@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "${version_major}.${version_minor}.${version_patch}"
+group = "snownee.snow"
+archivesBaseName = "SnowRealMagic"
+
+if (System.getenv().BUILD_NUMBER != null) {
+    version += "-build${System.getenv().BUILD_NUMBER}"
+}
+
+sourceCompatibility = targetCompatibility = '1.8'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    maven {
+        name = "jei"
+        url = "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+    runDir = "run"
+
+    mappings = "${mapping_version}"
+    useDepAts = true
+
+    replace "@VERSION_INJECT@", project.version
+}
+
+dependencies {
+    // Why not deobfCompile? Since JEI 4.13.1, JEI uses stable_39 mapping, so we are on the same MCP version now.
+    compile "mezz.jei:jei_${minecraft_version}:${jei_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    exclude "**/*.bat"
+    exclude "**/*.psd"
+    exclude "**/*.d"
+    exclude "**/*.exe"
+    exclude "**/*.e"
+    exclude "**/*.txt"
+    manifest {
+        attributes 'FMLAT': 'snow_at.cfg'
+        attributes 'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}"
+        attributes 'Timestamp': System.currentTimeMillis()
+    }
+}
+
+javadoc {
+    options.encoding = "UTF-8"
+    options.charSet = "UTF-8"
+    options.links = [
+            'https://docs.oracle.com/javase/8/docs/api/'
+    ]
+    options.tags = [
+            "implSpec:a:Implementation Specification",
+            "implNote:a:Implementation Note"
+    ]
+}

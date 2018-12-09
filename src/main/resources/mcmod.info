@@ -1,0 +1,12 @@
+[
+{
+  "modid": "snowrealmagic",
+  "name": "Snow! Real Magic!",
+  "description": "Tweak vanilla snow layer.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Snownee"],
+  "logoFile": "",
+  "dependencies": []
+}
+]
