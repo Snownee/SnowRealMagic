@@ -401,7 +401,8 @@ public class BlockSnowLayer extends BlockSnow
             {
                 IBlockState newState = ((TileSnowLayer) tile).getState();
                 worldIn.removeTileEntity(pos);
-                worldIn.setBlockState(pos, newState);
+                if (worldIn.setBlockState(pos, newState))
+                    newState.getBlock().neighborChanged(newState, worldIn, pos, newState.getBlock(), pos.down());
             }
             else
             {
