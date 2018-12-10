@@ -40,7 +40,6 @@ public class ItemSnowLayer extends ItemSnow
                 {
                     blockpos = pos.up();
                     state = worldIn.getBlockState(blockpos);
-                    block = state.getBlock();
                 }
 
                 if (BlockSnowLayer.canContainState(state))
