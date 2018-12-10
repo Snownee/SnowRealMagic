@@ -14,6 +14,7 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -419,5 +420,11 @@ public class BlockSnowLayer extends BlockSnow
             return getContainedState(worldIn, pos).getBlock().isPassable(worldIn, pos);
         }
         return super.isPassable(worldIn, pos);
+    }
+
+    @Override
+    public EnumPushReaction getPushReaction(IBlockState state)
+    {
+        return hasTileEntity(state) ? EnumPushReaction.BLOCK : EnumPushReaction.DESTROY;
     }
 }
