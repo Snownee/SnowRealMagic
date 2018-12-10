@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAnvil;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFlower;
@@ -78,7 +77,7 @@ public class BlockSnowLayer extends BlockSnow
     {
         if (ModConfig.placeSnowInBlock)
         {
-            state.getValue(TILE);
+            return state.getValue(TILE);
         }
         return false;
     }
@@ -343,10 +342,6 @@ public class BlockSnowLayer extends BlockSnow
             return true;
         }
         if (block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockPane)
-        {
-            return true;
-        }
-        if (block instanceof BlockAnvil)
         {
             return true;
         }
