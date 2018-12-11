@@ -11,6 +11,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -78,6 +79,8 @@ public class SnowRealMagic
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event)
     {
+        RenderingRegistry.registerEntityRenderingHandler(EntityFallingSnow.class, RenderFallingSnow::new);
+
         if (ModConfig.placeSnowInBlock)
         {
             ModelLoader.setCustomStateMapper(BLOCK, new StateMap.Builder().ignore(BlockSnowLayer.TILE).build());

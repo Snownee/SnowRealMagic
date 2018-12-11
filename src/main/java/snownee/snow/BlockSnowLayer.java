@@ -202,8 +202,9 @@ public class BlockSnowLayer extends BlockSnow
             {
                 if (!worldIn.isRemote)
                 {
+                    worldIn.setBlockToAir(pos);
                     EntityFallingSnow entityfallingblock = new EntityFallingSnow(worldIn, pos.getX() + 0.5D, pos.getY(),
-                            pos.getZ() + 0.5D, state);
+                            pos.getZ() + 0.5D, state.getValue(LAYERS));
                     worldIn.spawnEntity(entityfallingblock);
                 }
             }
