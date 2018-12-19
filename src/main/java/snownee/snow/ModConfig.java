@@ -42,4 +42,7 @@ public final class ModConfig
 
     @Config.Name("ParticleThroughLeaves")
     public static boolean particleThroughLeaves = true;
+
+    @Config.Name("SnowMakingIce")
+    public static boolean snowMakingIce = true;
 }

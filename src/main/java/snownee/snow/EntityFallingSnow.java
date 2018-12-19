@@ -89,7 +89,7 @@ public class EntityFallingSnow extends Entity
                     prevPos = pos;
                     IBlockState state = world.getBlockState(pos);
                     Block block = state.getBlock();
-                    if (block == Blocks.WATER)
+                    if (ModConfig.snowMakingIce && block == Blocks.WATER)
                     {
                         world.setBlockState(pos, Blocks.ICE.getDefaultState());
                         setDead();
