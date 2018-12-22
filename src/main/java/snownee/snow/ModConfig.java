@@ -37,6 +37,9 @@ public final class ModConfig
     @Config.Name("SnowAccumulationDuringSnowstorm")
     public static boolean snowAccumulationDuringSnowstorm = true;
 
+    @Config.Name("SnowAccumulationDuringSnowfall")
+    public static boolean snowAccumulationDuringSnowfall = false;
+
     @Config.Name("ThinnerBoundingBox")
     public static boolean thinnerBoundingBox = true;
 

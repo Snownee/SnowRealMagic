@@ -171,23 +171,43 @@ public class BlockSnowLayer extends BlockSnow
             worldIn.setBlockToAir(pos);
             return;
         }
+        if (!ModConfig.snowAccumulationDuringSnowfall && !ModConfig.snowAccumulationDuringSnowstorm)
+        {
+            return;
+        }
         if (random.nextInt(8) > 0 || !worldIn.canSeeSky(pos.up()))
         {
             return;
         }
         int layers = state.getValue(LAYERS);
-        if (layers < 8 && worldIn.isRaining() && worldIn.isThundering() && worldIn.canSnowAt(pos, false))
+
+        boolean flag = false;
+        if (worldIn.isRaining())
         {
-            // check light
-            if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) < 10)
+            if (ModConfig.snowAccumulationDuringSnowfall)
             {
-                worldIn.setBlockState(pos, state.withProperty(LAYERS, layers + 1));
+                flag = true;
+            }
+            else if (ModConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering())
+            {
+                flag = true;
             }
         }
-        if (layers > 1 && !worldIn.isRaining() && worldIn.canSnowAt(pos, false)
-                && worldIn.getBlockState(pos.up()).getBlock() != this)
+
+        if (worldIn.canSnowAt(pos, false))
         {
-            worldIn.setBlockState(pos, state.withProperty(LAYERS, layers - 1));
+            if (flag && layers < 8)
+            {
+                // check light
+                if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) < 10)
+                {
+                    worldIn.setBlockState(pos, state.withProperty(LAYERS, layers + 1));
+                }
+            }
+            else if (layers > 1 && !worldIn.isRaining() && worldIn.getBlockState(pos.up()).getBlock() != this)
+            {
+                worldIn.setBlockState(pos, state.withProperty(LAYERS, layers - 1));
+            }
         }
     }
 
