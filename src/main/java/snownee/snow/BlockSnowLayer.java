@@ -15,6 +15,7 @@ import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -326,9 +327,9 @@ public class BlockSnowLayer extends BlockSnow
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
         IBlockState state = worldIn.getBlockState(pos);
-        if (state.getValue(TILE))
+        if (state.getBlock() == this && state.getValue(TILE))
         {
-            return false;
+            return getContainedState(worldIn, pos).getMaterial().isReplaceable();
         }
         return (ModConfig.snowAlwaysReplaceable && state.getValue(LAYERS) < 8) || super.isReplaceable(worldIn, pos);
     }
@@ -416,7 +417,7 @@ public class BlockSnowLayer extends BlockSnow
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
     {
-        if (hasTileEntity(state))
+        if (worldIn.getBlockState(pos).getMaterial() == Material.AIR && hasTileEntity(state))
         {
             TileEntity tile = worldIn.getTileEntity(pos);
             if (tile instanceof TileSnowLayer)
