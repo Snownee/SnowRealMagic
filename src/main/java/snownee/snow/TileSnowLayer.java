@@ -74,7 +74,7 @@ public class TileSnowLayer extends TileEntity
     @Override
     public boolean hasFastRenderer()
     {
-        return true;
+        return ModConfig.useFastTESR;
     }
 
     @Override

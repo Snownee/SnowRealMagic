@@ -48,4 +48,8 @@ public final class ModConfig
 
     @Config.Name("SnowMakingIce")
     public static boolean snowMakingIce = true;
+
+    @Config.Name("UseFastTESR")
+    @Config.Comment("It's faster. But you will see back face of plants")
+    public static boolean useFastTESR = false;
 }
