@@ -214,8 +214,8 @@ public class BlockSnowLayer extends BlockSnow
 
     private boolean checkFallable(World worldIn, BlockPos pos, IBlockState state)
     {
-        if ((worldIn.isAirBlock(pos.down()) || BlockFalling.canFallThrough(worldIn.getBlockState(pos.down())))
-                && pos.getY() >= 0)
+        BlockPos posDown = pos.down();
+        if ((worldIn.isAirBlock(posDown) || canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) && pos.getY() >= 0)
         {
             int i = 32;
 
@@ -224,8 +224,7 @@ public class BlockSnowLayer extends BlockSnow
                 if (!worldIn.isRemote)
                 {
                     worldIn.setBlockToAir(pos);
-                    EntityFallingSnow entityfallingblock = new EntityFallingSnow(worldIn, pos.getX() + 0.5D, pos.getY(),
-                            pos.getZ() + 0.5D, state.getValue(LAYERS));
+                    EntityFallingSnow entityfallingblock = new EntityFallingSnow(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, state.getValue(LAYERS));
                     worldIn.spawnEntity(entityfallingblock);
                 }
             }
@@ -234,9 +233,7 @@ public class BlockSnowLayer extends BlockSnow
                 worldIn.setBlockToAir(pos);
                 BlockPos blockpos;
 
-                for (blockpos = pos.down(); (worldIn.isAirBlock(blockpos)
-                        || BlockFalling.canFallThrough(worldIn.getBlockState(blockpos)))
-                        && blockpos.getY() > 0; blockpos = blockpos.down())
+                for (blockpos = pos.down(); (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos), worldIn, blockpos)) && blockpos.getY() > 0; blockpos = blockpos.down())
                 {
                 }
 
@@ -289,16 +286,14 @@ public class BlockSnowLayer extends BlockSnow
             else
             {
                 SoundType soundtype = Blocks.SNOW_LAYER.getSoundType(state, world, pos, null);
-                world.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,
-                        (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
+                world.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
             }
             if (originLayers + layers > 8)
             {
                 pos = pos.up();
                 if (world.getBlockState(pos).getBlock().isReplaceable(world, pos))
                 {
-                    world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(LAYERS,
-                            MathHelper.clamp(originLayers + layers - 8, 1, 8)));
+                    world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
                 }
             }
         }
@@ -314,12 +309,10 @@ public class BlockSnowLayer extends BlockSnow
             double d0 = RANDOM.nextGaussian() * 0.2D;
             double d1 = RANDOM.nextGaussian() * 0.02D;
             double d2 = RANDOM.nextGaussian() * 0.2D;
-            worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, (double) ((float) pos.getX() + RANDOM.nextFloat()),
-                    (double) pos.getY() + offsetY, (double) ((float) pos.getZ() + RANDOM.nextFloat()), d0, d1, d2);
+            worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, (double) ((float) pos.getX() + RANDOM.nextFloat()), (double) pos.getY() + offsetY, (double) ((float) pos.getZ() + RANDOM.nextFloat()), d0, d1, d2);
         }
         SoundType soundtype = getSoundType(state, worldIn, pos, null);
-        worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F,
-                soundtype.getPitch() * 0.8F);
+        worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
         return true;
     }
 
@@ -359,8 +352,7 @@ public class BlockSnowLayer extends BlockSnow
             return false;
         }
         Block block = state.getBlock();
-        if (block instanceof BlockTallGrass || block instanceof BlockFlower || block instanceof BlockSapling
-                || block instanceof BlockMushroom)
+        if (block instanceof BlockTallGrass || block instanceof BlockFlower || block instanceof BlockSapling || block instanceof BlockMushroom)
         {
             return true;
         }
@@ -409,8 +401,7 @@ public class BlockSnowLayer extends BlockSnow
         addCollisionBoxToList(pos, entityBox, collidingBoxes, state.getCollisionBoundingBox(worldIn, pos));
         if (ModConfig.placeSnowInBlock && state.getValue(TILE))
         {
-            getContainedState(worldIn, pos).addCollisionBoxToList(worldIn, pos, entityBox, collidingBoxes, entityIn,
-                    isActualState);
+            getContainedState(worldIn, pos).addCollisionBoxToList(worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
         }
     }
 
@@ -448,5 +439,10 @@ public class BlockSnowLayer extends BlockSnow
     public EnumPushReaction getPushReaction(IBlockState state)
     {
         return hasTileEntity(state) ? EnumPushReaction.BLOCK : EnumPushReaction.DESTROY;
+    }
+
+    public static boolean canFallThrough(IBlockState state, World worldIn, BlockPos pos)
+    {
+        return BlockFalling.canFallThrough(state) && state.getCollisionBoundingBox(worldIn, pos) == null;
     }
 }
