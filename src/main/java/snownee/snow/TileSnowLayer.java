@@ -3,6 +3,7 @@ package snownee.snow;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBush;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +75,7 @@ public class TileSnowLayer extends TileEntity
     @Override
     public boolean hasFastRenderer()
     {
-        return ModConfig.useFastTESR;
+        return !(ModConfig.forceNormalTESR || state.getBlock() instanceof BlockBush);
     }
 
     @Override
