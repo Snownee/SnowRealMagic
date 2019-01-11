@@ -51,4 +51,7 @@ public final class ModConfig
 
     @Config.Name("ForceNormalTESR")
     public static boolean forceNormalTESR = false;
+
+    @Config.Name("SnowOnIce")
+    public static boolean snowOnIce = false;
 }

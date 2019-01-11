@@ -165,6 +165,23 @@ public class BlockSnowLayer extends BlockSnow
     }
 
     @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        IBlockState iblockstate = worldIn.getBlockState(pos.down());
+        Block block = iblockstate.getBlock();
+
+        if (ModConfig.snowOnIce || (block != Blocks.ICE && block != Blocks.PACKED_ICE && block != Blocks.BARRIER))
+        {
+            BlockFaceShape blockfaceshape = iblockstate.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP);
+            return blockfaceshape == BlockFaceShape.SOLID || iblockstate.getBlock().isLeaves(iblockstate, worldIn, pos.down()) || block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() == 8;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
     public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
     {
         if (worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
