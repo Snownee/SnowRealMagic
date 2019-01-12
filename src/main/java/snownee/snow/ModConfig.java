@@ -54,4 +54,7 @@ public final class ModConfig
 
     @Config.Name("SnowOnIce")
     public static boolean snowOnIce = false;
+
+    @Config.Name("BlackMagic")
+    public static boolean blackMagic = false;
 }

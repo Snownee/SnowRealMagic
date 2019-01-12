@@ -141,6 +141,7 @@ public class BlockSnowLayer extends BlockSnow
         return 2;
     }
 
+    @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
     {
         if (ModConfig.snowGravity)
@@ -149,6 +150,7 @@ public class BlockSnowLayer extends BlockSnow
         }
     }
 
+    @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
         if (ModConfig.snowGravity)
@@ -157,6 +159,7 @@ public class BlockSnowLayer extends BlockSnow
         }
     }
 
+    @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
         if (worldIn.isRemote)
@@ -173,7 +176,7 @@ public class BlockSnowLayer extends BlockSnow
         if (ModConfig.snowOnIce || (block != Blocks.ICE && block != Blocks.PACKED_ICE && block != Blocks.BARRIER))
         {
             BlockFaceShape blockfaceshape = iblockstate.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP);
-            return blockfaceshape == BlockFaceShape.SOLID || iblockstate.getBlock().isLeaves(iblockstate, worldIn, pos.down()) || block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() == 8;
+            return blockfaceshape == BlockFaceShape.SOLID || iblockstate.getBlock().isLeaves(iblockstate, worldIn, pos.down()) || block == this && iblockstate.getValue(LAYERS).intValue() == 8;
         }
         else
         {
@@ -326,7 +329,7 @@ public class BlockSnowLayer extends BlockSnow
             double d0 = RANDOM.nextGaussian() * 0.2D;
             double d1 = RANDOM.nextGaussian() * 0.02D;
             double d2 = RANDOM.nextGaussian() * 0.2D;
-            worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, (double) ((float) pos.getX() + RANDOM.nextFloat()), (double) pos.getY() + offsetY, (double) ((float) pos.getZ() + RANDOM.nextFloat()), d0, d1, d2);
+            worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
         }
         SoundType soundtype = getSoundType(state, worldIn, pos, null);
         worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
@@ -399,7 +402,7 @@ public class BlockSnowLayer extends BlockSnow
             Block block = stateIn.getBlock();
             if (block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockPane)
             {
-                return BlockFaceShape.SOLID;
+                return face == EnumFacing.UP ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
             }
             return stateIn.getBlockFaceShape(worldIn, pos, face);
         }

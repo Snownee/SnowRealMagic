@@ -36,6 +36,7 @@ repositories {
 minecraft {
     version = "${minecraft_version}-${forge_version}"
     runDir = "run"
+    coreMod = project.coreMod
 
     mappings = "${mapping_version}"
     useDepAts = true
@@ -73,8 +74,25 @@ jar {
         attributes 'FMLAT': 'snow_at.cfg'
         attributes 'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}"
         attributes 'Timestamp': System.currentTimeMillis()
+        attributes 'ContainedDeps': "${project.archivesBaseName}-${project.version}-coremod.jar"
     }
 }
+
+sourceSets {
+    coremod {
+        compileClasspath += main.compileClasspath
+    }
+}
+
+task coreModJar(type: Jar) {
+    from sourceSets.coremod.output
+    manifest {
+        attributes 'FMLCorePlugin': project.coreMod
+    }
+    classifier = 'coremod'
+}
+
+tasks.jar.dependsOn tasks.coreModJar
 
 javadoc {
     options.encoding = "UTF-8"

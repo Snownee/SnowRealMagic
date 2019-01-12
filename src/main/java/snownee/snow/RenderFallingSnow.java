@@ -29,6 +29,7 @@ public class RenderFallingSnow extends Render<EntityFallingSnow>
         this.shadowSize = 0.5F;
     }
 
+    @Override
     public void doRender(EntityFallingSnow entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         if (entity.getLayers() > 0 && entity.getLayers() <= 8)
@@ -54,8 +55,8 @@ public class RenderFallingSnow extends Render<EntityFallingSnow>
 
                     bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
                     BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
-                    GlStateManager.translate((float) (x - (double) blockpos.getX() - 0.5D),
-                            (float) (y - (double) blockpos.getY()), (float) (z - (double) blockpos.getZ() - 0.5D));
+                    GlStateManager.translate((float) (x - blockpos.getX() - 0.5D),
+                            (float) (y - blockpos.getY()), (float) (z - blockpos.getZ() - 0.5D));
                     BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
                             .getBlockRendererDispatcher();
                     blockrendererdispatcher.getBlockModelRenderer().renderModel(world,
@@ -77,6 +78,7 @@ public class RenderFallingSnow extends Render<EntityFallingSnow>
         }
     }
 
+    @Override
     protected ResourceLocation getEntityTexture(EntityFallingSnow entity)
     {
         return TextureMap.LOCATION_BLOCKS_TEXTURE;
