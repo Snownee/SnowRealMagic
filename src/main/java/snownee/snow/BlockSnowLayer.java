@@ -187,7 +187,7 @@ public class BlockSnowLayer extends BlockSnow
     @Override
     public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
     {
-        if (worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
+        if (!ModConfig.snowNeverMelt && worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
         {
             worldIn.setBlockToAir(pos);
             return;
