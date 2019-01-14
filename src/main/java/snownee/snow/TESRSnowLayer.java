@@ -52,7 +52,8 @@ public class TESRSnowLayer extends TileEntitySpecialRenderer<TileSnowLayer>
         BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IBlockState state = te.getState();
-        buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+        double offsetY = te.isFullHeight() ? 0.001 : 0;
+        buffer.setTranslation(x - pos.getX(), y - pos.getY() - offsetY, z - pos.getZ());
         dispatcher.renderBlock(state, te.getPos(), te.getWorld(), buffer);
     }
 }

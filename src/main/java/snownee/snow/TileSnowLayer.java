@@ -4,6 +4,9 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockPane;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class TileSnowLayer extends TileEntity
 {
     private IBlockState state = Blocks.ACACIA_FENCE.getDefaultState();
+    private boolean isFullHeight = false;
 
     public TileSnowLayer()
     {
@@ -32,9 +36,16 @@ public class TileSnowLayer extends TileEntity
         return state;
     }
 
+    public boolean isFullHeight()
+    {
+        return isFullHeight;
+    }
+
     public void setState(IBlockState state)
     {
         this.state = state;
+        Block block = state.getBlock();
+        this.isFullHeight = block instanceof BlockWall || block instanceof BlockFence || block instanceof BlockPane;
         if (world != null && !world.isRemote)
         {
             IBlockState blockState = world.getBlockState(pos);
@@ -61,6 +72,7 @@ public class TileSnowLayer extends TileEntity
             meta = compound.getInteger("blockMeta");
         }
         state = block.getStateFromMeta(meta);
+        isFullHeight = block instanceof BlockWall || block instanceof BlockFence || block instanceof BlockPane;
     }
 
     @Override
