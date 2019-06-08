@@ -47,6 +47,7 @@ public class ItemSnowLayer extends ItemSnow
                 if (BlockSnowLayer.canContainState(state))
                 {
                     BlockSnowLayer.placeLayersOn(worldIn, blockpos, 1, false);
+                    itemstack.shrink(1);
                     return EnumActionResult.SUCCESS;
                 }
             }
