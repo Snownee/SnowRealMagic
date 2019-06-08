@@ -84,6 +84,7 @@ public class ItemSnowLayer extends ItemSnow
             {
                 actionResult = onItemUse(playerIn, worldIn, result.getBlockPos(), handIn, result.sideHit,
                         (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z);
+                playerIn.swingArm(handIn);
             }
         }
         return new ActionResult<ItemStack>(actionResult, playerIn.getHeldItem(handIn));
