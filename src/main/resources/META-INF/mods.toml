@@ -1,0 +1,20 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+[[mods]]
+modId="snowrealmagic"
+version="${file.jarVersion}"
+displayName="Snow! Real Magic!"
+authors="Snownee"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
+description='''Tweak vanilla snow layer.
+Huge thanks to my supporters:
+
+粉鱼 Lioness131 皮蛋 Cherls idyllic_bean 鱼加盐有点咸 洋葱菜菜子 面条公爵 车轮饼 mc00zhu 洛华 纪华裕
+'''
+
+[[dependencies.snowrealmagic]]
+    modId="kiwi"
+    mandatory=true
+    versionRange="[2.3, 2.5)"
+    ordering="BEFORE"
+    side="BOTH"

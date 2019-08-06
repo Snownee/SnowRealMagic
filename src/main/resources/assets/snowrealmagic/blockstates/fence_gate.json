@@ -1,0 +1,37 @@
+{
+    "variants": {
+        "facing=south,in_wall=false,open=false,down=false": { "model": "snowrealmagic:block/fence_gate", "uvlock": true },
+        "facing=west,in_wall=false,open=false,down=false":  { "model": "snowrealmagic:block/fence_gate", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=false,open=false,down=false": { "model": "snowrealmagic:block/fence_gate", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=false,open=false,down=false":  { "model": "snowrealmagic:block/fence_gate", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=false,open=true,down=false": { "model": "snowrealmagic:block/fence_gate_open", "uvlock": true },
+        "facing=west,in_wall=false,open=true,down=false":  { "model": "snowrealmagic:block/fence_gate_open", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=false,open=true,down=false": { "model": "snowrealmagic:block/fence_gate_open", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=false,open=true,down=false":  { "model": "snowrealmagic:block/fence_gate_open", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=true,open=false,down=false": { "model": "snowrealmagic:block/fence_gate_wall", "uvlock": true },
+        "facing=west,in_wall=true,open=false,down=false":  { "model": "snowrealmagic:block/fence_gate_wall", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=true,open=false,down=false": { "model": "snowrealmagic:block/fence_gate_wall", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=true,open=false,down=false":  { "model": "snowrealmagic:block/fence_gate_wall", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=true,open=true,down=false": { "model": "snowrealmagic:block/fence_gate_wall_open", "uvlock": true },
+        "facing=west,in_wall=true,open=true,down=false":  { "model": "snowrealmagic:block/fence_gate_wall_open", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=true,open=true,down=false": { "model": "snowrealmagic:block/fence_gate_wall_open", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=true,open=true,down=false":  { "model": "snowrealmagic:block/fence_gate_wall_open", "uvlock": true, "y": 270 },
+        
+        "facing=south,in_wall=false,open=false,down=true": { "model": "snowrealmagic:block/fence_gate_snow", "uvlock": true },
+        "facing=west,in_wall=false,open=false,down=true":  { "model": "snowrealmagic:block/fence_gate_snow", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=false,open=false,down=true": { "model": "snowrealmagic:block/fence_gate_snow", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=false,open=false,down=true":  { "model": "snowrealmagic:block/fence_gate_snow", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=false,open=true,down=true": { "model": "snowrealmagic:block/fence_gate_open_snow", "uvlock": true },
+        "facing=west,in_wall=false,open=true,down=true":  { "model": "snowrealmagic:block/fence_gate_open_snow", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=false,open=true,down=true": { "model": "snowrealmagic:block/fence_gate_open_snow", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=false,open=true,down=true":  { "model": "snowrealmagic:block/fence_gate_open_snow", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=true,open=false,down=true": { "model": "snowrealmagic:block/fence_gate_wall_snow", "uvlock": true },
+        "facing=west,in_wall=true,open=false,down=true":  { "model": "snowrealmagic:block/fence_gate_wall_snow", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=true,open=false,down=true": { "model": "snowrealmagic:block/fence_gate_wall_snow", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=true,open=false,down=true":  { "model": "snowrealmagic:block/fence_gate_wall_snow", "uvlock": true, "y": 270 },
+        "facing=south,in_wall=true,open=true,down=true": { "model": "snowrealmagic:block/fence_gate_wall_open_snow", "uvlock": true },
+        "facing=west,in_wall=true,open=true,down=true":  { "model": "snowrealmagic:block/fence_gate_wall_open_snow", "uvlock": true, "y": 90 },
+        "facing=north,in_wall=true,open=true,down=true": { "model": "snowrealmagic:block/fence_gate_wall_open_snow", "uvlock": true, "y": 180 },
+        "facing=east,in_wall=true,open=true,down=true":  { "model": "snowrealmagic:block/fence_gate_wall_open_snow", "uvlock": true, "y": 270 }
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "kiwi:texture_block",
+  "pattern": [
+    "_",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "tag": "fences"
+    },
+    "_": {
+      "item": "snow"
+    }
+  },
+  "texture": {
+    "#": "0"
+  },
+  "mark": "0",
+  "result": {
+    "item": "snowrealmagic:fence"
+  }
+}
