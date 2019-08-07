@@ -100,6 +100,8 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    exclude '**/acacia_planks.png'
+    exclude '**/snow.png'
     manifest {
         attributes([
             "Implementation-Title": project.name,
