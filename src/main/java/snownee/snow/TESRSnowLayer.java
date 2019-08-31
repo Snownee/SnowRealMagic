@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -32,12 +34,15 @@ public class TESRSnowLayer extends TileEntitySpecialRenderer<TileSnowLayer>
         GlStateManager.enableRescaleNormal();
         GlStateManager.color(1, 1, 1, 1);
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(7, DefaultVertexFormats.BLOCK);
         renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer);
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
+        GlStateManager.disableBlend();
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }
