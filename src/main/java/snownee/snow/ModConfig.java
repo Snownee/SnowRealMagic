@@ -57,7 +57,4 @@ public final class ModConfig
 
     @Config.Name("SnowNeverMelt")
     public static boolean snowNeverMelt = false;
-
-    @Config.Name("BlackMagic")
-    public static boolean blackMagic = false;
 }
