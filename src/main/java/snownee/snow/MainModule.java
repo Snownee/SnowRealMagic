@@ -214,13 +214,11 @@ public class MainModule extends AbstractModule
         worldIn.setBlockState(pos, newState);
         if (player instanceof ServerPlayerEntity)
         {
+            if (newState.isSolid()) pos = pos.up();
             Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
-            if (((ServerPlayerEntity) player).interactionManager.tryHarvestBlock(pos))
-            {
-                player.getHeldItemMainhand().damageItem(1, player, stack -> {
-                    stack.sendBreakAnimation(Hand.MAIN_HAND);
-                });
-            }
+            player.getHeldItemMainhand().damageItem(1, player, stack -> {
+                stack.sendBreakAnimation(Hand.MAIN_HAND);
+            });
         }
         event.setCanceled(true);
         event.setCancellationResult(ActionResultType.SUCCESS);

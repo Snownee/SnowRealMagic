@@ -125,7 +125,6 @@ public class ModSnowTileBlock extends ModSnowBlock
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public PushReaction getPushReaction(BlockState state)
     {
         return PushReaction.BLOCK;
@@ -162,7 +161,6 @@ public class ModSnowTileBlock extends ModSnowBlock
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean isSolid(BlockState state)
     {
         return state.get(LAYERS) > 1;
@@ -181,7 +179,6 @@ public class ModSnowTileBlock extends ModSnowBlock
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {
         if (entityIn instanceof LivingEntity)

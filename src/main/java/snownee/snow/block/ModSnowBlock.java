@@ -83,7 +83,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
     {
         if (SnowCommonConfig.snowGravity)
@@ -137,7 +136,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
         this.checkFallable(worldIn, pos, state);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
     {
@@ -323,7 +321,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int originLayers, int layers)
     {
         double offsetY = originLayers / 8D;
@@ -460,7 +457,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
 
     public static boolean convert(IWorld world, BlockPos pos, BlockState state, BlockState stateIn, int layers, int flags)
     {
-        if (world.isRemote() || !SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state))
+        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state))
         {
             return false;
         }

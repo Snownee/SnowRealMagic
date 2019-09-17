@@ -32,7 +32,7 @@ public class SnowBlockItem extends BlockItem
             BlockItemUseContext blockContext = new BlockItemUseContext(context);
             if (ModSnowBlock.canContainState(state))
             {
-                if (!world.isRemote && ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !context.getPlayer().isCreative())
+                if (ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !world.isRemote && !context.getPlayer().isCreative())
                 {
                     context.getItem().shrink(1);
                 }
@@ -44,7 +44,7 @@ public class SnowBlockItem extends BlockItem
                 state = world.getBlockState(pos);
                 if (ModSnowBlock.canContainState(state))
                 {
-                    if (!world.isRemote && ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !context.getPlayer().isCreative())
+                    if (ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !world.isRemote && !context.getPlayer().isCreative())
                     {
                         context.getItem().shrink(1);
                     }

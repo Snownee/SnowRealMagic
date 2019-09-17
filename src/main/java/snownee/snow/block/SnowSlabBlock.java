@@ -55,7 +55,6 @@ public class SnowSlabBlock extends ModBlock implements ISnowVariant
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
     {
         if (worldIn.isRemote)
@@ -79,14 +78,12 @@ public class SnowSlabBlock extends ModBlock implements ISnowVariant
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
     {
         return BOTTOM_SHAPE;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type)
     {
         return false;

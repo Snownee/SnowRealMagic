@@ -70,7 +70,6 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public Material getMaterial(BlockState state)
     {
         return Material.WOOD;
