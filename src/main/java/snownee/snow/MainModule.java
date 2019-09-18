@@ -32,10 +32,12 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.placement.IPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -214,7 +216,8 @@ public class MainModule extends AbstractModule
         worldIn.setBlockState(pos, newState);
         if (player instanceof ServerPlayerEntity)
         {
-            if (newState.isSolid()) pos = pos.up();
+            if (newState.isSolid())
+                pos = pos.up();
             Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
             player.getHeldItemMainhand().damageItem(1, player, stack -> {
                 stack.sendBreakAnimation(Hand.MAIN_HAND);
@@ -240,12 +243,12 @@ public class MainModule extends AbstractModule
         items.addAll(tag.getAllElements().stream().filter(i -> !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
 
-    //    @SubscribeEvent
-    //    public static void onWorldTick(TickEvent.WorldTickEvent event)
-    //    {
-    //        if (event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld)
-    //        {
-    //            WorldTickHandler.tick(event);
-    //        }
-    //    }
+    @SubscribeEvent
+    public static void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld)
+        {
+            WorldTickHandler.tick(event);
+        }
+    }
 }

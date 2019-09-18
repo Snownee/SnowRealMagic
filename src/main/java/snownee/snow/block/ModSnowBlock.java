@@ -488,7 +488,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
         BlockState stateDown = world.getBlockState(posDown);
         if (block instanceof StairsBlock && state.getBlock() != MainModule.STAIRS)
         {
-            world.setBlockState(pos, MainModule.STAIRS.getDefaultState().with(StairsBlock.FACING, state.get(StairsBlock.FACING)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)), flags);
+            world.setBlockState(pos, MainModule.STAIRS.getDefaultState().with(StairsBlock.FACING, state.get(StairsBlock.FACING)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)).with(StairsBlock.SHAPE, state.get(StairsBlock.SHAPE)), flags);
         }
         else if (block instanceof SlabBlock && state.getBlock() != MainModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM)
         {
