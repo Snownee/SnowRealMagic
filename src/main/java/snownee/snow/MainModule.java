@@ -99,15 +99,15 @@ public class MainModule extends AbstractModule
     @Name("minecraft:snow")
     public static final SnowBlockItem ITEM = new SnowBlockItem(BLOCK);
 
-    public static final SnowFenceBlock FENCE = new SnowFenceBlock(Block.Properties.from(Blocks.OAK_FENCE));
+    public static final SnowFenceBlock FENCE = new SnowFenceBlock(Block.Properties.from(Blocks.OAK_FENCE).tickRandomly());
 
-    public static final SnowStairsBlock STAIRS = new SnowStairsBlock(Block.Properties.from(Blocks.OAK_STAIRS));
+    public static final SnowStairsBlock STAIRS = new SnowStairsBlock(Block.Properties.from(Blocks.OAK_STAIRS).tickRandomly());
 
-    public static final SnowSlabBlock SLAB = new SnowSlabBlock(Block.Properties.from(Blocks.OAK_SLAB));
+    public static final SnowSlabBlock SLAB = new SnowSlabBlock(Block.Properties.from(Blocks.OAK_SLAB).tickRandomly());
 
-    public static final SnowFenceGateBlock FENCE_GATE = new SnowFenceGateBlock(Block.Properties.from(Blocks.OAK_FENCE_GATE));
+    public static final SnowFenceGateBlock FENCE_GATE = new SnowFenceGateBlock(Block.Properties.from(Blocks.OAK_FENCE_GATE).tickRandomly());
 
-    public static final SnowWallBlock WALL = new SnowWallBlock(Block.Properties.from(Blocks.COBBLESTONE_WALL));
+    public static final SnowWallBlock WALL = new SnowWallBlock(Block.Properties.from(Blocks.COBBLESTONE_WALL).tickRandomly());
 
     @Name("snow")
     public static final TileEntityType<?> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);

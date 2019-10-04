@@ -1,6 +1,7 @@
 package snownee.snow.block;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,6 +26,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,6 +34,7 @@ import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.tile.TextureTile;
 import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
+import snownee.snow.SnowCommonConfig;
 
 public class SnowSlabBlock extends ModBlock implements ISnowVariant
 {
@@ -104,6 +107,15 @@ public class SnowSlabBlock extends ModBlock implements ISnowVariant
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
     {
         MainModule.fillTextureItems(ItemTags.SLABS, this, items);
+    }
+
+    @Override
+    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
+    {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11)
+        {
+            worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
+        }
     }
 
 }
