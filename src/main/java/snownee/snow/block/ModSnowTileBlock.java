@@ -121,7 +121,7 @@ public class ModSnowTileBlock extends ModSnowBlock
     {
         //Ensure that after we place the block already containing snow that it updates the block under it
         BlockPos down = pos.down();
-        ModSnowTileBlock.updateSnowyDirt(world, down, world.getBlockState(down));
+        updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
     public static void updateSnowyDirt(IWorld world, BlockPos pos, BlockState state)

@@ -1,35 +1,31 @@
 package snownee.snow.block;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -41,39 +37,35 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.ModBlock;
-import snownee.kiwi.util.NBTHelper;
 import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.block.state.SnowFenceBlockState;
 
 public class SnowFenceBlock extends FenceBlock implements ISnowVariant
 {
-    public enum Mat implements IStringSerializable
-    {
-        WOOD(Material.WOOD), ROCK(Material.ROCK), IRON(Material.IRON), MISC(Material.CLAY);
-
-        public final Material material;
-
-        Mat(Material material)
-        {
-            this.material = material;
-        }
-
-        @Override
-        public String getName()
-        {
-            return toString().toLowerCase(Locale.ENGLISH);
-        }
-    }
 
     public static final BooleanProperty DOWN = SixWayBlock.DOWN;
-    public static final EnumProperty<Mat> MAT = EnumProperty.create("mat", Mat.class);
+    public static final Material NO_MATCH = new Material.Builder(MaterialColor.WOOD).build();
+
+    protected final StateContainer<Block, BlockState> ourStateContainer;
 
     public SnowFenceBlock(Properties properties)
     {
         super(properties);
+        StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
+        fillStateContainer(builder);
+        ourStateContainer = builder.create(SnowFenceBlockState::new);
+        setDefaultState(ourStateContainer.getBaseState().with(NORTH, false).with(EAST, false).with(SOUTH, false)
+              .with(WEST, false).with(WATERLOGGED, false));
+    }
+
+    @Nonnull
+    @Override
+    public StateContainer<Block, BlockState> getStateContainer() {
+        //Overwrite access to the state container with ours that has the override method
+        return ourStateContainer;
     }
 
     @Override
@@ -103,8 +95,9 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     @Override
     public Material getMaterial(BlockState state)
     {
-        //TODO: Figure out a better way of doing this as we need to still implement this so the other fence block can call it on us
-        return state.get(MAT).material;
+        //Fallback to a custom material to ensure it does not match so that other fences only connect
+        // when our custom blockstate says that we are solid
+        return NO_MATCH;
     }
 
     public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos)
@@ -132,40 +125,7 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         World iblockreader = context.getWorld();
         BlockPos blockpos = context.getPos();
         BlockState stateIn = iblockreader.getBlockState(blockpos);
-        BlockState state = super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
-        ItemStack stack = context.getItem();
-        NBTHelper data = NBTHelper.of(stack);
-        String rl = data.getString("BlockEntityTag.Items.0");
-        if (rl != null && ResourceLocation.func_217855_b(rl))
-        {
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-            if (item instanceof BlockItem)
-            {
-                state = copyMaterialState(state, ((BlockItem) item).getBlock().getDefaultState());
-            }
-        }
-        return state;
-    }
-
-    private BlockState copyMaterialState(BlockState state, BlockState source) {
-        Material mat = source.getMaterial();
-        if (mat == Material.WOOD)
-        {
-            state = state.with(MAT, Mat.WOOD);
-        }
-        else if (mat == Material.ROCK)
-        {
-            state = state.with(MAT, Mat.ROCK);
-        }
-        else if (mat == Material.IRON)
-        {
-            state = state.with(MAT, Mat.IRON);
-        }
-        else
-        {
-            state = state.with(MAT, Mat.MISC);
-        }
-        return state;
+        return super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
     }
 
     @Override
@@ -174,8 +134,7 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         if (facing == Direction.DOWN)
         {
             ModSnowTileBlock.updateSnowyDirt(worldIn, facingPos, facingState);
-            BlockState newState = stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
-            return copyMaterialState(newState, getRaw(newState, worldIn, currentPos));
+            return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
         }
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL)
         {
@@ -197,7 +156,7 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(NORTH, EAST, WEST, SOUTH, DOWN, MAT, WATERLOGGED);
+        builder.add(NORTH, EAST, WEST, SOUTH, DOWN, WATERLOGGED);
     }
 
     @Override
