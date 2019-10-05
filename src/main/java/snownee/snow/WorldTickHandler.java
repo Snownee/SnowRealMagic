@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
@@ -14,6 +13,7 @@ import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import snownee.snow.block.ModSnowBlock;
 
 public class WorldTickHandler
@@ -24,10 +24,9 @@ public class WorldTickHandler
     {
         try
         {
-            METHOD = ChunkManager.class.getMethod("func_223491_f");
-            METHOD.setAccessible(true);
+            METHOD = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
         }
-        catch (NoSuchMethodException | SecurityException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -71,7 +70,7 @@ public class WorldTickHandler
                 Biome biome = world.getBiome(pos);
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {
-                    if (biome.func_225486_c(pos) < 0.15f)
+                    if (biome.func_225486_c(pos) >= 0.15f)
                     {
                         return;
                     }
@@ -80,7 +79,7 @@ public class WorldTickHandler
                     {
                         return;
                     }
-                    ModSnowBlock.convert(world, pos, Blocks.SNOW.getDefaultState(), state, 1, 3);
+                    ModSnowBlock.convert(world, pos, state, 1, 3);
                 }
             }
         });

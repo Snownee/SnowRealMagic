@@ -9,8 +9,10 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.Half;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -89,17 +91,6 @@ public class SnowStairsBlock extends StairsBlock implements ISnowVariant
         }
     }
 
-    //    @Override
-    //    public BlockState getStateForPlacement(BlockItemUseContext context)
-    //    {
-    //        if (state.get(StairsBlock.HALF) == Half.TOP)
-    //        {
-    //            world.setBlockState(pos, getRaw(state, world, pos));
-    //            spawnAsEntity(world, pos, new ItemStack(Items.SNOWBALL));
-    //        }
-    //        return super.getStateForPlacement(p_196258_1_);
-    //    }
-
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
     {
@@ -113,5 +104,11 @@ public class SnowStairsBlock extends StairsBlock implements ISnowVariant
         {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context)
+    {
+        return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
     }
 }

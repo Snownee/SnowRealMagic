@@ -160,8 +160,8 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
         {
             return;
         }
-        BlockPos height = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
-        if (height.getY() != pos.getY())
+        BlockPos height = worldIn.getHeight(Heightmap.Type.WORLD_SURFACE, pos);
+        if (height.getY() != pos.getY() + 1)
         {
             return;
         }
@@ -184,10 +184,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
 
         if (flag && layers < 8)
         {
-            // check light
-            accumulate(worldIn, pos, state, (w, p) -> w.getLightFor(LightType.BLOCK, p) < 10, true);
+            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
         }
-        else if (layers > 1 && !worldIn.isRaining())
+        else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining())
         {
             accumulate(worldIn, pos, state, (
                     w, p
@@ -272,7 +271,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
         }
         else if (canContainState(state) && state.isValidPosition(world, pos))
         {
-            convert(world, pos, state, state, MathHelper.clamp(layers, 1, 8), 3);
+            convert(world, pos, state, MathHelper.clamp(layers, 1, 8), 3);
         }
         else if (MainModule.BLOCK.isValidPosition(state, world, pos))
         {
@@ -382,7 +381,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @Override
-    public BlockState getRaw(BlockState state, World world, BlockPos pos)
+    public BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos)
     {
         return getContainedState(world, pos);
     }
@@ -455,13 +454,13 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
         return false;
     }
 
-    public static boolean convert(IWorld world, BlockPos pos, BlockState state, BlockState stateIn, int layers, int flags)
+    public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags)
     {
         if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state))
         {
             return false;
         }
-        if (stateIn.isAir(world, pos))
+        if (state.isAir(world, pos))
         {
             if (state.getBlock() != MainModule.BLOCK)
             {
@@ -469,7 +468,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
             }
             return true;
         }
-        Block block = stateIn.getBlock();
+        Block block = state.getBlock();
         if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock)
         {
             if (state.getBlock() != MainModule.TILE_BLOCK)
@@ -479,7 +478,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof SnowTile)
             {
-                ((SnowTile) tile).setState(stateIn);
+                ((SnowTile) tile).setState(state);
             }
             return true;
         }

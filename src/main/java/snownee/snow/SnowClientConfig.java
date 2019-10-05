@@ -12,8 +12,10 @@ import net.minecraftforge.fml.config.ModConfig;
 public final class SnowClientConfig
 {
     public static boolean particleThroughLeaves = true;
+    public static boolean colorTint = true;
 
     private static BooleanValue particleThroughLeavesCfg;
+    private static BooleanValue colorTintCfg;
 
     static final ForgeConfigSpec spec;
 
@@ -26,11 +28,13 @@ public final class SnowClientConfig
     private SnowClientConfig(ForgeConfigSpec.Builder builder)
     {
         particleThroughLeavesCfg = builder.define("particleThroughLeaves", particleThroughLeaves);
+        colorTintCfg = builder.define("colorTint", colorTint);
     }
 
     public static void refresh()
     {
         particleThroughLeaves = particleThroughLeavesCfg.get();
+        colorTint = colorTintCfg.get();
     }
 
     @SubscribeEvent

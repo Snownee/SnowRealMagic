@@ -85,7 +85,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature
         if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(LightType.BLOCK, pos) < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos))
         {
             BlockState blockstate = worldIn.getBlockState(pos);
-            return ModSnowBlock.convert(worldIn, pos, blockstate, blockstate, 1, 2);
+            return ModSnowBlock.convert(worldIn, pos, blockstate, 1, 2);
         }
         return false;
     }

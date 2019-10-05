@@ -6,6 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +24,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -35,6 +38,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.TickEvent;
@@ -244,11 +248,51 @@ public class MainModule extends AbstractModule
     }
 
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event)
+    public void onWorldTick(TickEvent.WorldTickEvent event)
     {
         if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld)
         {
             WorldTickHandler.tick(event);
         }
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onBlockTint(ColorHandlerEvent.Block event)
+    {
+        if (!SnowClientConfig.colorTint)
+            return;
+        BlockColors blockColors = event.getBlockColors();
+        blockColors.register((state, world, pos, index) -> {
+            Block block = state.getBlock();
+            if (block instanceof ISnowVariant)
+            {
+                BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
+                return blockColors.getColor(raw, world, pos, index);
+            }
+            return -1;
+        }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onItemTint(ColorHandlerEvent.Item event)
+    {
+        if (!SnowClientConfig.colorTint)
+            return;
+        ItemColors itemColors = event.getItemColors();
+        itemColors.register((stack, index) -> {
+            NBTHelper data = NBTHelper.of(stack);
+            String rl = data.getString("BlockEntityTag.Items.0");
+            if (rl != null && ResourceLocation.func_217855_b(rl))
+            {
+                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+                if (item != null)
+                {
+                    return itemColors.getColor(new ItemStack(item), index);
+                }
+            }
+            return -1;
+        }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);
     }
 }

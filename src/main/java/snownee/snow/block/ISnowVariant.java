@@ -7,12 +7,13 @@ import net.minecraft.item.Item;
 import net.minecraft.state.IProperty;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import snownee.kiwi.tile.TextureTile;
 
 public interface ISnowVariant
 {
-    default BlockState getRaw(BlockState state, World world, BlockPos pos)
+    default BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos)
     {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TextureTile)
