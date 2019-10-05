@@ -49,13 +49,13 @@ import snownee.snow.SnowCommonConfig;
 
 public class SnowFenceBlock extends FenceBlock implements ISnowVariant
 {
-    public static enum Mat implements IStringSerializable
+    public enum Mat implements IStringSerializable
     {
         WOOD(Material.WOOD), ROCK(Material.ROCK), IRON(Material.IRON), MISC(Material.CLAY);
 
         public final Material material;
 
-        private Mat(Material material)
+        Mat(Material material)
         {
             this.material = material;
         }
@@ -102,15 +102,27 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     @Override
     public Material getMaterial(BlockState state)
     {
+        //TODO: Figure out a better way of doing this as we need to still implement this so the other fence block can call it on us
         return state.get(MAT).material;
     }
 
-    public boolean canConnect(BlockState stateIn, BlockState p_220111_1_, boolean p_220111_2_, Direction p_220111_3_)
+    public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos)
     {
-        Block block = p_220111_1_.getBlock();
-        boolean flag = block.isIn(BlockTags.FENCES) && p_220111_1_.getMaterial() == this.getMaterial(stateIn);
-        boolean flag1 = block instanceof FenceGateBlock && FenceGateBlock.isParallel(p_220111_1_, p_220111_3_);
-        return !cannotAttach(block) && p_220111_2_ || flag || flag1;
+        return getRaw(state, world, pos).getMaterial();
+    }
+
+    /**
+     * @param otherState  The neighboring block/fences state
+     * @param isSolid     If the block we are attempting to attach to is solid on the side we are connecting to
+     * @param dirToCheck  The direction the other block is from us
+     * @param ourMaterial Our Material
+     */
+    public boolean canConnect(BlockState otherState, boolean isSolid, Direction dirToCheck, Material ourMaterial)
+    {
+        Block block = otherState.getBlock();
+        boolean isMatchingFence = block.isIn(BlockTags.FENCES) && otherState.getMaterial() == ourMaterial;
+        boolean isFenceGate = block instanceof FenceGateBlock && FenceGateBlock.isParallel(otherState, dirToCheck);
+        return !cannotAttach(block) && isSolid || isMatchingFence || isFenceGate;
     }
 
     @Override
@@ -126,27 +138,31 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         if (rl != null && ResourceLocation.func_217855_b(rl))
         {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-            if (item != null && item instanceof BlockItem)
+            if (item instanceof BlockItem)
             {
-                Block block = ((BlockItem) item).getBlock();
-                Material mat = block.getDefaultState().getMaterial();
-                if (mat == Material.WOOD)
-                {
-                    state = state.with(MAT, Mat.WOOD);
-                }
-                else if (mat == Material.ROCK)
-                {
-                    state = state.with(MAT, Mat.ROCK);
-                }
-                else if (mat == Material.IRON)
-                {
-                    state = state.with(MAT, Mat.IRON);
-                }
-                else
-                {
-                    state = state.with(MAT, Mat.MISC);
-                }
+                state = copyMaterialState(state, ((BlockItem) item).getBlock().getDefaultState());
             }
+        }
+        return state;
+    }
+
+    private BlockState copyMaterialState(BlockState state, BlockState source) {
+        Material mat = source.getMaterial();
+        if (mat == Material.WOOD)
+        {
+            state = state.with(MAT, Mat.WOOD);
+        }
+        else if (mat == Material.ROCK)
+        {
+            state = state.with(MAT, Mat.ROCK);
+        }
+        else if (mat == Material.IRON)
+        {
+            state = state.with(MAT, Mat.IRON);
+        }
+        else
+        {
+            state = state.with(MAT, Mat.MISC);
         }
         return state;
     }
@@ -157,9 +173,16 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         if (facing == Direction.DOWN)
         {
             ModSnowTileBlock.updateSnowyDirt(worldIn, facingPos, facingState);
-            return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
+            BlockState newState = stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
+            return copyMaterialState(newState, getRaw(newState, worldIn, currentPos));
         }
-        return facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL ? stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), Boolean.valueOf(this.canConnect(stateIn, facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite()))) : stateIn;
+        if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL)
+        {
+            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(),
+                  getMaterial(stateIn, worldIn, currentPos));
+            return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
+        }
+        return stateIn;
     }
 
     @Override
