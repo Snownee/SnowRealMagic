@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.WallBlock;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItemUseContext;
@@ -95,6 +96,14 @@ public class SnowWallBlock extends WallBlock implements ISnowVariant
             return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
         }
         return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    {
+        //Ensure that after we place the block already containing snow that it updates the block under it
+        BlockPos down = pos.down();
+        ModSnowTileBlock.updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItem;
@@ -183,6 +184,14 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         return stateIn;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    {
+        //Ensure that after we place the block already containing snow that it updates the block under it
+        BlockPos down = pos.down();
+        ModSnowTileBlock.updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
     @Override
