@@ -498,9 +498,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
             BlockState newState = MainModule.FENCE.getDefaultState().with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.EAST, state.get(FourWayBlock.EAST));
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
-            //Send the change AGAIN to the client to ensure that it rerenders the connection
-            World w = world.getWorld();
-            w.markAndNotifyBlock(pos, w.getChunkAt(pos), state, newState, 2);
         }
         else if (block instanceof FenceGateBlock && state.getBlock() != MainModule.FENCE_GATE)
         {

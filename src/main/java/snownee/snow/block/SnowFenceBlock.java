@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceBlock;
@@ -15,7 +16,9 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
@@ -26,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -37,7 +41,9 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.ModBlock;
+import snownee.kiwi.util.NBTHelper;
 import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
@@ -57,13 +63,13 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
         fillStateContainer(builder);
         ourStateContainer = builder.create(SnowFenceBlockState::new);
-        setDefaultState(ourStateContainer.getBaseState().with(NORTH, false).with(EAST, false).with(SOUTH, false)
-              .with(WEST, false).with(WATERLOGGED, false));
+        setDefaultState(ourStateContainer.getBaseState().with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false).with(WATERLOGGED, false));
     }
 
     @Nonnull
     @Override
-    public StateContainer<Block, BlockState> getStateContainer() {
+    public StateContainer<Block, BlockState> getStateContainer()
+    {
         //Overwrite access to the state container with ours that has the override method
         return ourStateContainer;
     }
@@ -125,7 +131,24 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         World iblockreader = context.getWorld();
         BlockPos blockpos = context.getPos();
         BlockState stateIn = iblockreader.getBlockState(blockpos);
-        return super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
+        BlockState state = super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
+        if (state instanceof SnowFenceBlockState)
+        {
+            ItemStack stack = context.getItem();
+            NBTHelper data = NBTHelper.of(stack);
+            String rl = data.getString("BlockEntityTag.Items.0");
+            if (rl != null && ResourceLocation.func_217855_b(rl))
+            {
+                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+                if (item != null && item instanceof BlockItem)
+                {
+                    Block block = ((BlockItem) item).getBlock();
+                    Material mat = block.getDefaultState().getMaterial();
+                    ((SnowFenceBlockState) state).setMaterial(mat);
+                }
+            }
+        }
+        return state;
     }
 
     @Override
@@ -138,8 +161,7 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         }
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL)
         {
-            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(),
-                  getMaterial(stateIn, worldIn, currentPos));
+            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         return stateIn;

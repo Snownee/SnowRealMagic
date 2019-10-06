@@ -130,7 +130,6 @@ public class SnowWallBlock extends WallBlock implements ISnowVariant
     @Override
     public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
     {
-        System.out.println(worldIn.getLightFor(LightType.BLOCK, pos));
         if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11)
         {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
