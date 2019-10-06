@@ -264,6 +264,10 @@ public class MainModule extends AbstractModule
             return;
         BlockColors blockColors = event.getBlockColors();
         blockColors.register((state, world, pos, index) -> {
+            if (world == null || pos == null)
+            {
+                return -1;
+            }
             Block block = state.getBlock();
             if (block instanceof ISnowVariant)
             {

@@ -116,6 +116,14 @@ public class ModSnowTileBlock extends ModSnowBlock
         return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    {
+        //Ensure that after we place the block already containing snow that it updates the block under it
+        BlockPos down = pos.down();
+        updateSnowyDirt(world, down, world.getBlockState(down));
+    }
+
     public static void updateSnowyDirt(IWorld world, BlockPos pos, BlockState state)
     {
         if (state.has(SnowyDirtBlock.SNOWY) && !state.get(SnowyDirtBlock.SNOWY))
