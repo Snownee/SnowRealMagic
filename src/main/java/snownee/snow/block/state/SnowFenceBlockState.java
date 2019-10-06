@@ -1,5 +1,7 @@
 package snownee.snow.block.state;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableMap;
@@ -12,13 +14,14 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.dimension.DimensionType;
 import snownee.snow.block.SnowFenceBlock;
 
 public class SnowFenceBlockState extends BlockState
 {
 
-    private Material cachedMaterial = SnowFenceBlock.NO_MATCH;
-    private boolean hasBlock = false;
+    private static Map<PositionKey, Material> cachedMaterials = new HashMap<>();
 
     public SnowFenceBlockState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties)
     {
@@ -41,22 +44,83 @@ public class SnowFenceBlockState extends BlockState
         return super.func_224755_d(world, pos, side);
     }
 
-    private Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos)
+    private static Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos)
     {
-        if (!hasBlock)
+        Block block = blockState.getBlock();
+        Material material;
+        if (block instanceof SnowFenceBlock)
         {
-            Block block = blockState.getBlock();
-            if (block instanceof SnowFenceBlock)
+            if (world instanceof IWorldReader)
             {
-                hasBlock = true;
-                cachedMaterial = ((SnowFenceBlock) block).getMaterial(blockState, world, pos);
+                //If we have world information and are a snow fence block, check if we have a cached material type that we are supposed to use
+                //Note: This cache is invalidated after the blocks finish changing as by then we are able to get the proper
+                // value from the world and don't have to deal with all the different edge cases for when the cache needs to be invalidated
+                PositionKey cacheKey = new PositionKey((IWorldReader) world, pos);
+                if (cachedMaterials.containsKey(cacheKey))
+                {
+                    return cachedMaterials.get(cacheKey);
+                }
             }
+            material = ((SnowFenceBlock) block).getMaterial(blockState, world, pos);
         }
-        return cachedMaterial;
+        else
+        {
+            //If the block is not one of our blocks just grab the material the normal way.
+            //This is likely to be the case for when we are getting the neighboring material.
+            material = blockState.getMaterial();
+        }
+        return material;
     }
 
-    public void setMaterial(Material material)
+    public static void setCachedMaterial(IWorldReader world, BlockPos pos, Material material)
     {
-        cachedMaterial = material;
+        cachedMaterials.put(new PositionKey(world, pos), material);
+    }
+
+    public static void clearCachedMaterial(IWorldReader world, BlockPos pos)
+    {
+        cachedMaterials.remove(new PositionKey(world, pos));
+    }
+
+    private static class PositionKey
+    {
+
+        private final DimensionType dim;
+        private final boolean remote;
+        private final BlockPos pos;
+
+        PositionKey(IWorldReader world, BlockPos pos)
+        {
+            //Keep track of the dimension to make sure that if a spot is edited in multiple worlds at once we don't break.
+            this.dim = world.getDimension().getType();
+            //Ensure we have an immutable position
+            this.pos = pos.toImmutable();
+            //We need to keep track of remote so that in single player we don't clear our cache too early by both sides sharing a cache
+            this.remote = world.isRemote();
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int code = remote ? 1 : 31;
+            code = 31 * code + dim.hashCode();
+            code = 31 * code + pos.hashCode();
+            return code;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj == this)
+            {
+                return true;
+            }
+            if (obj instanceof PositionKey)
+            {
+                PositionKey other = (PositionKey) obj;
+                return remote == other.remote && dim.equals(other.dim) && pos.equals(other.pos);
+            }
+            return false;
+        }
     }
 }
