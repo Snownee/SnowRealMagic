@@ -128,27 +128,36 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        World iblockreader = context.getWorld();
+        World world = context.getWorld();
         BlockPos blockpos = context.getPos();
-        BlockState stateIn = iblockreader.getBlockState(blockpos);
-        BlockState state = super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
-        if (state instanceof SnowFenceBlockState)
+        BlockState stateIn = world.getBlockState(blockpos);
+        Material mat = NO_MATCH;
+        BlockState state = getDefaultState().with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, world, blockpos));
+        ItemStack stack = context.getItem();
+        //Check the item to get the actual state we want to try to connect using.
+        NBTHelper data = NBTHelper.of(stack);
+        String rl = data.getString("BlockEntityTag.Items.0");
+        if (rl != null && ResourceLocation.func_217855_b(rl))
         {
-            ItemStack stack = context.getItem();
-            NBTHelper data = NBTHelper.of(stack);
-            String rl = data.getString("BlockEntityTag.Items.0");
-            if (rl != null && ResourceLocation.func_217855_b(rl))
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+            if (item instanceof BlockItem)
             {
-                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-                if (item != null && item instanceof BlockItem)
-                {
-                    Block block = ((BlockItem) item).getBlock();
-                    Material mat = block.getDefaultState().getMaterial();
-                    ((SnowFenceBlockState) state).setMaterial(mat);
-                }
+                mat = ((BlockItem) item).getBlock().getDefaultState().getMaterial();
             }
         }
-        return state;
+        //Now check the connections using the correct material we just retrieved
+        BlockPos north = blockpos.north();
+        BlockPos east = blockpos.east();
+        BlockPos south = blockpos.south();
+        BlockPos west = blockpos.west();
+        BlockState northState = world.getBlockState(north);
+        BlockState eastState = world.getBlockState(east);
+        BlockState southState = world.getBlockState(south);
+        BlockState westState = world.getBlockState(west);
+        return state.with(NORTH, canConnect(northState, northState.func_224755_d(world, north, Direction.SOUTH), Direction.SOUTH, mat))
+              .with(EAST, canConnect(eastState, eastState.func_224755_d(world, east, Direction.WEST), Direction.WEST, mat))
+              .with(SOUTH, canConnect(southState, southState.func_224755_d(world, south, Direction.NORTH), Direction.NORTH, mat))
+              .with(WEST, canConnect(westState, westState.func_224755_d(world, west, Direction.EAST), Direction.EAST, mat));
     }
 
     @Override
