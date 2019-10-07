@@ -16,7 +16,9 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
@@ -27,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -38,7 +41,9 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.ModBlock;
+import snownee.kiwi.util.NBTHelper;
 import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
@@ -123,10 +128,36 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        World iblockreader = context.getWorld();
+        World world = context.getWorld();
         BlockPos blockpos = context.getPos();
-        BlockState stateIn = iblockreader.getBlockState(blockpos);
-        return super.getStateForPlacement(context).with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
+        BlockState stateIn = world.getBlockState(blockpos);
+        Material mat = NO_MATCH;
+        BlockState state = getDefaultState().with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, world, blockpos));
+        ItemStack stack = context.getItem();
+        //Check the item to get the actual state we want to try to connect using.
+        NBTHelper data = NBTHelper.of(stack);
+        String rl = data.getString("BlockEntityTag.Items.0");
+        if (rl != null && ResourceLocation.func_217855_b(rl))
+        {
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+            if (item instanceof BlockItem)
+            {
+                mat = ((BlockItem) item).getBlock().getDefaultState().getMaterial();
+            }
+        }
+        //Now check the connections using the correct material we just retrieved
+        BlockPos north = blockpos.north();
+        BlockPos east = blockpos.east();
+        BlockPos south = blockpos.south();
+        BlockPos west = blockpos.west();
+        BlockState northState = world.getBlockState(north);
+        BlockState eastState = world.getBlockState(east);
+        BlockState southState = world.getBlockState(south);
+        BlockState westState = world.getBlockState(west);
+        return state.with(NORTH, canConnect(northState, northState.func_224755_d(world, north, Direction.SOUTH), Direction.SOUTH, mat))
+              .with(EAST, canConnect(eastState, eastState.func_224755_d(world, east, Direction.WEST), Direction.WEST, mat))
+              .with(SOUTH, canConnect(southState, southState.func_224755_d(world, south, Direction.NORTH), Direction.NORTH, mat))
+              .with(WEST, canConnect(westState, westState.func_224755_d(world, west, Direction.EAST), Direction.EAST, mat));
     }
 
     @Override
