@@ -60,7 +60,7 @@ import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant
 {
-    protected static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
+    public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
 
     public ModSnowBlock(Block.Properties properties)
     {

@@ -32,6 +32,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -211,5 +214,16 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
+    }
+
+    @Override
+    public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
+        VoxelShape shape = super.getRenderShape(state, worldIn, pos);
+        if (state.get(DOWN))
+        {
+            shape = VoxelShapes.combine(shape, ModSnowBlock.SNOW_SHAPES_MAGIC[2], IBooleanFunction.OR);
+        }
+        return shape;
     }
 }
