@@ -15,6 +15,6 @@ Huge thanks to my supporters:
 [[dependencies.snowrealmagic]]
     modId="kiwi"
     mandatory=true
-    versionRange="[2.3, 2.5)"
+    versionRange="[2.3.3, 2.7)"
     ordering="BEFORE"
     side="BOTH"

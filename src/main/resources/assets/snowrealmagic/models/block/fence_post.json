@@ -1,10 +1,10 @@
 {
 	"credit": "Made by Snownee",
 	"textures": {
+		"0": "block/acacia_planks",
 		"1": "snowrealmagic:block/snow_overlay",
 		"2": "block/snow",
-        "0": "block/acacia_planks",
-        "particle": "block/snow"
+		"particle": "block/snow"
 	},
 	"elements": [
 		{
@@ -15,7 +15,8 @@
 				"north": {"uv": [6, 0, 10, 16], "texture": "#0", "tintindex": 0},
 				"east": {"uv": [6, 0, 10, 16], "texture": "#0", "tintindex": 0},
 				"south": {"uv": [6, 0, 10, 16], "texture": "#0", "tintindex": 0},
-				"west": {"uv": [6, 0, 10, 16], "texture": "#0", "tintindex": 0}
+				"west": {"uv": [6, 0, 10, 16], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [6, 6, 9.99958, 9.99958], "texture": "#0"}
 			}
 		},
 		{
