@@ -139,10 +139,10 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         ItemStack stack = context.getItem();
         //Check the item to get the actual state we want to try to connect using.
         NBTHelper data = NBTHelper.of(stack);
-        String rl = data.getString("BlockEntityTag.Items.0");
-        if (rl != null && ResourceLocation.func_217855_b(rl))
+        ResourceLocation rl = Util.RL(data.getString("BlockEntityTag.Items.0", ""));
+        if (rl != null)
         {
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+            Item item = ForgeRegistries.ITEMS.getValue(rl);
             if (item instanceof BlockItem)
             {
                 mat = ((BlockItem) item).getBlock().getDefaultState().getMaterial();

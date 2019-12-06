@@ -9,12 +9,12 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
 description='''Tweak vanilla snow layer.
 Huge thanks to my supporters:
 
-粉鱼 Lioness131 皮蛋 路人玖 Cherls idyllic_bean 鱼加盐有点咸 洋葱菜菜子 面条公爵 车轮饼 mc00zhu 洛华 纪华裕 可爱至吉 ycccz 东篱下i Ruriri
+粉鱼 Lioness131 皮蛋 路人玖 Cherls idyllic_bean 鱼加盐有点咸 洋葱菜菜子 面条公爵 车轮饼 mc00zhu 洛华 纪华裕 可爱至吉 ycccz 东篱下i Ruriri Meowsquito
 '''
 
 [[dependencies.snowrealmagic]]
     modId="kiwi"
     mandatory=true
-    versionRange="[2.3.3, 2.7)"
+    versionRange="[2.4.3, 2.8)"
     ordering="BEFORE"
     side="BOTH"
