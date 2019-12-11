@@ -34,6 +34,7 @@ import net.minecraft.state.properties.Half;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -59,197 +60,151 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.state.SnowFenceBlockState;
 import snownee.snow.entity.FallingSnowEntity;
 
-public class ModSnowBlock extends SnowBlock implements ISnowVariant
-{
+public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
 
-    public ModSnowBlock(Block.Properties properties)
-    {
+    public ModSnowBlock(Block.Properties properties) {
         super(properties);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
-    {
-        if (!SnowCommonConfig.thinnerBoundingBox)
-        {
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        if (!SnowCommonConfig.thinnerBoundingBox) {
             return super.getCollisionShape(state, worldIn, pos, context);
         }
         int layers = state.get(LAYERS);
-        if (layers == 8 && !worldIn.getBlockState(pos.up()).isAir(worldIn, pos))
-        {
+        if (layers == 8 && !worldIn.getBlockState(pos.up()).isAir(worldIn, pos)) {
             return VoxelShapes.fullCube();
         }
         return SNOW_SHAPES_MAGIC[layers - 1];
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
-    {
-        if (SnowCommonConfig.snowGravity)
-        {
+    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (SnowCommonConfig.snowGravity) {
             worldIn.getPendingBlockTicks().scheduleTick(pos, this, this.tickRate(worldIn));
         }
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
-    {
-        if (SnowCommonConfig.snowGravity)
-        {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (SnowCommonConfig.snowGravity) {
             worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.tickRate(worldIn));
         }
         return stateIn;
     }
 
     @Override
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
-    {
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
         return isValidPosition(state, worldIn, pos, false);
     }
 
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, boolean ignoreSelf)
-    {
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, boolean ignoreSelf) {
         BlockState blockstate = worldIn.getBlockState(pos.down());
         Block block = blockstate.getBlock();
-        if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8)
-        {
+        if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8) {
             return true;
-        }
-        else if (SnowCommonConfig.snowOnIce || (block != Blocks.ICE && block != Blocks.PACKED_ICE && block != Blocks.BARRIER))
-        {
+        } else if (SnowCommonConfig.snowOnIce || (block != Blocks.ICE && block != Blocks.PACKED_ICE && block != Blocks.BARRIER)) {
             return (ignoreSelf || state.getMaterial().isReplaceable() || canContainState(state)) && Block.doesSideFillSquare(blockstate.getCollisionShape(worldIn, pos.down()), Direction.UP);
         }
         return false;
     }
 
     @Override
-    public int tickRate(IWorldReader worldIn)
-    {
+    public int tickRate(IWorldReader worldIn) {
         return 2;
     }
 
     @Override
-    public void tick(BlockState state, World worldIn, BlockPos pos, Random random)
-    {
+    public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
         if (worldIn.isRemote)
             return;
         this.checkFallable(worldIn, pos, state);
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
-    {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11)
-        {
-            if (state.getBlock() == MainModule.TILE_BLOCK)
-            {
+    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
+            if (state.getBlock() == MainModule.TILE_BLOCK) {
                 state.removedByPlayer(worldIn, pos, null, false, null);
-            }
-            else
-            {
+            } else {
                 spawnDrops(state, worldIn, pos);
                 worldIn.removeBlock(pos, false);
             }
             return;
         }
-        if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm)
-        {
+        if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
             return;
         }
-        if (random.nextInt(8) > 0)
-        {
+        if (random.nextInt(8) > 0) {
             return;
         }
         BlockPos height = worldIn.getHeight(Heightmap.Type.WORLD_SURFACE, pos);
-        if (height.getY() != pos.getY() + 1)
-        {
+        if (height.getY() != pos.getY() + 1) {
             return;
         }
 
         Biome biome = worldIn.getBiome(pos);
         boolean flag = false;
-        if (worldIn.isRaining() && biome.func_225486_c(pos) < 0.15f)
-        {
-            if (SnowCommonConfig.snowAccumulationDuringSnowfall)
-            {
+        if (worldIn.isRaining() && biome.func_225486_c(pos) < 0.15f) {
+            if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
                 flag = true;
-            }
-            else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering())
-            {
+            } else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
                 flag = true;
             }
         }
 
         int layers = state.get(LAYERS);
 
-        if (flag && layers < 8)
-        {
-            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
-        }
-        else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining())
-        {
+        if (flag && layers < 8) {
+            accumulate(worldIn, pos, state, (
+                    w, p
+            ) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
+        } else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining()) {
             accumulate(worldIn, pos, state, (
                     w, p
             ) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
         }
     }
 
-    private static void accumulate(World world, BlockPos pos, BlockState centerState, BiPredicate<IWorld, BlockPos> filter, boolean accumulate)
-    {
+    private static void accumulate(World world, BlockPos pos, BlockState centerState, BiPredicate<IWorld, BlockPos> filter, boolean accumulate) {
         int i = centerState.get(LAYERS);
-        for (int j = 0; j < 4; j++)
-        {
+        for (int j = 0; j < 4; j++) {
             Direction direction = Direction.byHorizontalIndex(j);
             BlockPos pos2 = pos.offset(direction);
-            if (!filter.test(world, pos2))
-            {
+            if (!filter.test(world, pos2)) {
                 continue;
             }
             BlockState state = world.getBlockState(pos2);
-            if (!MainModule.BLOCK.isValidPosition(state, world, pos2))
-            {
+            if (!MainModule.BLOCK.isValidPosition(state, world, pos2)) {
                 continue;
             }
             int l;
-            if (state.getBlock() instanceof ModSnowBlock)
-            {
+            if (state.getBlock() instanceof ModSnowBlock) {
                 l = state.get(LAYERS);
-            }
-            else
-            {
+            } else {
                 l = 0;
             }
-            if (accumulate ? i > l : i < l)
-            {
-                if (accumulate)
-                {
+            if (accumulate ? i > l : i < l) {
+                if (accumulate) {
                     placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
-                }
-                else
-                {
+                } else {
                     world.setBlockState(pos2, state.with(LAYERS, l - 1));
                 }
                 return;
             }
         }
-        if (accumulate)
-        {
+        if (accumulate) {
             placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
-        }
-        else
-        {
+        } else {
             world.setBlockState(pos, centerState.with(LAYERS, i - 1));
         }
     }
 
-    protected boolean checkFallable(World worldIn, BlockPos pos, BlockState state)
-    {
+    protected boolean checkFallable(World worldIn, BlockPos pos, BlockState state) {
         BlockPos posDown = pos.down();
-        if ((worldIn.isAirBlock(posDown) || canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) && pos.getY() >= 0)
-        {
-            if (!worldIn.isRemote)
-            {
+        if ((worldIn.isAirBlock(posDown) || canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) && pos.getY() >= 0) {
+            if (!worldIn.isRemote) {
                 worldIn.setBlockState(pos, getContainedState(worldIn, pos));
                 FallingSnowEntity entity = new FallingSnowEntity(worldIn, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, state.get(LAYERS));
                 worldIn.addEntity(entity);
@@ -260,42 +215,29 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @SuppressWarnings("deprecation")
-    public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, BlockItemUseContext useContext, boolean playSound)
-    {
+    public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, BlockItemUseContext useContext, boolean playSound) {
         layers = MathHelper.clamp(layers, 1, 8);
         BlockState state = world.getBlockState(pos);
         int originLayers = 0;
-        if (state.getBlock() instanceof ModSnowBlock)
-        {
+        if (state.getBlock() instanceof ModSnowBlock) {
             originLayers = state.get(LAYERS);
             world.setBlockState(pos, state.with(LAYERS, MathHelper.clamp(originLayers + layers, 1, 8)));
-        }
-        else if (canContainState(state) && state.isValidPosition(world, pos))
-        {
+        } else if (canContainState(state) && state.isValidPosition(world, pos)) {
             convert(world, pos, state, MathHelper.clamp(layers, 1, 8), 3);
-        }
-        else if (MainModule.BLOCK.isValidPosition(state, world, pos))
-        {
+        } else if (MainModule.BLOCK.isValidPosition(state, world, pos)) {
             world.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, MathHelper.clamp(layers, 1, 8)));
-        }
-        else
-        {
+        } else {
             return false;
         }
-        if (falling)
-        {
+        if (falling) {
             world.addBlockEvent(pos, MainModule.BLOCK, originLayers, layers);
-        }
-        else if (playSound)
-        {
+        } else if (playSound) {
             SoundType soundtype = MainModule.BLOCK.getSoundType(MainModule.BLOCK.getDefaultState());
             world.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
         }
-        if (originLayers + layers > 8)
-        {
+        if (originLayers + layers > 8) {
             pos = pos.up();
-            if (MainModule.BLOCK.isValidPosition(MainModule.BLOCK.getDefaultState(), world, pos) && world.getBlockState(pos).isReplaceable(useContext))
-            {
+            if (MainModule.BLOCK.isValidPosition(MainModule.BLOCK.getDefaultState(), world, pos) && world.getBlockState(pos).isReplaceable(useContext)) {
                 world.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
             }
         }
@@ -303,17 +245,12 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @Override
-    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext)
-    {
+    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
         int i = state.get(LAYERS);
-        if (useContext.getItem().getItem() == MainModule.BLOCK.asItem() && i < 8)
-        {
-            if (useContext.replacingClickedOnBlock() && state.getBlock() == MainModule.BLOCK)
-            {
+        if (useContext.getItem().getItem() == MainModule.BLOCK.asItem() && i < 8) {
+            if (useContext.replacingClickedOnBlock() && state.getBlock() == MainModule.BLOCK) {
                 return useContext.getFace() == Direction.UP;
-            }
-            else
-            {
+            } else {
                 return true;
             }
         }
@@ -321,12 +258,10 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @Override
-    public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int originLayers, int layers)
-    {
+    public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int originLayers, int layers) {
         double offsetY = originLayers / 8D;
         layers *= 10;
-        for (int i = 0; i < layers; ++i)
-        {
+        for (int i = 0; i < layers; ++i) {
             // TODO better particle
             double d0 = RANDOM.nextGaussian() * 0.1D;
             double d1 = RANDOM.nextGaussian() * 0.02D;
@@ -340,15 +275,12 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
-    {
-        if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(16) > 0)
-        {
+    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+        if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(16) > 0) {
             return;
         }
         BlockState stateDown = worldIn.getBlockState(pos.down());
-        if (stateDown.isIn(BlockTags.LEAVES))
-        {
+        if (stateDown.isIn(BlockTags.LEAVES)) {
             double d0 = pos.getX() + rand.nextDouble();
             double d1 = pos.getY() - 0.05D;
             double d2 = pos.getZ() + rand.nextDouble();
@@ -357,55 +289,42 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getDustColor(BlockState state)
-    {
+    public int getDustColor(BlockState state) {
         return 0xffffffff;
     }
 
-    public static boolean canFallThrough(BlockState state, World worldIn, BlockPos pos)
-    {
+    public static boolean canFallThrough(BlockState state, World worldIn, BlockPos pos) {
         return FallingBlock.canFallThrough(state) && state.getCollisionShape(worldIn, pos).isEmpty();
     }
 
     @Override
-    public BlockState onShovel(BlockState state, World world, BlockPos pos)
-    {
+    public BlockState onShovel(BlockState state, World world, BlockPos pos) {
         int layers = state.get(LAYERS) - 1;
-        if (layers > 0)
-        {
+        if (layers > 0) {
             return state.with(LAYERS, layers);
-        }
-        else
-        {
+        } else {
             return getRaw(state, world, pos);
         }
     }
 
     @Override
-    public BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos)
-    {
+    public BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos) {
         return getContainedState(world, pos);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
-    {
-        if (state.getBlock() == MainModule.BLOCK)
-        {
+    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (state.getBlock() == MainModule.BLOCK) {
             BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, handIn, hit));
             Block block = Block.getBlockFromItem(context.getItem().getItem());
-            if (block != null && context.replacingClickedOnBlock())
-            {
+            if (block != null && context.replacingClickedOnBlock()) {
                 BlockState state2 = block.getStateForPlacement(context);
-                if (canContainState(state2) && state2.isValidPosition(worldIn, pos))
-                {
-                    if (!worldIn.isRemote)
-                    {
+                if (canContainState(state2) && state2.isValidPosition(worldIn, pos)) {
+                    if (!worldIn.isRemote) {
                         worldIn.setBlockState(pos, state2, 16 | 32);
                         int i = state.get(LAYERS);
-                        if (placeLayersOn(worldIn, pos, i, false, context, true) && !player.isCreative())
-                        {
+                        if (placeLayersOn(worldIn, pos, i, false, context, true) && !player.isCreative()) {
                             context.getItem().shrink(1);
                         }
                     }
@@ -418,67 +337,51 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
 
     @Override
     @Nullable
-    public BlockState getStateForPlacement(BlockItemUseContext context)
-    {
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         BlockState blockstate = context.getWorld().getBlockState(context.getPos());
-        if (blockstate.getBlock() instanceof ModSnowBlock)
-        {
+        if (blockstate.getBlock() instanceof ModSnowBlock) {
             int i = blockstate.get(LAYERS);
             return blockstate.with(LAYERS, Math.min(8, i + 1));
-        }
-        else
-        {
+        } else {
             return super.getStateForPlacement(context);
         }
     }
 
-    public BlockState getContainedState(IBlockReader world, BlockPos pos)
-    {
+    public BlockState getContainedState(IBlockReader world, BlockPos pos) {
         return Blocks.AIR.getDefaultState();
     }
 
-    public static boolean canContainState(BlockState state)
-    {
-        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state))
-        {
+    public static boolean canContainState(BlockState state) {
+        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state)) {
             return false;
         }
         Block block = state.getBlock();
-        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock)
-        {
+        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
             return true;
         }
-        if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || block instanceof SlabBlock || block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM)
-        {
-            return true;
+        if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) || (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM)) {
+            return block.getRenderLayer() == BlockRenderLayer.SOLID;
         }
         return false;
     }
 
-    public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags)
-    {
-        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state))
-        {
+    public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags) {
+        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state)) {
             return false;
         }
-        if (state.isAir(world, pos))
-        {
-            if (state.getBlock() != MainModule.BLOCK)
-            {
+        if (state.isAir(world, pos)) {
+            if (state.getBlock() != MainModule.BLOCK) {
                 world.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, layers), flags);
             }
             return true;
         }
         Block block = state.getBlock();
-        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock)
-        {
-            if (state.getBlock() != MainModule.TILE_BLOCK)
-            {
+        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+            if (state.getBlock() != MainModule.TILE_BLOCK) {
                 world.setBlockState(pos, MainModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
             }
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof SnowTile)
-            {
+            if (tile instanceof SnowTile) {
                 ((SnowTile) tile).setState(state);
             }
             return true;
@@ -486,16 +389,11 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
 
         BlockPos posDown = pos.down();
         BlockState stateDown = world.getBlockState(posDown);
-        if (block instanceof StairsBlock && state.getBlock() != MainModule.STAIRS)
-        {
+        if (block instanceof StairsBlock && state.getBlock() != MainModule.STAIRS) {
             world.setBlockState(pos, MainModule.STAIRS.getDefaultState().with(StairsBlock.FACING, state.get(StairsBlock.FACING)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)).with(StairsBlock.SHAPE, state.get(StairsBlock.SHAPE)), flags);
-        }
-        else if (block instanceof SlabBlock && state.getBlock() != MainModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM)
-        {
+        } else if (block instanceof SlabBlock && state.getBlock() != MainModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
             world.setBlockState(pos, MainModule.SLAB.getDefaultState(), flags);
-        }
-        else if (block instanceof FenceBlock && state.getBlock() != MainModule.FENCE)
-        {
+        } else if (block instanceof FenceBlock && state.getBlock() != MainModule.FENCE) {
             //Cache what the material should/will be so that we can use the correct material while the state is changing
             //Otherwise we have the issue that the tile has no data yet so we cannot use the proper value directly from the block
             SnowFenceBlockState.setCachedMaterial(world, pos, state.getMaterial());
@@ -504,27 +402,20 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant
             world.setBlockState(pos, newState, flags);
             //Clear the temporary cache we set so that we don't have to deal with all the edge cases of when it needs to be invalidated
             SnowFenceBlockState.clearCachedMaterial(world, pos);
-        }
-        else if (block instanceof FenceGateBlock && state.getBlock() != MainModule.FENCE_GATE)
-        {
+        } else if (block instanceof FenceGateBlock && state.getBlock() != MainModule.FENCE_GATE) {
             BlockState newState = MainModule.FENCE_GATE.getDefaultState().with(FenceGateBlock.OPEN, state.get(FenceGateBlock.OPEN)).with(FenceGateBlock.IN_WALL, state.get(FenceGateBlock.IN_WALL)).with(HorizontalBlock.HORIZONTAL_FACING, state.get(HorizontalBlock.HORIZONTAL_FACING));
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
-        }
-        else if (block instanceof WallBlock && state.getBlock() != MainModule.WALL)
-        {
+        } else if (block instanceof WallBlock && state.getBlock() != MainModule.WALL) {
             BlockState newState = MainModule.WALL.getDefaultState().with(FourWayBlock.EAST, state.get(FourWayBlock.EAST)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(WallBlock.UP, state.get(WallBlock.UP));
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
-        }
-        else
-        {
+        } else {
             return false;
         }
 
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TextureTile)
-        {
+        if (tile instanceof TextureTile) {
             ((TextureTile) tile).setTexture("0", state);
         }
         return true;

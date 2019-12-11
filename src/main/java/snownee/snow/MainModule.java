@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
@@ -80,14 +81,11 @@ import snownee.snow.world.gen.feature.ModIceAndSnowFeature;
 @KiwiModule(modid = SnowRealMagic.MODID)
 @KiwiModule.Subscriber({ Bus.MOD, Bus.FORGE })
 @KiwiModule.Group
-public class MainModule extends AbstractModule
-{
-    public static final ItemGroup GROUP = new ItemGroup(SnowRealMagic.MODID)
-    {
+public class MainModule extends AbstractModule {
+    public static final ItemGroup GROUP = new ItemGroup(SnowRealMagic.MODID) {
         @Override
         @OnlyIn(Dist.CLIENT)
-        public ItemStack createIcon()
-        {
+        public ItemStack createIcon() {
             return new ItemStack(Items.SNOWBALL);
         }
     };
@@ -126,16 +124,14 @@ public class MainModule extends AbstractModule
     @Name("minecraft:freeze_top_layer")
     public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature();
 
-    public MainModule()
-    {
+    public MainModule() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SnowCommonConfig.spec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SnowClientConfig.spec);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    protected void clientInit(FMLClientSetupEvent event)
-    {
+    protected void clientInit(FMLClientSetupEvent event) {
         SnowClientConfig.refresh();
 
         RenderingRegistry.registerEntityRenderingHandler(FallingSnowEntity.class, FallingSnowRenderer::new);
@@ -144,27 +140,21 @@ public class MainModule extends AbstractModule
     }
 
     @Override
-    protected void init(FMLCommonSetupEvent event)
-    {
+    protected void init(FMLCommonSetupEvent event) {
         SnowCommonConfig.refresh();
     }
 
     @Override
-    protected void postInit()
-    {
-        for (Biome biome : ForgeRegistries.BIOMES.getValues())
-        {
-            if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature))
-            {
+    protected void postInit() {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+            if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
                 biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(FEATURE, IFeatureConfig.NO_FEATURE_CONFIG, Placement.NOPE, IPlacementConfig.NO_PLACEMENT_CONFIG));
             }
         }
     }
 
-    private static boolean isVanillaFeature(ConfiguredFeature<?> cf)
-    {
-        if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig)
-        {
+    private static boolean isVanillaFeature(ConfiguredFeature<?> cf) {
+        if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig) {
             return ((DecoratedFeatureConfig) cf.config).feature.feature == Feature.FREEZE_TOP_LAYER;
         }
         return false;
@@ -172,8 +162,7 @@ public class MainModule extends AbstractModule
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onModelBake(ModelBakeEvent event)
-    {
+    public void onModelBake(ModelBakeEvent event) {
         Block block = FENCE;
         TextureModel.register(event, block, null, "0");
         TextureModel.registerInventory(event, block, "0");
@@ -198,28 +187,23 @@ public class MainModule extends AbstractModule
     }
 
     @SubscribeEvent
-    public void onItemUse(PlayerInteractEvent.RightClickBlock event)
-    {
-        if (event.getHand() != Hand.MAIN_HAND)
-        {
+    public void onItemUse(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getHand() != Hand.MAIN_HAND) {
             return;
         }
         World worldIn = event.getWorld();
         BlockPos pos = event.getPos();
         BlockState state = worldIn.getBlockState(pos);
-        if (!(state.getBlock() instanceof ISnowVariant))
-        {
+        if (!(state.getBlock() instanceof ISnowVariant)) {
             return;
         }
         PlayerEntity player = event.getPlayer();
-        if (!ForgeHooks.canHarvestBlock(BLOCK.getDefaultState(), player, worldIn, pos))
-        {
+        if (!ForgeHooks.canHarvestBlock(BLOCK.getDefaultState(), player, worldIn, pos)) {
             return;
         }
         BlockState newState = ((ISnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
         worldIn.setBlockState(pos, newState);
-        if (player instanceof ServerPlayerEntity)
-        {
+        if (player instanceof ServerPlayerEntity) {
             if (newState.isSolid())
                 pos = pos.up();
             Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
@@ -231,8 +215,7 @@ public class MainModule extends AbstractModule
         event.setCancellationResult(ActionResultType.SUCCESS);
     }
 
-    public static ItemStack makeTextureItem(Item item, ItemStack mark)
-    {
+    public static ItemStack makeTextureItem(Item item, ItemStack mark) {
         ItemStack stack = new ItemStack(item);
         NBTHelper helper = NBTHelper.of(stack);
         String v = Util.trimRL(mark.getItem().getRegistryName());
@@ -241,36 +224,30 @@ public class MainModule extends AbstractModule
         return stack;
     }
 
-    public static void fillTextureItems(Tag<Item> tag, Block block, NonNullList<ItemStack> items)
-    {
+    public static void fillTextureItems(Tag<Item> tag, Block block, NonNullList<ItemStack> items) {
         Item item = block.asItem();
-        items.addAll(tag.getAllElements().stream().filter(i -> !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
+        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getRenderLayer() == BlockRenderLayer.SOLID && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.WorldTickEvent event)
-    {
-        if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld)
-        {
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld) {
             WorldTickHandler.tick(event);
         }
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onBlockTint(ColorHandlerEvent.Block event)
-    {
+    public void onBlockTint(ColorHandlerEvent.Block event) {
         if (!SnowClientConfig.colorTint)
             return;
         BlockColors blockColors = event.getBlockColors();
         blockColors.register((state, world, pos, index) -> {
-            if (world == null || pos == null)
-            {
+            if (world == null || pos == null) {
                 return -1;
             }
             Block block = state.getBlock();
-            if (block instanceof ISnowVariant)
-            {
+            if (block instanceof ISnowVariant) {
                 BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
                 return blockColors.getColor(raw, world, pos, index);
             }
@@ -280,19 +257,16 @@ public class MainModule extends AbstractModule
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onItemTint(ColorHandlerEvent.Item event)
-    {
+    public void onItemTint(ColorHandlerEvent.Item event) {
         if (!SnowClientConfig.colorTint)
             return;
         ItemColors itemColors = event.getItemColors();
         itemColors.register((stack, index) -> {
             NBTHelper data = NBTHelper.of(stack);
             String rl = data.getString("BlockEntityTag.Items.0");
-            if (rl != null && ResourceLocation.func_217855_b(rl))
-            {
+            if (rl != null && ResourceLocation.func_217855_b(rl)) {
                 Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-                if (item != null)
-                {
+                if (item != null) {
                     return itemColors.getColor(new ItemStack(item), index);
                 }
             }
