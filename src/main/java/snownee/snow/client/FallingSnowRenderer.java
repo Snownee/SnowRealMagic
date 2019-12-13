@@ -21,35 +21,28 @@ import net.minecraft.world.World;
 import snownee.snow.MainModule;
 import snownee.snow.entity.FallingSnowEntity;
 
-public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity>
-{
-    public FallingSnowRenderer(EntityRendererManager renderManagerIn)
-    {
+public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
+    public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
         super(renderManagerIn);
         this.shadowSize = 0.5F;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void doRender(FallingSnowEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
-    {
-        if (entity.getLayers() > 0 && entity.getLayers() <= 8)
-        {
+    public void doRender(FallingSnowEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        if (entity.getLayers() > 0 && entity.getLayers() <= 8) {
             BlockState state = MainModule.BLOCK.getDefaultState().with(SnowBlock.LAYERS, entity.getLayers());
-            if (state.getRenderType() == BlockRenderType.MODEL)
-            {
+            if (state.getRenderType() == BlockRenderType.MODEL) {
                 World world = entity.world;
 
-                if (state != world.getBlockState(new BlockPos(entity)))
-                {
+                if (state != world.getBlockState(new BlockPos(entity))) {
                     this.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
                     GlStateManager.pushMatrix();
                     GlStateManager.disableLighting();
                     Tessellator tessellator = Tessellator.getInstance();
                     BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-                    if (this.renderOutlines)
-                    {
+                    if (this.renderOutlines) {
                         GlStateManager.enableColorMaterial();
                         GlStateManager.setupSolidRenderingTextureCombine(this.getTeamColor(entity));
                     }
@@ -61,8 +54,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity>
                     blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, new Random(), state.getPositionRandom(entity.getOrigin()));
                     tessellator.draw();
 
-                    if (this.renderOutlines)
-                    {
+                    if (this.renderOutlines) {
                         GlStateManager.tearDownSolidRenderingTextureCombine();
                         GlStateManager.disableColorMaterial();
                     }
@@ -76,8 +68,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(FallingSnowEntity entity)
-    {
+    protected ResourceLocation getEntityTexture(FallingSnowEntity entity) {
         return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }
 }

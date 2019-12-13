@@ -36,76 +36,62 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import snownee.snow.MainModule;
 
-public class ModSnowTileBlock extends ModSnowBlock
-{
-    public ModSnowTileBlock(Block.Properties properties)
-    {
+public class ModSnowTileBlock extends ModSnowBlock {
+    public ModSnowTileBlock(Block.Properties properties) {
         super(properties);
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state)
-    {
+    public boolean hasTileEntity(BlockState state) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world)
-    {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new SnowTile();
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
-    {
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
         shape = VoxelShapes.combine(shape, getContainedState(worldIn, pos).getCollisionShape(worldIn, pos), IBooleanFunction.OR);
         return VoxelShapes.combineAndSimplify(shape, VoxelShapes.fullCube(), IBooleanFunction.AND);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
-    {
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         VoxelShape shape = super.getShape(state, worldIn, pos, context);
         return VoxelShapes.combineAndSimplify(shape, getContainedState(worldIn, pos).getShape(worldIn, pos, context), IBooleanFunction.OR);
     }
 
     @Override
-    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext)
-    {
-        if (useContext.getItem().getItem() == MainModule.BLOCK.asItem())
-        {
+    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
+        if (useContext.getItem().getItem() == MainModule.BLOCK.asItem()) {
             return super.isReplaceable(state, useContext);
         }
-        if (!super.isReplaceable(state, useContext))
-        {
+        if (!super.isReplaceable(state, useContext)) {
             return false;
         }
         return getContainedState(useContext.getWorld(), useContext.getPos()).getMaterial().isReplaceable();
     }
 
     @Override
-    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type)
-    {
+    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
         return getContainedState(worldIn, pos).allowsMovement(worldIn, pos, type);
     }
 
     @Override
-    public BlockState getContainedState(IBlockReader world, BlockPos pos)
-    {
+    public BlockState getContainedState(IBlockReader world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof SnowTile)
-        {
+        if (tile instanceof SnowTile) {
             return ((SnowTile) tile).getState();
         }
         return super.getContainedState(world, pos);
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
-    {
-        if (facing == Direction.DOWN)
-        {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (facing == Direction.DOWN) {
             updateSnowyDirt(worldIn, facingPos, facingState);
         }
         //        TileEntity tile = worldIn.getTileEntity(currentPos);
@@ -117,44 +103,36 @@ public class ModSnowTileBlock extends ModSnowBlock
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
-    {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         //Ensure that after we place the block already containing snow that it updates the block under it
         BlockPos down = pos.down();
         updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
-    public static void updateSnowyDirt(IWorld world, BlockPos pos, BlockState state)
-    {
-        if (state.has(SnowyDirtBlock.SNOWY) && !state.get(SnowyDirtBlock.SNOWY))
-        {
+    public static void updateSnowyDirt(IWorld world, BlockPos pos, BlockState state) {
+        if (state.has(SnowyDirtBlock.SNOWY) && !state.get(SnowyDirtBlock.SNOWY)) {
             world.setBlockState(pos, state.with(SnowyDirtBlock.SNOWY, true), 2 | 16 | 32);
         }
     }
 
     @Override
-    public PushReaction getPushReaction(BlockState state)
-    {
+    public PushReaction getPushReaction(BlockState state) {
         return PushReaction.BLOCK;
     }
 
     // No place calls this method..
     @Override
-    public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction facing)
-    {
+    public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction facing) {
         return super.canBeConnectedTo(state, world, pos, facing);
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
-    {
-        if (willHarvest)
-        {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+        if (willHarvest) {
             getBlock().onBlockHarvested(world, pos, state, player);
         }
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof SnowTile)
-        {
+        if (tile instanceof SnowTile) {
             BlockState newState = ((SnowTile) tile).getState();
             world.setBlockState(pos, newState);
         }
@@ -163,57 +141,43 @@ public class ModSnowTileBlock extends ModSnowBlock
 
     // trick to avoid grass under snow becoming dirt
     @Override
-    public boolean func_220074_n(BlockState state)
-    {
+    public boolean func_220074_n(BlockState state) {
         return state.get(LAYERS) == 1;
     }
 
     @Override
-    public boolean isSolid(BlockState state)
-    {
+    public boolean isSolid(BlockState state) {
         return state.get(LAYERS) > 1;
     }
 
     @Override
-    public String getTranslationKey()
-    {
+    public String getTranslationKey() {
         return MainModule.BLOCK.getTranslationKey();
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
-    {
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return getContainedState(world, pos).getPickBlock(target, world, pos, player);
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
-    {
-        if (entityIn instanceof LivingEntity)
-        {
-            if (!worldIn.isRemote && worldIn.getDifficulty() != Difficulty.PEACEFUL)
-            {
-                if (getContainedState(worldIn, pos).getBlock() instanceof WitherRoseBlock)
-                {
+    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+        if (entityIn instanceof LivingEntity) {
+            if (!worldIn.isRemote && worldIn.getDifficulty() != Difficulty.PEACEFUL) {
+                if (getContainedState(worldIn, pos).getBlock() instanceof WitherRoseBlock) {
                     LivingEntity livingentity = (LivingEntity) entityIn;
-                    if (!livingentity.isInvulnerableTo(DamageSource.WITHER))
-                    {
+                    if (!livingentity.isInvulnerableTo(DamageSource.WITHER)) {
                         livingentity.addPotionEffect(new EffectInstance(Effects.WITHER, 40));
                     }
                 }
-            }
-            else if (entityIn.getType() != EntityType.FOX)
-            {
+            } else if (entityIn.getType() != EntityType.FOX) {
                 BlockState stateIn = getContainedState(worldIn, pos);
-                if (stateIn.getBlock() instanceof SweetBerryBushBlock)
-                {
+                if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
                     entityIn.setMotionMultiplier(state, new Vec3d(0.8F, 0.75D, 0.8F));
-                    if (!worldIn.isRemote && stateIn.get(SweetBerryBushBlock.AGE) > 0 && (entityIn.lastTickPosX != entityIn.posX || entityIn.lastTickPosZ != entityIn.posZ))
-                    {
+                    if (!worldIn.isRemote && stateIn.get(SweetBerryBushBlock.AGE) > 0 && (entityIn.lastTickPosX != entityIn.posX || entityIn.lastTickPosZ != entityIn.posZ)) {
                         double d0 = Math.abs(entityIn.posX - entityIn.lastTickPosX);
                         double d1 = Math.abs(entityIn.posZ - entityIn.lastTickPosZ);
-                        if (d0 >= 0.003F || d1 >= 0.003F)
-                        {
+                        if (d0 >= 0.003F || d1 >= 0.003F) {
                             entityIn.attackEntityFrom(DamageSource.SWEET_BERRY_BUSH, 1.0F);
                         }
                     }
@@ -223,19 +187,16 @@ public class ModSnowTileBlock extends ModSnowBlock
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
-    {
+    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
         BlockState stateIn = getContainedState(worldIn, pos);
-        if ((stateIn.getBlock() instanceof SweetBerryBushBlock && stateIn.get(SweetBerryBushBlock.AGE) < 3))
-        {
+        if ((stateIn.getBlock() instanceof SweetBerryBushBlock && stateIn.get(SweetBerryBushBlock.AGE) < 3)) {
             stateIn.randomTick(worldIn, pos, random);
         }
         super.randomTick(state, worldIn, pos, random);
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
-    {
+    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         getContainedState(worldIn, pos).onBlockActivated(worldIn, player, handIn, hit);
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }

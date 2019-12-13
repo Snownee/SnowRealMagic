@@ -14,44 +14,36 @@ import snownee.kiwi.util.NBTHelper;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowTile extends BaseTile
-{
+public class SnowTile extends BaseTile {
     private BlockState state = Blocks.AIR.getDefaultState();
     private boolean isFullHeight = false;
 
-    public SnowTile()
-    {
+    public SnowTile() {
         super(MainModule.TILE);
     }
 
-    public BlockState getState()
-    {
+    public BlockState getState() {
         return state;
     }
 
-    public boolean isFullHeight()
-    {
+    public boolean isFullHeight() {
         return isFullHeight;
     }
 
-    public void setState(BlockState state)
-    {
-        if (this.state.equals(state))
-        {
+    public void setState(BlockState state) {
+        if (this.state.equals(state)) {
             return;
         }
         this.state = state;
         Block block = state.getBlock();
         this.isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
-        if (world != null && !world.isRemote)
-        {
+        if (world != null && !world.isRemote) {
             refresh();
         }
     }
 
     @Override
-    public void read(CompoundNBT compound)
-    {
+    public void read(CompoundNBT compound) {
         super.read(compound);
         state = NBTHelper.of(compound).getBlockState("State");
         Block block = state.getBlock();
@@ -59,34 +51,29 @@ public class SnowTile extends BaseTile
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound)
-    {
+    public CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
         NBTHelper.of(compound).setBlockState("State", state);
         return compound;
     }
 
     @Override
-    public boolean hasFastRenderer()
-    {
+    public boolean hasFastRenderer() {
         return !SnowCommonConfig.forceNormalTESR && state.getBlock().getRenderLayer() != BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox()
-    {
+    public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos);
     }
 
     @Override
-    protected void readPacketData(CompoundNBT data)
-    {
+    protected void readPacketData(CompoundNBT data) {
         read(data);
     }
 
     @Override
-    protected CompoundNBT writePacketData(CompoundNBT data)
-    {
+    protected CompoundNBT writePacketData(CompoundNBT data) {
         return write(data);
     }
 }

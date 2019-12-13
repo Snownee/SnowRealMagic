@@ -23,15 +23,12 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import snownee.snow.block.SnowTile;
 
 @OnlyIn(Dist.CLIENT)
-public class SnowRenderer extends TileEntityRenderer<SnowTile>
-{
+public class SnowRenderer extends TileEntityRenderer<SnowTile> {
     private static final Random RAND = new Random();
 
     @Override
-    public void render(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage)
-    {
-        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8)
-        {
+    public void render(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage) {
+        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
             return;
         }
         GlStateManager.pushMatrix();
@@ -55,10 +52,8 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile>
     }
 
     @Override
-    public void renderTileEntityFast(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer)
-    {
-        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8)
-        {
+    public void renderTileEntityFast(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer) {
+        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
             return;
         }
         BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();

@@ -51,16 +51,14 @@ import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.state.SnowFenceBlockState;
 
-public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant
-{
+public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant {
 
     public static final BooleanProperty DOWN = SixWayBlock.DOWN;
     public static final Material NO_MATCH = new Material.Builder(MaterialColor.WOOD).build();
 
     protected final StateContainer<Block, BlockState> ourStateContainer;
 
-    public SnowFenceBlock(Properties properties)
-    {
+    public SnowFenceBlock(Properties properties) {
         super(properties);
         StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
         fillStateContainer(builder);
@@ -70,46 +68,39 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
 
     @Nonnull
     @Override
-    public StateContainer<Block, BlockState> getStateContainer()
-    {
+    public StateContainer<Block, BlockState> getStateContainer() {
         //Overwrite access to the state container with ours that has the override method
         return ourStateContainer;
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state)
-    {
+    public boolean hasTileEntity(BlockState state) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world)
-    {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new SnowTextureTile();
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
-    {
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return ModBlock.pickBlock(state, target, world, pos, player);
     }
 
     @Override
-    public BlockRenderLayer getRenderLayer()
-    {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public Material getMaterial(BlockState state)
-    {
+    public Material getMaterial(BlockState state) {
         //Fallback to a custom material to ensure it does not match so that other fences only connect
         // when our custom blockstate says that we are solid
         return NO_MATCH;
     }
 
-    public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos)
-    {
+    public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos) {
         return getRaw(state, world, pos).getMaterial();
     }
 
@@ -119,8 +110,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
      * @param dirToCheck  The direction the other block is from us
      * @param ourMaterial Our Material
      */
-    public boolean canConnect(BlockState otherState, boolean isSolid, Direction dirToCheck, Material ourMaterial)
-    {
+    public boolean canConnect(BlockState otherState, boolean isSolid, Direction dirToCheck, Material ourMaterial) {
         Block block = otherState.getBlock();
         boolean isMatchingFence = block.isIn(BlockTags.FENCES) && otherState.getMaterial() == ourMaterial;
         boolean isFenceGate = block instanceof FenceGateBlock && FenceGateBlock.isParallel(otherState, dirToCheck);
@@ -128,8 +118,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context)
-    {
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         World world = context.getWorld();
         BlockPos blockpos = context.getPos();
         BlockState stateIn = world.getBlockState(blockpos);
@@ -139,11 +128,9 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         //Check the item to get the actual state we want to try to connect using.
         NBTHelper data = NBTHelper.of(stack);
         ResourceLocation rl = Util.RL(data.getString("BlockEntityTag.Items.0", ""));
-        if (rl != null)
-        {
+        if (rl != null) {
             Item item = ForgeRegistries.ITEMS.getValue(rl);
-            if (item instanceof BlockItem)
-            {
+            if (item instanceof BlockItem) {
                 mat = ((BlockItem) item).getBlock().getDefaultState().getMaterial();
             }
         }
@@ -156,22 +143,16 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         BlockState eastState = world.getBlockState(east);
         BlockState southState = world.getBlockState(south);
         BlockState westState = world.getBlockState(west);
-        return state.with(NORTH, canConnect(northState, northState.func_224755_d(world, north, Direction.SOUTH), Direction.SOUTH, mat))
-              .with(EAST, canConnect(eastState, eastState.func_224755_d(world, east, Direction.WEST), Direction.WEST, mat))
-              .with(SOUTH, canConnect(southState, southState.func_224755_d(world, south, Direction.NORTH), Direction.NORTH, mat))
-              .with(WEST, canConnect(westState, westState.func_224755_d(world, west, Direction.EAST), Direction.EAST, mat));
+        return state.with(NORTH, canConnect(northState, northState.func_224755_d(world, north, Direction.SOUTH), Direction.SOUTH, mat)).with(EAST, canConnect(eastState, eastState.func_224755_d(world, east, Direction.WEST), Direction.WEST, mat)).with(SOUTH, canConnect(southState, southState.func_224755_d(world, south, Direction.NORTH), Direction.NORTH, mat)).with(WEST, canConnect(westState, westState.func_224755_d(world, west, Direction.EAST), Direction.EAST, mat));
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
-    {
-        if (facing == Direction.DOWN)
-        {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (facing == Direction.DOWN) {
             ModSnowTileBlock.updateSnowyDirt(worldIn, facingPos, facingState);
             return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
         }
-        if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL)
-        {
+        if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL) {
             boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
@@ -179,52 +160,42 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
-    {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         //Ensure that after we place the block already containing snow that it updates the block under it
         BlockPos down = pos.down();
         ModSnowTileBlock.updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
-    {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(NORTH, EAST, WEST, SOUTH, DOWN, WATERLOGGED);
     }
 
-
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
-    {
+    public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
-        if (!key.isEmpty())
-        {
+        if (!key.isEmpty()) {
             tooltip.add(new TranslationTextComponent(key).applyTextStyle(TextFormatting.GRAY));
         }
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
-    {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         MainModule.fillTextureItems(ItemTags.FENCES, this, items);
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
-    {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11)
-        {
+    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }
 
     @Override
-    public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
+    public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         VoxelShape shape = super.getRenderShape(state, worldIn, pos);
-        if (state.get(DOWN))
-        {
+        if (state.get(DOWN)) {
             shape = VoxelShapes.combine(shape, ModSnowBlock.SNOW_SHAPES_MAGIC[2], IBooleanFunction.OR);
         }
         return shape;

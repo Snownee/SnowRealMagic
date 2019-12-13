@@ -7,8 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import snownee.kiwi.Kiwi;
 
 @Mod(SnowRealMagic.MODID)
-public class SnowRealMagic
-{
+public class SnowRealMagic {
     public static final String MODID = "snowrealmagic";
     public static final String NAME = "Snow! Real Magic!";
 

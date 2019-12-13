@@ -31,43 +31,35 @@ import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant
-{
+public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant {
 
-    public SnowStairsBlock(Properties properties)
-    {
+    public SnowStairsBlock(Properties properties) {
         super(Blocks.STONE.getDefaultState(), properties);
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state)
-    {
+    public boolean hasTileEntity(BlockState state) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world)
-    {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new SnowTextureTile();
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
-    {
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return ModBlock.pickBlock(state, target, world, pos, player);
     }
 
     @Override
-    public BlockRenderLayer getRenderLayer()
-    {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
-    {
-        if (state.hasTileEntity() && state.getBlock() != newState.getBlock())
-        {
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.hasTileEntity() && state.getBlock() != newState.getBlock()) {
             worldIn.removeTileEntity(pos);
         }
         super.onReplaced(state, worldIn, pos, newState, isMoving);
@@ -75,33 +67,27 @@ public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVa
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
-    {
+    public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
-        if (!key.isEmpty())
-        {
+        if (!key.isEmpty()) {
             tooltip.add(new TranslationTextComponent(key).applyTextStyle(TextFormatting.GRAY));
         }
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
-    {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         MainModule.fillTextureItems(ItemTags.STAIRS, this, items);
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
-    {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11)
-        {
+    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context)
-    {
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
     }
 }

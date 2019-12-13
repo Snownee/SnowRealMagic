@@ -12,8 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
 
 @EventBusSubscriber(bus = Bus.MOD)
-public final class SnowCommonConfig
-{
+public final class SnowCommonConfig {
     public static boolean placeSnowInBlock = true;
     public static boolean snowGravity = true;
     public static boolean snowAlwaysReplaceable = true;
@@ -42,14 +41,12 @@ public final class SnowCommonConfig
 
     static final ForgeConfigSpec spec;
 
-    static
-    {
+    static {
         final Pair<SnowCommonConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SnowCommonConfig::new);
         spec = specPair.getRight();
     }
 
-    private SnowCommonConfig(ForgeConfigSpec.Builder builder)
-    {
+    private SnowCommonConfig(ForgeConfigSpec.Builder builder) {
         placeSnowInBlockCfg = builder.define("placeSnowInBlock", placeSnowInBlock);
         snowGravityCfg = builder.define("snowGravity", snowGravity);
         snowAlwaysReplaceableCfg = builder.define("snowAlwaysReplaceable", snowAlwaysReplaceable);
@@ -64,8 +61,7 @@ public final class SnowCommonConfig
         forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
     }
 
-    public static void refresh()
-    {
+    public static void refresh() {
         placeSnowInBlock = placeSnowInBlockCfg.get();
         snowGravity = snowGravityCfg.get();
         snowAlwaysReplaceable = snowAlwaysReplaceableCfg.get();
@@ -81,8 +77,7 @@ public final class SnowCommonConfig
     }
 
     @SubscribeEvent
-    public static void onFileChange(ModConfig.ConfigReloading event)
-    {
+    public static void onFileChange(ModConfig.ConfigReloading event) {
         ((CommentedFileConfig) event.getConfig().getConfigData()).load();
         refresh();
     }

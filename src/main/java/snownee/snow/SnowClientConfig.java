@@ -12,8 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
 
 @EventBusSubscriber(bus = Bus.MOD)
-public final class SnowClientConfig
-{
+public final class SnowClientConfig {
     public static boolean particleThroughLeaves = true;
     public static boolean colorTint = true;
 
@@ -22,27 +21,23 @@ public final class SnowClientConfig
 
     static final ForgeConfigSpec spec;
 
-    static
-    {
+    static {
         final Pair<SnowClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SnowClientConfig::new);
         spec = specPair.getRight();
     }
 
-    private SnowClientConfig(ForgeConfigSpec.Builder builder)
-    {
+    private SnowClientConfig(ForgeConfigSpec.Builder builder) {
         particleThroughLeavesCfg = builder.define("particleThroughLeaves", particleThroughLeaves);
         colorTintCfg = builder.define("colorTint", colorTint);
     }
 
-    public static void refresh()
-    {
+    public static void refresh() {
         particleThroughLeaves = particleThroughLeavesCfg.get();
         colorTint = colorTintCfg.get();
     }
 
     @SubscribeEvent
-    public static void onFileChange(ModConfig.ConfigReloading event)
-    {
+    public static void onFileChange(ModConfig.ConfigReloading event) {
         ((CommentedFileConfig) event.getConfig().getConfigData()).load();
         refresh();
     }

@@ -11,21 +11,15 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import snownee.kiwi.tile.TextureTile;
 
-public interface ISnowVariant
-{
-    default BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos)
-    {
+public interface ISnowVariant {
+    default BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TextureTile)
-        {
+        if (tile instanceof TextureTile) {
             Item item = ((TextureTile) tile).getMark("0");
-            if (item instanceof BlockItem)
-            {
+            if (item instanceof BlockItem) {
                 BlockState newState = ((BlockItem) item).getBlock().getDefaultState();
-                for (IProperty property : state.getProperties())
-                {
-                    if (newState.has(property))
-                    {
+                for (IProperty property : state.getProperties()) {
+                    if (newState.has(property)) {
                         newState = newState.with(property, state.get(property));
                     }
                 }
@@ -35,8 +29,7 @@ public interface ISnowVariant
         return Blocks.AIR.getDefaultState();
     }
 
-    default BlockState onShovel(BlockState state, World world, BlockPos pos)
-    {
+    default BlockState onShovel(BlockState state, World world, BlockPos pos) {
         return getRaw(state, world, pos);
     }
 }
