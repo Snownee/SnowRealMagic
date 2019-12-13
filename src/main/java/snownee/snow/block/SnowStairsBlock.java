@@ -8,7 +8,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -32,7 +31,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowStairsBlock extends StairsBlock implements ISnowVariant
+public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant
 {
 
     public SnowStairsBlock(Properties properties)
@@ -72,12 +71,6 @@ public class SnowStairsBlock extends StairsBlock implements ISnowVariant
             worldIn.removeTileEntity(pos);
         }
         super.onReplaced(state, worldIn, pos, newState, isMoving);
-    }
-
-    @Override
-    public boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn)
-    {
-        return false;
     }
 
     @Override

@@ -15,7 +15,6 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
@@ -52,7 +51,7 @@ import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.state.SnowFenceBlockState;
 
-public class SnowFenceBlock extends FenceBlock implements ISnowVariant
+public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant
 {
 
     public static final BooleanProperty DOWN = SixWayBlock.DOWN;
@@ -193,11 +192,6 @@ public class SnowFenceBlock extends FenceBlock implements ISnowVariant
         builder.add(NORTH, EAST, WEST, SOUTH, DOWN, WATERLOGGED);
     }
 
-    @Override
-    public boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn)
-    {
-        return false;
-    }
 
     @Override
     @OnlyIn(Dist.CLIENT)

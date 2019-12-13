@@ -2,6 +2,7 @@ package snownee.snow.block.state;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableMap;

@@ -352,7 +352,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     }
 
     public static boolean canContainState(BlockState state) {
-        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state)) {
+        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state) || !state.getFluidState().isEmpty()) {
             return false;
         }
         Block block = state.getBlock();

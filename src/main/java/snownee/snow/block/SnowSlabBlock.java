@@ -3,11 +3,14 @@ package snownee.snow.block;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -18,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -36,7 +40,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowSlabBlock extends ModBlock implements ISnowVariant {
+public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant {
     protected static final VoxelShape BOTTOM_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
 
@@ -56,17 +60,23 @@ public class SnowSlabBlock extends ModBlock implements ISnowVariant {
 
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (worldIn.isRemote) {
-            return true;
-        }
-
         TileEntity tile = worldIn.getTileEntity(pos);
         ItemStack stack = player.getHeldItem(handIn);
         if (hit.getFace() == Direction.UP && tile instanceof TextureTile && ((TextureTile) tile).getMark("0") == stack.getItem() && stack.getItem() instanceof BlockItem && stack.getItem().isIn(ItemTags.SLABS)) {
             Block block = ((BlockItem) stack.getItem()).getBlock();
             if (block instanceof SlabBlock) {
                 BlockState state2 = block.getDefaultState().with(SlabBlock.TYPE, SlabType.DOUBLE);
-                worldIn.setBlockState(pos, state2);
+                if (!worldIn.isRemote) {
+                    worldIn.setBlockState(pos, state2);
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                    }
+                    if (player instanceof ServerPlayerEntity) {
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) player, pos, stack);
+                    }
+                }
+                SoundType soundtype = state2.getSoundType(worldIn, pos, player);
+                worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                 return true;
             }
         }

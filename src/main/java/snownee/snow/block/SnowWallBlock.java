@@ -10,7 +10,6 @@ import net.minecraft.block.WallBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -40,7 +39,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowWallBlock extends WallBlock implements ISnowVariant
+public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVariant
 {
     public static final BooleanProperty DOWN = SixWayBlock.DOWN;
 
@@ -116,12 +115,6 @@ public class SnowWallBlock extends WallBlock implements ISnowVariant
         BlockPos blockpos = context.getPos();
         BlockState stateIn = iblockreader.getBlockState(blockpos);
         return super.getStateForPlacement(context).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, iblockreader, blockpos));
-    }
-
-    @Override
-    public boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn)
-    {
-        return false;
     }
 
     @Override
