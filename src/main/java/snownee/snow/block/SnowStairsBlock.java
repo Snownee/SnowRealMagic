@@ -3,6 +3,7 @@ package snownee.snow.block;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
@@ -14,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.Half;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -24,13 +24,17 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import snownee.kiwi.RenderLayer;
+import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
+@RenderLayer(Layer.CUTOUT)
 public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant {
 
     public SnowStairsBlock(Properties properties) {
@@ -50,11 +54,6 @@ public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVa
     @Override
     public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return ModBlock.pickBlock(state, target, world, pos, player);
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -80,8 +79,8 @@ public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVa
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
+    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.func_226658_a_/*getLightFor*/(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }

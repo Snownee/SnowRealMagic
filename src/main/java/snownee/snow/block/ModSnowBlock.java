@@ -34,7 +34,7 @@ import net.minecraft.state.properties.Half;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -51,6 +51,7 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.kiwi.tile.TextureTile;
@@ -116,15 +117,15 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     }
 
     @Override
-    public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
+    public void func_225534_a_/*tick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         if (worldIn.isRemote)
             return;
         this.checkFallable(worldIn, pos, state);
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
+    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.func_226658_a_/*getLightFor*/(LightType.BLOCK, pos) > 11) {
             if (state.getBlock() == MainModule.TILE_BLOCK) {
                 state.removedByPlayer(worldIn, pos, null, false, null);
             } else {
@@ -144,7 +145,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return;
         }
 
-        Biome biome = worldIn.getBiome(pos);
+        Biome biome = worldIn.func_226691_t_/*getBiome*/(pos);
         boolean flag = false;
         if (worldIn.isRaining() && biome.func_225486_c(pos) < 0.15f) {
             if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
@@ -159,7 +160,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         if (flag && layers < 8) {
             accumulate(worldIn, pos, state, (
                     w, p
-            ) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
+            ) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.func_226658_a_/*getLightFor*/(LightType.BLOCK, p) < 10, true);
         } else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining()) {
             accumulate(worldIn, pos, state, (
                     w, p
@@ -312,9 +313,10 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         return getContainedState(world, pos);
     }
 
+    // onBlockActivated
     @Override
     @SuppressWarnings("deprecation")
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (state.getBlock() == MainModule.BLOCK) {
             BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, handIn, hit));
             Block block = Block.getBlockFromItem(context.getItem().getItem());
@@ -328,11 +330,11 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
                             context.getItem().shrink(1);
                         }
                     }
-                    return true;
+                    return ActionResultType.SUCCESS;
                 }
             }
         }
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
     }
 
     @Override
@@ -360,7 +362,8 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return true;
         }
         if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) || (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM)) {
-            return block.getRenderLayer() == BlockRenderLayer.SOLID;
+            return true;
+            // return block.getRenderLayer() == BlockRenderLayer.SOLID;
         }
         return false;
     }

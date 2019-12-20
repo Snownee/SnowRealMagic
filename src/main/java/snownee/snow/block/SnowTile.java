@@ -7,7 +7,6 @@ import net.minecraft.block.FenceBlock;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.block.WallBlock;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import snownee.kiwi.tile.BaseTile;
 import snownee.kiwi.util.NBTHelper;
@@ -59,7 +58,8 @@ public class SnowTile extends BaseTile {
 
     @Override
     public boolean hasFastRenderer() {
-        return !SnowCommonConfig.forceNormalTESR && state.getBlock().getRenderLayer() != BlockRenderLayer.CUTOUT;
+        return !SnowCommonConfig.forceNormalTESR;
+        // return !SnowCommonConfig.forceNormalTESR && state.getBlock().getRenderLayer() != BlockRenderLayer.CUTOUT;
     }
 
     @Override

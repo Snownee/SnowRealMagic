@@ -2,64 +2,50 @@ package snownee.snow.client;
 
 import java.util.Random;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SnowBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ILightReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import snownee.snow.block.SnowTile;
 
 @OnlyIn(Dist.CLIENT)
 public class SnowRenderer extends TileEntityRenderer<SnowTile> {
-    private static final Random RAND = new Random();
-
-    @Override
-    public void render(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
-            return;
-        }
-        GlStateManager.pushMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.enableDepthTest();
-        GlStateManager.depthFunc(515);
-        GlStateManager.depthMask(true);
-        GlStateManager.enableRescaleNormal();
-        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        buffer.begin(7, DefaultVertexFormats.BLOCK);
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, buffer);
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
-        GlStateManager.disableBlend();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.popMatrix();
+    public SnowRenderer(TileEntityRendererDispatcher dispatcher) {
+        super(dispatcher);
     }
 
+    protected static final Random RAND = new Random();
+    protected static BlockRendererDispatcher blockRenderer;
+
     @Override
-    public void renderTileEntityFast(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer) {
+    public void func_225616_a_/*render*/(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
         if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
             return;
         }
-        BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+        BlockModelRenderer.enableCache();
+        matrixstack.func_227860_a_();
+        if (blockRenderer == null)
+            blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         BlockState state = te.getState();
-        buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
-        dispatcher.renderBlock(state, te.getPos(), te.getWorld(), buffer, RAND, EmptyModelData.INSTANCE);
+        IBakedModel model = blockRenderer.getModelForState(state);
+        ILightReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderTypeLookup.func_228394_b_(state)), false, RAND, state.getPositionRandom(pos), light, EmptyModelData.INSTANCE);
+        matrixstack.func_227865_b_();
+        BlockModelRenderer.disableCache();
     }
 }

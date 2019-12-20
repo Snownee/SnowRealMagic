@@ -8,6 +8,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +22,6 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
@@ -34,8 +34,6 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -112,12 +110,12 @@ public class MainModule extends AbstractModule {
     public static final SnowWallBlock WALL = new SnowWallBlock(Block.Properties.from(Blocks.COBBLESTONE_WALL).tickRandomly());
 
     @Name("snow")
-    public static final TileEntityType<?> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);
+    public static final TileEntityType<SnowTile> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);
 
-    public static final TileEntityType<?> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
+    public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
 
     @Name("snow")
-    public static final EntityType<?> ENTITY = EntityType.Builder.create(EntityClassification.MISC).setCustomClientFactory((
+    public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((
             spawnEntity, world
     ) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
@@ -134,9 +132,9 @@ public class MainModule extends AbstractModule {
     protected void clientInit(FMLClientSetupEvent event) {
         SnowClientConfig.refresh();
 
-        RenderingRegistry.registerEntityRenderingHandler(FallingSnowEntity.class, FallingSnowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ENTITY, FallingSnowRenderer::new);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(SnowTile.class, new SnowRenderer());
+        ClientRegistry.bindTileEntityRenderer(TILE, new SnowRenderer(TileEntityRendererDispatcher.instance));
     }
 
     @Override
@@ -148,12 +146,12 @@ public class MainModule extends AbstractModule {
     protected void postInit() {
         for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
             if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
-                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(FEATURE, IFeatureConfig.NO_FEATURE_CONFIG, Placement.NOPE, IPlacementConfig.NO_PLACEMENT_CONFIG));
+                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG));
             }
         }
     }
 
-    private static boolean isVanillaFeature(ConfiguredFeature<?> cf) {
+    private static boolean isVanillaFeature(ConfiguredFeature<?, ?> cf) {
         if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig) {
             return ((DecoratedFeatureConfig) cf.config).feature.feature == Feature.FREEZE_TOP_LAYER;
         }
@@ -226,7 +224,7 @@ public class MainModule extends AbstractModule {
 
     public static void fillTextureItems(Tag<Item> tag, Block block, NonNullList<ItemStack> items) {
         Item item = block.asItem();
-        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getRenderLayer() == BlockRenderLayer.SOLID && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
+        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
 
     @SubscribeEvent
@@ -249,7 +247,7 @@ public class MainModule extends AbstractModule {
             Block block = state.getBlock();
             if (block instanceof ISnowVariant) {
                 BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
-                return blockColors.getColor(raw, world, pos, index);
+                return blockColors.func_228054_a_(raw, world, pos, index); // getColor
             }
             return -1;
         }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);
@@ -264,7 +262,7 @@ public class MainModule extends AbstractModule {
         itemColors.register((stack, index) -> {
             NBTHelper data = NBTHelper.of(stack);
             String rl = data.getString("BlockEntityTag.Items.0");
-            if (rl != null && ResourceLocation.func_217855_b(rl)) {
+            if (rl != null && ResourceLocation.isResouceNameValid(rl)) {
                 Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
                 if (item != null) {
                     return itemColors.getColor(new ItemStack(item), index);

@@ -7,6 +7,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ILightReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
@@ -27,32 +28,32 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
 
     @Override
     public boolean place(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-        BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
+        BlockPos.Mutable blockpos = new BlockPos.Mutable();
+        BlockPos.Mutable blockpos1 = new BlockPos.Mutable();
 
         for (int i = 0; i < 16; ++i) {
             for (int j = 0; j < 16; ++j) {
                 int k = pos.getX() + i;
                 int l = pos.getZ() + j;
                 int i1 = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, k, l);
-                blockpos$mutableblockpos.setPos(k, i1, l);
-                blockpos$mutableblockpos1.setPos(blockpos$mutableblockpos).move(Direction.DOWN, 1);
-                Biome biome = worldIn.getBiome(blockpos$mutableblockpos);
-                if (biome.doesWaterFreeze(worldIn, blockpos$mutableblockpos1, false)) {
-                    worldIn.setBlockState(blockpos$mutableblockpos1, Blocks.ICE.getDefaultState(), 2);
+                blockpos.setPos(k, i1, l);
+                blockpos1.setPos(blockpos).move(Direction.DOWN, 1);
+                Biome biome = worldIn.func_226691_t_/*getBiome*/(blockpos);
+                if (biome.doesWaterFreeze(worldIn, blockpos1, false)) {
+                    worldIn.setBlockState(blockpos1, Blocks.ICE.getDefaultState(), 2);
                 }
 
                 boolean flag = false;
-                if (biome.doesSnowGenerate(worldIn, blockpos$mutableblockpos)) {
-                    worldIn.setBlockState(blockpos$mutableblockpos, MainModule.BLOCK.getDefaultState(), 2);
+                if (biome.doesSnowGenerate(worldIn, blockpos)) {
+                    worldIn.setBlockState(blockpos, MainModule.BLOCK.getDefaultState(), 2);
                     flag = true;
-                } else if (placeAdditional(biome, worldIn, blockpos$mutableblockpos)) {
+                } else if (placeAdditional(biome, worldIn, blockpos)) {
                     flag = true;
                 }
                 if (flag) {
-                    BlockState blockstate = worldIn.getBlockState(blockpos$mutableblockpos1);
+                    BlockState blockstate = worldIn.getBlockState(blockpos1);
                     if (blockstate.has(SnowyDirtBlock.SNOWY)) {
-                        worldIn.setBlockState(blockpos$mutableblockpos1, blockstate.with(SnowyDirtBlock.SNOWY, true), 2);
+                        worldIn.setBlockState(blockpos1, blockstate.with(SnowyDirtBlock.SNOWY, true), 2);
                     }
                 }
             }
@@ -61,14 +62,14 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
         return true;
     }
 
-    public boolean placeAdditional(Biome biome, IWorld worldIn, BlockPos.MutableBlockPos pos) {
+    public boolean placeAdditional(Biome biome, IWorld worldIn, BlockPos.Mutable pos) {
         if (!SnowCommonConfig.replaceWorldFeature) {
             return false;
         }
         if (biome.func_225486_c(pos) >= 0.15F) {
             return false;
         }
-        if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(LightType.BLOCK, pos) < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {
+        if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.func_226658_a_(LightType.BLOCK, pos) /* getLightFor */ < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {
             BlockState blockstate = worldIn.getBlockState(pos);
             return ModSnowBlock.convert(worldIn, pos, blockstate, 1, 2);
         }
