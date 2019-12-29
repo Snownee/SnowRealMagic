@@ -8,7 +8,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -134,7 +133,7 @@ public class MainModule extends AbstractModule {
 
         RenderingRegistry.registerEntityRenderingHandler(ENTITY, FallingSnowRenderer::new);
 
-        ClientRegistry.bindTileEntityRenderer(TILE, new SnowRenderer(TileEntityRendererDispatcher.instance));
+        ClientRegistry.bindTileEntityRenderer(TILE, dispatcher -> new SnowRenderer(dispatcher));
     }
 
     @Override
