@@ -105,7 +105,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         Block block = blockstate.getBlock();
         if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8) {
             return true;
-        } else if (SnowCommonConfig.snowOnIce || (block != Blocks.ICE && block != Blocks.PACKED_ICE && block != Blocks.BARRIER)) {
+        } else if ((SnowCommonConfig.snowOnIce && (block == Blocks.ICE || block == Blocks.PACKED_ICE)) || !SnowCommonConfig.invalidSupportingBlocks.contains(block)) {
             return (ignoreSelf || state.getMaterial().isReplaceable() || canContainState(state)) && Block.doesSideFillSquare(blockstate.getCollisionShape(worldIn, pos.down()), Direction.UP);
         }
         return false;
