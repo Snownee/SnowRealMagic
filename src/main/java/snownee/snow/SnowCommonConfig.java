@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
@@ -71,7 +72,7 @@ public final class SnowCommonConfig {
         snowNeverMeltCfg = builder.define("snowNeverMelt", snowNeverMelt);
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
         //forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
-        invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), null);
+        invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), Predicates.alwaysTrue());
     }
 
     public static void refresh() {
