@@ -322,7 +322,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             Block block = Block.getBlockFromItem(context.getItem().getItem());
             if (block != null && context.replacingClickedOnBlock()) {
                 BlockState state2 = block.getStateForPlacement(context);
-                if (canContainState(state2) && state2.isValidPosition(worldIn, pos)) {
+                if (state2 != null && canContainState(state2) && state2.isValidPosition(worldIn, pos)) {
                     if (!worldIn.isRemote) {
                         worldIn.setBlockState(pos, state2, 16 | 32);
                         int i = state.get(LAYERS);
