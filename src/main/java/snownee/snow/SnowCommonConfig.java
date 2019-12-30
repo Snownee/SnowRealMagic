@@ -48,7 +48,7 @@ public final class SnowCommonConfig {
     private static BooleanValue snowOnIceCfg;
     private static BooleanValue snowNeverMeltCfg;
     private static BooleanValue replaceWorldFeatureCfg;
-    private static BooleanValue forceNormalTESRCfg;
+    //private static BooleanValue forceNormalTESRCfg;
     private static ConfigValue<List<? extends String>> invalidSupportingBlocksCfg;
 
     static final ForgeConfigSpec spec;
@@ -70,7 +70,7 @@ public final class SnowCommonConfig {
         snowOnIceCfg = builder.define("snowOnIce", snowOnIce);
         snowNeverMeltCfg = builder.define("snowNeverMelt", snowNeverMelt);
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
-        forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
+        //forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
         invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), null);
     }
 
@@ -86,7 +86,7 @@ public final class SnowCommonConfig {
         snowOnIce = snowOnIceCfg.get();
         snowNeverMelt = snowNeverMeltCfg.get();
         replaceWorldFeature = replaceWorldFeatureCfg.get();
-        forceNormalTESR = forceNormalTESRCfg.get();
+        //forceNormalTESR = forceNormalTESRCfg.get();
         invalidSupportingBlocks.clear();
         invalidSupportingBlocksCfg.get().forEach(id -> {
             ResourceLocation rl = Util.RL(id);
