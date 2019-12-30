@@ -124,4 +124,9 @@ public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant
         }
     }
 
+    @Override
+    public boolean func_220074_n(BlockState state) {
+        return true;
+    }
+
 }
