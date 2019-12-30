@@ -89,24 +89,24 @@ public class MainModule extends AbstractModule {
 
     @NoItem
     @Name("minecraft:snow")
-    public static final ModSnowBlock BLOCK = new ModSnowBlock(Block.Properties.from(Blocks.SNOW));
+    public static final ModSnowBlock BLOCK = new ModSnowBlock(blockProp(Blocks.SNOW));
 
     @NoItem
     @Name("snow")
-    public static final ModSnowTileBlock TILE_BLOCK = new ModSnowTileBlock(Block.Properties.from(BLOCK));
+    public static final ModSnowTileBlock TILE_BLOCK = new ModSnowTileBlock(blockProp(BLOCK));
 
     @Name("minecraft:snow")
     public static final SnowBlockItem ITEM = new SnowBlockItem(BLOCK);
 
-    public static final SnowFenceBlock FENCE = new SnowFenceBlock(Block.Properties.from(Blocks.OAK_FENCE).tickRandomly());
+    public static final SnowFenceBlock FENCE = new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).tickRandomly());
 
-    public static final SnowStairsBlock STAIRS = new SnowStairsBlock(Block.Properties.from(Blocks.OAK_STAIRS).tickRandomly());
+    public static final SnowStairsBlock STAIRS = new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).tickRandomly());
 
-    public static final SnowSlabBlock SLAB = new SnowSlabBlock(Block.Properties.from(Blocks.OAK_SLAB).tickRandomly());
+    public static final SnowSlabBlock SLAB = new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).tickRandomly());
 
-    public static final SnowFenceGateBlock FENCE_GATE = new SnowFenceGateBlock(Block.Properties.from(Blocks.OAK_FENCE_GATE).tickRandomly());
+    public static final SnowFenceGateBlock FENCE_GATE = new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).tickRandomly());
 
-    public static final SnowWallBlock WALL = new SnowWallBlock(Block.Properties.from(Blocks.COBBLESTONE_WALL).tickRandomly());
+    public static final SnowWallBlock WALL = new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).tickRandomly());
 
     @Name("snow")
     public static final TileEntityType<SnowTile> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);
@@ -114,9 +114,7 @@ public class MainModule extends AbstractModule {
     public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
 
     @Name("snow")
-    public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((
-            spawnEntity, world
-    ) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
+    public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
     @Name("minecraft:freeze_top_layer")
     public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature();
