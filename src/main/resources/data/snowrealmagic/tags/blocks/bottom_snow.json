@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "snowrealmagic:fence",
+    "snowrealmagic:fence_gate",
+    "snowrealmagic:wall",
+    "snowrealmagic:snow",
+    "snow"
+  ]
+}
