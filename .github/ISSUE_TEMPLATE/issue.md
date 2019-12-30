@@ -7,5 +7,8 @@ assignees: ''
 
 ---
 
- * Minecraft Version:
+ * Forge Version:
  * Mod Version:
+ * Have OptiFine installed? See previous issues first
+
+Paste your crash report to somewhere like https://paste.ubuntu.com/, instead of directly here.
