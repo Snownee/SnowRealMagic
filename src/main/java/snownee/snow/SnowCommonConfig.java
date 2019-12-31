@@ -1,15 +1,25 @@
 package snownee.snow;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.google.common.collect.Sets;
 
+import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.registries.ForgeRegistries;
+import snownee.kiwi.util.Util;
 
 @EventBusSubscriber(bus = Bus.MOD)
 public final class SnowCommonConfig {
@@ -25,6 +35,7 @@ public final class SnowCommonConfig {
     public static boolean snowNeverMelt = false;
     public static boolean replaceWorldFeature = true;
     public static boolean forceNormalTESR = false;
+    public static final Set<Block> invalidSupportingBlocks = Sets.newHashSet();
 
     private static BooleanValue placeSnowInBlockCfg;
     private static BooleanValue snowGravityCfg;
@@ -38,6 +49,7 @@ public final class SnowCommonConfig {
     private static BooleanValue snowNeverMeltCfg;
     private static BooleanValue replaceWorldFeatureCfg;
     private static BooleanValue forceNormalTESRCfg;
+    private static ConfigValue<List<? extends String>> invalidSupportingBlocksCfg;
 
     static final ForgeConfigSpec spec;
 
@@ -59,6 +71,7 @@ public final class SnowCommonConfig {
         snowNeverMeltCfg = builder.define("snowNeverMelt", snowNeverMelt);
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
         forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
+        invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), null);
     }
 
     public static void refresh() {
@@ -74,6 +87,13 @@ public final class SnowCommonConfig {
         snowNeverMelt = snowNeverMeltCfg.get();
         replaceWorldFeature = replaceWorldFeatureCfg.get();
         forceNormalTESR = forceNormalTESRCfg.get();
+        invalidSupportingBlocks.clear();
+        invalidSupportingBlocksCfg.get().forEach(id -> {
+            ResourceLocation rl = Util.RL(id);
+            if (rl != null && ForgeRegistries.BLOCKS.containsKey(rl)) {
+                invalidSupportingBlocks.add(ForgeRegistries.BLOCKS.getValue(rl));
+            }
+        });
     }
 
     @SubscribeEvent
