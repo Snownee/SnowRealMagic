@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.block.WitherRoseBlock;
 import net.minecraft.block.material.PushReaction;
@@ -20,7 +19,6 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -32,7 +30,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import snownee.snow.MainModule;
 
@@ -90,40 +87,8 @@ public class ModSnowTileBlock extends ModSnowBlock {
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (facing == Direction.DOWN) {
-            updateSnowyDirt(worldIn, facingPos, facingState);
-        }
-        //        TileEntity tile = worldIn.getTileEntity(currentPos);
-        //        if (tile instanceof SnowTile)
-        //        {
-        //            // TODO
-        //        }
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        //Ensure that after we place the block already containing snow that it updates the block under it
-        BlockPos down = pos.down();
-        updateSnowyDirt(world, down, world.getBlockState(down));
-    }
-
-    public static void updateSnowyDirt(IWorld world, BlockPos pos, BlockState state) {
-        if (state.has(SnowyDirtBlock.SNOWY) && !state.get(SnowyDirtBlock.SNOWY)) {
-            world.setBlockState(pos, state.with(SnowyDirtBlock.SNOWY, true), 2 | 16 | 32);
-        }
-    }
-
-    @Override
     public PushReaction getPushReaction(BlockState state) {
         return PushReaction.BLOCK;
-    }
-
-    // No place calls this method..
-    @Override
-    public boolean canBeConnectedTo(BlockState state, IBlockReader world, BlockPos pos, Direction facing) {
-        return super.canBeConnectedTo(state, world, pos, facing);
     }
 
     @Override

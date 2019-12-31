@@ -13,7 +13,6 @@ import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
@@ -148,22 +147,11 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
 
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (facing == Direction.DOWN) {
-            ModSnowTileBlock.updateSnowyDirt(worldIn, facingPos, facingState);
-            return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
-        }
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL) {
             boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         return stateIn;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        //Ensure that after we place the block already containing snow that it updates the block under it
-        BlockPos down = pos.down();
-        ModSnowTileBlock.updateSnowyDirt(world, down, world.getBlockState(down));
     }
 
     @Override
