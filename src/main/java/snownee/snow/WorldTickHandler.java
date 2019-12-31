@@ -52,7 +52,7 @@ public class WorldTickHandler {
             if (world.dimension.canDoRainSnowIce(chunk) && world.rand.nextInt(16) == 0) {
                 int x = chunk.getPos().getXStart();
                 int y = chunk.getPos().getZStart();
-                BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.func_217383_a(x, 0, y, 15)).down();
+                BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).down();
                 Biome biome = world.getBiome(pos);
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {

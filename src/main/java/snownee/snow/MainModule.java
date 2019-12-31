@@ -263,9 +263,9 @@ public class MainModule extends AbstractModule {
         ItemColors itemColors = event.getItemColors();
         itemColors.register((stack, index) -> {
             NBTHelper data = NBTHelper.of(stack);
-            String rl = data.getString("BlockEntityTag.Items.0");
-            if (rl != null && ResourceLocation.func_217855_b(rl)) {
-                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
+            ResourceLocation rl = Util.RL(data.getString("BlockEntityTag.Items.0"));
+            if (rl != null) {
+                Item item = ForgeRegistries.ITEMS.getValue(rl);
                 if (item != null) {
                     return itemColors.getColor(new ItemStack(item), index);
                 }
