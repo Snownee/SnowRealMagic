@@ -18,7 +18,7 @@ import snownee.snow.SnowRealMagic;
 public class GrassModule extends AbstractModule {
     public static final Tag<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
 
-    @RenderLayer(Layer.CUTOUT)
+    @RenderLayer(Layer.CUTOUT_MIPPED)
     @Name("minecraft:grass_block")
     public static final GrassBlock GRASS_BLOCK = new ModGrassBlock(blockProp(Blocks.GRASS_BLOCK));
 
