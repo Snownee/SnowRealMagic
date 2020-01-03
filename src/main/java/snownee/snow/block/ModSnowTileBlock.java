@@ -111,11 +111,6 @@ public class ModSnowTileBlock extends ModSnowBlock {
     }
 
     @Override
-    public boolean isSolid(BlockState state) {
-        return state.get(LAYERS) > 1;
-    }
-
-    @Override
     public String getTranslationKey() {
         return MainModule.BLOCK.getTranslationKey();
     }
