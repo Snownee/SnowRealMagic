@@ -12,7 +12,7 @@ import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.snow.SnowRealMagic;
 
-@KiwiModule(name = "fix_grass_block")
+//@KiwiModule(name = "fix_grass_block")
 @KiwiModule.Optional
 @KiwiModule.Group("building_blocks")
 public class GrassModule extends AbstractModule {
