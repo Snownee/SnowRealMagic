@@ -148,7 +148,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL) {
-            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), getMaterial(stateIn, worldIn, currentPos));
+            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), SnowFenceBlockState.getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         if (facing == Direction.DOWN) {
