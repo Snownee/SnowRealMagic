@@ -41,7 +41,7 @@ public class SnowFenceBlockState extends BlockState {
         return super.func_224755_d(world, pos, side);
     }
 
-    private static Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos) {
+    public static Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos) {
         Block block = blockState.getBlock();
         Material material;
         if (block instanceof SnowFenceBlock) {
