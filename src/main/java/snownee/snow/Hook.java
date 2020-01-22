@@ -16,7 +16,7 @@ public final class Hook {
         BlockState blockState2 = viewableWorld.getBlockState(blockPos2);
         if (blockState2.getBlock().isIn(MainModule.BOTTOM_SNOW)) {
             if (blockState2.getBlock() == Blocks.SNOW) {
-                return SnowCommonConfig.sustainGrassIfLayerMoreThanTwo || blockState2.get(SnowBlock.LAYERS) == 1;
+                return SnowCommonConfig.sustainGrassIfLayerMoreThanOne || blockState2.get(SnowBlock.LAYERS) == 1;
             }
             return true;
         } else {
