@@ -119,15 +119,15 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     }
 
     @Override
-    public void func_225534_a_/*tick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         if (worldIn.isRemote)
             return;
         this.checkFallable(worldIn, pos, state);
     }
 
     @Override
-    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.func_226658_a_/*getLightFor*/(LightType.BLOCK, pos) > 11) {
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             if (state.getBlock() == MainModule.TILE_BLOCK) {
                 state.removedByPlayer(worldIn, pos, null, false, null);
             } else {
@@ -147,7 +147,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return;
         }
 
-        Biome biome = worldIn.func_226691_t_/*getBiome*/(pos);
+        Biome biome = worldIn.getBiome(pos);
         boolean flag = false;
         if (worldIn.isRaining() && biome.func_225486_c(pos) < 0.15f) {
             if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
@@ -160,7 +160,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         int layers = state.get(LAYERS);
 
         if (flag && layers < 8) {
-            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.func_226658_a_/*getLightFor*/(LightType.BLOCK, p) < 10, true);
+            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
         } else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining()) {
             accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
         }
@@ -311,10 +311,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         return getContainedState(world, pos);
     }
 
-    // onBlockActivated
     @Override
     @SuppressWarnings("deprecation")
-    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (state.getBlock() == MainModule.BLOCK) {
             BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, handIn, hit));
             Block block = Block.getBlockFromItem(context.getItem().getItem());
@@ -332,7 +331,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
                 }
             }
         }
-        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
     @Override

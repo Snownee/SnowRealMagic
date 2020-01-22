@@ -29,7 +29,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void func_225623_a_/*doRender*/(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
+    public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
         if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
             return;
         }
@@ -39,19 +39,19 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
         }
         World world = entity.getWorldObj();
 
-        matrixstack.func_227860_a_();
-        BlockPos blockpos = new BlockPos(entity.func_226277_ct_(), entity.getBoundingBox().maxY, entity.func_226281_cx_());
-        matrixstack.func_227861_a_(-0.5D, 0.0D, -0.5D);
+        matrixstack.push();
+        BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().maxY, entity.getPosZ());
+        matrixstack.translate(-0.5D, 0.0D, -0.5D);
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.func_228661_n_()) {
+        for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.getBlockRenderTypes()) {
             if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
                 net.minecraftforge.client.ForgeHooksClient.setRenderLayer(type);
-                blockrendererdispatcher.getBlockModelRenderer().func_228802_a_(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.field_229196_a_);
+                blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.DEFAULT_LIGHT);
             }
         }
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
-        matrixstack.func_227865_b_();
-        super.func_225623_a_(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
+        matrixstack.pop();
+        super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
     }
 
     @Override

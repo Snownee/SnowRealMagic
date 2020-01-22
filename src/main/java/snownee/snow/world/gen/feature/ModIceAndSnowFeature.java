@@ -37,7 +37,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
                 int i1 = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, k, l);
                 blockpos.setPos(k, i1, l);
                 blockpos1.setPos(blockpos).move(Direction.DOWN, 1);
-                Biome biome = worldIn.func_226691_t_/*getBiome*/(blockpos);
+                Biome biome = worldIn.getBiome(blockpos);
                 if (biome.doesWaterFreeze(worldIn, blockpos1, false)) {
                     worldIn.setBlockState(blockpos1, Blocks.ICE.getDefaultState(), 2);
                 }
@@ -68,7 +68,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
         if (biome.func_225486_c(pos) >= 0.15F) {
             return false;
         }
-        if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.func_226658_a_(LightType.BLOCK, pos) /* getLightFor */ < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {
+        if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(LightType.BLOCK, pos) < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {
             BlockState blockstate = worldIn.getBlockState(pos);
             return ModSnowBlock.convert(worldIn, pos, blockstate, 1, 2);
         }

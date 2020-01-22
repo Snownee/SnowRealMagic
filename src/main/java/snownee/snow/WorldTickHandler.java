@@ -45,7 +45,7 @@ public class WorldTickHandler {
             return;
         }
         holders.forEach(holder -> {
-            Chunk chunk = holder.func_219298_c();
+            Chunk chunk = holder.getChunkIfComplete();
             if (chunk == null || !world.getChunkProvider().isChunkLoaded(chunk.getPos())) {
                 return;
             }
@@ -53,7 +53,7 @@ public class WorldTickHandler {
                 int x = chunk.getPos().getXStart();
                 int y = chunk.getPos().getZStart();
                 BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).down();
-                Biome biome = world.func_226691_t_(pos); // getBiome
+                Biome biome = world.getBiome(pos);
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {
                     if (biome.func_225486_c(pos) >= 0.15f) {

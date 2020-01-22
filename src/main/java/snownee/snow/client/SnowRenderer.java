@@ -32,12 +32,12 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
     protected static BlockRendererDispatcher blockRenderer;
 
     @Override
-    public void func_225616_a_/*render*/(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
+    public void render(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
         if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
             return;
         }
         BlockModelRenderer.enableCache();
-        matrixstack.func_227860_a_();
+        matrixstack.push();
         if (blockRenderer == null)
             blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
@@ -45,7 +45,7 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
         IBakedModel model = blockRenderer.getModelForState(state);
         ILightReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderTypeLookup.func_228394_b_(state)), false, RAND, state.getPositionRandom(pos), light, EmptyModelData.INSTANCE);
-        matrixstack.func_227865_b_();
+        matrixstack.pop();
         BlockModelRenderer.disableCache();
     }
 }

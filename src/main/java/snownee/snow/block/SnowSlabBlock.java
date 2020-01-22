@@ -64,7 +64,7 @@ public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant
     }
 
     @Override
-    public ActionResultType func_225533_a_/*onBlockActivated*/(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         TileEntity tile = worldIn.getTileEntity(pos);
         ItemStack stack = player.getHeldItem(handIn);
         if (hit.getFace() == Direction.UP && tile instanceof TextureTile && ((TextureTile) tile).getMark("0") == stack.getItem() && stack.getItem() instanceof BlockItem && stack.getItem().isIn(ItemTags.SLABS)) {
@@ -118,14 +118,14 @@ public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant
     }
 
     @Override
-    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.func_226658_a_/*getLightFor*/(LightType.BLOCK, pos) > 11) {
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }
 
     @Override
-    public boolean func_220074_n(BlockState state) {
+    public boolean isTransparent(BlockState state) {
         return true;
     }
 

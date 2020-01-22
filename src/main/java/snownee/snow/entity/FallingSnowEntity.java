@@ -176,7 +176,7 @@ public class FallingSnowEntity extends Entity {
     }
 
     @Override
-    protected boolean func_225502_at_/*canTriggerWalking*/() {
+    protected boolean canTriggerWalking() {
         return false;
     }
 

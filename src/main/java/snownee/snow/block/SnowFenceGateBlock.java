@@ -99,8 +99,8 @@ public class SnowFenceGateBlock extends FenceGateBlock implements ISnowVariant {
     }
 
     @Override
-    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.func_226658_a_/*getLightFor*/(LightType.BLOCK, pos) > 11) {
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }

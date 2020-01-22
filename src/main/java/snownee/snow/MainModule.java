@@ -246,7 +246,7 @@ public class MainModule extends AbstractModule {
             Block block = state.getBlock();
             if (block instanceof ISnowVariant) {
                 BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
-                return blockColors.func_228054_a_(raw, world, pos, index); // getColor
+                return blockColors.getColor(raw, world, pos, index); // getColor
             }
             return -1;
         }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);

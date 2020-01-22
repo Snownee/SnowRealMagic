@@ -118,17 +118,6 @@ public class ModSnowTileBlock extends ModSnowBlock {
         return true;
     }
 
-    // trick to avoid grass under snow becoming dirt
-    @Override
-    public boolean func_220074_n(BlockState state) {
-        return state.get(LAYERS) == 1;
-    }
-
-//    @Override
-//    public boolean isSolid(BlockState state) {
-//        return state.get(LAYERS) > 1;
-//    }
-
     @Override
     public String getTranslationKey() {
         return MainModule.BLOCK.getTranslationKey();
@@ -149,13 +138,13 @@ public class ModSnowTileBlock extends ModSnowBlock {
                         livingentity.addPotionEffect(new EffectInstance(Effects.WITHER, 40));
                     }
                 }
-            } else if (entityIn.getType() != EntityType.FOX && entityIn.getType() != EntityType.field_226289_e_/*BEE*/) {
+            } else if (entityIn.getType() != EntityType.FOX && entityIn.getType() != EntityType.BEE) {
                 BlockState stateIn = getContainedState(worldIn, pos);
                 if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
                     entityIn.setMotionMultiplier(state, new Vec3d(0.8F, 0.75D, 0.8F));
-                    if (!worldIn.isRemote && stateIn.get(SweetBerryBushBlock.AGE) > 0 && (entityIn.lastTickPosX != entityIn.func_226277_ct_()/*posX*/ || entityIn.lastTickPosZ != entityIn.func_226281_cx_()/*posZ*/)) {
-                        double d0 = Math.abs(entityIn.func_226277_ct_()/*posX*/ - entityIn.lastTickPosX);
-                        double d1 = Math.abs(entityIn.func_226281_cx_()/*posZ*/ - entityIn.lastTickPosZ);
+                    if (!worldIn.isRemote && stateIn.get(SweetBerryBushBlock.AGE) > 0 && (entityIn.lastTickPosX != entityIn.getPosX() || entityIn.lastTickPosZ != entityIn.getPosZ())) {
+                        double d0 = Math.abs(entityIn.getPosX() - entityIn.lastTickPosX);
+                        double d1 = Math.abs(entityIn.getPosZ() - entityIn.lastTickPosZ);
                         if (d0 >= 0.003F || d1 >= 0.003F) {
                             entityIn.attackEntityFrom(DamageSource.SWEET_BERRY_BUSH, 1.0F);
                         }
@@ -166,17 +155,17 @@ public class ModSnowTileBlock extends ModSnowBlock {
     }
 
     @Override
-    public void func_225542_b_/*randomTick*/(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         BlockState stateIn = getContainedState(worldIn, pos);
         if ((stateIn.getBlock() instanceof SweetBerryBushBlock && stateIn.get(SweetBerryBushBlock.AGE) < 3)) {
-            stateIn.func_227034_b_/*randomTick*/(worldIn, pos, random);
+            stateIn.randomTick(worldIn, pos, random);
         }
-        super.func_225542_b_(state, worldIn, pos, random);
+        super.randomTick(state, worldIn, pos, random);
     }
 
     @Override
-    public ActionResultType func_225533_a_/*onBlockActivated*/(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        getContainedState(worldIn, pos).func_227031_a_/*onBlockActivated*/(worldIn, player, handIn, hit);
-        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        getContainedState(worldIn, pos).onBlockActivated(worldIn, player, handIn, hit);
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 }
