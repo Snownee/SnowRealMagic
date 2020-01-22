@@ -57,12 +57,6 @@ public class SnowTile extends BaseTile {
     }
 
     @Override
-    public boolean hasFastRenderer() {
-        return !SnowCommonConfig.forceNormalTESR;
-        // return !SnowCommonConfig.forceNormalTESR && state.getBlock().getRenderLayer() != BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos);
     }
