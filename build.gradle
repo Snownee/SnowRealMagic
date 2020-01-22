@@ -3,9 +3,12 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven { url='https://dist.creeper.host/Sponge/maven' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -30,7 +33,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20200104-1.14.3'
+    mappings channel: 'stable', version: '56-1.14.3'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -81,10 +84,13 @@ artifacts {
 }
 
 repositories {
-//    maven {
-//        name = "jei"
-//        url = "https://dvs1.progwml6.com/files/maven"
-//    }
+    maven {
+        name = "jei"
+        url = "https://dvs1.progwml6.com/files/maven"
+    }
+    maven {
+        url = 'https://dist.creeper.host/Sponge/maven'
+    }
 }
 
 dependencies {
@@ -93,7 +99,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    //compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+
+    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
 
 	compile files("Kiwi-${minecraft_version}-${kiwi_version}-deobf.jar")
 }
@@ -106,7 +114,8 @@ jar {
         attributes([
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConnector": "snownee.snow.mixin.Connector"
         ])
     }
 }
@@ -131,4 +140,10 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, "mixins.snowrealmagic.refmap.json"
 }
