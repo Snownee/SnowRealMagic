@@ -149,6 +149,9 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
             boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
+        if (facing == Direction.DOWN) {
+            return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
+        }
         return stateIn;
     }
 
