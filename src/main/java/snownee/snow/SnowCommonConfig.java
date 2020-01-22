@@ -35,6 +35,7 @@ public final class SnowCommonConfig {
     public static boolean snowOnIce = false;
     public static boolean snowNeverMelt = false;
     public static boolean replaceWorldFeature = true;
+    public static boolean forceNormalTESR = false;
     public static boolean sustainGrassIfLayerMoreThanOne = true;
     public static final Set<Block> invalidSupportingBlocks = Sets.newHashSet();
 
@@ -49,6 +50,7 @@ public final class SnowCommonConfig {
     private static BooleanValue snowOnIceCfg;
     private static BooleanValue snowNeverMeltCfg;
     private static BooleanValue replaceWorldFeatureCfg;
+    private static BooleanValue forceNormalTESRCfg;
     private static BooleanValue sustainGrassIfLayerMoreThanOneCfg;
     private static ConfigValue<List<? extends String>> invalidSupportingBlocksCfg;
 
@@ -71,6 +73,7 @@ public final class SnowCommonConfig {
         snowOnIceCfg = builder.define("snowOnIce", snowOnIce);
         snowNeverMeltCfg = builder.define("snowNeverMelt", snowNeverMelt);
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
+        forceNormalTESRCfg = builder.define("forceNormalTESR", forceNormalTESR);
         sustainGrassIfLayerMoreThanOneCfg = builder.comment("Requires Mixin").define("sustainGrassIfLayerMoreThanOne", sustainGrassIfLayerMoreThanOne);
         invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), Predicates.alwaysTrue());
     }
@@ -87,6 +90,7 @@ public final class SnowCommonConfig {
         snowOnIce = snowOnIceCfg.get();
         snowNeverMelt = snowNeverMeltCfg.get();
         replaceWorldFeature = replaceWorldFeatureCfg.get();
+        forceNormalTESR = forceNormalTESRCfg.get();
         sustainGrassIfLayerMoreThanOne = sustainGrassIfLayerMoreThanOneCfg.get();
         invalidSupportingBlocks.clear();
         invalidSupportingBlocksCfg.get().forEach(id -> {
