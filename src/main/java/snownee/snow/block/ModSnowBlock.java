@@ -399,6 +399,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             //Otherwise we have the issue that the tile has no data yet so we cannot use the proper value directly from the block
             SnowFenceBlockState.setCachedMaterial(world, pos, state.getMaterial());
             BlockState newState = MainModule.FENCE.getDefaultState().with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.EAST, state.get(FourWayBlock.EAST));
+            world.setBlockState(pos, newState, flags | 32 ^ 2);
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
             //Clear the temporary cache we set so that we don't have to deal with all the edge cases of when it needs to be invalidated
