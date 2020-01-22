@@ -95,7 +95,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         } else {
             return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
         }
-
     }
 
     @Override
