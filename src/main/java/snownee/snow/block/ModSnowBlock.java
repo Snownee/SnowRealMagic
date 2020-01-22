@@ -91,8 +91,11 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (SnowCommonConfig.snowGravity) {
             worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.tickRate(worldIn));
+            return stateIn;
+        } else {
+            return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
         }
-        return stateIn;
+
     }
 
     @Override
@@ -158,13 +161,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         int layers = state.get(LAYERS);
 
         if (flag && layers < 8) {
-            accumulate(worldIn, pos, state, (
-                    w, p
-            ) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.func_226658_a_/*getLightFor*/(LightType.BLOCK, p) < 10, true);
+            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.func_226658_a_/*getLightFor*/(LightType.BLOCK, p) < 10, true);
         } else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining()) {
-            accumulate(worldIn, pos, state, (
-                    w, p
-            ) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
+            accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
         }
     }
 
