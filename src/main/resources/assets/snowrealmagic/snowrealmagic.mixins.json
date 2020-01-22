@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "snownee.snow.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.snowrealmagic.refmap.json",
+  "mixins": [
+    "MixinSpreadableSnowyDirtBlock",
+    "MixinSnowyDirtBlock"
+  ],
+  "minVersion": "0.8"
+}
