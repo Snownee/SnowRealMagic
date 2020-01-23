@@ -16,7 +16,7 @@ import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.block.SpreadableSnowyDirtBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 import snownee.snow.Hook;
 import snownee.snow.MainModule;
 
@@ -32,14 +32,8 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
         cir.setReturnValue(Hook.canSurvive(state, viewableWorld, blockPos));
     }
 
-    //    @Inject(at = @At("HEAD"), method = "func_220257_b", cancellable = true)
-    //    private static boolean canSpread(BlockState blockState, IWorldReader viewableWorld, BlockPos blockPos) {
-    //        BlockPos blockPos2 = blockPos.up();
-    //        return Hook.canSurvive(blockState, viewableWorld, blockPos) && !viewableWorld.getFluidState(blockPos2).isTagged(FluidTags.WATER);
-    //    }
-
-    @Inject(at = @At("HEAD"), method = "func_225534_a_", cancellable = true)
-    public void onScheduledTickProxy(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+    public void tickProxy(BlockState blockState, World world, BlockPos blockPos, Random random, CallbackInfo ci) {
         if (!world.isRemote) {
             if (!Hook.canSurvive(blockState, world, blockPos)) {
                 world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
@@ -63,7 +57,6 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
 
     @Shadow
     public static boolean func_220256_c(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
-        System.out.println(111);
         return false;
     };
 
