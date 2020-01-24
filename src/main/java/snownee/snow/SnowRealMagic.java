@@ -11,5 +11,5 @@ public class SnowRealMagic {
     public static final String MODID = "snowrealmagic";
     public static final String NAME = "Snow! Real Magic!";
 
-    public static Logger logger = LogManager.getLogger(Kiwi.NAME);
+    public static Logger logger = LogManager.getLogger(SnowRealMagic.NAME);
 }
