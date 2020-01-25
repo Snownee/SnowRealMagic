@@ -56,7 +56,7 @@ public class WorldTickHandler {
                 Biome biome = world.getBiome(pos);
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {
-                    if (biome.func_225486_c(pos) >= 0.15f) {
+                    if (biome.getTemperature(pos) >= 0.15f) {
                         return;
                     }
                     BlockState state = world.getBlockState(pos);

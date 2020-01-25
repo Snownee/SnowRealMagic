@@ -149,7 +149,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
         Biome biome = worldIn.getBiome(pos);
         boolean flag = false;
-        if (worldIn.isRaining() && biome.func_225486_c(pos) < 0.15f) {
+        if (worldIn.isRaining() && biome.getTemperature(pos) < 0.15f) {
             if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
                 flag = true;
             } else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {

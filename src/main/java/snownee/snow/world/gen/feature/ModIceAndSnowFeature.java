@@ -65,7 +65,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
         if (!SnowCommonConfig.replaceWorldFeature) {
             return false;
         }
-        if (biome.func_225486_c(pos) >= 0.15F) {
+        if (biome.getTemperature(pos) >= 0.15F) {
             return false;
         }
         if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(LightType.BLOCK, pos) < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {

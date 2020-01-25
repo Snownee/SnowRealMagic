@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[30,)"
+loaderVersion="[31,)"
 [[mods]]
 modId="snowrealmagic"
 version="${file.jarVersion}"
@@ -15,6 +15,6 @@ Huge thanks to my supporters:
 [[dependencies.snowrealmagic]]
     modId="kiwi"
     mandatory=true
-    versionRange="[2.6.3, 2.10)"
+    versionRange="[2.6.5, 2.10)"
     ordering="BEFORE"
     side="BOTH"

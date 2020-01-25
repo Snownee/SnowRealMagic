@@ -44,7 +44,7 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
         BlockState state = te.getState();
         IBakedModel model = blockRenderer.getModelForState(state);
         ILightReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
-        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderTypeLookup.func_228394_b_(state)), false, RAND, state.getPositionRandom(pos), light, EmptyModelData.INSTANCE);
+        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderTypeLookup.getRenderType(state)), false, RAND, state.getPositionRandom(pos), light, EmptyModelData.INSTANCE);
         matrixstack.pop();
         BlockModelRenderer.disableCache();
     }

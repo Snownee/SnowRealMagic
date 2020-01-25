@@ -28,7 +28,7 @@ public class SnowFenceBlockState extends BlockState {
     }
 
     @Override
-    public boolean func_224755_d(IBlockReader world, BlockPos pos, @Nonnull Direction side) {
+    public boolean isSolidSide(IBlockReader world, BlockPos pos, @Nonnull Direction side) {
         BlockPos neighborPos = pos.offset(side);
         BlockState neighborState = world.getBlockState(neighborPos);
         Block neighborBlock = neighborState.getBlock();
@@ -38,7 +38,7 @@ public class SnowFenceBlockState extends BlockState {
             Material neighborMaterial = getMaterial(neighborState, world, neighborPos);
             return ourMaterial == neighborMaterial;
         }
-        return super.func_224755_d(world, pos, side);
+        return super.isSolidSide(world, pos, side);
     }
 
     public static Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos) {

@@ -140,13 +140,13 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         BlockState eastState = world.getBlockState(east);
         BlockState southState = world.getBlockState(south);
         BlockState westState = world.getBlockState(west);
-        return state.with(NORTH, canConnect(northState, northState.func_224755_d(world, north, Direction.SOUTH), Direction.SOUTH, mat)).with(EAST, canConnect(eastState, eastState.func_224755_d(world, east, Direction.WEST), Direction.WEST, mat)).with(SOUTH, canConnect(southState, southState.func_224755_d(world, south, Direction.NORTH), Direction.NORTH, mat)).with(WEST, canConnect(westState, westState.func_224755_d(world, west, Direction.EAST), Direction.EAST, mat));
+        return state.with(NORTH, canConnect(northState, northState.isSolidSide(world, north, Direction.SOUTH), Direction.SOUTH, mat)).with(EAST, canConnect(eastState, eastState.isSolidSide(world, east, Direction.WEST), Direction.WEST, mat)).with(SOUTH, canConnect(southState, southState.isSolidSide(world, south, Direction.NORTH), Direction.NORTH, mat)).with(WEST, canConnect(westState, westState.isSolidSide(world, west, Direction.EAST), Direction.EAST, mat));
     }
 
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL) {
-            boolean connected = this.canConnect(facingState, facingState.func_224755_d(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), SnowFenceBlockState.getMaterial(stateIn, worldIn, currentPos));
+            boolean connected = this.canConnect(facingState, facingState.isSolidSide(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), SnowFenceBlockState.getMaterial(stateIn, worldIn, currentPos));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         if (facing == Direction.DOWN) {
