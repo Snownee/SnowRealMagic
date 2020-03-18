@@ -54,6 +54,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
         super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ResourceLocation getEntityTexture(FallingSnowEntity entity) {
         return AtlasTexture.LOCATION_BLOCKS_TEXTURE;

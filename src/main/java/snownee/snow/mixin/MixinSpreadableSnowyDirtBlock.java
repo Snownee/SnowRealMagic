@@ -58,6 +58,6 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
     @Shadow
     public static boolean func_220256_c(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
         return false;
-    };
+    }
 
 }

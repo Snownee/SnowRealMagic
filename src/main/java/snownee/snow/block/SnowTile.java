@@ -11,7 +11,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import snownee.kiwi.tile.BaseTile;
 import snownee.kiwi.util.NBTHelper;
 import snownee.snow.MainModule;
-import snownee.snow.SnowCommonConfig;
 
 public class SnowTile extends BaseTile {
     private BlockState state = Blocks.AIR.getDefaultState();

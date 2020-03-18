@@ -36,6 +36,7 @@ import snownee.snow.SnowCommonConfig;
 @RenderLayer(Layer.CUTOUT)
 public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant {
 
+    @SuppressWarnings("deprecation")
     public SnowStairsBlock(Properties properties) {
         super(Blocks.STONE.getDefaultState(), properties);
     }
