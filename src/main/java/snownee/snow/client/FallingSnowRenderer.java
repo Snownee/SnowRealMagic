@@ -46,7 +46,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
         for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.getBlockRenderTypes()) {
             if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
                 net.minecraftforge.client.ForgeHooksClient.setRenderLayer(type);
-                blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.DEFAULT_LIGHT);
+                blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
             }
         }
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);

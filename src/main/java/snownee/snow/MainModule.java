@@ -145,7 +145,7 @@ public class MainModule extends AbstractModule {
     protected void postInit() {
         for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
             if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
-                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG));
+                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
             }
         }
     }
