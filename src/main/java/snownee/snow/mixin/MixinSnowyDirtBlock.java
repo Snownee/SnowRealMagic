@@ -22,10 +22,14 @@ public class MixinSnowyDirtBlock extends Block {
         super(properties);
     }
 
-    @Inject(at = @At(value = "RETURN", ordinal = 1), method = "updatePostPlacement", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "updatePostPlacement", cancellable = true)
     public void updatePostPlacementProxy(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
-        Block block = facingState.getBlock();
-        cir.setReturnValue(stateIn.with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(MainModule.BOTTOM_SNOW)));
+        if (facing != Direction.UP) {
+            cir.setReturnValue(stateIn);
+        } else {
+            Block block = facingState.getBlock();
+            cir.setReturnValue(stateIn.with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(MainModule.BOTTOM_SNOW)));
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "getStateForPlacement", cancellable = true)
