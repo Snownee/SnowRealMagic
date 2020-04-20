@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -44,7 +44,7 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
         BlockState state = te.getState();
         IBakedModel model = blockRenderer.getModelForState(state);
         ILightReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
-        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderTypeLookup.getRenderType(state)), false, RAND, state.getPositionRandom(pos), light, EmptyModelData.INSTANCE);
+        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, buffer.getBuffer(RenderType.getCutout()), false, RAND, state.getPositionRandom(pos), otherlight, EmptyModelData.INSTANCE);
         matrixstack.pop();
         BlockModelRenderer.disableCache();
     }
