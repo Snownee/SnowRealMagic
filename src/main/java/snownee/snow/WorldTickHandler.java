@@ -28,7 +28,7 @@ public class WorldTickHandler {
     }
 
     public static void tick(TickEvent.WorldTickEvent event) {
-        if (METHOD == null) {
+        if (SnowCommonConfig.retainOriginalBlocks || METHOD == null) {
             return;
         }
         ServerWorld world = (ServerWorld) event.world;

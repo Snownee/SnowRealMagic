@@ -36,6 +36,7 @@ public final class SnowCommonConfig {
     public static boolean snowNeverMelt = false;
     public static boolean replaceWorldFeature = true;
     public static boolean sustainGrassIfLayerMoreThanOne = true;
+    public static boolean retainOriginalBlocks = false;
     public static final Set<Block> invalidSupportingBlocks = Sets.newHashSet();
 
     private static BooleanValue placeSnowInBlockCfg;
@@ -50,6 +51,7 @@ public final class SnowCommonConfig {
     private static BooleanValue snowNeverMeltCfg;
     private static BooleanValue replaceWorldFeatureCfg;
     private static BooleanValue sustainGrassIfLayerMoreThanOneCfg;
+    private static BooleanValue retainOriginalBlocksCfg;
     private static ConfigValue<List<? extends String>> invalidSupportingBlocksCfg;
 
     static final ForgeConfigSpec spec;
@@ -72,7 +74,9 @@ public final class SnowCommonConfig {
         snowNeverMeltCfg = builder.define("snowNeverMelt", snowNeverMelt);
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
         sustainGrassIfLayerMoreThanOneCfg = builder.comment("Requires Mixin").define("sustainGrassIfLayerMoreThanOne", sustainGrassIfLayerMoreThanOne);
+        retainOriginalBlocksCfg = builder.worldRestart().comment("If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal.").define("retainOriginalBlocks", retainOriginalBlocks);
         invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), Predicates.alwaysTrue());
+
     }
 
     public static void refresh() {
@@ -88,6 +92,7 @@ public final class SnowCommonConfig {
         snowNeverMelt = snowNeverMeltCfg.get();
         replaceWorldFeature = replaceWorldFeatureCfg.get();
         sustainGrassIfLayerMoreThanOne = sustainGrassIfLayerMoreThanOneCfg.get();
+        retainOriginalBlocks = retainOriginalBlocksCfg.get();
         invalidSupportingBlocks.clear();
         invalidSupportingBlocksCfg.get().forEach(id -> {
             ResourceLocation rl = Util.RL(id);

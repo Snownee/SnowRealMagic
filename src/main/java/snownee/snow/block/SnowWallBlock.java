@@ -100,7 +100,9 @@ public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVarian
 
     @Override
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
+        if (SnowCommonConfig.retainOriginalBlocks) {
+            worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
+        } else if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }

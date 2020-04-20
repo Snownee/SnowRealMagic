@@ -35,6 +35,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.snow.MainModule;
+import snownee.snow.SnowCommonConfig;
 
 public class ModSnowTileBlock extends ModSnowBlock {
     public ModSnowTileBlock(Block.Properties properties) {
@@ -58,7 +59,6 @@ public class ModSnowTileBlock extends ModSnowBlock {
 
     @Override
     public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        // TODO Auto-generated method stub
         return true;
     }
 
@@ -157,6 +157,10 @@ public class ModSnowTileBlock extends ModSnowBlock {
     @Override
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         BlockState stateIn = getContainedState(worldIn, pos);
+        if (SnowCommonConfig.retainOriginalBlocks) {
+            worldIn.setBlockState(pos, stateIn);
+            return;
+        }
         if ((stateIn.getBlock() instanceof SweetBerryBushBlock && stateIn.get(SweetBerryBushBlock.AGE) < 3)) {
             stateIn.randomTick(worldIn, pos, random);
         }
@@ -168,4 +172,5 @@ public class ModSnowTileBlock extends ModSnowBlock {
         getContainedState(worldIn, pos).onBlockActivated(worldIn, player, handIn, hit);
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
+
 }
