@@ -1,26 +1,15 @@
 package snownee.snow;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.registries.ForgeRegistries;
-import snownee.kiwi.util.Util;
 
 @EventBusSubscriber(bus = Bus.MOD)
 public final class SnowCommonConfig {
@@ -37,7 +26,6 @@ public final class SnowCommonConfig {
     public static boolean replaceWorldFeature = true;
     public static boolean sustainGrassIfLayerMoreThanOne = true;
     public static boolean retainOriginalBlocks = false;
-    public static final Set<Block> invalidSupportingBlocks = Sets.newHashSet();
 
     private static BooleanValue placeSnowInBlockCfg;
     private static BooleanValue snowGravityCfg;
@@ -52,7 +40,6 @@ public final class SnowCommonConfig {
     private static BooleanValue replaceWorldFeatureCfg;
     private static BooleanValue sustainGrassIfLayerMoreThanOneCfg;
     private static BooleanValue retainOriginalBlocksCfg;
-    private static ConfigValue<List<? extends String>> invalidSupportingBlocksCfg;
 
     static final ForgeConfigSpec spec;
 
@@ -75,8 +62,6 @@ public final class SnowCommonConfig {
         replaceWorldFeatureCfg = builder.define("replaceWorldFeature", replaceWorldFeature);
         sustainGrassIfLayerMoreThanOneCfg = builder.comment("Requires Mixin").define("sustainGrassIfLayerMoreThanOne", sustainGrassIfLayerMoreThanOne);
         retainOriginalBlocksCfg = builder.worldRestart().comment("If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal.").define("retainOriginalBlocks", retainOriginalBlocks);
-        invalidSupportingBlocksCfg = builder.defineList("invalidSupportingBlocks", () -> Arrays.asList("ice", "packed_ice", "barrier"), Predicates.alwaysTrue());
-
     }
 
     public static void refresh() {
@@ -93,13 +78,6 @@ public final class SnowCommonConfig {
         replaceWorldFeature = replaceWorldFeatureCfg.get();
         sustainGrassIfLayerMoreThanOne = sustainGrassIfLayerMoreThanOneCfg.get();
         retainOriginalBlocks = retainOriginalBlocksCfg.get();
-        invalidSupportingBlocks.clear();
-        invalidSupportingBlocksCfg.get().forEach(id -> {
-            ResourceLocation rl = Util.RL(id);
-            if (rl != null && ForgeRegistries.BLOCKS.containsKey(rl)) {
-                invalidSupportingBlocks.add(ForgeRegistries.BLOCKS.getValue(rl));
-            }
-        });
     }
 
     @SubscribeEvent
