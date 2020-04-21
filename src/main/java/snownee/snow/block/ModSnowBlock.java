@@ -355,7 +355,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return false;
         }
         Block block = state.getBlock();
-        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+        if (block.isIn(MainModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
             return true;
         }
         if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) || (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM)) {
@@ -376,7 +376,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return true;
         }
         Block block = state.getBlock();
-        if (block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+        if (block.isIn(MainModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
             if (state.getBlock() != MainModule.TILE_BLOCK) {
                 world.setBlockState(pos, MainModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
             }

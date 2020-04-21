@@ -91,6 +91,8 @@ public class MainModule extends AbstractModule {
 
     public static final Tag<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
 
+    public static final Tag<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
+
     @NoItem
     @Name("minecraft:snow")
     public static final ModSnowBlock BLOCK = new ModSnowBlock(blockProp(Blocks.SNOW));
