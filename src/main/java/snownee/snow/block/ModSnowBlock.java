@@ -83,14 +83,14 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     @Override
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (SnowCommonConfig.snowGravity) {
-            worldIn.getPendingBlockTicks().scheduleTick(pos, this, this.tickRate(worldIn));
+            worldIn.getPendingBlockTicks().scheduleTick(pos, this, tickRate());
         }
     }
 
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (SnowCommonConfig.snowGravity) {
-            worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.tickRate(worldIn));
+            worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, tickRate());
             return stateIn;
         } else {
             return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
@@ -113,15 +113,12 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         return false;
     }
 
-    @Override
-    public int tickRate(IWorldReader worldIn) {
+    protected int tickRate() {
         return 2;
     }
 
     @Override
     public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (worldIn.isRemote)
-            return;
         this.checkFallable(worldIn, pos, state);
     }
 
@@ -279,7 +276,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return;
         }
         BlockState stateDown = worldIn.getBlockState(pos.down());
-        if (stateDown.isIn(BlockTags.LEAVES)) {
+        if (stateDown.getBlock().isIn(BlockTags.LEAVES)) {
             double d0 = pos.getX() + rand.nextDouble();
             double d1 = pos.getY() - 0.05D;
             double d2 = pos.getZ() + rand.nextDouble();
@@ -365,7 +362,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         return false;
     }
 
-    public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags) {
+    public static boolean convert(World world, BlockPos pos, BlockState state, int layers, int flags) {
         if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state)) {
             return false;
         }

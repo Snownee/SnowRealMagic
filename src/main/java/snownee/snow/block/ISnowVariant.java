@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -18,8 +18,8 @@ public interface ISnowVariant {
             Item item = ((TextureTile) tile).getMark("0");
             if (item instanceof BlockItem) {
                 BlockState newState = ((BlockItem) item).getBlock().getDefaultState();
-                for (IProperty property : state.getProperties()) {
-                    if (newState.has(property)) {
+                for (Property property : state./*getProperties*/func_235904_r_()) {
+                    if (newState./*has*/func_235901_b_(property)) {
                         newState = newState.with(property, state.get(property));
                     }
                 }

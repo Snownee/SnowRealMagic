@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
@@ -25,11 +25,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -55,11 +55,6 @@ public class ModSnowTileBlock extends ModSnowBlock {
     @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return true;
     }
 
     @Override
@@ -106,7 +101,7 @@ public class ModSnowTileBlock extends ModSnowBlock {
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         if (willHarvest) {
             getBlock().onBlockHarvested(world, pos, state, player);
         }
@@ -141,7 +136,7 @@ public class ModSnowTileBlock extends ModSnowBlock {
             } else if (entityIn.getType() != EntityType.FOX && entityIn.getType() != EntityType.BEE) {
                 BlockState stateIn = getContainedState(worldIn, pos);
                 if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
-                    entityIn.setMotionMultiplier(state, new Vec3d(0.8F, 0.75D, 0.8F));
+                    entityIn.setMotionMultiplier(state, new Vector3d(0.8F, 0.75D, 0.8F));
                     if (!worldIn.isRemote && stateIn.get(SweetBerryBushBlock.AGE) > 0 && (entityIn.lastTickPosX != entityIn.getPosX() || entityIn.lastTickPosZ != entityIn.getPosZ())) {
                         double d0 = Math.abs(entityIn.getPosX() - entityIn.lastTickPosX);
                         double d1 = Math.abs(entityIn.getPosZ() - entityIn.lastTickPosZ);

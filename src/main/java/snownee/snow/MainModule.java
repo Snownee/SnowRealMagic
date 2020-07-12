@@ -18,7 +18,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -33,6 +33,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -87,11 +88,11 @@ public class MainModule extends AbstractModule {
         }
     };
 
-    public static final Tag<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
+    public static final INamedTag<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
 
-    public static final Tag<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
+    public static final INamedTag<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
 
-    public static final Tag<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
+    public static final INamedTag<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
     @NoItem
     @Name("minecraft:snow")
@@ -123,7 +124,7 @@ public class MainModule extends AbstractModule {
     public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
     @Name("minecraft:freeze_top_layer")
-    public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature();
+    public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature(NoFeatureConfig.field_236558_a_);
 
     public MainModule() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SnowCommonConfig.spec);
@@ -225,9 +226,9 @@ public class MainModule extends AbstractModule {
         return stack;
     }
 
-    public static void fillTextureItems(Tag<Item> tag, Block block, NonNullList<ItemStack> items) {
+    public static void fillTextureItems(INamedTag<Item> tag, Block block, NonNullList<ItemStack> items) {
         Item item = block.asItem();
-        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
+        items.addAll(tag./*getAllElements*/func_230236_b_().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
 
     @SubscribeEvent

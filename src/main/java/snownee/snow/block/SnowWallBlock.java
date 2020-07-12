@@ -14,6 +14,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -68,13 +69,13 @@ public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVarian
     public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
         if (!key.isEmpty()) {
-            tooltip.add(new TranslationTextComponent(key).applyTextStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(key)./*applyTextStyle*/func_240699_a_(TextFormatting.GRAY));
         }
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(UP, NORTH, EAST, WEST, SOUTH, WATERLOGGED, DOWN);
+        builder.add(UP, field_235613_c_, field_235612_b_, field_235615_e_, field_235614_d_, BlockStateProperties.WATERLOGGED, DOWN);
     }
 
     @Override

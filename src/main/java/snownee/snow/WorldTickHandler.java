@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.DebugChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkManager;
@@ -35,7 +35,7 @@ public class WorldTickHandler {
         if (!world.isRaining()) {
             return;
         }
-        if (world.getWorldInfo().getGenerator() == WorldType.DEBUG_ALL_BLOCK_STATES) {
+        if (world.getChunkProvider().getChunkGenerator() instanceof DebugChunkGenerator) {
             return;
         }
         Iterable<ChunkHolder> holders;
@@ -49,7 +49,7 @@ public class WorldTickHandler {
             if (chunk == null || !world.getChunkProvider().isChunkLoaded(chunk.getPos())) {
                 return;
             }
-            if (world.dimension.canDoRainSnowIce(chunk) && world.rand.nextInt(16) == 0) {
+            if (world.rand.nextInt(16) == 0) {
                 int x = chunk.getPos().getXStart();
                 int y = chunk.getPos().getZStart();
                 BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).down();
@@ -58,7 +58,7 @@ public class WorldTickHandler {
                 {
                     if (biome.getTemperature(pos) >= 0.15f) {
                         return;
-                    }
+                    } // TODO: check light
                     BlockState state = world.getBlockState(pos);
                     if (!ModSnowBlock.canContainState(state)) {
                         return;

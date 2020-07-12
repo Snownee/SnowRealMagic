@@ -64,7 +64,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         super(properties);
         StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
         fillStateContainer(builder);
-        ourStateContainer = builder.create(SnowFenceBlockState::new);
+        ourStateContainer = builder./*create*/func_235882_a_(Block::getDefaultState, SnowFenceBlockState::new);
         setDefaultState(ourStateContainer.getBaseState().with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false).with(WATERLOGGED, false));
     }
 
@@ -88,13 +88,6 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     @Override
     public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return ModBlock.pickBlock(state, target, world, pos, player);
-    }
-
-    @Override
-    public Material getMaterial(BlockState state) {
-        //Fallback to a custom material to ensure it does not match so that other fences only connect
-        // when our custom blockstate says that we are solid
-        return NO_MATCH;
     }
 
     public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos) {
@@ -165,7 +158,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
         if (!key.isEmpty()) {
-            tooltip.add(new TranslationTextComponent(key).applyTextStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(key)./*applyTextStyle*/func_240699_a_(TextFormatting.GRAY));
         }
     }
 

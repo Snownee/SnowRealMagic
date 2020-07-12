@@ -41,17 +41,15 @@ public class SnowTile extends BaseTile {
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
-        state = NBTHelper.of(compound).getBlockState("State");
-        Block block = state.getBlock();
-        isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
+    public void /*read*/ func_230337_a_(BlockState state, CompoundNBT compound) {
+        super./*read*/func_230337_a_(state, compound);
+        readPacketData(compound);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
-        NBTHelper.of(compound).setBlockState("State", state);
+        writePacketData(compound);
         return compound;
     }
 
@@ -62,11 +60,14 @@ public class SnowTile extends BaseTile {
 
     @Override
     protected void readPacketData(CompoundNBT data) {
-        read(data);
+        state = NBTHelper.of(data).getBlockState("State");
+        Block block = state.getBlock();
+        isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
     }
 
     @Override
     protected CompoundNBT writePacketData(CompoundNBT data) {
-        return write(data);
+        NBTHelper.of(data).setBlockState("State", state);
+        return data;
     }
 }

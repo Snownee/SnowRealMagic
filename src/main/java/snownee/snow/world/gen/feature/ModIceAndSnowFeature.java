@@ -2,31 +2,34 @@ package snownee.snow.world.gen.feature;
 
 import java.util.Random;
 
+import com.mojang.serialization.Codec;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.IceAndSnowFeature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.ModSnowBlock;
 
 public class ModIceAndSnowFeature extends IceAndSnowFeature {
 
-    public ModIceAndSnowFeature() {
-        super(NoFeatureConfig::deserialize);
+    public ModIceAndSnowFeature(Codec<NoFeatureConfig> codec) {
+        super(codec);
     }
 
     @Override
-    public boolean place(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean /*place*/ func_230362_a_(ISeedReader worldIn, StructureManager structureManager, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
         BlockPos.Mutable blockpos = new BlockPos.Mutable();
         BlockPos.Mutable blockpos1 = new BlockPos.Mutable();
 
@@ -51,7 +54,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
                 }
                 if (flag) {
                     BlockState blockstate = worldIn.getBlockState(blockpos1);
-                    if (blockstate.has(SnowyDirtBlock.SNOWY)) {
+                    if (blockstate./*has*/func_235901_b_(SnowyDirtBlock.SNOWY)) {
                         worldIn.setBlockState(blockpos1, blockstate.with(SnowyDirtBlock.SNOWY, true), 2);
                     }
                 }
@@ -70,7 +73,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
         }
         if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(LightType.BLOCK, pos) < 10 && MainModule.BLOCK.getDefaultState().isValidPosition(worldIn, pos)) {
             BlockState blockstate = worldIn.getBlockState(pos);
-            return ModSnowBlock.convert(worldIn, pos, blockstate, 1, 2);
+            return ModSnowBlock.convert(worldIn.getWorld(), pos, blockstate, 1, 2);
         }
         return false;
     }

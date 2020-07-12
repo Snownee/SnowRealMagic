@@ -1,5 +1,6 @@
 package snownee.snow.block;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import snownee.kiwi.tile.TextureTile;
 import snownee.snow.MainModule;
@@ -16,9 +17,9 @@ public class SnowTextureTile extends TextureTile {
     }
 
     @Override
-    public void read(CompoundNBT compound) {
+    public void /*read*/ func_230337_a_(BlockState state, CompoundNBT compound) {
         readPacketData(compound);
-        super.read(compound);
+        super./*read*/func_230337_a_(state, compound);
     }
 
     @Override

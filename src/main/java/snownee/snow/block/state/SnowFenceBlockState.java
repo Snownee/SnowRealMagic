@@ -6,25 +6,31 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import snownee.snow.block.SnowFenceBlock;
 
 public class SnowFenceBlockState extends BlockState {
 
     private static Map<PositionKey, Material> cachedMaterials = new HashMap<>();
 
-    public SnowFenceBlockState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties) {
-        super(block, properties);
+    public SnowFenceBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> properties, MapCodec<BlockState> mapCodec) {
+        super(block, properties, mapCodec);
+    }
+
+    @Override
+    public boolean isNormalCube(IBlockReader reader, BlockPos pos) {
+        return true;
     }
 
     @Override
@@ -41,15 +47,22 @@ public class SnowFenceBlockState extends BlockState {
         return super.isSolidSide(world, pos, side);
     }
 
+    @Override
+    public Material getMaterial() {
+        //Fallback to a custom material to ensure it does not match so that other fences only connect
+        // when our custom blockstate says that we are solid
+        return SnowFenceBlock.NO_MATCH;
+    }
+
     public static Material getMaterial(BlockState blockState, IBlockReader world, BlockPos pos) {
         Block block = blockState.getBlock();
         Material material;
         if (block instanceof SnowFenceBlock) {
-            if (world instanceof IWorldReader) {
+            if (world instanceof World) {
                 //If we have world information and are a snow fence block, check if we have a cached material type that we are supposed to use
                 //Note: This cache is invalidated after the blocks finish changing as by then we are able to get the proper
                 // value from the world and don't have to deal with all the different edge cases for when the cache needs to be invalidated
-                PositionKey cacheKey = new PositionKey((IWorldReader) world, pos);
+                PositionKey cacheKey = new PositionKey((World) world, pos);
                 if (cachedMaterials.containsKey(cacheKey)) {
                     return cachedMaterials.get(cacheKey);
                 }
@@ -63,23 +76,23 @@ public class SnowFenceBlockState extends BlockState {
         return material;
     }
 
-    public static void setCachedMaterial(IWorldReader world, BlockPos pos, Material material) {
+    public static void setCachedMaterial(World world, BlockPos pos, Material material) {
         cachedMaterials.put(new PositionKey(world, pos), material);
     }
 
-    public static void clearCachedMaterial(IWorldReader world, BlockPos pos) {
+    public static void clearCachedMaterial(World world, BlockPos pos) {
         cachedMaterials.remove(new PositionKey(world, pos));
     }
 
     private static class PositionKey {
 
-        private final DimensionType dim;
+        private final RegistryKey<World> dim;
         private final boolean remote;
         private final BlockPos pos;
 
-        PositionKey(IWorldReader world, BlockPos pos) {
+        PositionKey(World world, BlockPos pos) {
             //Keep track of the dimension to make sure that if a spot is edited in multiple worlds at once we don't break.
-            this.dim = world.getDimension().getType();
+            this.dim = world.func_234923_W_();
             //Ensure we have an immutable position
             this.pos = pos.toImmutable();
             //We need to keep track of remote so that in single player we don't clear our cache too early by both sides sharing a cache

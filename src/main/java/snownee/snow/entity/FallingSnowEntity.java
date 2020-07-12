@@ -27,8 +27,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -57,13 +57,13 @@ public class FallingSnowEntity extends Entity {
         super(MainModule.ENTITY, worldIn);
         this.preventEntitySpawning = true;
         this.setPosition(x, y + (1.0F - this.getHeight()) / 2.0F, z);
-        this.setMotion(Vec3d.ZERO);
+        this.setMotion(Vector3d.ZERO);
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
         this.layers = layers;
-        this.setData(new BlockPos(this), layers);
-        prevPos = new BlockPos(this);
+        this.setData(/*getPosition*/func_233580_cy_(), layers);
+        prevPos = /*getPosition*/func_233580_cy_();
         size = new EntitySize(0.98f, 0.1225f * layers, true);
     }
 
@@ -74,9 +74,9 @@ public class FallingSnowEntity extends Entity {
 
     @Override
     public void tick() {
-//        this.prevPosX = this.posX;
-//        this.prevPosY = this.posY;
-//        this.prevPosZ = this.posZ;
+        //        this.prevPosX = this.posX;
+        //        this.prevPosY = this.posY;
+        //        this.prevPosZ = this.posZ;
 
         ++this.fallTime;
 
@@ -86,7 +86,7 @@ public class FallingSnowEntity extends Entity {
 
         this.move(MoverType.SELF, this.getMotion());
 
-        BlockPos pos = new BlockPos(this);
+        BlockPos pos = /*getPosition*/func_233580_cy_();
         if (!this.world.isRemote) {
             if (!this.onGround) {
                 if (this.fallTime > 100 && !this.world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || this.fallTime > 600) {
