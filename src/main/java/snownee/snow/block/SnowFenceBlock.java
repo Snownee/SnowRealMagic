@@ -90,21 +90,12 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         return ModBlock.pickBlock(state, target, world, pos, player);
     }
 
-    public Material getMaterial(BlockState state, IBlockReader world, BlockPos pos) {
-        return getRaw(state, world, pos).getMaterial();
-    }
-
-    /**
-     * @param otherState  The neighboring block/fences state
-     * @param isSolid     If the block we are attempting to attach to is solid on the side we are connecting to
-     * @param dirToCheck  The direction the other block is from us
-     * @param ourMaterial Our Material
-     */
-    public boolean canConnect(BlockState otherState, boolean isSolid, Direction dirToCheck, Material ourMaterial) {
-        Block block = otherState.getBlock();
-        boolean isMatchingFence = block.isIn(BlockTags.FENCES) && otherState.getMaterial() == ourMaterial;
-        boolean isFenceGate = block instanceof FenceGateBlock && FenceGateBlock.isParallel(otherState, dirToCheck);
-        return !cannotAttach(block) && isSolid || isMatchingFence || isFenceGate;
+    public boolean canConnect(IBlockReader world, Direction dirToCheck, BlockPos pos, boolean isWooden) {
+        BlockPos facingPos = pos.offset(dirToCheck);
+        BlockState facingState = world.getBlockState(facingPos);
+        Block block = facingState.getBlock();
+        boolean isFenceGate = block instanceof FenceGateBlock && FenceGateBlock.isParallel(facingState, dirToCheck);
+        return !cannotAttach(block) && facingState.isSolidSide(world, facingPos, dirToCheck.getOpposite()) || (facingState.isIn(BlockTags.FENCES) && isWooden == isWooden(world, facingPos, facingState)) || isFenceGate;
     }
 
     @Override
@@ -112,7 +103,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         World world = context.getWorld();
         BlockPos blockpos = context.getPos();
         BlockState stateIn = world.getBlockState(blockpos);
-        Material mat = NO_MATCH;
+        boolean isWooden = false;
         BlockState state = getDefaultState().with(WATERLOGGED, false).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, world, blockpos));
         ItemStack stack = context.getItem();
         //Check the item to get the actual state we want to try to connect using.
@@ -121,31 +112,31 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
         if (rl != null) {
             Item item = ForgeRegistries.ITEMS.getValue(rl);
             if (item instanceof BlockItem) {
-                mat = ((BlockItem) item).getBlock().getDefaultState().getMaterial();
+                isWooden = ((BlockItem) item).getBlock().isIn(BlockTags.WOODEN_FENCES);
             }
         }
         //Now check the connections using the correct material we just retrieved
-        BlockPos north = blockpos.north();
-        BlockPos east = blockpos.east();
-        BlockPos south = blockpos.south();
-        BlockPos west = blockpos.west();
-        BlockState northState = world.getBlockState(north);
-        BlockState eastState = world.getBlockState(east);
-        BlockState southState = world.getBlockState(south);
-        BlockState westState = world.getBlockState(west);
-        return state.with(NORTH, canConnect(northState, northState.isSolidSide(world, north, Direction.SOUTH), Direction.SOUTH, mat)).with(EAST, canConnect(eastState, eastState.isSolidSide(world, east, Direction.WEST), Direction.WEST, mat)).with(SOUTH, canConnect(southState, southState.isSolidSide(world, south, Direction.NORTH), Direction.NORTH, mat)).with(WEST, canConnect(westState, westState.isSolidSide(world, west, Direction.EAST), Direction.EAST, mat));
+        return state.with(NORTH, canConnect(world, Direction.NORTH, blockpos, isWooden)).with(EAST, canConnect(world, Direction.EAST, blockpos, isWooden)).with(SOUTH, canConnect(world, Direction.SOUTH, blockpos, isWooden)).with(WEST, canConnect(world, Direction.WEST, blockpos, isWooden));
     }
 
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL) {
-            boolean connected = this.canConnect(facingState, facingState.isSolidSide(worldIn, facingPos, facing.getOpposite()), facing.getOpposite(), SnowFenceBlockState.getMaterial(stateIn, worldIn, currentPos));
+            boolean connected = canConnect(worldIn, facing, currentPos, isWooden(worldIn, currentPos, stateIn));
             return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), connected);
         }
         if (facing == Direction.DOWN) {
             return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
         }
         return stateIn;
+    }
+
+    public static boolean isWooden(IBlockReader world, BlockPos pos, BlockState state) {
+        Block block = state.getBlock();
+        if (block instanceof ISnowVariant) {
+            block = ((ISnowVariant) block).getRaw(state, world, pos).getBlock();
+        }
+        return block.isIn(BlockTags.WOODEN_FENCES);
     }
 
     @Override

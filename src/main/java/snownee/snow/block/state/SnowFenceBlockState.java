@@ -37,12 +37,9 @@ public class SnowFenceBlockState extends BlockState {
     public boolean isSolidSide(IBlockReader world, BlockPos pos, @Nonnull Direction side) {
         BlockPos neighborPos = pos.offset(side);
         BlockState neighborState = world.getBlockState(neighborPos);
-        Block neighborBlock = neighborState.getBlock();
         //If the block requesting our "solid" status is a fence we want to fake it if our source material is the same as theirs
-        if (neighborBlock.isIn(BlockTags.FENCES)) {
-            Material ourMaterial = getMaterial(world.getBlockState(pos), world, pos);
-            Material neighborMaterial = getMaterial(neighborState, world, neighborPos);
-            return ourMaterial == neighborMaterial;
+        if (neighborState.isIn(BlockTags.FENCES)) {
+            return SnowFenceBlock.isWooden(world, pos, this) == SnowFenceBlock.isWooden(world, neighborPos, neighborState);
         }
         return super.isSolidSide(world, pos, side);
     }
@@ -67,7 +64,7 @@ public class SnowFenceBlockState extends BlockState {
                     return cachedMaterials.get(cacheKey);
                 }
             }
-            material = ((SnowFenceBlock) block).getMaterial(blockState, world, pos);
+            material = ((SnowFenceBlock) block).getRaw(blockState, world, pos).getMaterial();
         } else {
             //If the block is not one of our blocks just grab the material the normal way.
             //This is likely to be the case for when we are getting the neighboring material.

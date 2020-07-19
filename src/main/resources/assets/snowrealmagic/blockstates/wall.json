@@ -1,22 +1,106 @@
 {
-    "multipart": [
-        {   "when": { "up": "true" },
-            "apply": { "model": "snowrealmagic:block/wall_post" }
-        },
-        {   "when": { "north": "true" },
-            "apply": { "model": "snowrealmagic:block/wall_side", "uvlock": true }
-        },
-        {   "when": { "east": "true" },
-            "apply": { "model": "snowrealmagic:block/wall_side", "y": 90, "uvlock": true }
-        },
-        {   "when": { "south": "true" },
-            "apply": { "model": "snowrealmagic:block/wall_side", "y": 180, "uvlock": true }
-        },
-        {   "when": { "west": "true" },
-            "apply": { "model": "snowrealmagic:block/wall_side", "y": 270, "uvlock": true }
-        },
-        {   "when": { "down": "true" },
-            "apply": { "model": "block/snow_height2" }
-        }
-    ]
+  "multipart": [
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_post"
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "west": "none|low",
+        "east": "none|low",
+        "south": "none|low",
+        "north": "none|low"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_post_overlay"
+      }
+    },
+    {
+      "when": {
+        "north": "low"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "low"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "low"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "low"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "north": "tall"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side_tall",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "tall"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side_tall",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "tall"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side_tall",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "tall"
+      },
+      "apply": {
+        "model": "snowrealmagic:block/wall_side_tall",
+        "y": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": { "down": "true" },
+      "apply": { "model": "block/snow_height2" }
+    }
+  ]
 }

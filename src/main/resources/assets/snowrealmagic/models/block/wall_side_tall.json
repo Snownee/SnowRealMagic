@@ -4,17 +4,16 @@
 		"0": "block/acacia_planks",
 		"particle": "block/snow"
 	},
-	"elements": [
-        {   "from": [ 4, 0, 4 ],
-            "to": [ 12, 16, 12 ],
+    "elements": [
+        {   "from": [ 5, 0, 0 ],
+            "to": [ 11, 16, 8 ],
             "faces": {
                 "down":  { "texture": "#0", "tintindex": 0, "cullface": "down" },
-                "up":    { "texture": "#0", "tintindex": 0, "cullface": "up" },
-                "north": { "texture": "#0", "tintindex": 0 },
-                "south": { "texture": "#0", "tintindex": 0 },
+                "up":    { "texture": "#0", "tintindex": 0, "cullface": "up"},
+                "north": { "texture": "#0", "tintindex": 0, "cullface": "north" },
                 "west":  { "texture": "#0", "tintindex": 0 },
                 "east":  { "texture": "#0", "tintindex": 0 }
             }
         }
-	]
+    ]
 }

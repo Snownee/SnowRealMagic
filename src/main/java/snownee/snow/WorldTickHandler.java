@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.DebugChunkGenerator;
@@ -58,9 +59,12 @@ public class WorldTickHandler {
                 {
                     if (biome.getTemperature(pos) >= 0.15f) {
                         return;
-                    } // TODO: check light
+                    }
                     BlockState state = world.getBlockState(pos);
                     if (!ModSnowBlock.canContainState(state)) {
+                        return;
+                    }
+                    if (world.getLightFor(LightType.BLOCK, pos.up()) > 11) {
                         return;
                     }
                     ModSnowBlock.convert(world, pos, state, 1, 3);

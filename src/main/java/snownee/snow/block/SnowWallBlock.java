@@ -22,6 +22,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
@@ -106,6 +107,16 @@ public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVarian
         } else if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return super.getShape(state.with(DOWN, Boolean.TRUE), worldIn, pos, context);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return super.getCollisionShape(state.with(DOWN, Boolean.TRUE), worldIn, pos, context);
     }
 
     @SuppressWarnings("deprecation")

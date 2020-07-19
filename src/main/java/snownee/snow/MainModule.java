@@ -51,6 +51,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.AbstractModule;
+import snownee.kiwi.Kiwi;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Subscriber.Bus;
 import snownee.kiwi.Name;
@@ -230,6 +231,9 @@ public class MainModule extends AbstractModule {
     }
 
     public static void fillTextureItems(INamedTag<Item> tag, Block block, NonNullList<ItemStack> items) {
+        if (!Kiwi.areTagsUpdated()) {
+            return;
+        }
         Item item = block.asItem();
         items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
