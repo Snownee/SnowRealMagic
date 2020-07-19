@@ -1,6 +1,9 @@
 package snownee.snow;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Predicates;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -108,6 +111,8 @@ public class MainModule extends AbstractModule {
 
     public static final SnowFenceBlock FENCE = new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).tickRandomly());
 
+    public static final SnowFenceBlock FENCE2 = new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).tickRandomly());
+
     public static final SnowStairsBlock STAIRS = new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).tickRandomly());
 
     public static final SnowSlabBlock SLAB = new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).tickRandomly());
@@ -119,7 +124,7 @@ public class MainModule extends AbstractModule {
     @Name("snow")
     public static final TileEntityType<SnowTile> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);
 
-    public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
+    public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
 
     @Name("snow")
     public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
@@ -170,6 +175,10 @@ public class MainModule extends AbstractModule {
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent event) {
         Block block = FENCE;
+        TextureModel.register(event, block, null, "0");
+        TextureModel.registerInventory(event, block, "0");
+
+        block = FENCE2;
         TextureModel.register(event, block, null, "0");
         TextureModel.registerInventory(event, block, "0");
 
@@ -231,11 +240,15 @@ public class MainModule extends AbstractModule {
     }
 
     public static void fillTextureItems(INamedTag<Item> tag, Block block, NonNullList<ItemStack> items) {
+        fillTextureItems(tag, block, items, Predicates.alwaysTrue());
+    }
+
+    public static void fillTextureItems(INamedTag<Item> tag, Block block, NonNullList<ItemStack> items, Predicate<Item> filter) {
         if (!Kiwi.areTagsUpdated()) {
             return;
         }
         Item item = block.asItem();
-        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
+        items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).filter(filter).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
     }
 
     @SubscribeEvent
@@ -261,7 +274,7 @@ public class MainModule extends AbstractModule {
                 return blockColors.getColor(raw, world, pos, index); // getColor
             }
             return -1;
-        }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);
+        }, SLAB, STAIRS, WALL, FENCE, FENCE2, FENCE_GATE);
     }
 
     @SubscribeEvent
@@ -280,6 +293,6 @@ public class MainModule extends AbstractModule {
                 }
             }
             return -1;
-        }, SLAB, STAIRS, WALL, FENCE, FENCE_GATE);
+        }, SLAB, STAIRS, WALL, FENCE, FENCE2, FENCE_GATE);
     }
 }

@@ -59,7 +59,6 @@ import snownee.kiwi.tile.TextureTile;
 import snownee.snow.MainModule;
 import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.state.SnowFenceBlockState;
 import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant {
@@ -363,8 +362,8 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         return false;
     }
 
-    public static boolean convert(World world, BlockPos pos, BlockState state, int layers, int flags) {
-        if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state)) {
+    public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags) {
+        if (!SnowCommonConfig.placeSnowInBlock || state.hasTileEntity()) {
             return false;
         }
         if (state.isAir(world, pos)) {
@@ -375,7 +374,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         }
         Block block = state.getBlock();
         if (block.isIn(MainModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
-            if (state.getBlock() != MainModule.TILE_BLOCK) {
+            if (block != MainModule.TILE_BLOCK) {
                 world.setBlockState(pos, MainModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
             }
             TileEntity tile = world.getTileEntity(pos);
@@ -391,15 +390,11 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             world.setBlockState(pos, MainModule.STAIRS.getDefaultState().with(StairsBlock.FACING, state.get(StairsBlock.FACING)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)).with(StairsBlock.SHAPE, state.get(StairsBlock.SHAPE)), flags);
         } else if (block instanceof SlabBlock && state.getBlock() != MainModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
             world.setBlockState(pos, MainModule.SLAB.getDefaultState(), flags);
-        } else if (block instanceof FenceBlock && state.getBlock() != MainModule.FENCE) {
-            //Cache what the material should/will be so that we can use the correct material while the state is changing
-            //Otherwise we have the issue that the tile has no data yet so we cannot use the proper value directly from the block
-            //SnowFenceBlockState.setCachedMaterial(world, pos, state.getMaterial());
-            BlockState newState = MainModule.FENCE.getDefaultState().with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.EAST, state.get(FourWayBlock.EAST));
+        } else if (block instanceof FenceBlock && state.getBlock().getClass() != SnowFenceBlock.class) {
+            Block newBlock = block.isIn(BlockTags.WOODEN_FENCES) ? MainModule.FENCE : MainModule.FENCE2;
+            BlockState newState = newBlock.getDefaultState().with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.EAST, state.get(FourWayBlock.EAST));
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
-            //Clear the temporary cache we set so that we don't have to deal with all the edge cases of when it needs to be invalidated
-            //SnowFenceBlockState.clearCachedMaterial(world, pos);
         } else if (block instanceof FenceGateBlock && state.getBlock() != MainModule.FENCE_GATE) {
             BlockState newState = MainModule.FENCE_GATE.getDefaultState().with(FenceGateBlock.OPEN, state.get(FenceGateBlock.OPEN)).with(FenceGateBlock.IN_WALL, state.get(FenceGateBlock.IN_WALL)).with(HorizontalBlock.HORIZONTAL_FACING, state.get(HorizontalBlock.HORIZONTAL_FACING));
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);

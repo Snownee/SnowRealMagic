@@ -5,7 +5,8 @@
   "refmap": "mixins.snowrealmagic.refmap.json",
   "mixins": [
     "MixinSpreadableSnowyDirtBlock",
-    "MixinSnowyDirtBlock"
+    "MixinSnowyDirtBlock",
+    "MixinDefaultBiomeFeatures"
   ],
   "minVersion": "0.8"
 }

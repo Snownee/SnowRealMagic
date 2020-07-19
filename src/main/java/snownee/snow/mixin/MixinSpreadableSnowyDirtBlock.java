@@ -28,12 +28,12 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
     }
 
     @Inject(at = @At("HEAD"), method = "func_220257_b", cancellable = true)
-    private static void canSurvive(BlockState state, IWorldReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+    private static void srm_canSurvive(BlockState state, IWorldReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(Hook.canSurvive(state, viewableWorld, blockPos));
     }
 
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-    public void tickProxy(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random, CallbackInfo ci) {
+    public void srm_tickProxy(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random, CallbackInfo ci) {
         if (!world.isRemote) {
             if (!Hook.canSurvive(blockState, world, blockPos)) {
                 world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
