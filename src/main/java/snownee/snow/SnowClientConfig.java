@@ -1,45 +1,12 @@
 package snownee.snow;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
+import snownee.kiwi.config.KiwiConfig;
 
-@EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT)
+@KiwiConfig(type = ModConfig.Type.CLIENT)
 public final class SnowClientConfig {
+
     public static boolean particleThroughLeaves = true;
     public static boolean colorTint = true;
 
-    private static BooleanValue particleThroughLeavesCfg;
-    private static BooleanValue colorTintCfg;
-
-    static final ForgeConfigSpec spec;
-
-    static {
-        final Pair<SnowClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SnowClientConfig::new);
-        spec = specPair.getRight();
-    }
-
-    private SnowClientConfig(ForgeConfigSpec.Builder builder) {
-        particleThroughLeavesCfg = builder.define("particleThroughLeaves", particleThroughLeaves);
-        colorTintCfg = builder.define("colorTint", colorTint);
-    }
-
-    public static void refresh() {
-        particleThroughLeaves = particleThroughLeavesCfg.get();
-        colorTint = colorTintCfg.get();
-    }
-
-    @SubscribeEvent
-    public static void onFileChange(ModConfig.Reloading event) {
-        ((CommentedFileConfig) event.getConfig().getConfigData()).load();
-        refresh();
-    }
 }

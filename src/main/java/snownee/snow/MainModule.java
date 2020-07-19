@@ -46,12 +46,9 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.Kiwi;
@@ -136,23 +133,14 @@ public class MainModule extends AbstractModule {
         if (!SnowRealMagic.mixin) {
             throw new IllegalAccessError("Requires MixinBootstrap.");
         }
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SnowCommonConfig.spec);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SnowClientConfig.spec);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void clientInit(FMLClientSetupEvent event) {
-        SnowClientConfig.refresh();
-
         RenderingRegistry.registerEntityRenderingHandler(ENTITY, FallingSnowRenderer::new);
 
         ClientRegistry.bindTileEntityRenderer(TILE, dispatcher -> new SnowRenderer(dispatcher));
-    }
-
-    @Override
-    protected void init(FMLCommonSetupEvent event) {
-        SnowCommonConfig.refresh();
     }
 
     @Override
