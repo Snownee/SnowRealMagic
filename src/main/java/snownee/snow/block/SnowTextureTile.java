@@ -17,9 +17,9 @@ public class SnowTextureTile extends TextureTile {
     }
 
     @Override
-    public void /*read*/ func_230337_a_(BlockState state, CompoundNBT compound) {
+    public void read(BlockState state, CompoundNBT compound) {
         readPacketData(compound);
-        super./*read*/func_230337_a_(state, compound);
+        super.read(state, compound);
     }
 
     @Override
