@@ -11,6 +11,7 @@ public class Connector implements IMixinConnector {
     public void connect() {
         SnowRealMagic.logger.info("Invoking Mixin Connector");
         Mixins.addConfiguration("assets/snowrealmagic/snowrealmagic.mixins.json");
+        SnowRealMagic.mixin = true;
     }
 
 }

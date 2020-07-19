@@ -127,6 +127,9 @@ public class MainModule extends AbstractModule {
     public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature(NoFeatureConfig.field_236558_a_);
 
     public MainModule() {
+        if (!SnowRealMagic.mixin) {
+            throw new IllegalAccessError("Requires MixinBootstrap.");
+        }
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SnowCommonConfig.spec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SnowClientConfig.spec);
     }
