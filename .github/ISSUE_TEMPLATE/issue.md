@@ -7,4 +7,7 @@ assignees: ''
 
 ---
 
+ * Forge Version: 
+ * Mod Version: 
 
+Paste your crash report to somewhere like https://paste.ubuntu.com/ , instead of directly here.
