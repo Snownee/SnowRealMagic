@@ -13,8 +13,6 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -23,13 +21,9 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
@@ -37,14 +31,10 @@ import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -78,7 +68,7 @@ import snownee.snow.item.SnowBlockItem;
 import snownee.snow.world.gen.feature.ModIceAndSnowFeature;
 
 @KiwiModule(modid = SnowRealMagic.MODID)
-@KiwiModule.Subscriber({ Bus.MOD, Bus.FORGE })
+@KiwiModule.Subscriber(Bus.MOD)
 @KiwiModule.Group
 public class MainModule extends AbstractModule {
     public static final ItemGroup GROUP = new ItemGroup(SnowRealMagic.MODID) {
@@ -189,35 +179,6 @@ public class MainModule extends AbstractModule {
         ModBlockItem.INSTANT_UPDATE_TILES.add(TEXTURE_TILE);
     }
 
-    @SubscribeEvent
-    public void onItemUse(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getHand() != Hand.MAIN_HAND) {
-            return;
-        }
-        World worldIn = event.getWorld();
-        BlockPos pos = event.getPos();
-        BlockState state = worldIn.getBlockState(pos);
-        if (!(state.getBlock() instanceof ISnowVariant)) {
-            return;
-        }
-        PlayerEntity player = event.getPlayer();
-        if (!ForgeHooks.canHarvestBlock(BLOCK.getDefaultState(), player, worldIn, pos)) {
-            return;
-        }
-        BlockState newState = ((ISnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-        worldIn.setBlockState(pos, newState);
-        if (player instanceof ServerPlayerEntity) {
-            if (newState.isSolid())
-                pos = pos.up();
-            Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
-            player.getHeldItemMainhand().damageItem(1, player, stack -> {
-                stack.sendBreakAnimation(Hand.MAIN_HAND);
-            });
-        }
-        event.setCanceled(true);
-        event.setCancellationResult(ActionResultType.SUCCESS);
-    }
-
     public static ItemStack makeTextureItem(Item item, ItemStack mark) {
         ItemStack stack = new ItemStack(item);
         NBTHelper helper = NBTHelper.of(stack);
@@ -237,13 +198,6 @@ public class MainModule extends AbstractModule {
         }
         Item item = block.asItem();
         items.addAll(tag.getAllElements().stream().filter(i -> i instanceof BlockItem && ((BlockItem) i).getBlock().getDefaultState().isSolid() && !i.getRegistryName().getNamespace().equals(SnowRealMagic.MODID)).filter(filter).map(ItemStack::new).filter(FullBlockIngredient::isTextureBlock).map(m -> MainModule.makeTextureItem(item, m)).collect(Collectors.toList()));
-    }
-
-    @SubscribeEvent
-    public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld) {
-            WorldTickHandler.tick(event);
-        }
     }
 
     @SubscribeEvent
