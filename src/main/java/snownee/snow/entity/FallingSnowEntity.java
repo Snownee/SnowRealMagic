@@ -62,8 +62,8 @@ public class FallingSnowEntity extends Entity {
         this.prevPosY = y;
         this.prevPosZ = z;
         this.layers = layers;
-        this.setData(/*getPosition*/func_233580_cy_(), layers);
-        prevPos = /*getPosition*/func_233580_cy_();
+        this.setData(getPosition(), layers);
+        prevPos = getPosition();
         size = new EntitySize(0.98f, 0.1225f * layers, true);
     }
 
@@ -86,7 +86,7 @@ public class FallingSnowEntity extends Entity {
 
         this.move(MoverType.SELF, this.getMotion());
 
-        BlockPos pos = /*getPosition*/func_233580_cy_();
+        BlockPos pos = getPosition();
         if (!this.world.isRemote) {
             if (!this.onGround) {
                 if (this.fallTime > 100 && !this.world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || this.fallTime > 600) {

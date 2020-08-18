@@ -18,8 +18,8 @@ public interface ISnowVariant {
             Item item = ((TextureTile) tile).getMark("0");
             if (item instanceof BlockItem) {
                 BlockState newState = ((BlockItem) item).getBlock().getDefaultState();
-                for (Property property : state./*getProperties*/func_235904_r_()) {
-                    if (newState./*has*/func_235901_b_(property)) {
+                for (Property property : state.getProperties()) {
+                    if (newState.hasProperty(property)) {
                         newState = newState.with(property, state.get(property));
                     }
                 }

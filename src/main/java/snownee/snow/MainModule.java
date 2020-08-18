@@ -24,11 +24,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.api.distmarker.Dist;
@@ -119,6 +115,8 @@ public class MainModule extends AbstractModule {
     @Name("minecraft:freeze_top_layer")
     public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature(NoFeatureConfig.field_236558_a_);
 
+    public static final ConfiguredFeature<?, ?> CONFIGURED_FEATURE = FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG);
+
     public MainModule() {
         if (!SnowRealMagic.mixin) {
             throw new IllegalAccessError("Requires MixinBootstrap.");
@@ -133,21 +131,21 @@ public class MainModule extends AbstractModule {
         ClientRegistry.bindTileEntityRenderer(TILE, dispatcher -> new SnowRenderer(dispatcher));
     }
 
-    @Override
-    protected void postInit() {
-        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-            if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
-                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
-            }
-        }
-    }
-
-    private static boolean isVanillaFeature(ConfiguredFeature<?, ?> cf) {
-        if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig) {
-            return ((DecoratedFeatureConfig) cf.config).feature.feature == Feature.FREEZE_TOP_LAYER;
-        }
-        return false;
-    }
+    //    @Override
+    //    protected void postInit() {
+    //        for (Biome biome : WorldGenRegistries.field_243657_i) {
+    //            if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
+    //                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+    //            }
+    //        }
+    //    }
+    //
+    //    private static boolean isVanillaFeature(ConfiguredFeature<?, ?> cf) {
+    //        if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig) {
+    //            return ((DecoratedFeatureConfig) cf.config).feature.feature == Feature.FREEZE_TOP_LAYER;
+    //        }
+    //        return false;
+    //    }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent

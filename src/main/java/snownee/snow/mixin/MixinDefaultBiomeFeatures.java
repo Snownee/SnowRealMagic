@@ -5,19 +5,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import snownee.snow.MainModule;
 
 @Mixin(DefaultBiomeFeatures.class)
 public class MixinDefaultBiomeFeatures {
 
-    @Inject(method = "addFreezeTopLayer", at = @At("HEAD"), cancellable = true)
-    private static void srm_addFreezeTopLayer(Biome biomeIn, CallbackInfo info) {
-        biomeIn.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, MainModule.FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+    @Inject(method = "func_243730_an", at = @At("HEAD"), cancellable = true)
+    private static void srm_addFreezeTopLayer(BiomeGenerationSettings.Builder builder, CallbackInfo info) {
+        builder.func_242513_a(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, MainModule.CONFIGURED_FEATURE);
         info.cancel();
     }
 
+    //    public static void func_243730_an(BiomeGenerationSettings.Builder p_243730_0_) {
+    //        p_243730_0_.func_242513_a(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Features.field_243794_T);
+    //    }
 }

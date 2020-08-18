@@ -17,7 +17,6 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.IceAndSnowFeature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.feature.structure.StructureManager;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.ModSnowBlock;
@@ -29,7 +28,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
     }
 
     @Override
-    public boolean /*place*/ func_230362_a_(ISeedReader worldIn, StructureManager structureManager, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
+    public boolean /*place*/ func_241855_a(ISeedReader worldIn, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
         BlockPos.Mutable blockpos = new BlockPos.Mutable();
         BlockPos.Mutable blockpos1 = new BlockPos.Mutable();
 
@@ -54,7 +53,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
                 }
                 if (flag) {
                     BlockState blockstate = worldIn.getBlockState(blockpos1);
-                    if (blockstate./*has*/func_235901_b_(SnowyDirtBlock.SNOWY)) {
+                    if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
                         worldIn.setBlockState(blockpos1, blockstate.with(SnowyDirtBlock.SNOWY, true), 2);
                     }
                 }

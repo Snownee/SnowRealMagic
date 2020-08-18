@@ -43,7 +43,7 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
 
                     for (int i = 0; i < 4; ++i) {
                         BlockPos blockPos2 = blockPos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
-                        if (world.getBlockState(blockPos2).getBlock() == Blocks.DIRT && func_220256_c(blockState2, world, blockPos2)) {
+                        if (world.getBlockState(blockPos2).getBlock() == Blocks.DIRT && isSnowyAndNotUnderwater(blockState2, world, blockPos2)) {
                             Block upBlock = world.getBlockState(blockPos2.up()).getBlock();
                             world.setBlockState(blockPos2, blockState2.with(SnowyDirtBlock.SNOWY, upBlock.isIn(MainModule.BOTTOM_SNOW)));
                         }
@@ -56,7 +56,7 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
     }
 
     @Shadow
-    public static boolean func_220256_c(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
+    public static boolean isSnowyAndNotUnderwater(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
         return false;
     }
 

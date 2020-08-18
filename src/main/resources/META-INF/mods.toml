@@ -1,5 +1,7 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[33,)"
+license="MIT"
+
 [[mods]]
 modId="snowrealmagic"
 version="${file.jarVersion}"
@@ -11,6 +13,6 @@ description='''Tweak vanilla snow layer.'''
 [[dependencies.snowrealmagic]]
     modId="kiwi"
     mandatory=true
-    versionRange="[3.2, 3.8)"
+    versionRange="[3.3, 3.9)"
     ordering="BEFORE"
     side="BOTH"

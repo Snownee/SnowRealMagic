@@ -10,6 +10,7 @@ import net.minecraft.block.SnowBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import snownee.snow.MainModule;
 import snownee.snow.entity.FallingSnowEntity;
 
@@ -43,13 +45,13 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
         BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().maxY, entity.getPosZ());
         matrixstack.translate(-0.5D, 0.0D, -0.5D);
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.getBlockRenderTypes()) {
+        for (RenderType type : RenderType.getBlockRenderTypes()) {
             if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
-                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(type);
+                ForgeHooksClient.setRenderLayer(type);
                 blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
             }
         }
-        net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+        ForgeHooksClient.setRenderLayer(null);
         matrixstack.pop();
         super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
     }

@@ -104,7 +104,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
         if (!key.isEmpty()) {
-            tooltip.add(new TranslationTextComponent(key)./*applyTextStyle*/func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(key).mergeStyle(TextFormatting.GRAY));
         }
     }
 

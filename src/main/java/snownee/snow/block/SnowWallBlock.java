@@ -70,13 +70,13 @@ public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVarian
     public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         String key = Util.getTextureItem(stack, "0");
         if (!key.isEmpty()) {
-            tooltip.add(new TranslationTextComponent(key)./*applyTextStyle*/func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent(key).mergeStyle(TextFormatting.GRAY));
         }
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(UP, field_235613_c_, field_235612_b_, field_235615_e_, field_235614_d_, BlockStateProperties.WATERLOGGED, DOWN);
+        builder.add(UP, WALL_HEIGHT_EAST, WALL_HEIGHT_NORTH, WALL_HEIGHT_SOUTH, WALL_HEIGHT_WEST, BlockStateProperties.WATERLOGGED, DOWN);
     }
 
     @Override
