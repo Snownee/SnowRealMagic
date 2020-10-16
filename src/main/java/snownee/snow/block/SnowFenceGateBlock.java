@@ -14,6 +14,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -33,6 +34,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.fml.ModList;
 import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
@@ -75,6 +77,9 @@ public class SnowFenceGateBlock extends FenceGateBlock implements ISnowVariant {
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(HORIZONTAL_FACING, OPEN, POWERED, IN_WALL, DOWN);
+        if (ModList.get().isLoaded("morewaterlogging")) {
+            builder.add(BlockStateProperties.WATERLOGGED);
+        }
     }
 
     @Override
