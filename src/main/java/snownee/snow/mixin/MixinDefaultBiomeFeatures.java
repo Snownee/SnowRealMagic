@@ -8,14 +8,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.gen.GenerationStage;
-import snownee.snow.MainModule;
+import snownee.snow.world.gen.feature.WorldModule;
 
 @Mixin(DefaultBiomeFeatures.class)
 public class MixinDefaultBiomeFeatures {
 
     @Inject(method = "func_243730_an", at = @At("HEAD"), cancellable = true)
     private static void srm_addFreezeTopLayer(BiomeGenerationSettings.Builder builder, CallbackInfo info) {
-        builder.func_242513_a(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, MainModule.CONFIGURED_FEATURE);
+        builder.func_242513_a(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, WorldModule.CONFIGURED_FEATURE);
         info.cancel();
     }
 
