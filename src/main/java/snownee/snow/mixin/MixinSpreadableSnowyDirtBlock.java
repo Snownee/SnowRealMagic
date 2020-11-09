@@ -21,11 +21,7 @@ import snownee.snow.Hook;
 import snownee.snow.MainModule;
 
 @Mixin(SpreadableSnowyDirtBlock.class)
-public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
-
-    protected MixinSpreadableSnowyDirtBlock(Properties builder) {
-        super(builder);
-    }
+public abstract class MixinSpreadableSnowyDirtBlock {
 
     @Inject(at = @At("HEAD"), method = "func_220257_b", cancellable = true)
     private static void srm_canSurvive(BlockState state, IWorldReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
@@ -54,6 +50,9 @@ public abstract class MixinSpreadableSnowyDirtBlock extends SnowyDirtBlock {
         }
         ci.cancel();
     }
+
+    @Shadow
+    public abstract BlockState getDefaultState();
 
     @Shadow
     public static boolean isSnowyAndNotUnderwater(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
