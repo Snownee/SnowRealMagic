@@ -35,7 +35,7 @@ public abstract class MixinSpreadableSnowyDirtBlock {
                 world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
             } else {
                 if (world.getLight(blockPos.up()) >= 9) {
-                    BlockState blockState2 = this.getDefaultState();
+                    BlockState blockState2 = ((Block) (Object) this).getDefaultState();
 
                     for (int i = 0; i < 4; ++i) {
                         BlockPos blockPos2 = blockPos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
@@ -50,9 +50,6 @@ public abstract class MixinSpreadableSnowyDirtBlock {
         }
         ci.cancel();
     }
-
-    @Shadow
-    public abstract BlockState getDefaultState();
 
     @Shadow
     public static boolean isSnowyAndNotUnderwater(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
