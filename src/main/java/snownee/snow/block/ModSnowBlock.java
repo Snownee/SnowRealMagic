@@ -105,6 +105,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, boolean ignoreSelf) {
         BlockState blockstate = worldIn.getBlockState(pos.down());
         Block block = blockstate.getBlock();
+        if (block.isIn(BlockTags.LEAVES)) {
+            return true;
+        }
         if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8) {
             return true;
         } else if ((SnowCommonConfig.snowOnIce && (block == Blocks.ICE || block == Blocks.PACKED_ICE)) || !block.isIn(MainModule.INVALID_SUPPORTERS)) {

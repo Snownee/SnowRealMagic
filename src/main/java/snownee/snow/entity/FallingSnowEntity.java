@@ -9,7 +9,6 @@ import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.WallBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MoverType;
@@ -23,6 +22,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.Half;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -90,7 +90,6 @@ public class FallingSnowEntity extends Entity {
         if (!this.world.isRemote) {
             if (!this.onGround) {
                 if (this.fallTime > 100 && !this.world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || this.fallTime > 600) {
-
                     this.remove();
                 } else if (!pos.equals(prevPos)) {
                     prevPos = pos;
@@ -101,7 +100,7 @@ public class FallingSnowEntity extends Entity {
                         remove();
                         return;
                     }
-                    if (state.getMaterial() == Material.LAVA) {
+                    if (state.getFluidState().isTagged(FluidTags.LAVA)) {
                         if (world.isRemote) {
                             Random random = world.rand;
                             for (int i = 0; i < 10; ++i) {
@@ -115,7 +114,7 @@ public class FallingSnowEntity extends Entity {
                         remove();
                         return;
                     }
-                    if (state.getMaterial().isLiquid()) {
+                    if (!state.getFluidState().isEmpty()) {
                         remove();
                         return;
                     }

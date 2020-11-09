@@ -109,7 +109,7 @@ public class MainModule extends AbstractModule {
     public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
     public MainModule() {
-        if (!SnowRealMagic.mixin) {
+        if (!MixinConstants.mixin) {
             throw new IllegalAccessError("Requires MixinBootstrap.");
         }
     }
