@@ -1,1 +1,1 @@
-MixinConnector: snownee.snow.mixin.Connector
+MixinConfigs: snowrealmagic.mixins.json

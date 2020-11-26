@@ -108,12 +108,6 @@ public class MainModule extends AbstractModule {
     @Name("snow")
     public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
-    public MainModule() {
-        if (!MixinConstants.mixin) {
-            throw new IllegalAccessError("Requires MixinBootstrap.");
-        }
-    }
-
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void clientInit(FMLClientSetupEvent event) {

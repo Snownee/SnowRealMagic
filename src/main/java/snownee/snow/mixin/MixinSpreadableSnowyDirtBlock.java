@@ -23,13 +23,13 @@ import snownee.snow.MainModule;
 @Mixin(SpreadableSnowyDirtBlock.class)
 public abstract class MixinSpreadableSnowyDirtBlock {
 
-    @Inject(at = @At("HEAD"), method = "func_220257_b", cancellable = true)
-    private static void srm_canSurvive(BlockState state, IWorldReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(at = @At("HEAD"), method = "isSnowyConditions", cancellable = true)
+    private static void srm_isSnowyConditions(BlockState state, IWorldReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(Hook.canSurvive(state, viewableWorld, blockPos));
     }
 
-    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-    public void srm_tickProxy(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
+    public void srm_randomTickProxy(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random, CallbackInfo ci) {
         if (!world.isRemote) {
             if (!Hook.canSurvive(blockState, world, blockPos)) {
                 world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
