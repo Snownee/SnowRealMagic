@@ -23,6 +23,7 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.WallBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DirectionalPlaceContext;
@@ -415,5 +416,32 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             ((TextureTile) tile).setTexture("0", state);
         }
         return true;
+    }
+
+    @Override
+    public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
+        if (SnowCommonConfig.snowReduceFallDamage) {
+            BlockState state = worldIn.getBlockState(pos.down());
+            if (state.getBlock() == MainModule.BLOCK || state.getBlock() == MainModule.TILE_BLOCK) {
+                entityIn.onLivingFall(fallDistance, 0.2F);
+                return;
+            }
+            state = worldIn.getBlockState(pos);
+            entityIn.onLivingFall(fallDistance, 1 - state.get(LAYERS) * 0.1F);
+        }
+        super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
+    }
+
+    @Override
+    public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
+        if (SnowCommonConfig.thinnerBoundingBox) {
+            double d0 = Math.abs(entityIn.getMotion().y);
+            if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {
+                int layers = worldIn.getBlockState(pos).get(LAYERS) - 1;
+                double d1 = 1 - layers * 0.05f;
+                entityIn.setMotion(entityIn.getMotion().mul(d1, 1.0D, d1));
+            }
+        }
+        super.onEntityWalk(worldIn, pos, entityIn);
     }
 }

@@ -16,6 +16,7 @@ public final class SnowCommonConfig {
     public static boolean snowMakingIce = true;
     public static boolean snowOnIce = false;
     public static boolean snowNeverMelt = false;
+    public static boolean snowReduceFallDamage = true;
     public static boolean replaceWorldFeature = true;
     public static boolean sustainGrassIfLayerMoreThanOne = true;
     @Comment("If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal.")
