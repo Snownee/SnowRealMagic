@@ -18,12 +18,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.LootPoolEntryType;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -39,6 +41,7 @@ import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Subscriber.Bus;
 import snownee.kiwi.Name;
 import snownee.kiwi.NoItem;
+import snownee.kiwi.Skip;
 import snownee.kiwi.client.model.TextureModel;
 import snownee.kiwi.crafting.FullBlockIngredient;
 import snownee.kiwi.item.ModBlockItem;
@@ -58,6 +61,7 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowRenderer;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.item.SnowBlockItem;
+import snownee.snow.loot.NormalLootEntry;
 
 @KiwiModule(modid = SnowRealMagic.MODID)
 @KiwiModule.Subscriber(Bus.MOD)
@@ -107,6 +111,9 @@ public class MainModule extends AbstractModule {
 
     @Name("snow")
     public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
+
+    @Skip
+    public static final LootPoolEntryType NORMAL = Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, SnowRealMagic.MODID + ":normal", new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
     @Override
     @OnlyIn(Dist.CLIENT)

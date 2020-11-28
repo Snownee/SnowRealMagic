@@ -5,26 +5,49 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
-          "functions": [
+          "type": "minecraft:alternatives",
+          "children": [
             {
-              "function": "minecraft:copy_nbt",
-              "source": "block_entity",
-              "ops": [
+              "type": "minecraft:item",
+              "functions": [
                 {
-                  "source": "Textures",
-                  "target": "BlockEntityTag.Textures",
-                  "op": "replace"
-                },
-                {
-                  "source": "Items",
-                  "target": "BlockEntityTag.Items",
-                  "op": "replace"
+                  "function": "minecraft:copy_nbt",
+                  "source": "block_entity",
+                  "ops": [
+                    {
+                      "source": "Textures",
+                      "target": "BlockEntityTag.Textures",
+                      "op": "replace"
+                    },
+                    {
+                      "source": "Items",
+                      "target": "BlockEntityTag.Items",
+                      "op": "replace"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "name": "snowrealmagic:fence"
+            },
+            {
+              "type": "snowrealmagic:normal"
             }
-          ],
-          "name": "snowrealmagic:fence"
+          ]
         }
       ]
     }
