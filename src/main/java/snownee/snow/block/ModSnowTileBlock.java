@@ -168,4 +168,20 @@ public class ModSnowTileBlock extends ModSnowBlock {
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
+    @Override
+    public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
+        if (worldIn.isRemote) {
+            return;
+        }
+        try {
+            BlockState contained = getContainedState(worldIn, pos);
+            if (contained.getBlockHardness(worldIn, pos) == 0) {
+                worldIn.playEvent(2001, pos, Block.getStateId(contained));
+                Block.spawnDrops(contained, worldIn, pos, null, player, ItemStack.EMPTY);
+                int layers = state.get(LAYERS);
+                worldIn.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, layers));
+            }
+        } catch (Exception e) {}
+    }
+
 }
