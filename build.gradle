@@ -99,11 +99,12 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
 
     compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
 
-	compile files("Kiwi-${minecraft_version}-${kiwi_version}-deobf.jar")
+	compile files("Kiwi-1.16.3-${kiwi_version}-deobf.jar")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
