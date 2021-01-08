@@ -121,7 +121,7 @@ public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         if (SnowCommonConfig.retainOriginalBlocks) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-        } else if (!SnowCommonConfig.snowNeverMelt && worldIn.getLightFor(LightType.BLOCK, pos) > 11) {
+        } else if (BlockUtil.shouldMelt(worldIn, pos)) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }
