@@ -361,6 +361,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return false;
         }
         Block block = state.getBlock();
+        if (block.isIn(MainModule.NOT_CONTAINABLES)) {
+            return false;
+        }
         if (block.isIn(MainModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
             return true;
         }
