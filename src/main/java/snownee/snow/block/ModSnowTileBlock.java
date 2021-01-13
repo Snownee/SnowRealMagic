@@ -78,7 +78,7 @@ public class ModSnowTileBlock extends ModSnowBlock {
         if (!super.isReplaceable(state, useContext)) {
             return false;
         }
-        return getContainedState(useContext.getWorld(), useContext.getPos()).getMaterial().isReplaceable();
+        return getContainedState(useContext.getWorld(), useContext.getPos()).isReplaceable(useContext);
     }
 
     @Override
