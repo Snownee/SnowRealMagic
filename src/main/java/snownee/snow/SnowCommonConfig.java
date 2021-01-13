@@ -11,7 +11,6 @@ public final class SnowCommonConfig {
     public static boolean snowAlwaysReplaceable = true;
     public static boolean snowAccumulationDuringSnowstorm = true;
     public static boolean snowAccumulationDuringSnowfall = false;
-    public static boolean snowAccumulationOnSpecialBlocks = true;
     public static boolean thinnerBoundingBox = true;
     public static boolean snowMakingIce = true;
     public static boolean snowOnIce = false;

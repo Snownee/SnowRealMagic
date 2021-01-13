@@ -24,7 +24,7 @@ public class WorldTickHandler {
         try {
             METHOD = ObfuscationReflectionHelper.findMethod(ChunkManager.class, "func_223491_f");
         } catch (Exception e) {
-            e.printStackTrace();
+            SnowRealMagic.LOGGER.catching(e);
         }
     }
 
@@ -43,6 +43,8 @@ public class WorldTickHandler {
         try {
             holders = (Iterable<ChunkHolder>) METHOD.invoke(world.getChunkProvider().chunkManager);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            SnowRealMagic.LOGGER.catching(e);
+            METHOD = null;
             return;
         }
         holders.forEach(holder -> {
@@ -53,11 +55,11 @@ public class WorldTickHandler {
             if (world.rand.nextInt(16) == 0) {
                 int x = chunk.getPos().getXStart();
                 int y = chunk.getPos().getZStart();
-                BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).down();
+                BlockPos pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, world.getBlockRandomPos(x, 0, y, 15)).down();
                 Biome biome = world.getBiome(pos);
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {
-                    if (biome.getTemperature(pos) >= 0.15f) {
+                    if (!ModUtil.isColdAt(world, biome, pos)) {
                         return;
                     }
                     BlockState state = world.getBlockState(pos);

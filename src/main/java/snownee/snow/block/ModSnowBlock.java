@@ -57,6 +57,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.kiwi.tile.TextureTile;
+import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
 import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
@@ -75,7 +76,11 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             return super.getCollisionShape(state, worldIn, pos, context);
         }
         int layers = state.get(LAYERS);
-        if (layers == 8 && !worldIn.getBlockState(pos.up()).isAir(worldIn, pos)) {
+        if (layers == 8) {
+            return VoxelShapes.fullCube();
+        }
+        BlockState upState = worldIn.getBlockState(pos.up());
+        if (!upState.getBlock().isAir(upState, worldIn, pos)) {
             return VoxelShapes.fullCube();
         }
         return SNOW_SHAPES_MAGIC[layers - 1];
@@ -128,7 +133,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
     @Override
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (BlockUtil.shouldMelt(worldIn, pos)) {
+        if (ModUtil.shouldMelt(worldIn, pos)) {
             if (state.getBlock() == MainModule.TILE_BLOCK) {
                 state.removedByPlayer(worldIn, pos, null, false, null);
             } else {
@@ -150,7 +155,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
         Biome biome = worldIn.getBiome(pos);
         boolean flag = false;
-        if (worldIn.isRaining() && biome.getTemperature(pos) < 0.15f) {
+        if (worldIn.isRaining() && ModUtil.isColdAt(worldIn, biome, pos)) {
             if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
                 flag = true;
             } else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
@@ -370,7 +375,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         if (!SnowCommonConfig.placeSnowInBlock || state.hasTileEntity()) {
             return false;
         }
-        if (state.isAir(world, pos)) {
+        if (state.getBlock().isAir(state, world, pos)) {
             if (state.getBlock() != MainModule.BLOCK) {
                 world.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, layers), flags);
             }

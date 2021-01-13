@@ -29,7 +29,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,6 +37,7 @@ import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
+import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
 
@@ -121,7 +121,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         if (SnowCommonConfig.retainOriginalBlocks) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-        } else if (BlockUtil.shouldMelt(worldIn, pos)) {
+        } else if (ModUtil.shouldMelt(worldIn, pos)) {
             worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
         }
     }

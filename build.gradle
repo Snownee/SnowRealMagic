@@ -91,6 +91,9 @@ repositories {
     maven {
         url = 'https://dist.creeper.host/Sponge/maven'
     }
+    maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
@@ -105,6 +108,8 @@ dependencies {
     compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
 
 	compile files("Kiwi-1.16.3-${kiwi_version}-deobf.jar")
+
+    //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
