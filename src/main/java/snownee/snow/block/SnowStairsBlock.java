@@ -5,8 +5,10 @@ import java.util.Random;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
@@ -21,6 +23,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,10 +32,9 @@ import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
-import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
+import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.SnowRealMagic;
 
 @RenderLayer(Layer.CUTOUT)
 public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant {
@@ -96,5 +98,15 @@ public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVa
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
+    }
+
+    @Override
+    public SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
+        return getRaw(state, world, pos).getSoundType(world, pos, entity);
+    }
+
+    @Override
+    public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+        return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
     }
 }

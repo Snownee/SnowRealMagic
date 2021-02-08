@@ -61,6 +61,9 @@ public class SnowTile extends BaseTile {
     @Override
     protected void readPacketData(CompoundNBT data) {
         state = NBTHelper.of(data).getBlockState("State");
+        if (state == null) {
+            state = Blocks.AIR.getDefaultState();
+        }
         Block block = state.getBlock();
         isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
     }

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelRenderer;
@@ -33,17 +34,21 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
     protected static final Random RAND = new Random();
     protected static BlockRendererDispatcher blockRenderer;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void render(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
         if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
             return;
         }
+        BlockState state = te.getState();
+        if (state.isAir()) {
+            return;
+        }
+        BlockPos pos = te.getPos();
         BlockModelRenderer.enableCache();
         matrixstack.push();
         if (blockRenderer == null)
             blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-        BlockPos pos = te.getPos();
-        BlockState state = te.getState();
         IBakedModel model = blockRenderer.getModelForState(state);
         IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         if (world == null) {
