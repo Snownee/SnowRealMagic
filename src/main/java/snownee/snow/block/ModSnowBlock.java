@@ -167,7 +167,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
         if (flag && layers < 8) {
             accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(LightType.BLOCK, p) < 10, true);
-        } else if (!SnowCommonConfig.snowNeverMelt && layers > 1 && !worldIn.isRaining()) {
+        } else if (!SnowCommonConfig.snowNeverMelt && SnowCommonConfig.snowNaturalMelt && layers > 1 && !worldIn.isRaining()) {
             accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
         }
     }
