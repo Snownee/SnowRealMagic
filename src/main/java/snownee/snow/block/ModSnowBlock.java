@@ -23,6 +23,7 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.WallBlock;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
@@ -282,6 +283,10 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
         if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(32) > 0) {
+            return;
+        }
+        Entity entity = Minecraft.getInstance().getRenderViewEntity();
+        if (entity != null && entity.getPosition().distanceSq(pos) > 256) {
             return;
         }
         BlockState stateDown = worldIn.getBlockState(pos.down());
