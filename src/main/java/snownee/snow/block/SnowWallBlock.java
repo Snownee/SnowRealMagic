@@ -44,6 +44,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.WrappedSoundType;
 
 @RenderLayer(Layer.CUTOUT)
 public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVariant {
@@ -134,7 +135,7 @@ public class SnowWallBlock extends WallBlock implements IWaterLoggableSnowVarian
 
     @Override
     public SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
-        return getRaw(state, world, pos).getSoundType(world, pos, entity);
+        return WrappedSoundType.get(getRaw(state, world, pos).getSoundType(world, pos, entity));
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.SixWayBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,6 +41,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.WrappedSoundType;
 
 @RenderLayer(Layer.CUTOUT)
 public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant {
@@ -133,5 +135,10 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
             shape = VoxelShapes.combine(shape, ModSnowBlock.SNOW_SHAPES_MAGIC[2], IBooleanFunction.OR);
         }
         return shape;
+    }
+
+    @Override
+    public SoundType getSoundType(BlockState state) {
+        return WrappedSoundType.get(super.getSoundType(state));
     }
 }
