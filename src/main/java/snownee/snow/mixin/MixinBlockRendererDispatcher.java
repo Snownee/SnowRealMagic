@@ -39,7 +39,7 @@ public abstract class MixinBlockRendererDispatcher {
     @Inject(
             method = "renderModel(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockDisplayReader;Lcom/mojang/blaze3d/matrix/MatrixStack;Lcom/mojang/blaze3d/vertex/IVertexBuilder;ZLjava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z", at = @At(
                 "RETURN"
-            )
+            ), remap = false
     )
     private void srm_renderModel(BlockState blockStateIn, BlockPos posIn, IBlockDisplayReader lightReaderIn, MatrixStack matrixStackIn, IVertexBuilder vertexBuilderIn, boolean checkSides, Random rand, IModelData modelData, CallbackInfoReturnable<Boolean> info) {
         if (blockStateIn.getBlock() == MainModule.TILE_BLOCK && blockStateIn.get(BlockStateProperties.LAYERS_1_8) < 8) {
