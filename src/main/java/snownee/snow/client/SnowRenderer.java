@@ -6,7 +6,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelRenderer;
@@ -25,6 +24,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import snownee.snow.block.SnowTile;
 
+@Deprecated
 @OnlyIn(Dist.CLIENT)
 public class SnowRenderer extends TileEntityRenderer<SnowTile> {
     public SnowRenderer(TileEntityRendererDispatcher dispatcher) {

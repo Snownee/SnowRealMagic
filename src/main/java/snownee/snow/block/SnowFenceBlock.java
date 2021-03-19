@@ -38,8 +38,8 @@ import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
-import snownee.snow.ModUtil;
 import snownee.snow.MainModule;
+import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.WrappedSoundType;
 
@@ -140,5 +140,14 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
     @Override
     public SoundType getSoundType(BlockState state) {
         return WrappedSoundType.get(super.getSoundType(state));
+    }
+
+    @Override
+    public String getTranslationKey() {
+        if (this == MainModule.FENCE) {
+            return super.getTranslationKey();
+        } else {
+            return MainModule.FENCE.getTranslationKey();
+        }
     }
 }

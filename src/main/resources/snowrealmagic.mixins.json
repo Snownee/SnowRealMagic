@@ -8,6 +8,9 @@
     "MixinSnowyDirtBlock",
     "MixinDefaultBiomeFeatures"
   ],
+  "client": [
+    "MixinBlockRendererDispatcher"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

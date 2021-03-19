@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -16,6 +17,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import snownee.snow.block.ModSnowBlock;
+import snownee.snow.entity.FallingSnowEntity;
 
 public class WorldTickHandler {
     private static Method METHOD;
@@ -33,7 +35,8 @@ public class WorldTickHandler {
             return;
         }
         ServerWorld world = (ServerWorld) event.world;
-        if (!world.isRaining()) {
+        int blizzard = world.getGameRules().getInt(MainModule.BLIZZARD_STRENGTH);
+        if (blizzard == 0 && !world.isRaining()) {
             return;
         }
         if (world.getChunkProvider().getChunkGenerator() instanceof DebugChunkGenerator) {
@@ -57,8 +60,14 @@ public class WorldTickHandler {
                 int y = chunk.getPos().getZStart();
                 BlockPos pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, world.getBlockRandomPos(x, 0, y, 15)).down();
                 Biome biome = world.getBiome(pos);
+
                 if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
                 {
+                    if (blizzard > 0) {
+                        doBlizzard(world, pos, blizzard);
+                        return;
+                    }
+
                     if (!ModUtil.isColdAt(world, biome, pos)) {
                         return;
                     }
@@ -73,5 +82,15 @@ public class WorldTickHandler {
                 }
             }
         });
+    }
+
+    private static void doBlizzard(ServerWorld world, BlockPos pos, int blizzard) {
+        if (pos.getY() == world.getHeight()) {
+            return;
+        }
+        blizzard = MathHelper.clamp(blizzard, 1, 8);
+        pos = pos.up(64);
+        FallingSnowEntity entity = new FallingSnowEntity(world, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, blizzard);
+        world.addEntity(entity);
     }
 }

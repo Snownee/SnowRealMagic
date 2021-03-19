@@ -26,12 +26,12 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,6 +41,8 @@ import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Subscriber.Bus;
 import snownee.kiwi.Name;
 import snownee.kiwi.NoItem;
+import snownee.kiwi.RenderLayer;
+import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.Skip;
 import snownee.kiwi.client.model.TextureModel;
 import snownee.kiwi.crafting.FullBlockIngredient;
@@ -58,7 +60,6 @@ import snownee.snow.block.SnowTextureTile;
 import snownee.snow.block.SnowTile;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.client.FallingSnowRenderer;
-import snownee.snow.client.SnowRenderer;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.item.SnowBlockItem;
 import snownee.snow.loot.NormalLootEntry;
@@ -89,6 +90,7 @@ public class MainModule extends AbstractModule {
 
     @NoItem
     @Name("snow")
+    @RenderLayer(Layer.CUTOUT)
     public static final ModSnowTileBlock TILE_BLOCK = new ModSnowTileBlock(blockProp(BLOCK));
 
     @Name("minecraft:snow")
@@ -117,29 +119,13 @@ public class MainModule extends AbstractModule {
     @Skip
     public static final LootPoolEntryType NORMAL = Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, SnowRealMagic.MODID + ":normal", new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
+    public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.func_234903_a_("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
+
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void clientInit(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(ENTITY, FallingSnowRenderer::new);
-
-        ClientRegistry.bindTileEntityRenderer(TILE, dispatcher -> new SnowRenderer(dispatcher));
     }
-
-    //    @Override
-    //    protected void postInit() {
-    //        for (Biome biome : WorldGenRegistries.field_243657_i) {
-    //            if (biome.getFeatures(GenerationStage.Decoration.TOP_LAYER_MODIFICATION).removeIf(MainModule::isVanillaFeature)) {
-    //                biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
-    //            }
-    //        }
-    //    }
-    //
-    //    private static boolean isVanillaFeature(ConfiguredFeature<?, ?> cf) {
-    //        if (cf.feature == Feature.DECORATED && cf.config instanceof DecoratedFeatureConfig) {
-    //            return ((DecoratedFeatureConfig) cf.config).feature.feature == Feature.FREEZE_TOP_LAYER;
-    //        }
-    //        return false;
-    //    }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent

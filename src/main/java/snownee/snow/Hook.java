@@ -9,7 +9,8 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.lighting.LightEngine;
 
 public final class Hook {
-    private Hook() {}
+    private Hook() {
+    }
 
     public static boolean canSurvive(BlockState blockState, IWorldReader viewableWorld, BlockPos blockPos) {
         BlockPos blockPos2 = blockPos.up();

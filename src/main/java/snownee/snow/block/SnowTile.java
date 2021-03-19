@@ -29,21 +29,37 @@ public class SnowTile extends BaseTile {
     }
 
     public void setState(BlockState state) {
-        if (this.state.equals(state)) {
+        setState(state, true);
+    }
+
+    public void setState(BlockState state, boolean update) {
+        if (state == null) {
+            state = Blocks.AIR.getDefaultState();
+        }
+        if (this.state == state) {
             return;
         }
         this.state = state;
         Block block = state.getBlock();
         this.isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
-        if (world != null && !world.isRemote) {
-            refresh();
+        if (update && world != null) {
+            if (world.isRemote) {
+                world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);
+            } else {
+                refresh();
+            }
         }
+    }
+
+    @Override
+    protected void refresh() {
+        super.refresh();
     }
 
     @Override
     public void read(BlockState state, CompoundNBT compound) {
         super.read(state, compound);
-        readPacketData(compound);
+        setState(NBTHelper.of(compound).getBlockState("State"), false);
     }
 
     @Override
@@ -60,12 +76,7 @@ public class SnowTile extends BaseTile {
 
     @Override
     protected void readPacketData(CompoundNBT data) {
-        state = NBTHelper.of(data).getBlockState("State");
-        if (state == null) {
-            state = Blocks.AIR.getDefaultState();
-        }
-        Block block = state.getBlock();
-        isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
+        setState(NBTHelper.of(data).getBlockState("State"));
     }
 
     @Override
