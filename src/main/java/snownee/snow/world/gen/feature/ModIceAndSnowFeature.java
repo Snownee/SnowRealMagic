@@ -63,7 +63,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
         return true;
     }
 
-    public boolean placeAdditional(Biome biome, IWorld worldIn, BlockPos.Mutable pos) {
+    public static boolean placeAdditional(Biome biome, IWorld worldIn, BlockPos.Mutable pos) {
         if (SnowCommonConfig.retainOriginalBlocks || !SnowCommonConfig.replaceWorldFeature) {
             return false;
         }

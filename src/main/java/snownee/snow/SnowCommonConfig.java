@@ -11,7 +11,9 @@ public final class SnowCommonConfig {
     public static boolean placeSnowInBlock = true;
     public static boolean snowGravity = true;
     public static boolean snowAlwaysReplaceable = true;
+    @Comment("Unavailable if TerraForged mod installed")
     public static boolean snowAccumulationDuringSnowstorm = true;
+    @Comment("Unavailable if TerraForged mod installed")
     public static boolean snowAccumulationDuringSnowfall = false;
     @Range(min = 1, max = 9)
     @Comment("9 = Unlimited")

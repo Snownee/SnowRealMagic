@@ -91,6 +91,9 @@ repositories {
     maven {
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
+    maven { 
+        url "https://io.terraforged.com/repository/maven/" 
+    }
     maven {
         url = "https://www.cursemaven.com"
     }
@@ -109,6 +112,7 @@ dependencies {
 
 	compile files("Kiwi-1.16.3-${kiwi_version}-deobf.jar")
 
+    implementation fg.deobf("com.terraforged:TerraForged:1.16.4-0.2.9")
     //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
 }
 

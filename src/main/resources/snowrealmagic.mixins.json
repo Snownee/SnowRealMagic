@@ -6,7 +6,9 @@
   "mixins": [
     "MixinSpreadableSnowyDirtBlock",
     "MixinSnowyDirtBlock",
-    "MixinDefaultBiomeFeatures"
+    "MixinDefaultBiomeFeatures",
+    "MixinLayerDecorator",
+    "MixinFreezeLayer"
   ],
   "client": [
     "MixinBlockRendererDispatcher"
