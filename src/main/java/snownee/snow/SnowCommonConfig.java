@@ -18,6 +18,7 @@ public final class SnowCommonConfig {
     @Range(min = 1, max = 9)
     @Comment("9 = Unlimited")
     public static int snowAccumulationMaxLayers = 8;
+    @Comment("Unavailable if TerraForged mod installed")
     public static boolean thinnerBoundingBox = true;
     public static boolean snowMakingIce = true;
     public static boolean snowOnIce = false;
@@ -32,5 +33,6 @@ public final class SnowCommonConfig {
         "If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal via random tick."
     )
     public static boolean retainOriginalBlocks = false;
+    public static boolean advancedBlockInteraction = true;
 
 }

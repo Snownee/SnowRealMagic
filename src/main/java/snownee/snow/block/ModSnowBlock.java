@@ -40,7 +40,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -58,13 +57,11 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.kiwi.Kiwi;
 import snownee.kiwi.tile.TextureTile;
 import snownee.snow.MainModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.SnowRealMagic;
 import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant {
@@ -76,7 +73,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        if (!SnowCommonConfig.thinnerBoundingBox) {
+        if (ModUtil.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
             return super.getCollisionShape(state, worldIn, pos, context);
         }
         int layers = state.get(LAYERS);
@@ -136,8 +133,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         this.checkFallable(worldIn, pos, state);
     }
 
-    private static final ResourceLocation terraforged = new ResourceLocation(SnowRealMagic.MODID, "terraforged");
-
     @Override
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         if (ModUtil.shouldMelt(worldIn, pos)) {
@@ -149,7 +144,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             }
             return;
         }
-        if (Kiwi.isLoaded(terraforged)) {
+        if (ModUtil.terraforged) {
             return;
         }
         if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {

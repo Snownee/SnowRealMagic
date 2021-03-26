@@ -48,7 +48,15 @@ public abstract class MixinBlockRendererDispatcher {
                 BlockState state = ((SnowTile) tileEntity).getState();
                 try {
                     if (state.getRenderType() == BlockRenderType.MODEL) {
-                        matrixStackIn.push();
+                        if (state.getBlock().getRegistryName().getNamespace().equals("projectvibrantjourneys")) {
+                            if (blockStateIn.get(BlockStateProperties.LAYERS_1_8) > 3)
+                                return;
+                            matrixStackIn.push();
+                            matrixStackIn.translate(0.001, 0.101, 0.001);
+                            matrixStackIn.scale(0.998f, 1, 0.998f);
+                        } else {
+                            matrixStackIn.push();
+                        }
                         this.blockModelRenderer.renderModel(lightReaderIn, this.getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
                         matrixStackIn.pop();
                     }

@@ -164,7 +164,7 @@ public class ModSnowTileBlock extends ModSnowBlock {
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        getContainedState(worldIn, pos).onBlockActivated(worldIn, player, handIn, hit);
+        getContainedState(worldIn, pos).onBlockActivated(wrapWorld(worldIn), player, handIn, hit);
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
@@ -181,7 +181,16 @@ public class ModSnowTileBlock extends ModSnowBlock {
                 int layers = state.get(LAYERS);
                 worldIn.setBlockState(pos, MainModule.BLOCK.getDefaultState().with(LAYERS, layers));
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
+    }
+
+    public static World wrapWorld(World world) {
+        if (SnowCommonConfig.advancedBlockInteraction) {
+            return new WrappedWorld(world);
+        } else {
+            return world;
+        }
     }
 
 }

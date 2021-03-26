@@ -15,6 +15,7 @@ public class ModUtil {
 
     private static Method getBiomeTemperature;
     private static Method enablesSeasonalEffects;
+    public static boolean terraforged = false;
 
     static {
         if (ModList.get().isLoaded("sereneseasons")) {
