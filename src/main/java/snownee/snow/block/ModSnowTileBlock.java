@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SweetBerryBushBlock;
+import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.WitherRoseBlock;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.Entity;
@@ -156,10 +157,19 @@ public class ModSnowTileBlock extends ModSnowBlock {
             worldIn.setBlockState(pos, stateIn);
             return;
         }
-        if ((stateIn.getBlock() instanceof SweetBerryBushBlock && stateIn.get(SweetBerryBushBlock.AGE) < 3)) {
-            stateIn.randomTick(worldIn, pos, random);
-        }
         super.randomTick(state, worldIn, pos, random);
+        if (stateIn.getBlock() instanceof TallGrassBlock) {
+            return;
+        }
+        BlockState stateNow = worldIn.getBlockState(pos);
+        if (stateNow.getBlock() != state.getBlock()) {
+            return;
+        }
+        stateIn.randomTick(worldIn, pos, random);
+        BlockState stateNow2 = worldIn.getBlockState(pos);
+        if (stateNow2.getBlock() != state.getBlock()) {
+            convert(worldIn, pos, stateNow2, stateNow.get(LAYERS), 3);
+        }
     }
 
     @Override

@@ -31,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -86,7 +87,7 @@ public class MainModule extends AbstractModule {
 
     @NoItem
     @Name("minecraft:snow")
-    public static final ModSnowBlock BLOCK = new ModSnowBlock(blockProp(Blocks.SNOW));
+    public static final ModSnowBlock BLOCK = new ModSnowBlock(blockProp(Blocks.SNOW).harvestTool(ToolType.SHOVEL));
 
     @NoItem
     @Name("snow")
@@ -98,7 +99,7 @@ public class MainModule extends AbstractModule {
 
     public static final SnowFenceBlock FENCE = new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).tickRandomly());
 
-    public static final SnowFenceBlock FENCE2 = new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).tickRandomly());
+    public static final SnowFenceBlock FENCE2 = new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).tickRandomly().harvestTool(ToolType.PICKAXE));
 
     public static final SnowStairsBlock STAIRS = new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).tickRandomly());
 
