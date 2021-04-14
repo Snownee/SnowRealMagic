@@ -1,28 +1,6 @@
 package snownee.snow.block;
 
-import java.util.Random;
-import java.util.function.BiPredicate;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.FlowerBlock;
-import net.minecraft.block.FourWayBlock;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.MushroomBlock;
-import net.minecraft.block.SaplingBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.SnowBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.SweetBerryBushBlock;
-import net.minecraft.block.TallGrassBlock;
-import net.minecraft.block.WallBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.Property;
 import net.minecraft.state.properties.Half;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tags.BlockTags;
@@ -47,11 +25,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
@@ -63,6 +37,11 @@ import snownee.snow.ModUtil;
 import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.entity.FallingSnowEntity;
+
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.BiPredicate;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant {
     public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
@@ -408,20 +387,26 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
         BlockPos posDown = pos.down();
         BlockState stateDown = world.getBlockState(posDown);
         if (block instanceof StairsBlock && state.getBlock() != MainModule.STAIRS) {
-            world.setBlockState(pos, MainModule.STAIRS.getDefaultState().with(StairsBlock.FACING, state.get(StairsBlock.FACING)).with(StairsBlock.HALF, state.get(StairsBlock.HALF)).with(StairsBlock.SHAPE, state.get(StairsBlock.SHAPE)), flags);
+            BlockState newState = MainModule.STAIRS.getDefaultState();
+            newState = copyProperties(state, newState);
+            world.setBlockState(pos, newState, flags);
         } else if (block instanceof SlabBlock && state.getBlock() != MainModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
+            // can't copy properties as this doesn't extend vanilla slabs
             world.setBlockState(pos, MainModule.SLAB.getDefaultState(), flags);
         } else if (block instanceof FenceBlock && state.getBlock().getClass() != SnowFenceBlock.class) {
             Block newBlock = block.isIn(BlockTags.WOODEN_FENCES) ? MainModule.FENCE : MainModule.FENCE2;
-            BlockState newState = newBlock.getDefaultState().with(FourWayBlock.NORTH, state.get(FourWayBlock.NORTH)).with(FourWayBlock.SOUTH, state.get(FourWayBlock.SOUTH)).with(FourWayBlock.WEST, state.get(FourWayBlock.WEST)).with(FourWayBlock.EAST, state.get(FourWayBlock.EAST));
+            BlockState newState = newBlock.getDefaultState();
+            newState = copyProperties(state, newState);
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
         } else if (block instanceof FenceGateBlock && state.getBlock() != MainModule.FENCE_GATE) {
-            BlockState newState = MainModule.FENCE_GATE.getDefaultState().with(FenceGateBlock.OPEN, state.get(FenceGateBlock.OPEN)).with(FenceGateBlock.IN_WALL, state.get(FenceGateBlock.IN_WALL)).with(HorizontalBlock.HORIZONTAL_FACING, state.get(HorizontalBlock.HORIZONTAL_FACING));
+            BlockState newState = MainModule.FENCE_GATE.getDefaultState();
+            newState = copyProperties(state, newState);
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
         } else if (block instanceof WallBlock && state.getBlock() != MainModule.WALL) {
-            BlockState newState = MainModule.WALL.getDefaultState().with(BlockStateProperties.WALL_HEIGHT_EAST, state.get(BlockStateProperties.WALL_HEIGHT_EAST)).with(BlockStateProperties.WALL_HEIGHT_NORTH, state.get(BlockStateProperties.WALL_HEIGHT_NORTH)).with(BlockStateProperties.WALL_HEIGHT_SOUTH, state.get(BlockStateProperties.WALL_HEIGHT_SOUTH)).with(BlockStateProperties.WALL_HEIGHT_WEST, state.get(BlockStateProperties.WALL_HEIGHT_WEST)).with(WallBlock.UP, state.get(WallBlock.UP));
+            BlockState newState = MainModule.WALL.getDefaultState();
+            newState = copyProperties(state, newState);
             newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
             world.setBlockState(pos, newState, flags);
         } else {
@@ -433,6 +418,15 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
             ((TextureTile) tile).setTexture("0", state);
         }
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
+        for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
+            Property<T> property = (Property<T>) entry.getKey();
+            newState = newState.with(property, property.getValueClass().cast(entry.getValue()));
+        }
+        return newState;
     }
 
     @Override
