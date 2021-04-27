@@ -28,6 +28,12 @@
     {"id":"foragecraft:rock","required":false},
     {"id":"foragecraft:flat_rock","required":false},
     {"id":"foragecraft:blackstone_rock","required":false},
-    {"id":"foragecraft:blackstone_flat_rock","required":false}
+    {"id":"foragecraft:blackstone_flat_rock","required":false},
+    {"id":"tconstruct:blood_slime_tall_grass","required":false},
+    {"id":"tconstruct:ender_slime_tall_grass","required":false},
+    {"id":"tconstruct:sky_slime_tall_grass","required":false},
+    {"id":"tconstruct:blood_slime_fern","required":false},
+    {"id":"tconstruct:ender_slime_fern","required":false},
+    {"id":"tconstruct:sky_slime_fern","required":false}
   ]
 }
