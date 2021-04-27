@@ -1,6 +1,27 @@
 package snownee.snow.block;
 
-import net.minecraft.block.*;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.BiPredicate;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FlowerBlock;
+import net.minecraft.block.MushroomBlock;
+import net.minecraft.block.SaplingBlock;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.SnowBlock;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.SweetBerryBushBlock;
+import net.minecraft.block.TallGrassBlock;
+import net.minecraft.block.WallBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +46,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.*;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.LightType;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
@@ -37,11 +62,6 @@ import snownee.snow.ModUtil;
 import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.entity.FallingSnowEntity;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.BiPredicate;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
@@ -433,12 +453,15 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState state = worldIn.getBlockState(pos.down());
+			if (!state.isIn(this))
+				return;
 			if (state.getBlock() == CoreModule.BLOCK || state.getBlock() == CoreModule.TILE_BLOCK) {
 				entityIn.onLivingFall(fallDistance, 0.2F);
 				return;
 			}
 			state = worldIn.getBlockState(pos);
 			entityIn.onLivingFall(fallDistance, 1 - state.get(LAYERS) * 0.1F);
+			return;
 		}
 		super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
 	}
@@ -448,11 +471,13 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (SnowCommonConfig.thinnerBoundingBox) {
 			double d0 = Math.abs(entityIn.getMotion().y);
 			if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {
-				int layers = worldIn.getBlockState(pos).get(LAYERS) - 1;
+				BlockState state = worldIn.getBlockState(pos);
+				if (!state.isIn(this))
+					return;
+				int layers = state.get(LAYERS) - 1;
 				double d1 = 1 - layers * 0.05f;
 				entityIn.setMotion(entityIn.getMotion().mul(d1, 1.0D, d1));
 			}
 		}
-		super.onEntityWalk(worldIn, pos, entityIn);
 	}
 }
