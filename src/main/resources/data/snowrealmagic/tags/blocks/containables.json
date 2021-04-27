@@ -23,6 +23,11 @@
     {"id":"projectvibrantjourneys:charred_bones","required":false},
     {"id":"projectvibrantjourneys:bones","required":false},
     {"id":"projectvibrantjourneys:ice_chunks","required":false},
-    {"id":"projectvibrantjourneys:red_sandstone_rocks","required":false}
+    {"id":"projectvibrantjourneys:red_sandstone_rocks","required":false},
+    {"id":"foragecraft:stick","required":false},
+    {"id":"foragecraft:rock","required":false},
+    {"id":"foragecraft:flat_rock","required":false},
+    {"id":"foragecraft:blackstone_rock","required":false},
+    {"id":"foragecraft:blackstone_flat_rock","required":false}
   ]
 }

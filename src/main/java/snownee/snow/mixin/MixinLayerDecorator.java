@@ -13,13 +13,13 @@ import snownee.snow.compat.terraforged.TerraForgedModule;
 @Mixin(LayerDecorator.class)
 public abstract class MixinLayerDecorator {
 
-    @Redirect(
-            at = @At(
-                    value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isIn(Lnet/minecraft/block/Block;)Z"
-            ), method = "fixBaseBlock"
-    )
-    private boolean srm_isIn(BlockState state, Block block) {
-        return TerraForgedModule.isIn(state, block);
-    }
+	@Redirect(
+			at = @At(
+					value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isIn(Lnet/minecraft/block/Block;)Z"
+			), method = "fixBaseBlock"
+	)
+	private boolean srm_isIn(BlockState state, Block block) {
+		return TerraForgedModule.isIn(state, block);
+	}
 
 }

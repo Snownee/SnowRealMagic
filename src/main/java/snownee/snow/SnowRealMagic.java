@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod(SnowRealMagic.MODID)
 public class SnowRealMagic {
-    public static final String MODID = "snowrealmagic";
+	public static final String MODID = "snowrealmagic";
 
-    public static final Logger LOGGER = LogManager.getLogger(SnowRealMagic.MODID);
+	public static final Logger LOGGER = LogManager.getLogger(SnowRealMagic.MODID);
 }

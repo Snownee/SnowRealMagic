@@ -27,55 +27,55 @@ import snownee.snow.block.SnowTile;
 @Deprecated
 @OnlyIn(Dist.CLIENT)
 public class SnowRenderer extends TileEntityRenderer<SnowTile> {
-    public SnowRenderer(TileEntityRendererDispatcher dispatcher) {
-        super(dispatcher);
-    }
+	public SnowRenderer(TileEntityRendererDispatcher dispatcher) {
+		super(dispatcher);
+	}
 
-    protected static final Random RAND = new Random();
-    protected static BlockRendererDispatcher blockRenderer;
+	protected static final Random RAND = new Random();
+	protected static BlockRendererDispatcher blockRenderer;
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void render(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
-        if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
-            return;
-        }
-        BlockState state = te.getState();
-        if (state.isAir()) {
-            return;
-        }
-        BlockPos pos = te.getPos();
-        BlockModelRenderer.enableCache();
-        matrixstack.push();
-        if (blockRenderer == null)
-            blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-        IBakedModel model = blockRenderer.getModelForState(state);
-        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
-        if (world == null) {
-            world = te.getWorld();
-        }
+	@SuppressWarnings("deprecation")
+	@Override
+	public void render(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
+		if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {
+			return;
+		}
+		BlockState state = te.getState();
+		if (state.isAir()) {
+			return;
+		}
+		BlockPos pos = te.getPos();
+		BlockModelRenderer.enableCache();
+		matrixstack.push();
+		if (blockRenderer == null)
+			blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+		IBakedModel model = blockRenderer.getModelForState(state);
+		IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+		if (world == null) {
+			world = te.getWorld();
+		}
 
-        //        for (RenderType rendertype : RenderType.getBlockRenderTypes()) {
-        //            if (!RenderTypeLookup.canRenderInLayer(state, rendertype)) {
-        //                continue;
-        //            }
-        //            rendertype = rendertype == RenderType.getTranslucent() ? RenderType.func_239269_g_() : rendertype;
-        //
-        //            ForgeHooksClient.setRenderLayer(rendertype);
-        //            IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
-        //            blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, ivertexbuilder, false, RAND, state.getPositionRandom(pos), otherlight, EmptyModelData.INSTANCE);
-        //        }
-        //        ForgeHooksClient.setRenderLayer(null);
+		//        for (RenderType rendertype : RenderType.getBlockRenderTypes()) {
+		//            if (!RenderTypeLookup.canRenderInLayer(state, rendertype)) {
+		//                continue;
+		//            }
+		//            rendertype = rendertype == RenderType.getTranslucent() ? RenderType.func_239269_g_() : rendertype;
+		//
+		//            ForgeHooksClient.setRenderLayer(rendertype);
+		//            IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
+		//            blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, ivertexbuilder, false, RAND, state.getPositionRandom(pos), otherlight, EmptyModelData.INSTANCE);
+		//        }
+		//        ForgeHooksClient.setRenderLayer(null);
 
-        RenderType rendertype = RenderType.getCutout();
-        ForgeHooksClient.setRenderLayer(rendertype);
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
-        blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, ivertexbuilder, false, RAND, state.getPositionRandom(pos), otherlight, EmptyModelData.INSTANCE);
+		RenderType rendertype = RenderType.getCutout();
+		ForgeHooksClient.setRenderLayer(rendertype);
+		IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
+		blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, matrixstack, ivertexbuilder, false, RAND, state.getPositionRandom(pos), otherlight, EmptyModelData.INSTANCE);
 
-        ForgeHooksClient.setRenderLayer(null);
+		ForgeHooksClient.setRenderLayer(null);
 
-        matrixstack.pop();
-        BlockModelRenderer.disableCache();
-    }
+		matrixstack.pop();
+		BlockModelRenderer.disableCache();
+	}
 
 }

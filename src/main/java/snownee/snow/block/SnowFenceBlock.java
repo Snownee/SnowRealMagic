@@ -38,7 +38,7 @@ import snownee.kiwi.RenderLayer;
 import snownee.kiwi.RenderLayer.Layer;
 import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
-import snownee.snow.MainModule;
+import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.WrappedSoundType;
@@ -46,110 +46,110 @@ import snownee.snow.WrappedSoundType;
 @RenderLayer(Layer.CUTOUT)
 public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant {
 
-    public static final BooleanProperty DOWN = SixWayBlock.DOWN;
+	public static final BooleanProperty DOWN = SixWayBlock.DOWN;
 
-    public SnowFenceBlock(Properties properties) {
-        super(properties);
-    }
+	public SnowFenceBlock(Properties properties) {
+		super(properties);
+	}
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
+	@Override
+	public boolean hasTileEntity(BlockState state) {
+		return true;
+	}
 
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new SnowTextureTile();
-    }
+	@Override
+	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+		return new SnowTextureTile();
+	}
 
-    @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        return ModBlock.pickBlock(state, target, world, pos, player);
-    }
+	@Override
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
+		return ModBlock.pickBlock(state, target, world, pos, player);
+	}
 
-    @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        //        boolean isWooden = false;
-        //        BlockState state = getDefaultState().with(WATERLOGGED, false)
-        //        ItemStack stack = context.getItem();
-        //        //Check the item to get the actual state we want to try to connect using.
-        //        NBTHelper data = NBTHelper.of(stack);
-        //        ResourceLocation rl = Util.RL(data.getString("BlockEntityTag.Items.0", ""));
-        //        if (rl != null) {
-        //            Item item = ForgeRegistries.ITEMS.getValue(rl);
-        //            if (item instanceof BlockItem) {
-        //                isWooden = ((BlockItem) item).getBlock().isIn(BlockTags.WOODEN_FENCES);
-        //            }
-        //        }
-        //Now check the connections using the correct material we just retrieved
-        World world = context.getWorld();
-        BlockPos blockpos = context.getPos();
-        BlockState stateIn = world.getBlockState(blockpos);
-        return super.getStateForPlacement(context).with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, world, blockpos));
-    }
+	@Override
+	public BlockState getStateForPlacement(BlockItemUseContext context) {
+		//        boolean isWooden = false;
+		//        BlockState state = getDefaultState().with(WATERLOGGED, false)
+		//        ItemStack stack = context.getItem();
+		//        //Check the item to get the actual state we want to try to connect using.
+		//        NBTHelper data = NBTHelper.of(stack);
+		//        ResourceLocation rl = Util.RL(data.getString("BlockEntityTag.Items.0", ""));
+		//        if (rl != null) {
+		//            Item item = ForgeRegistries.ITEMS.getValue(rl);
+		//            if (item instanceof BlockItem) {
+		//                isWooden = ((BlockItem) item).getBlock().isIn(BlockTags.WOODEN_FENCES);
+		//            }
+		//        }
+		//Now check the connections using the correct material we just retrieved
+		World world = context.getWorld();
+		BlockPos blockpos = context.getPos();
+		BlockState stateIn = world.getBlockState(blockpos);
+		return super.getStateForPlacement(context).with(DOWN, CoreModule.BLOCK.isValidPosition(stateIn, world, blockpos));
+	}
 
-    @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        stateIn = super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-        if (facing == Direction.DOWN) {
-            return stateIn.with(DOWN, MainModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
-        }
-        return stateIn;
-    }
+	@Override
+	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+		stateIn = super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+		if (facing == Direction.DOWN) {
+			return stateIn.with(DOWN, CoreModule.BLOCK.isValidPosition(stateIn, worldIn, currentPos, true));
+		}
+		return stateIn;
+	}
 
-    @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
-        builder.add(DOWN);
-    }
+	@Override
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+		super.fillStateContainer(builder);
+		builder.add(DOWN);
+	}
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        String key = Util.getTextureItem(stack, "0");
-        if (!key.isEmpty()) {
-            tooltip.add(new TranslationTextComponent(key).mergeStyle(TextFormatting.GRAY));
-        }
-    }
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+		String key = Util.getTextureItem(stack, "0");
+		if (!key.isEmpty()) {
+			tooltip.add(new TranslationTextComponent(key).mergeStyle(TextFormatting.GRAY));
+		}
+	}
 
-    @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (material == Material.WOOD) {
-            MainModule.fillTextureItems(ItemTags.WOODEN_FENCES, this, items);
-        } else {
-            MainModule.fillTextureItems(ItemTags.FENCES, this, items, item -> !item.isIn(ItemTags.WOODEN_FENCES));
-        }
-    }
+	@Override
+	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+		if (material == Material.WOOD) {
+			CoreModule.fillTextureItems(ItemTags.WOODEN_FENCES, this, items);
+		} else {
+			CoreModule.fillTextureItems(ItemTags.FENCES, this, items, item -> !item.isIn(ItemTags.WOODEN_FENCES));
+		}
+	}
 
-    @Override
-    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-        if (SnowCommonConfig.retainOriginalBlocks) {
-            worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-        } else if (ModUtil.shouldMelt(worldIn, pos)) {
-            worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-        }
-    }
+	@Override
+	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+		if (SnowCommonConfig.retainOriginalBlocks) {
+			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
+		} else if (ModUtil.shouldMelt(worldIn, pos)) {
+			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
+		}
+	}
 
-    @Override
-    public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        VoxelShape shape = super.getRenderShape(state, worldIn, pos);
-        if (state.get(DOWN)) {
-            shape = VoxelShapes.combine(shape, ModSnowBlock.SNOW_SHAPES_MAGIC[2], IBooleanFunction.OR);
-        }
-        return shape;
-    }
+	@Override
+	public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
+		VoxelShape shape = super.getRenderShape(state, worldIn, pos);
+		if (state.get(DOWN)) {
+			shape = VoxelShapes.combine(shape, ModSnowBlock.SNOW_SHAPES_MAGIC[2], IBooleanFunction.OR);
+		}
+		return shape;
+	}
 
-    @Override
-    public SoundType getSoundType(BlockState state) {
-        return WrappedSoundType.get(super.getSoundType(state));
-    }
+	@Override
+	public SoundType getSoundType(BlockState state) {
+		return WrappedSoundType.get(super.getSoundType(state));
+	}
 
-    @Override
-    public String getTranslationKey() {
-        if (this == MainModule.FENCE) {
-            return super.getTranslationKey();
-        } else {
-            return MainModule.FENCE.getTranslationKey();
-        }
-    }
+	@Override
+	public String getTranslationKey() {
+		if (this == CoreModule.FENCE) {
+			return super.getTranslationKey();
+		} else {
+			return CoreModule.FENCE.getTranslationKey();
+		}
+	}
 }

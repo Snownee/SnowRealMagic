@@ -16,9 +16,9 @@ import snownee.snow.compat.terraforged.TerraForgedModule;
 @Mixin(FreezeLayer.class)
 public class MixinFreezeLayer {
 
-    @Inject(at = @At("TAIL"), method = "freezeGround", remap = false)
-    private void srm_freezeGround(IWorld world, IChunk chunk, Biome biome, BlockPos.Mutable snowPos, BlockPos.Mutable underPos, CallbackInfo info) {
-        TerraForgedModule.freezeGround(world, chunk, biome, snowPos, underPos);
-    }
+	@Inject(at = @At("TAIL"), method = "freezeGround", remap = false)
+	private void srm_freezeGround(IWorld world, IChunk chunk, Biome biome, BlockPos.Mutable snowPos, BlockPos.Mutable underPos, CallbackInfo info) {
+		TerraForgedModule.freezeGround(world, chunk, biome, snowPos, underPos);
+	}
 
 }

@@ -17,45 +17,45 @@ import net.minecraft.loot.functions.ILootFunction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IItemProvider;
 import snownee.kiwi.tile.TextureTile;
-import snownee.snow.MainModule;
+import snownee.snow.CoreModule;
 
 public class NormalLootEntry extends StandaloneLootEntry {
 
-    private NormalLootEntry(int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
-        super(weightIn, qualityIn, conditionsIn, functionsIn);
-    }
+	private NormalLootEntry(int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
+		super(weightIn, qualityIn, conditionsIn, functionsIn);
+	}
 
-    @Override
-    protected void func_216154_a(Consumer<ItemStack> consumer, LootContext context) {
-        TileEntity tile = context.get(LootParameters.BLOCK_ENTITY);
-        if (tile instanceof TextureTile) {
-            Item item = ((TextureTile) tile).getMark("0");
-            if (item != null) {
-                consumer.accept(new ItemStack(item));
-            }
-        }
-    }
+	@Override
+	protected void func_216154_a(Consumer<ItemStack> consumer, LootContext context) {
+		TileEntity tile = context.get(LootParameters.BLOCK_ENTITY);
+		if (tile instanceof TextureTile) {
+			Item item = ((TextureTile) tile).getMark("0");
+			if (item != null) {
+				consumer.accept(new ItemStack(item));
+			}
+		}
+	}
 
-    public static StandaloneLootEntry.Builder<?> builder(IItemProvider itemIn) {
-        return builder((weight, quality, conditions, functions) -> {
-            return new NormalLootEntry(weight, quality, conditions, functions);
-        });
-    }
+	public static StandaloneLootEntry.Builder<?> builder(IItemProvider itemIn) {
+		return builder((weight, quality, conditions, functions) -> {
+			return new NormalLootEntry(weight, quality, conditions, functions);
+		});
+	}
 
-    @Override
-    public LootPoolEntryType func_230420_a_() {
-        return MainModule.NORMAL;
-    }
+	@Override
+	public LootPoolEntryType func_230420_a_() {
+		return CoreModule.NORMAL;
+	}
 
-    public static class Serializer extends StandaloneLootEntry.Serializer<NormalLootEntry> {
-        @Override
-        public void func_230422_a_(JsonObject json, NormalLootEntry lootEntry, JsonSerializationContext context) {
-            super.func_230422_a_(json, lootEntry, context);
-        }
+	public static class Serializer extends StandaloneLootEntry.Serializer<NormalLootEntry> {
+		@Override
+		public void func_230422_a_(JsonObject json, NormalLootEntry lootEntry, JsonSerializationContext context) {
+			super.func_230422_a_(json, lootEntry, context);
+		}
 
-        @Override
-        protected NormalLootEntry func_212829_b_(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
-            return new NormalLootEntry(weightIn, qualityIn, conditionsIn, functionsIn);
-        }
-    }
+		@Override
+		protected NormalLootEntry func_212829_b_(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
+			return new NormalLootEntry(weightIn, qualityIn, conditionsIn, functionsIn);
+		}
+	}
 }

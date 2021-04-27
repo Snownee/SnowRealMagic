@@ -20,45 +20,45 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
-import snownee.snow.MainModule;
+import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
-    public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
-        super(renderManagerIn);
-        this.shadowSize = 0.5F;
-    }
+	public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
+		super(renderManagerIn);
+		this.shadowSize = 0.5F;
+	}
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
-        if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
-            return;
-        }
-        BlockState blockstate = MainModule.BLOCK.getDefaultState().with(SnowBlock.LAYERS, entity.getLayers());
-        if (blockstate.getRenderType() != BlockRenderType.MODEL) {
-            return;
-        }
-        World world = entity.getWorldObj();
+	@SuppressWarnings("deprecation")
+	@Override
+	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
+		if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
+			return;
+		}
+		BlockState blockstate = CoreModule.BLOCK.getDefaultState().with(SnowBlock.LAYERS, entity.getLayers());
+		if (blockstate.getRenderType() != BlockRenderType.MODEL) {
+			return;
+		}
+		World world = entity.getWorldObj();
 
-        matrixstack.push();
-        BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().maxY, entity.getPosZ());
-        matrixstack.translate(-0.5D, 0.0D, -0.5D);
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        for (RenderType type : RenderType.getBlockRenderTypes()) {
-            if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
-                ForgeHooksClient.setRenderLayer(type);
-                blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
-            }
-        }
-        ForgeHooksClient.setRenderLayer(null);
-        matrixstack.pop();
-        super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
-    }
+		matrixstack.push();
+		BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().maxY, entity.getPosZ());
+		matrixstack.translate(-0.5D, 0.0D, -0.5D);
+		BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+		for (RenderType type : RenderType.getBlockRenderTypes()) {
+			if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
+				ForgeHooksClient.setRenderLayer(type);
+				blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
+			}
+		}
+		ForgeHooksClient.setRenderLayer(null);
+		matrixstack.pop();
+		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
+	}
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public ResourceLocation getEntityTexture(FallingSnowEntity entity) {
-        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
-    }
+	@SuppressWarnings("deprecation")
+	@Override
+	public ResourceLocation getEntityTexture(FallingSnowEntity entity) {
+		return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+	}
 }

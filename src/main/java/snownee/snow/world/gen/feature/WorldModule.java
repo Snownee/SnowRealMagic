@@ -12,9 +12,9 @@ import snownee.kiwi.Name;
 @KiwiModule("world")
 public class WorldModule extends AbstractModule {
 
-    @Name("minecraft:freeze_top_layer")
-    public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature(NoFeatureConfig.field_236558_a_);
-    // field_243794_T
-    public static final ConfiguredFeature<?, ?> CONFIGURED_FEATURE = Registry.register(WorldGenRegistries.field_243653_e, "freeze_top_layer", FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+	@Name("minecraft:freeze_top_layer")
+	public static final ModIceAndSnowFeature FEATURE = new ModIceAndSnowFeature(NoFeatureConfig.field_236558_a_);
+	// field_243794_T
+	public static final ConfiguredFeature<?, ?> CONFIGURED_FEATURE = Registry.register(WorldGenRegistries.field_243653_e, "freeze_top_layer", FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
 
 }

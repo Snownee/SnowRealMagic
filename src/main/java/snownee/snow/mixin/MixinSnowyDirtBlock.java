@@ -13,28 +13,28 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import snownee.snow.MainModule;
+import snownee.snow.CoreModule;
 
 @Mixin(SnowyDirtBlock.class)
 public class MixinSnowyDirtBlock extends Block {
 
-    public MixinSnowyDirtBlock(Properties properties) {
-        super(properties);
-    }
+	public MixinSnowyDirtBlock(Properties properties) {
+		super(properties);
+	}
 
-    @Inject(at = @At("HEAD"), method = "updatePostPlacement", cancellable = true)
-    public void srm_updatePostPlacementProxy(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
-        if (facing != Direction.UP) {
-            cir.setReturnValue(stateIn);
-        } else {
-            Block block = facingState.getBlock();
-            cir.setReturnValue(stateIn.with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(MainModule.BOTTOM_SNOW)));
-        }
-    }
+	@Inject(at = @At("HEAD"), method = "updatePostPlacement", cancellable = true)
+	public void srm_updatePostPlacementProxy(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
+		if (facing != Direction.UP) {
+			cir.setReturnValue(stateIn);
+		} else {
+			Block block = facingState.getBlock();
+			cir.setReturnValue(stateIn.with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(CoreModule.BOTTOM_SNOW)));
+		}
+	}
 
-    @Inject(at = @At("HEAD"), method = "getStateForPlacement", cancellable = true)
-    public void srm_getStateForPlacementProxy(BlockItemUseContext context, CallbackInfoReturnable<BlockState> cir) {
-        Block block = context.getWorld().getBlockState(context.getPos().up()).getBlock();
-        cir.setReturnValue(this.getDefaultState().with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(MainModule.BOTTOM_SNOW)));
-    }
+	@Inject(at = @At("HEAD"), method = "getStateForPlacement", cancellable = true)
+	public void srm_getStateForPlacementProxy(BlockItemUseContext context, CallbackInfoReturnable<BlockState> cir) {
+		Block block = context.getWorld().getBlockState(context.getPos().up()).getBlock();
+		cir.setReturnValue(this.getDefaultState().with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(CoreModule.BOTTOM_SNOW)));
+	}
 }
