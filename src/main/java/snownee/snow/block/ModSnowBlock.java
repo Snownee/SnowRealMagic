@@ -375,9 +375,20 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) || (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM)) {
-			return true;
-			// return block.getRenderLayer() == BlockRenderLayer.SOLID;
+		if (block instanceof FenceBlock) {
+			return hasAllProperties(state, CoreModule.FENCE.getDefaultState());
+		}
+		if (block instanceof FenceGateBlock) {
+			return hasAllProperties(state, CoreModule.FENCE_GATE.getDefaultState());
+		}
+		if (block instanceof WallBlock) {
+			return hasAllProperties(state, CoreModule.WALL.getDefaultState());
+		}
+		if (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
+			return hasAllProperties(state, CoreModule.SLAB.getDefaultState());
+		}
+		if (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM) {
+			return hasAllProperties(state, CoreModule.STAIRS.getDefaultState());
 		}
 		return false;
 	}
@@ -441,9 +452,21 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	}
 
 	@SuppressWarnings("unchecked")
+	private static <T extends Comparable<T>> boolean hasAllProperties(BlockState oldState, BlockState newState) {
+		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
+			Property<T> property = (Property<T>) entry.getKey();
+			if (!newState.hasProperty(property))
+				return false;
+		}
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
 	private static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 			Property<T> property = (Property<T>) entry.getKey();
+			if (!newState.hasProperty(property))
+				continue;
 			newState = newState.with(property, property.getValueClass().cast(entry.getValue()));
 		}
 		return newState;
