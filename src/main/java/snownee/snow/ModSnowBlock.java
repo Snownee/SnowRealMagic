@@ -30,6 +30,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -98,6 +100,7 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		if (!ModConfig.thinnerBoundingBox) {
 			return super.getCollisionBoundingBox(blockState, worldIn, pos);
@@ -107,6 +110,27 @@ public class ModSnowBlock extends BlockSnow {
 			return FULL_BLOCK_AABB;
 		}
 		return SNOW_AABB_MAGIC[layers - 1];
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public RayTraceResult collisionRayTrace(IBlockState state, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
+		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
+			RayTraceResult hit = this.rayTrace(pos, start, end, getContainedState(worldIn, pos).getBoundingBox(worldIn, pos));
+			if (hit != null)
+				return hit;
+		}
+		return super.collisionRayTrace(state, worldIn, pos, start, end);
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+		AxisAlignedBB aabb = super.getSelectedBoundingBox(state, worldIn, pos);
+		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
+			aabb = aabb.union(getContainedState(worldIn, pos).getSelectedBoundingBox(worldIn, pos));
+		}
+		return aabb;
 	}
 
 	@Override
@@ -309,6 +333,7 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
 		if (state.getValue(TILE)) {
 			IBlockState stateIn = getContainedState(worldIn, pos);
@@ -327,6 +352,7 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isActualState) {
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, state.getCollisionBoundingBox(worldIn, pos));
 		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
@@ -335,6 +361,7 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		if (worldIn.getBlockState(pos).getMaterial() == Material.AIR && hasTileEntity(state)) {
 			TileEntity tile = worldIn.getTileEntity(pos);
