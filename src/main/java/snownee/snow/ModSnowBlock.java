@@ -21,10 +21,13 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -232,7 +235,7 @@ public class ModSnowBlock extends BlockSnow {
 		return false;
 	}
 
-	public static void placeLayersOn(World world, BlockPos pos, int layers, boolean falling) {
+	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling) {
 		layers = MathHelper.clamp(layers, 1, 8);
 		IBlockState state = world.getBlockState(pos);
 		int originLayers = 0;
@@ -268,7 +271,9 @@ public class ModSnowBlock extends BlockSnow {
 					world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
 				}
 			}
+			return true;
 		}
+		return false;
 	}
 
 	@Override
@@ -398,5 +403,45 @@ public class ModSnowBlock extends BlockSnow {
 		if (layer == BlockRenderLayer.CUTOUT && state.getValue(TILE))
 			return true;
 		return layer == BlockRenderLayer.SOLID;
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (ModConfig.placeSnowInBlock && !state.getValue(TILE)) {
+			ItemStack stack = playerIn.getHeldItem(hand);
+			Block block = Block.getBlockFromItem(stack.getItem());
+			if (block != null && block != Blocks.AIR) {
+				IBlockState state2 = block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, stack.getMetadata(), playerIn, hand);
+				if (state2 != null && canContainState(state2) && state2.getBlock().canPlaceBlockOnSide(worldIn, pos, EnumFacing.UP)) {
+					if (!worldIn.isRemote) {
+						worldIn.setBlockState(pos, state2, 16 | 32);
+						int i = state.getValue(LAYERS);
+						if (placeLayersOn(worldIn, pos, i, false) && !playerIn.isCreative()) {
+							stack.shrink(1);
+						}
+					}
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer player) {
+		if (worldIn.isRemote)
+			return;
+		IBlockState state = worldIn.getBlockState(pos);
+		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
+			try {
+				IBlockState contained = getContainedState(worldIn, pos);
+				if (contained.getBlockHardness(worldIn, pos) == 0) {
+					worldIn.playEvent(2001, pos, Block.getStateId(contained));
+					contained.getBlock().harvestBlock(worldIn, player, pos, state, null, player.getHeldItemMainhand());
+					worldIn.setBlockState(pos, state.withProperty(TILE, false));
+				}
+			} catch (Exception e) {
+			}
+		}
 	}
 }
