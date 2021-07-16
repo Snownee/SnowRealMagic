@@ -108,7 +108,7 @@ public class FallingSnowEntity extends Entity {
 				motionY *= -0.5D;
 
 				if (state.getBlock() != Blocks.PISTON_EXTENSION) {
-					ModSnowBlock.placeLayersOn(world, pos, layers, true);
+					ModSnowBlock.placeLayersOn(world, pos, layers, true, true);
 					setDead();
 					return;
 				}

@@ -2,6 +2,7 @@ package snownee.snow;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiPredicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -187,7 +188,6 @@ public class ModSnowBlock extends BlockSnow {
 		if (random.nextInt(8) > 0 || !worldIn.canSeeSky(pos.up())) {
 			return;
 		}
-		int layers = state.getValue(LAYERS);
 
 		boolean flag = false;
 		if (worldIn.isRaining()) {
@@ -198,15 +198,48 @@ public class ModSnowBlock extends BlockSnow {
 			}
 		}
 
+		int layers = state.getValue(LAYERS);
+
 		if (worldIn.canSnowAt(pos, false)) {
 			if (flag && layers < 8) {
-				// check light
-				if (pos.getY() >= 0 && pos.getY() < 256 && worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
-					worldIn.setBlockState(pos, state.withProperty(LAYERS, layers + 1));
-				}
+				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(EnumSkyBlock.BLOCK, p) < 10, true);
 			} else if (layers > 1 && !worldIn.isRaining() && worldIn.getBlockState(pos.up()).getBlock() != this) {
-				worldIn.setBlockState(pos, state.withProperty(LAYERS, layers - 1));
+				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
 			}
+		}
+	}
+
+	private static void accumulate(World world, BlockPos pos, IBlockState centerState, BiPredicate<World, BlockPos> filter, boolean accumulate) {
+		int i = centerState.getValue(LAYERS);
+		for (int j = 0; j < 4; j++) {
+			EnumFacing direction = EnumFacing.byHorizontalIndex(j);
+			BlockPos pos2 = pos.offset(direction);
+			if (!filter.test(world, pos2)) {
+				continue;
+			}
+			IBlockState state = world.getBlockState(pos2);
+			if (!Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos2)) {
+				continue;
+			}
+			int l;
+			if (state.getBlock() instanceof ModSnowBlock) {
+				l = state.getValue(LAYERS);
+			} else {
+				l = 0;
+			}
+			if (accumulate ? i > l : i < l) {
+				if (accumulate) {
+					placeLayersOn(world, pos2, 1, false, false);
+				} else {
+					world.setBlockState(pos2, state.withProperty(LAYERS, l - 1));
+				}
+				return;
+			}
+		}
+		if (accumulate) {
+			placeLayersOn(world, pos, 1, false, false);
+		} else {
+			world.setBlockState(pos, centerState.withProperty(LAYERS, i - 1));
 		}
 	}
 
@@ -235,7 +268,7 @@ public class ModSnowBlock extends BlockSnow {
 		return false;
 	}
 
-	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling) {
+	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, boolean playSound) {
 		layers = MathHelper.clamp(layers, 1, 8);
 		IBlockState state = world.getBlockState(pos);
 		int originLayers = 0;
@@ -261,7 +294,7 @@ public class ModSnowBlock extends BlockSnow {
 			}
 			if (falling) {
 				world.addBlockEvent(pos, Blocks.SNOW_LAYER, originLayers, layers);
-			} else {
+			} else if (playSound) {
 				SoundType soundtype = Blocks.SNOW_LAYER.getSoundType(state, world, pos, null);
 				world.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
 			}
@@ -416,7 +449,7 @@ public class ModSnowBlock extends BlockSnow {
 					if (!worldIn.isRemote) {
 						worldIn.setBlockState(pos, state2, 16 | 32);
 						int i = state.getValue(LAYERS);
-						if (placeLayersOn(worldIn, pos, i, false) && !playerIn.isCreative()) {
+						if (placeLayersOn(worldIn, pos, i, false, true) && !playerIn.isCreative()) {
 							stack.shrink(1);
 						}
 					}

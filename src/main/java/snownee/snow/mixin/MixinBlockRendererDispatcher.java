@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -23,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.MinecraftForgeClient;
-import snownee.snow.SnowRealMagic;
 import snownee.snow.SnowTile;
 
 @Mixin(BlockRendererDispatcher.class)
@@ -35,7 +35,7 @@ public abstract class MixinBlockRendererDispatcher {
 
 	@Inject(method = "renderBlock", at = @At("RETURN"))
 	private void srm_renderBlock(IBlockState blockStateIn, BlockPos pos, IBlockAccess world, BufferBuilder bufferBuilderIn, CallbackInfoReturnable<Boolean> info) {
-		if (blockStateIn.getBlock() == SnowRealMagic.BLOCK && blockStateIn.getValue(BlockSnow.LAYERS) < 8) {
+		if (blockStateIn.getBlock() == Blocks.SNOW_LAYER && blockStateIn.getValue(BlockSnow.LAYERS) < 8) {
 			TileEntity tileEntity = world.getTileEntity(pos);
 			if (tileEntity instanceof SnowTile) {
 				IBlockState state = ((SnowTile) tileEntity).getState();

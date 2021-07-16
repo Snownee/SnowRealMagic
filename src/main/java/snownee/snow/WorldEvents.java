@@ -43,7 +43,7 @@ public final class WorldEvents {
 		}
 		if (pos.getY() >= 0 && pos.getY() < 256 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
 			if (Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos)) {
-				ModSnowBlock.placeLayersOn(world, pos, 1, false);
+				ModSnowBlock.placeLayersOn(world, pos, 1, false, false);
 			}
 		}
 	}

@@ -38,7 +38,7 @@ public class ModSnowItem extends ItemSnow {
 				}
 
 				if (ModSnowBlock.canContainState(state)) {
-					ModSnowBlock.placeLayersOn(worldIn, blockpos, 1, false);
+					ModSnowBlock.placeLayersOn(worldIn, blockpos, 1, false, true);
 					itemstack.shrink(1);
 					return EnumActionResult.SUCCESS;
 				}
