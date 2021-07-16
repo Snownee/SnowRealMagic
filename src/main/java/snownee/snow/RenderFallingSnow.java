@@ -21,66 +21,53 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderFallingSnow extends Render<EntityFallingSnow>
-{
-    public RenderFallingSnow(RenderManager renderManagerIn)
-    {
-        super(renderManagerIn);
-        this.shadowSize = 0.5F;
-    }
+public class RenderFallingSnow extends Render<FallingSnowEntity> {
+	public RenderFallingSnow(RenderManager renderManagerIn) {
+		super(renderManagerIn);
+		shadowSize = 0.5F;
+	}
 
-    @Override
-    public void doRender(EntityFallingSnow entity, double x, double y, double z, float entityYaw, float partialTicks)
-    {
-        if (entity.getLayers() > 0 && entity.getLayers() <= 8)
-        {
-            IBlockState state = Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, entity.getLayers());
-            if (state.getRenderType() == EnumBlockRenderType.MODEL)
-            {
-                World world = entity.world;
+	@Override
+	public void doRender(FallingSnowEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		if (entity.getLayers() > 0 && entity.getLayers() <= 8) {
+			IBlockState state = Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, entity.getLayers());
+			if (state.getRenderType() == EnumBlockRenderType.MODEL) {
+				World world = entity.world;
 
-                if (state != world.getBlockState(new BlockPos(entity)))
-                {
-                    this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.disableLighting();
-                    Tessellator tessellator = Tessellator.getInstance();
-                    BufferBuilder bufferbuilder = tessellator.getBuffer();
+				if (state != world.getBlockState(new BlockPos(entity))) {
+					bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+					GlStateManager.pushMatrix();
+					GlStateManager.disableLighting();
+					Tessellator tessellator = Tessellator.getInstance();
+					BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-                    if (this.renderOutlines)
-                    {
-                        GlStateManager.enableColorMaterial();
-                        GlStateManager.enableOutlineMode(this.getTeamColor(entity));
-                    }
+					if (renderOutlines) {
+						GlStateManager.enableColorMaterial();
+						GlStateManager.enableOutlineMode(getTeamColor(entity));
+					}
 
-                    bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
-                    BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
-                    GlStateManager.translate((float) (x - blockpos.getX() - 0.5D),
-                            (float) (y - blockpos.getY()), (float) (z - blockpos.getZ() - 0.5D));
-                    BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
-                            .getBlockRendererDispatcher();
-                    blockrendererdispatcher.getBlockModelRenderer().renderModel(world,
-                            blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false,
-                            MathHelper.getPositionRandom(entity.getOrigin()));
-                    tessellator.draw();
+					bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
+					BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
+					GlStateManager.translate((float) (x - blockpos.getX() - 0.5D), (float) (y - blockpos.getY()), (float) (z - blockpos.getZ() - 0.5D));
+					BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+					blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(entity.getOrigin()));
+					tessellator.draw();
 
-                    if (this.renderOutlines)
-                    {
-                        GlStateManager.disableOutlineMode();
-                        GlStateManager.disableColorMaterial();
-                    }
+					if (renderOutlines) {
+						GlStateManager.disableOutlineMode();
+						GlStateManager.disableColorMaterial();
+					}
 
-                    GlStateManager.enableLighting();
-                    GlStateManager.popMatrix();
-                    super.doRender(entity, x, y, z, entityYaw, partialTicks);
-                }
-            }
-        }
-    }
+					GlStateManager.enableLighting();
+					GlStateManager.popMatrix();
+					super.doRender(entity, x, y, z, entityYaw, partialTicks);
+				}
+			}
+		}
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(EntityFallingSnow entity)
-    {
-        return TextureMap.LOCATION_BLOCKS_TEXTURE;
-    }
+	@Override
+	protected ResourceLocation getEntityTexture(FallingSnowEntity entity) {
+		return TextureMap.LOCATION_BLOCKS_TEXTURE;
+	}
 }

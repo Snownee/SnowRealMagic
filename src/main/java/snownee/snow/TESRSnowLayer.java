@@ -17,48 +17,43 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class TESRSnowLayer extends TileEntitySpecialRenderer<TileSnowLayer>
-{
-    @Override
-    public void render(TileSnowLayer te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
-    {
-        if (!te.hasWorld())
-        {
-            return;
-        }
-        GlStateManager.pushMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.depthFunc(515);
-        GlStateManager.depthMask(true);
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.color(1, 1, 1, 1);
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(7, DefaultVertexFormats.BLOCK);
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer);
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
-        GlStateManager.disableBlend();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.popMatrix();
-    }
+public class TESRSnowLayer extends TileEntitySpecialRenderer<SnowTile> {
+	@Override
+	public void render(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+		if (!te.hasWorld()) {
+			return;
+		}
+		GlStateManager.pushMatrix();
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.depthFunc(515);
+		GlStateManager.depthMask(true);
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.color(1, 1, 1, 1);
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableBlend();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(7, DefaultVertexFormats.BLOCK);
+		renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer);
+		buffer.setTranslation(0, 0, 0);
+		tessellator.draw();
+		GlStateManager.disableBlend();
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.popMatrix();
+	}
 
-    @Override
-    public void renderTileEntityFast(TileSnowLayer te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer)
-    {
-        if (!te.hasWorld())
-        {
-            return;
-        }
-        BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        BlockPos pos = te.getPos();
-        IBlockState state = te.getState();
-        double offsetY = te.isFullHeight() ? 0.001 : 0;
-        buffer.setTranslation(x - pos.getX(), y - pos.getY() - offsetY, z - pos.getZ());
-        dispatcher.renderBlock(state, te.getPos(), te.getWorld(), buffer);
-    }
+	@Override
+	public void renderTileEntityFast(SnowTile te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
+		if (!te.hasWorld()) {
+			return;
+		}
+		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		BlockPos pos = te.getPos();
+		IBlockState state = te.getState();
+		double offsetY = te.isFullHeight() ? 0.001 : 0;
+		buffer.setTranslation(x - pos.getX(), y - pos.getY() - offsetY, z - pos.getZ());
+		dispatcher.renderBlock(state, te.getPos(), te.getWorld(), buffer);
+	}
 }

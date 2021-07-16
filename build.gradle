@@ -1,51 +1,56 @@
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://repo.spongepowered.org/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
-
-apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'eclipse'
 
-version = "${version_major}.${version_minor}.${version_patch}"
-group = "snownee.snow"
-archivesBaseName = "SnowRealMagic"
-
-if (System.getenv().BUILD_NUMBER != null) {
-    version += "-build${System.getenv().BUILD_NUMBER}"
-}
+version = mod_version
+group = mod_group
+archivesBaseName = mod_id + "-" + minecraft_version
 
 sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+    runDir = "run"
+    mappings = mappings_version
+    String resolved_core_plugin = mod_core_plugin.replace('${mod_group}', mod_group).replace('${mod_id}', mod_id);
+    clientJvmArgs += "-Dfml.coreMods.load=${resolved_core_plugin}"
+    serverJvmArgs += "-Dfml.coreMods.load=${resolved_core_plugin}"
+    String resolved_core_config = mod_mixin_configs.replace('${mod_id}', mod_id);
+    clientRunArgs += "--mixin ${resolved_core_config}"
+    serverRunArgs += "--mixin ${resolved_core_config}"
+}
 
 repositories {
+    mavenCentral()
+    maven { url = "https://repo.spongepowered.org/maven" }
     maven {
         name = "jei"
         url = "http://dvs1.progwml6.com/files/maven"
     }
 }
 
-minecraft {
-    version = "${minecraft_version}-${forge_version}"
-    runDir = "run"
-
-    mappings = "${mapping_version}"
-    useDepAts = true
-
-    replace "@VERSION_INJECT@", project.version
-}
-
 dependencies {
-    // Why not deobfCompile? Since JEI 4.13.1, JEI uses stable_39 mapping, so we are on the same MCP version now.
-    compile "mezz.jei:jei_${minecraft_version}:${jei_version}"
+    provided('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
+    deobfCompile "mezz.jei:jei_${minecraft_version}:${jei_version}"
 }
 
 processResources {
@@ -54,7 +59,10 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+
+        expand 'mod_id': mod_id, 'mod_name': mod_name, 'version': project.version,
+                'mcversion': project.minecraft.version, 'mod_description': mod_description,
+                'mod_author': mod_author
     }
 
     from(sourceSets.main.resources.srcDirs) {
@@ -69,21 +77,18 @@ jar {
     exclude "**/*.exe"
     exclude "**/*.e"
     exclude "**/*.txt"
-    manifest {
-        attributes 'FMLAT': 'snow_at.cfg'
-        attributes 'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}"
-        attributes 'Timestamp': System.currentTimeMillis()
+    from(configurations.provided.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }) {
+        exclude "LICENSE.txt", "META-INF/MANIFSET.MF", "META-INF/maven/**", "META-INF/*.RSA", "META-INF/*.SF"
     }
-}
 
-javadoc {
-    options.encoding = "UTF-8"
-    options.charSet = "UTF-8"
-    options.links = [
-            'https://docs.oracle.com/javase/8/docs/api/'
-    ]
-    options.tags = [
-            "implSpec:a:Implementation Specification",
-            "implNote:a:Implementation Note"
-    ]
+    manifest {
+        attributes "FMLCorePlugin": mod_core_plugin
+        attributes "FMLCorePluginContainsFMLMod": "true"
+        attributes "ForceLoadAsMod": "true"
+        attributes "TweakClass": "org.spongepowered.asm.launch.MixinTweaker"
+        attributes "TweakOrder": "0"
+        attributes "MixinConfigs": mod_mixin_configs.replace('${mod_id}', mod_id)
+    }
 }
