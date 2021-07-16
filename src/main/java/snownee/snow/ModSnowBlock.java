@@ -109,7 +109,7 @@ public class ModSnowBlock extends BlockSnow {
 			return super.getCollisionBoundingBox(blockState, worldIn, pos);
 		}
 		int layers = blockState.getValue(LAYERS);
-		if (layers == 8 && !worldIn.isAirBlock(pos.up())) {
+		if (layers == 8 && worldIn.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
 			return FULL_BLOCK_AABB;
 		}
 		return SNOW_AABB_MAGIC[layers - 1];
