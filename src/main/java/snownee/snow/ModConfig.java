@@ -24,6 +24,9 @@ public final class ModConfig {
 	@Config.RequiresMcRestart
 	public static boolean placeSnowInBlock = true;
 
+	@Config.Name("ReplaceSnowWorldGen")
+	public static boolean replaceSnowWorldGen = true;
+
 	@Config.Name("SnowGravity")
 	public static boolean snowGravity = true;
 

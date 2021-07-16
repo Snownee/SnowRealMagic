@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -34,6 +35,10 @@ public class SnowRealMagic {
 	public static Logger logger;
 
 	public static Block BLOCK = Blocks.SNOW_LAYER;
+
+	public SnowRealMagic() {
+		MinecraftForge.TERRAIN_GEN_BUS.register(WorldEvents.class);
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

@@ -119,7 +119,7 @@ public class ModSnowBlock extends BlockSnow {
 	@SuppressWarnings("deprecation")
 	public RayTraceResult collisionRayTrace(IBlockState state, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
 		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
-			RayTraceResult hit = this.rayTrace(pos, start, end, getContainedState(worldIn, pos).getBoundingBox(worldIn, pos));
+			RayTraceResult hit = rayTrace(pos, start, end, getContainedState(worldIn, pos).getBoundingBox(worldIn, pos));
 			if (hit != null)
 				return hit;
 		}

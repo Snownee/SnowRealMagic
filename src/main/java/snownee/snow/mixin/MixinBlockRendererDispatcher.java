@@ -51,7 +51,7 @@ public abstract class MixinBlockRendererDispatcher {
 							}
 						}
 						//matrixStackIn.push();
-						IBakedModel model = this.getModelForState(state);
+						IBakedModel model = getModelForState(state);
 						state = state.getBlock().getExtendedState(state, world, pos);
 						blockModelRenderer.renderModel(world, model, state, pos, bufferBuilderIn, true);
 						//matrixStackIn.pop();
