@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.function.BiPredicate;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDeadBush;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFlower;
@@ -12,6 +13,7 @@ import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.BlockPane;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.BlockSnow;
+import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.SoundType;
@@ -353,10 +355,10 @@ public class ModSnowBlock extends BlockSnow {
 			return false;
 		}
 		Block block = state.getBlock();
-		if (block instanceof BlockTallGrass || block instanceof BlockFlower || block instanceof BlockSapling || block instanceof BlockMushroom) {
+		if (block instanceof BlockTallGrass || block instanceof BlockFlower || block instanceof BlockSapling || block instanceof BlockMushroom || block instanceof BlockDeadBush) {
 			return true;
 		}
-		if (block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockPane) {
+		if (block instanceof BlockFence || block instanceof BlockWall || (block instanceof BlockPane && !(block instanceof BlockStainedGlassPane))) {
 			return true;
 		}
 		return false;
@@ -433,7 +435,7 @@ public class ModSnowBlock extends BlockSnow {
 
 	@Override
 	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-		if (layer == BlockRenderLayer.CUTOUT && state.getValue(TILE))
+		if ((layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.CUTOUT_MIPPED) && state.getValue(TILE))
 			return true;
 		return layer == BlockRenderLayer.SOLID;
 	}
