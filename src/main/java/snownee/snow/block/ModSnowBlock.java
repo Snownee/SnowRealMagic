@@ -79,8 +79,9 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (layers == 8) {
 			return VoxelShapes.fullCube();
 		}
-		BlockState upState = worldIn.getBlockState(pos.up());
-		if (!upState.getBlock().isAir(upState, worldIn, pos)) {
+		BlockPos upPos = pos.up();
+		BlockState upState = worldIn.getBlockState(upPos);
+		if (upState.isSolidSide(worldIn, upPos, Direction.DOWN)) {
 			return VoxelShapes.fullCube();
 		}
 		return SNOW_SHAPES_MAGIC[layers - 1];
