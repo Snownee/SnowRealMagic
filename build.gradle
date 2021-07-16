@@ -16,7 +16,7 @@ apply plugin: 'eclipse'
 
 version = mod_version
 group = mod_group
-archivesBaseName = mod_id + "-" + minecraft_version
+archivesBaseName = "SnowRealMagic-" + minecraft_version
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
