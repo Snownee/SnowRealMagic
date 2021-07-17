@@ -1,11 +1,7 @@
 package snownee.snow.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.PaneBlock;
-import net.minecraft.block.WallBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import snownee.kiwi.tile.BaseTile;
@@ -14,7 +10,6 @@ import snownee.snow.CoreModule;
 
 public class SnowTile extends BaseTile {
 	private BlockState state = Blocks.AIR.getDefaultState();
-	private boolean isFullHeight = false;
 
 	public SnowTile() {
 		super(CoreModule.TILE);
@@ -22,10 +17,6 @@ public class SnowTile extends BaseTile {
 
 	public BlockState getState() {
 		return state;
-	}
-
-	public boolean isFullHeight() {
-		return isFullHeight;
 	}
 
 	public void setState(BlockState state) {
@@ -40,8 +31,6 @@ public class SnowTile extends BaseTile {
 			return;
 		}
 		this.state = state;
-		Block block = state.getBlock();
-		this.isFullHeight = block instanceof WallBlock || block instanceof FenceBlock || block instanceof PaneBlock;
 		if (update && world != null) {
 			if (world.isRemote) {
 				world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);

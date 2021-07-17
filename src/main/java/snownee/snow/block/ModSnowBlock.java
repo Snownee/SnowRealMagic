@@ -169,23 +169,44 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		}
 
 		int layers = state.get(LAYERS);
-
 		if (flag && layers < SnowCommonConfig.snowAccumulationMaxLayers) {
 			accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock)) && w.getLightFor(LightType.BLOCK, p) < 10, true);
-		} else if (!SnowCommonConfig.snowNeverMelt && SnowCommonConfig.snowNaturalMelt && layers > 1 && !worldIn.isRaining()) {
-			accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
+		} else if (!SnowCommonConfig.snowNeverMelt && SnowCommonConfig.snowNaturalMelt && !worldIn.isRaining()) {
+			if (layers == 1) {
+				if (SnowCommonConfig.snowAccumulationMaxLayers > 8 && worldIn.getBlockState(pos.down()).getBlock() instanceof ModSnowBlock) {
+					worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+				}
+			} else {
+				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
+			}
 		}
 	}
 
 	private static void accumulate(World world, BlockPos pos, BlockState centerState, BiPredicate<IWorld, BlockPos> filter, boolean accumulate) {
 		int i = centerState.get(LAYERS);
-		for (int j = 0; j < 4; j++) {
-			Direction direction = Direction.byHorizontalIndex(j);
+		for (int j = 0; j < 8; j++) {
+			int k = j / 2;
+			Direction direction = Direction.byHorizontalIndex(k);
 			BlockPos pos2 = pos.offset(direction);
-			if (!filter.test(world, pos2)) {
+			if (j % 2 == 1) {
+				pos2 = pos2.offset(Direction.byHorizontalIndex(k + 1));
+			}
+			if (!world.isBlockPresent(pos2) || !filter.test(world, pos2)) {
 				continue;
 			}
 			BlockState state = world.getBlockState(pos2);
+			boolean isAir = state.getBlock().isAir(state, world, pos2);
+			BlockPos height = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos2);
+			if (isAir) {
+				if (height.getY() != pos2.getY()) {
+					continue;
+				}
+			} else {
+				if (height.getY() != pos2.getY() + 1) {
+					continue;
+				}
+			}
+
 			if (!CoreModule.BLOCK.isValidPosition(state, world, pos2)) {
 				continue;
 			}
@@ -332,7 +353,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (state.getBlock() == CoreModule.BLOCK) {
 			BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, handIn, hit));
 			Block block = Block.getBlockFromItem(context.getItem().getItem());
-			if (block != null && context.replacingClickedOnBlock()) {
+			if (block != null && block != Blocks.AIR && context.replacingClickedOnBlock()) {
 				BlockState state2 = block.getStateForPlacement(context);
 				if (state2 != null && canContainState(state2) && state2.isValidPosition(worldIn, pos)) {
 					if (!worldIn.isRemote) {
