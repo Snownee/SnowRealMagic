@@ -35,6 +35,6 @@ public class MixinSnowyDirtBlock extends Block {
 	@Inject(at = @At("HEAD"), method = "getStateForPlacement", cancellable = true)
 	public void srm_getStateForPlacementProxy(BlockItemUseContext context, CallbackInfoReturnable<BlockState> cir) {
 		Block block = context.getWorld().getBlockState(context.getPos().up()).getBlock();
-		cir.setReturnValue(this.getDefaultState().with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(CoreModule.BOTTOM_SNOW)));
+		cir.setReturnValue(getDefaultState().with(SnowyDirtBlock.SNOWY, block == Blocks.SNOW_BLOCK || block.isIn(CoreModule.BOTTOM_SNOW)));
 	}
 }

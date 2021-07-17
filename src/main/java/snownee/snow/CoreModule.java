@@ -110,12 +110,12 @@ public class CoreModule extends AbstractModule {
 	public static final SnowWallBlock WALL = new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).tickRandomly());
 
 	@Name("snow")
-	public static final TileEntityType<SnowTile> TILE = TileEntityType.Builder.create(() -> new SnowTile(), TILE_BLOCK).build(null);
+	public static final TileEntityType<SnowTile> TILE = TileEntityType.Builder.create(SnowTile::new, TILE_BLOCK).build(null);
 
-	public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(() -> new SnowTextureTile(), FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
+	public static final TileEntityType<SnowTextureTile> TEXTURE_TILE = TileEntityType.Builder.create(SnowTextureTile::new, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL).build(null);
 
 	@Name("snow")
-	public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
+	public static final EntityType<FallingSnowEntity> ENTITY = EntityType.Builder.<FallingSnowEntity>create(FallingSnowEntity::new, EntityClassification.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).size(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow");
 
 	@Skip
 	public static final LootPoolEntryType NORMAL = Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, SnowRealMagic.MODID + ":normal", new LootPoolEntryType(new NormalLootEntry.Serializer()));

@@ -11,6 +11,7 @@ import net.minecraft.block.StairsBlock;
 import net.minecraft.block.WallBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.Pose;
 import net.minecraft.item.DirectionalPlaceContext;
@@ -49,20 +50,24 @@ public class FallingSnowEntity extends Entity {
 	public FallingSnowEntity(World worldIn) {
 		super(CoreModule.ENTITY, worldIn);
 		prevPos = BlockPos.ZERO;
-		this.layers = 1;
+		layers = 1;
 		size = new EntitySize(0.98f, 0.1225f * layers, true);
+	}
+
+	public FallingSnowEntity(EntityType<FallingSnowEntity> type, World worldIn) {
+		this(worldIn);
 	}
 
 	public FallingSnowEntity(World worldIn, double x, double y, double z, int layers) {
 		super(CoreModule.ENTITY, worldIn);
-		this.preventEntitySpawning = true;
-		this.setPosition(x, y + (1.0F - this.getHeight()) / 2.0F, z);
+		preventEntitySpawning = true;
+		setPosition(x, y + (1.0F - getHeight()) / 2.0F, z);
 		this.setMotion(Vector3d.ZERO);
-		this.prevPosX = x;
-		this.prevPosY = y;
-		this.prevPosZ = z;
+		prevPosX = x;
+		prevPosY = y;
+		prevPosZ = z;
 		this.layers = layers;
-		this.setData(getPosition(), layers);
+		setData(getPosition(), layers);
 		prevPos = getPosition();
 		size = new EntitySize(0.98f, 0.1225f * layers, true);
 	}
@@ -78,18 +83,18 @@ public class FallingSnowEntity extends Entity {
 		//        this.prevPosY = this.posY;
 		//        this.prevPosZ = this.posZ;
 
-		++this.fallTime;
+		++fallTime;
 
-		if (!this.hasNoGravity()) {
-			this.setMotion(this.getMotion().add(0.0D, -0.04D, 0.0D));
+		if (!hasNoGravity()) {
+			this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
 		}
 
-		this.move(MoverType.SELF, this.getMotion());
+		move(MoverType.SELF, getMotion());
 
 		BlockPos pos = getPosition();
-		if (!this.world.isRemote) {
-			if (!this.onGround) {
-				if (this.fallTime > 100 && !this.world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || this.fallTime > 600) {
+		if (!world.isRemote) {
+			if (!onGround) {
+				if (fallTime > 100 && !world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || fallTime > 600) {
 					this.remove();
 				} else if (!pos.equals(prevPos)) {
 					prevPos = pos;
@@ -120,9 +125,9 @@ public class FallingSnowEntity extends Entity {
 					}
 				}
 			} else {
-				BlockState state = this.world.getBlockState(pos);
+				BlockState state = world.getBlockState(pos);
 
-				this.setMotion(this.getMotion().mul(0.7D, -0.5D, 0.7D));
+				this.setMotion(getMotion().mul(0.7D, -0.5D, 0.7D));
 
 				if (state.getBlock() != Blocks.MOVING_PISTON) {
 					if (state.getCollisionShape(world, pos, ISelectionContext.forEntity(this)).isEmpty()) {
@@ -133,39 +138,39 @@ public class FallingSnowEntity extends Entity {
 							pos = posDown;
 						}
 					}
-					ModSnowBlock.placeLayersOn(world, pos, layers, true, new DirectionalPlaceContext(this.world, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
+					ModSnowBlock.placeLayersOn(world, pos, layers, true, new DirectionalPlaceContext(world, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
 					this.remove();
 					return;
 				}
 			}
 		}
 
-		this.setMotion(this.getMotion().scale(0.98D));
+		this.setMotion(getMotion().scale(0.98D));
 	}
 
 	public void setData(BlockPos pos, int layers) {
-		this.dataManager.set(ORIGIN, pos);
-		this.dataManager.set(LAYERS, layers);
+		dataManager.set(ORIGIN, pos);
+		dataManager.set(LAYERS, layers);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public BlockPos getOrigin() {
-		return this.dataManager.get(ORIGIN);
+		return dataManager.get(ORIGIN);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public int getLayers() {
-		return this.dataManager.get(LAYERS);
+		return dataManager.get(LAYERS);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public World getWorldObj() {
-		return this.world;
+		return world;
 	}
 
 	@Override
 	public boolean canBeCollidedWith() {
-		return this.isAlive();
+		return isAlive();
 	}
 
 	@Override
@@ -186,23 +191,23 @@ public class FallingSnowEntity extends Entity {
 
 	@Override
 	protected void registerData() {
-		this.dataManager.register(ORIGIN, BlockPos.ZERO);
-		this.dataManager.register(LAYERS, 1);
+		dataManager.register(ORIGIN, BlockPos.ZERO);
+		dataManager.register(LAYERS, 1);
 	}
 
 	@Override
 	protected void readAdditional(CompoundNBT compound) {
-		this.fallTime = compound.getInt("Time");
+		fallTime = compound.getInt("Time");
 		if (compound.contains("Layers", Constants.NBT.TAG_INT)) {
-			this.layers = compound.getInt("Layers");
+			layers = compound.getInt("Layers");
 			size = new EntitySize(0.98f, 0.1225f * layers, true);
 		}
 	}
 
 	@Override
 	protected void writeAdditional(CompoundNBT compound) {
-		compound.putInt("Time", this.fallTime);
-		compound.putInt("Layers", this.layers);
+		compound.putInt("Time", fallTime);
+		compound.putInt("Layers", layers);
 	}
 
 	@Override

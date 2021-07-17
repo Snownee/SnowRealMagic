@@ -37,9 +37,7 @@ public class NormalLootEntry extends StandaloneLootEntry {
 	}
 
 	public static StandaloneLootEntry.Builder<?> builder(IItemProvider itemIn) {
-		return builder((weight, quality, conditions, functions) -> {
-			return new NormalLootEntry(weight, quality, conditions, functions);
-		});
+		return builder(NormalLootEntry::new);
 	}
 
 	@Override

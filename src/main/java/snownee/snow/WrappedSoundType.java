@@ -55,6 +55,6 @@ public final class WrappedSoundType extends SoundType {
 		if (soundType == SoundType.SNOW) {
 			return soundType;
 		}
-		return wrappedSounds.computeIfAbsent(soundType, $ -> new WrappedSoundType($));
+		return wrappedSounds.computeIfAbsent(soundType, WrappedSoundType::new);
 	}
 }

@@ -31,7 +31,7 @@ public class WrappedWorld extends World {
 	protected World world;
 
 	public WrappedWorld(World world) {
-		super((ISpawnWorldInfo) world.getWorldInfo(), world.func_234923_W_(), world.func_230315_m_(), world::getProfiler, world.isRemote, world.func_234925_Z_(), 0l);
+		super((ISpawnWorldInfo) world.getWorldInfo(), world.func_234923_W_(), world.func_230315_m_(), world::getProfiler, world.isRemote, world.func_234925_Z_(), 0L);
 		this.world = world;
 	}
 

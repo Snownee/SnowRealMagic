@@ -64,7 +64,7 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowBlock extends SnowBlock implements ISnowVariant {
-	public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16), Block.makeCuboidShape(0, 0, 0, 16, 8, 16) };
+	public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16) };
 
 	public ModSnowBlock(Block.Properties properties) {
 		super(properties);
@@ -77,11 +77,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		}
 		int layers = state.get(LAYERS);
 		if (layers == 8) {
-			return VoxelShapes.fullCube();
-		}
-		BlockPos upPos = pos.up();
-		BlockState upState = worldIn.getBlockState(upPos);
-		if (upState.isSolidSide(worldIn, upPos, Direction.DOWN)) {
 			return VoxelShapes.fullCube();
 		}
 		return SNOW_SHAPES_MAGIC[layers - 1];
@@ -130,7 +125,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
 	@Override
 	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-		this.checkFallable(worldIn, pos, state);
+		checkFallable(worldIn, pos, state);
 	}
 
 	@Override

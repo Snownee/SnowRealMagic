@@ -17,8 +17,8 @@ import net.minecraft.block.SpreadableSnowyDirtBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.server.ServerWorld;
-import snownee.snow.Hook;
 import snownee.snow.CoreModule;
+import snownee.snow.Hook;
 
 @Mixin(SpreadableSnowyDirtBlock.class)
 public abstract class MixinSpreadableSnowyDirtBlock {

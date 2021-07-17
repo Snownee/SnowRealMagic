@@ -58,7 +58,7 @@ public abstract class MixinBlockRendererDispatcher {
 						} else {
 							matrixStackIn.push();
 						}
-						this.blockModelRenderer.renderModel(lightReaderIn, this.getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
+						blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 						matrixStackIn.pop();
 					}
 				} catch (Throwable throwable) {

@@ -21,7 +21,7 @@ public interface IWaterLoggableSnowVariant extends ISnowVariant, IWaterLoggable 
 		BlockState raw = getRaw(state, worldIn, pos);
 		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
 			if (!worldIn.isRemote()) {
-				worldIn.setBlockState(pos, raw.with(BlockStateProperties.WATERLOGGED, Boolean.valueOf(true)), 3);
+				worldIn.setBlockState(pos, raw.with(BlockStateProperties.WATERLOGGED, true), 3);
 				worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
 			}
 			return true;

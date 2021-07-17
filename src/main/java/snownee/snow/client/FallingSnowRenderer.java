@@ -26,7 +26,7 @@ import snownee.snow.entity.FallingSnowEntity;
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn);
-		this.shadowSize = 0.5F;
+		shadowSize = 0.5F;
 	}
 
 	@SuppressWarnings("deprecation")
