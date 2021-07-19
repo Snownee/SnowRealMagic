@@ -16,3 +16,6 @@ description='''Tweak vanilla snow layer.'''
     versionRange="[3.4, 3.10)"
     ordering="BEFORE"
     side="BOTH"
+
+[modproperties.snowrealmagic]
+    catalogueItemIcon="minecraft:snow_block" #Support for Catalogue mod
