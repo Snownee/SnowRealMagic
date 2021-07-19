@@ -134,9 +134,18 @@ public class ModSnowBlock extends BlockSnow {
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
 		AxisAlignedBB aabb = super.getSelectedBoundingBox(state, worldIn, pos);
 		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
-			aabb = aabb.union(getContainedState(worldIn, pos).getSelectedBoundingBox(worldIn, pos));
+			IBlockState contained = getContainedState(worldIn, pos);
+			if (contained.getBlock() != Blocks.AIR)
+				aabb = aabb.union(contained.getSelectedBoundingBox(worldIn, pos));
 		}
 		return aabb;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		if (state.getBlock() != this) // Fix Fancy Block Particles mod crash
+			return false;
+		return state.getValue(LAYERS) == 8;
 	}
 
 	@Override
@@ -213,10 +222,14 @@ public class ModSnowBlock extends BlockSnow {
 
 	private static void accumulate(World world, BlockPos pos, IBlockState centerState, BiPredicate<World, BlockPos> filter, boolean accumulate) {
 		int i = centerState.getValue(LAYERS);
-		for (int j = 0; j < 4; j++) {
-			EnumFacing direction = EnumFacing.byHorizontalIndex(j);
+		for (int j = 0; j < 8; j++) {
+			int k = j / 2;
+			EnumFacing direction = EnumFacing.byHorizontalIndex(k);
 			BlockPos pos2 = pos.offset(direction);
-			if (!filter.test(world, pos2)) {
+			if (j % 2 == 1) {
+				pos2 = pos2.offset(EnumFacing.byHorizontalIndex(k + 1));
+			}
+			if (!world.isBlockLoaded(pos2) || !filter.test(world, pos2)) {
 				continue;
 			}
 			IBlockState state = world.getBlockState(pos2);
@@ -227,11 +240,16 @@ public class ModSnowBlock extends BlockSnow {
 			if (state.getBlock() instanceof ModSnowBlock) {
 				l = state.getValue(LAYERS);
 			} else {
-				l = 0;
+				continue;
 			}
 			if (accumulate ? i > l : i < l) {
 				if (accumulate) {
-					placeLayersOn(world, pos2, 1, false, false);
+					if (placeLayersOn(world, pos2, 1, false, false)) {
+						AxisAlignedBB aabb = new AxisAlignedBB(pos2);
+						for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, aabb)) {
+							entity.setPositionAndUpdate(entity.posX, entity.posY + (ModConfig.thinnerBoundingBox ? 0.0625D : 0.125D), entity.posZ);
+						}
+					}
 				} else {
 					world.setBlockState(pos2, state.withProperty(LAYERS, l - 1));
 				}

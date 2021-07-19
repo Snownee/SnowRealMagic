@@ -33,6 +33,8 @@ minecraft {
     String resolved_core_config = mod_mixin_configs.replace('${mod_id}', mod_id);
     clientRunArgs += "--mixin ${resolved_core_config}"
     serverRunArgs += "--mixin ${resolved_core_config}"
+    
+    replace "@VERSION_INJECT@", project.version
 }
 
 repositories {
@@ -91,4 +93,8 @@ jar {
         attributes "TweakOrder": "0"
         attributes "MixinConfigs": mod_mixin_configs.replace('${mod_id}', mod_id)
     }
+}
+
+mixin {
+    add sourceSets.main, "refmap.snowrealmagic.json"
 }

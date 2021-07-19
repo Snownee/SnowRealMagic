@@ -16,7 +16,7 @@ public final class WorldEvents {
 
 	@SubscribeEvent
 	public static void populateIce(PopulateChunkEvent.Populate event) {
-		if (!ModConfig.replaceSnowWorldGen || event.getType() != EventType.ICE)
+		if (!ModConfig.placeSnowInBlock || !ModConfig.replaceSnowWorldGen || event.getType() != EventType.ICE)
 			return;
 		event.setResult(Result.DENY);
 		World world = event.getWorld();

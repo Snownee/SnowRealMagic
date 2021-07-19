@@ -1,6 +1,7 @@
 {
   "compatibilityLevel": "JAVA_8",
   "package": "snownee.snow.mixin",
+  "refmap": "refmap.snowrealmagic.json",
   "mixins": [
   ],
   "client": [
