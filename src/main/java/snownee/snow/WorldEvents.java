@@ -8,13 +8,14 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public final class WorldEvents {
 	private WorldEvents() {
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void populateIce(PopulateChunkEvent.Populate event) {
 		if (!ModConfig.placeSnowInBlock || !ModConfig.replaceSnowWorldGen || event.getType() != EventType.ICE)
 			return;

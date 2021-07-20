@@ -1,8 +1,10 @@
 package snownee.snow;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemSnow;
 import net.minecraft.item.ItemStack;
@@ -25,8 +27,7 @@ public class ModSnowItem extends ItemSnow {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack itemstack = player.getHeldItem(hand);
-
-		if (!itemstack.isEmpty() && player.canPlayerEdit(pos, facing, itemstack)) {
+		if (player.canPlayerEdit(pos, facing, itemstack)) {
 			if (ModConfig.placeSnowInBlock) {
 				IBlockState state = worldIn.getBlockState(pos);
 				Block block = state.getBlock();
@@ -39,15 +40,17 @@ public class ModSnowItem extends ItemSnow {
 
 				if (ModSnowBlock.canContainState(state)) {
 					ModSnowBlock.placeLayersOn(worldIn, blockpos, 1, false, true);
+					if (player instanceof EntityPlayerMP) {
+						CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, itemstack);
+					}
 					itemstack.shrink(1);
 					return EnumActionResult.SUCCESS;
 				}
 			}
 
 			return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-		} else {
-			return EnumActionResult.FAIL;
 		}
+		return EnumActionResult.FAIL;
 	}
 
 	@Override
@@ -71,7 +74,9 @@ public class ModSnowItem extends ItemSnow {
 			RayTraceResult result = worldIn.rayTraceBlocks(vec3d, vec3d1, false, false, false);
 			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK && result.sideHit != EnumFacing.DOWN) {
 				actionResult = onItemUse(playerIn, worldIn, result.getBlockPos(), handIn, result.sideHit, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z);
-				playerIn.swingArm(handIn);
+				if (actionResult == EnumActionResult.SUCCESS) {
+					playerIn.swingArm(handIn);
+				}
 			}
 		}
 		return new ActionResult<>(actionResult, playerIn.getHeldItem(handIn));
