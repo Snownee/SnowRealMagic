@@ -289,6 +289,9 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, boolean playSound) {
+		if (!Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos)) {
+			return false;
+		}
 		layers = MathHelper.clamp(layers, 1, 8);
 		IBlockState state = world.getBlockState(pos);
 		int originLayers = 0;

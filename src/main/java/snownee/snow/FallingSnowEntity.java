@@ -70,7 +70,6 @@ public class FallingSnowEntity extends Entity {
 		if (!world.isRemote) {
 			if (!onGround) {
 				if (fallTime > 100 && !world.isRemote && (pos.getY() < 1 || pos.getY() > 256) || fallTime > 600) {
-
 					setDead();
 				} else if (!pos.equals(prevPos)) {
 					prevPos = pos;
@@ -101,6 +100,10 @@ public class FallingSnowEntity extends Entity {
 					}
 				}
 			} else {
+				IBlockState stateDown = world.getBlockState(pos.down());
+				if (ModSnowBlock.canContainState(stateDown)) {
+					pos = pos.down();
+				}
 				IBlockState state = world.getBlockState(pos);
 
 				motionX *= 0.699999988079071D;
