@@ -493,7 +493,7 @@ public class ModSnowBlock extends BlockSnow {
 				IBlockState contained = getContainedState(worldIn, pos);
 				if (contained.getBlockHardness(worldIn, pos) == 0) {
 					worldIn.playEvent(2001, pos, Block.getStateId(contained));
-					contained.getBlock().harvestBlock(worldIn, player, pos, state, null, player.getHeldItemMainhand());
+					contained.getBlock().harvestBlock(worldIn, player, pos, contained, null, player.getHeldItemMainhand());
 					worldIn.setBlockState(pos, state.withProperty(TILE, false));
 				}
 			} catch (Exception e) {
