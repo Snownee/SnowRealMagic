@@ -43,6 +43,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import snownee.snow.compat.NoTreePunchingCompat;
 
 public class ModSnowBlock extends BlockSnow {
 	protected static final AxisAlignedBB[] SNOW_AABB_MAGIC = new AxisAlignedBB[] { new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.3125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.4375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D) };
@@ -193,10 +194,7 @@ public class ModSnowBlock extends BlockSnow {
 			worldIn.setBlockToAir(pos);
 			return;
 		}
-		if (!ModConfig.snowAccumulationDuringSnowfall && !ModConfig.snowAccumulationDuringSnowstorm) {
-			return;
-		}
-		if (random.nextInt(8) > 0 || !worldIn.canSeeSky(pos.up())) {
+		if ((!ModConfig.snowAccumulationDuringSnowfall && !ModConfig.snowAccumulationDuringSnowstorm) || random.nextInt(8) > 0 || !worldIn.canSeeSky(pos.up())) {
 			return;
 		}
 
@@ -382,6 +380,9 @@ public class ModSnowBlock extends BlockSnow {
 		if (block instanceof BlockFence || block instanceof BlockWall || (block instanceof BlockPane && !(block instanceof BlockStainedGlassPane))) {
 			return true;
 		}
+		if (NoTreePunchingCompat.isRock(block)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -463,20 +464,32 @@ public class ModSnowBlock extends BlockSnow {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (ModConfig.placeSnowInBlock && !state.getValue(TILE)) {
-			ItemStack stack = playerIn.getHeldItem(hand);
-			Block block = Block.getBlockFromItem(stack.getItem());
-			if (block != null && block != Blocks.AIR) {
-				IBlockState state2 = block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, stack.getMetadata(), playerIn, hand);
-				if (state2 != null && canContainState(state2) && state2.getBlock().canPlaceBlockOnSide(worldIn, pos, EnumFacing.UP)) {
-					if (!worldIn.isRemote) {
-						worldIn.setBlockState(pos, state2, 16 | 32);
-						int i = state.getValue(LAYERS);
-						if (placeLayersOn(worldIn, pos, i, false, true) && !playerIn.isCreative()) {
-							stack.shrink(1);
+		if (ModConfig.placeSnowInBlock) {
+			if (state.getValue(TILE)) {
+				IBlockState contained = getContainedState(worldIn, pos);
+				if (NoTreePunchingCompat.isRock(contained.getBlock())) {
+					try {
+						if (contained.getBlock().onBlockActivated(worldIn, pos, contained, playerIn, hand, facing, hitX, hitY, hitZ)) {
+							return worldIn.setBlockState(pos, state.withProperty(TILE, false));
 						}
+					} catch (Exception e) {
 					}
-					return true;
+				}
+			} else {
+				ItemStack stack = playerIn.getHeldItem(hand);
+				Block block = Block.getBlockFromItem(stack.getItem());
+				if (block != null && block != Blocks.AIR) {
+					IBlockState state2 = block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, stack.getMetadata(), playerIn, hand);
+					if (state2 != null && canContainState(state2) && state2.getBlock().canPlaceBlockOnSide(worldIn, pos, EnumFacing.UP)) {
+						if (!worldIn.isRemote) {
+							worldIn.setBlockState(pos, state2, 16 | 32);
+							int i = state.getValue(LAYERS);
+							if (placeLayersOn(worldIn, pos, i, false, true) && !playerIn.isCreative()) {
+								stack.shrink(1);
+							}
+						}
+						return true;
+					}
 				}
 			}
 		}

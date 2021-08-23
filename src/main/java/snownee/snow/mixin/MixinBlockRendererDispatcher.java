@@ -24,7 +24,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.MinecraftForgeClient;
+import snownee.snow.BufferBuilderDuck;
 import snownee.snow.SnowTile;
+import snownee.snow.compat.NoTreePunchingCompat;
 
 @Mixin(BlockRendererDispatcher.class)
 public abstract class MixinBlockRendererDispatcher {
@@ -53,7 +55,14 @@ public abstract class MixinBlockRendererDispatcher {
 						//matrixStackIn.push();
 						IBakedModel model = getModelForState(state);
 						state = state.getBlock().getExtendedState(state, world, pos);
+						boolean translate = NoTreePunchingCompat.isRock(state.getBlock());
+						if (translate) {
+							((BufferBuilderDuck) bufferBuilderIn).translateY(0.125);
+						}
 						blockModelRenderer.renderModel(world, model, state, pos, bufferBuilderIn, true);
+						if (translate) {
+							((BufferBuilderDuck) bufferBuilderIn).translateY(-0.125);
+						}
 						//matrixStackIn.pop();
 					}
 				} catch (Throwable throwable) {

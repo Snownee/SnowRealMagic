@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import snownee.snow.SnowRealMagic;
 
-public class FBPHack {
+public final class FBPHack {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void hackFBP(WorldEvent.Load event) {
 		try {
