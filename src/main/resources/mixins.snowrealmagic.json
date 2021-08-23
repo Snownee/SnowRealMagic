@@ -3,6 +3,7 @@
   "package": "snownee.snow.mixin",
   "refmap": "refmap.snowrealmagic.json",
   "mixins": [
+    "MixinItemSnow"
   ],
   "client": [
     "MixinBlockRendererDispatcher",

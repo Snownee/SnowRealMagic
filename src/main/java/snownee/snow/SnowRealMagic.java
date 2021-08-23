@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -70,11 +69,6 @@ public class SnowRealMagic {
 		if (ModConfig.placeSnowInBlock) {
 			GameRegistry.registerTileEntity(SnowTile.class, new ResourceLocation(MODID, "snow"));
 		}
-	}
-
-	@SubscribeEvent
-	public static void onItemRegister(RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(new ModSnowItem(BLOCK).setRegistryName(BLOCK.getRegistryName()));
 	}
 
 	@SubscribeEvent

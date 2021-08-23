@@ -1,4 +1,9 @@
-package snownee.snow;
+package snownee.snow.mixin;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -6,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSnow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -17,15 +23,18 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import snownee.snow.ModConfig;
+import snownee.snow.ModSnowBlock;
 
-public class ModSnowItem extends ItemSnow {
+@Mixin(ItemSnow.class)
+public abstract class MixinItemSnow extends ItemBlock {
 
-	public ModSnowItem(Block block) {
+	public MixinItemSnow(Block block) {
 		super(block);
 	}
 
-	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	@Inject(at = @At("HEAD"), method = "onItemUse", cancellable = true)
+	private void srm_onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> ci) {
 		ItemStack itemstack = player.getHeldItem(hand);
 		if (player.canPlayerEdit(pos, facing, itemstack)) {
 			if (ModConfig.placeSnowInBlock) {
@@ -44,13 +53,12 @@ public class ModSnowItem extends ItemSnow {
 						CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, itemstack);
 					}
 					itemstack.shrink(1);
-					return EnumActionResult.SUCCESS;
+					ci.setReturnValue(EnumActionResult.SUCCESS);
 				}
 			}
-
-			return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+			return;
 		}
-		return EnumActionResult.FAIL;
+		ci.setReturnValue(EnumActionResult.FAIL);
 	}
 
 	@Override
@@ -73,7 +81,7 @@ public class ModSnowItem extends ItemSnow {
 			Vec3d vec3d1 = vec3d.add(f6 * d3, f5 * d3, f7 * d3);
 			RayTraceResult result = worldIn.rayTraceBlocks(vec3d, vec3d1, false, false, false);
 			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK && result.sideHit != EnumFacing.DOWN) {
-				actionResult = onItemUse(playerIn, worldIn, result.getBlockPos(), handIn, result.sideHit, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z);
+				actionResult = ((ItemSnow) (Object) this).onItemUse(playerIn, worldIn, result.getBlockPos(), handIn, result.sideHit, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z);
 				if (actionResult == EnumActionResult.SUCCESS) {
 					playerIn.swingArm(handIn);
 				}
