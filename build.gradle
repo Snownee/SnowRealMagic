@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    provided('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+    provided('org.spongepowered:mixin:0.8-SNAPSHOT') {
         exclude module: 'guava'
         exclude module: 'commons-io'
         exclude module: 'gson'

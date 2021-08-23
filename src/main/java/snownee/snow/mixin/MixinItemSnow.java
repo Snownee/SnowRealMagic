@@ -56,9 +56,7 @@ public abstract class MixinItemSnow extends ItemBlock {
 					ci.setReturnValue(EnumActionResult.SUCCESS);
 				}
 			}
-			return;
 		}
-		ci.setReturnValue(EnumActionResult.FAIL);
 	}
 
 	@Override

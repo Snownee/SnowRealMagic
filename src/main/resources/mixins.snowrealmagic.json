@@ -3,11 +3,13 @@
   "package": "snownee.snow.mixin",
   "refmap": "refmap.snowrealmagic.json",
   "mixins": [
-    "MixinItemSnow"
+    "MixinItemSnow",
+    "ItemBlockAccessor"
   ],
   "client": [
     "MixinBlockRendererDispatcher",
     "MixinBufferBuilder"
   ],
-  "server": []
+  "server": [],
+  "minVersion": "0.8"
 }

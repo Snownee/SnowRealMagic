@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -27,6 +29,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import snownee.snow.compat.FBPHack;
 import snownee.snow.compat.NoTreePunchingCompat;
+import snownee.snow.mixin.ItemBlockAccessor;
 
 @Mod(
 		modid = SnowRealMagic.MODID, name = SnowRealMagic.NAME, version = "@VERSION_INJECT@", acceptedMinecraftVersions = "[1.12, 1.13)"
@@ -66,6 +69,10 @@ public class SnowRealMagic {
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
 		BLOCK = new ModSnowBlock();
 		event.getRegistry().register(BLOCK);
+		Item item = Item.getItemFromBlock(BLOCK);
+		if (item instanceof ItemBlock) {
+			((ItemBlockAccessor) item).setBlock(BLOCK);
+		}
 		if (ModConfig.placeSnowInBlock) {
 			GameRegistry.registerTileEntity(SnowTile.class, new ResourceLocation(MODID, "snow"));
 		}
