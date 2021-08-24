@@ -2,6 +2,7 @@ package snownee.snow;
 
 import java.util.Random;
 
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +34,14 @@ public class SnowGenerator implements IWorldGenerator {
 		if (f >= 0.15F) {
 			return;
 		}
-		if (pos.getY() >= 0 && pos.getY() < 256 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
+
+		IBlockState state = world.getBlockState(pos);
+		if (state.getBlock() == Blocks.SNOW_LAYER) {
+			// SereneSeasons will generate snow layer in populate event too
+			return;
+		}
+
+		if (pos.getY() >= 0 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
 			ModSnowBlock.placeLayersOn(world, pos, 1, false, false);
 		}
 	}
@@ -42,6 +50,8 @@ public class SnowGenerator implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (!ModConfig.placeSnowInBlock || !ModConfig.replaceSnowWorldGen)
 			return;
+		boolean pre = BlockFalling.fallInstantly;
+		BlockFalling.fallInstantly = true;
 		for (int k2 = 0; k2 < 16; ++k2) {
 			for (int j3 = 0; j3 < 16; ++j3) {
 				BlockPos blockpos1 = world.getPrecipitationHeight(new BlockPos(chunkX * 16 + 8 + k2, 0, chunkZ * 16 + 8 + j3));
@@ -58,5 +68,6 @@ public class SnowGenerator implements IWorldGenerator {
 				trySnowAt(world, blockpos1, true);
 			}
 		}
+		BlockFalling.fallInstantly = pre;
 	}
 }

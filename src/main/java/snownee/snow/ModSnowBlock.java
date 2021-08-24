@@ -348,10 +348,13 @@ public class ModSnowBlock extends BlockSnow {
 	@Override
 	public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
 		IBlockState state = worldIn.getBlockState(pos);
+		if (state.getValue(LAYERS) == 8) {
+			return false;
+		}
 		if (state.getBlock() == this && state.getValue(TILE)) {
 			return getContainedState(worldIn, pos).getMaterial().isReplaceable();
 		}
-		return (ModConfig.snowAlwaysReplaceable && state.getValue(LAYERS) < 8) || super.isReplaceable(worldIn, pos);
+		return ModConfig.snowAlwaysReplaceable || super.isReplaceable(worldIn, pos);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -452,7 +455,7 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	public static boolean canFallThrough(IBlockState state, World worldIn, BlockPos pos) {
-		return BlockFalling.canFallThrough(state) && state.getCollisionBoundingBox(worldIn, pos) == null;
+		return state.getCollisionBoundingBox(worldIn, pos) == null;
 	}
 
 	@Override
