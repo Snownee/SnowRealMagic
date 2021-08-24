@@ -113,7 +113,8 @@ public class ModSnowBlock extends BlockSnow {
 			return super.getCollisionBoundingBox(blockState, worldIn, pos);
 		}
 		int layers = blockState.getValue(LAYERS);
-		if (layers == 8 && worldIn.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
+		BlockPos posUp = pos.up();
+		if (layers == 8 && worldIn.getBlockState(posUp).getCollisionBoundingBox(worldIn, posUp) != null) {
 			return FULL_BLOCK_AABB;
 		}
 		return SNOW_AABB_MAGIC[layers - 1];
@@ -122,12 +123,24 @@ public class ModSnowBlock extends BlockSnow {
 	@Override
 	@SuppressWarnings("deprecation")
 	public RayTraceResult collisionRayTrace(IBlockState state, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
+		RayTraceResult hit1 = null;
 		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
-			RayTraceResult hit = rayTrace(pos, start, end, getContainedState(worldIn, pos).getBoundingBox(worldIn, pos));
-			if (hit != null)
-				return hit;
+			hit1 = rayTrace(pos, start, end, getContainedState(worldIn, pos).getBoundingBox(worldIn, pos));
 		}
-		return super.collisionRayTrace(state, worldIn, pos, start, end);
+		RayTraceResult hit2 = super.collisionRayTrace(state, worldIn, pos, start, end);
+		if (hit1 == null) {
+			return hit2;
+		}
+		if (hit2 == null) {
+			return hit1;
+		}
+		Vec3d vec1 = hit1.hitVec;
+		Vec3d vec2 = hit2.hitVec;
+		if (start.squareDistanceTo(vec1) < start.squareDistanceTo(vec2)) {
+			return hit1;
+		} else {
+			return hit2;
+		}
 	}
 
 	@Override
