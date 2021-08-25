@@ -223,7 +223,7 @@ public class ModSnowBlock extends BlockSnow {
 		int layers = state.getValue(LAYERS);
 
 		if (worldIn.canSnowAt(pos, false)) {
-			if (flag && layers < 8) {
+			if (flag) {
 				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.down()).getBlock() instanceof ModSnowBlock) && w.getLightFor(EnumSkyBlock.BLOCK, p) < 10, true);
 			} else if (layers > 1 && !worldIn.isRaining() && worldIn.getBlockState(pos.up()).getBlock() != this) {
 				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.up()).getBlock() instanceof ModSnowBlock), false);
@@ -244,6 +244,20 @@ public class ModSnowBlock extends BlockSnow {
 				continue;
 			}
 			IBlockState state = world.getBlockState(pos2);
+			boolean isAir = state.getBlock().isAir(state, world, pos2);
+			int height = world.getPrecipitationHeight(pos2).getY();
+			if (isAir || state.getBlock() == Blocks.SNOW_LAYER) {
+				if (height != pos2.getY()) {
+					continue;
+				}
+			} else if (ModSnowBlock.canContainState(state)) {
+				if (height != pos2.getY() && height != pos2.getY() + 1) {
+					continue;
+				}
+			} else {
+				continue;
+			}
+
 			if (!Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos2)) {
 				continue;
 			}
@@ -251,24 +265,22 @@ public class ModSnowBlock extends BlockSnow {
 			if (state.getBlock() instanceof ModSnowBlock) {
 				l = state.getValue(LAYERS);
 			} else {
-				continue;
+				l = 0;
 			}
 			if (accumulate ? i > l : i < l) {
-				if (accumulate) {
-					if (placeLayersOn(world, pos2, 1, false, false)) {
-						AxisAlignedBB aabb = new AxisAlignedBB(pos2);
-						for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, aabb)) {
-							entity.setPositionAndUpdate(entity.posX, entity.posY + (ModConfig.thinnerBoundingBox ? 0.0625D : 0.125D), entity.posZ);
-						}
-					}
-				} else {
-					world.setBlockState(pos2, state.withProperty(LAYERS, l - 1));
-				}
-				return;
+				i = l;
+				pos = pos2;
+				break;
 			}
 		}
 		if (accumulate) {
-			placeLayersOn(world, pos, 1, false, false);
+			//			world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
+			if (i < 8 && placeLayersOn(world, pos, 1, false, false)) {
+				AxisAlignedBB aabb = new AxisAlignedBB(pos);
+				for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, aabb)) {
+					entity.setPositionAndUpdate(entity.posX, entity.posY + (ModConfig.thinnerBoundingBox ? 0.0625D : 0.125D), entity.posZ);
+				}
+			}
 		} else {
 			world.setBlockState(pos, centerState.withProperty(LAYERS, i - 1));
 		}
