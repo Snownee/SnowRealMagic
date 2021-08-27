@@ -8,7 +8,8 @@
     "MixinSnowyDirtBlock",
     "MixinDefaultBiomeFeatures",
     "MixinLayerDecorator",
-    "MixinFreezeLayer"
+    "MixinFreezeLayer",
+    "MixinDoublePlantBlock"
   ],
   "client": [
     "MixinBlockRendererDispatcher"
