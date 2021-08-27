@@ -46,19 +46,25 @@ public class MixinDoublePlantBlock {
 		}
 	}
 
+	@Inject(method = "onBlockHarvested", at = @At("TAIL"))
+	public void srm_onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
+		srm_deleteBottomHalfDoublePlant(worldIn, pos, state, player, ci);
+	}
+
 	@Inject(method = "updatePostPlacement", at = @At("HEAD"), cancellable = true)
-	public void updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
+	public void srm_updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
 		DoubleBlockHalf doubleblockhalf = stateIn.get(HALF);
 		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN && facingState.getBlock() instanceof ModSnowTileBlock) {
+			cir.setReturnValue(stateIn);
+		}
+		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP && facingState.getBlock() instanceof ModSnowTileBlock) {
 			cir.setReturnValue(stateIn);
 		}
 	}
 
 	@Inject(method = "isValidPosition", at = @At("HEAD"), cancellable = true)
-	public void isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-		BlockPos blockPos = pos.down();
-		Block block = worldIn.getBlockState(blockPos).getBlock();
-		if (state.get(HALF) == DoubleBlockHalf.UPPER && block instanceof ModSnowTileBlock) {
+	public void srm_isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+		if (state.get(HALF) == DoubleBlockHalf.UPPER && worldIn.getBlockState(pos.down()).getBlock() instanceof ModSnowTileBlock) {
 			cir.setReturnValue(true);
 		}
 	}

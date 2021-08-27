@@ -265,7 +265,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (originLayers + layers > 8) {
 			pos = pos.up();
 			if (CoreModule.BLOCK.isValidPosition(CoreModule.BLOCK.getDefaultState(), world, pos) && world.getBlockState(pos).isReplaceable(useContext)) {
-				world.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
+				placeLayersOn(world, pos, layers - (8 - originLayers), falling, useContext, playSound);
 			}
 		}
 		return true;
