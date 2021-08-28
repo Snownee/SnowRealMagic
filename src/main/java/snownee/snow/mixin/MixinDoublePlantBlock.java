@@ -2,8 +2,6 @@ package snownee.snow.mixin;
 
 import static net.minecraft.block.SnowBlock.LAYERS;
 
-import net.minecraft.state.EnumProperty;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -40,8 +39,8 @@ public class MixinDoublePlantBlock {
 			BlockState blockstate = world.getBlockState(blockpos);
 			if (blockstate.getBlock() instanceof ModSnowTileBlock) {
 				world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-				world.setBlockState(blockpos, CoreModule.TILE_BLOCK.getDefaultState().with(LAYERS, blockstate.get(LAYERS)), 35);
-				world.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+				world.setBlockState(blockpos, CoreModule.BLOCK.getDefaultState().with(LAYERS, blockstate.get(LAYERS)), 35);
+				world.playEvent(player, 2001, blockpos, Block.getStateId(state));
 			}
 		}
 	}

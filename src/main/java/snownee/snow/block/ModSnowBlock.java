@@ -242,7 +242,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, BlockItemUseContext useContext, boolean playSound) {
+	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean fallingEffect, BlockItemUseContext useContext, boolean playSound) {
 		layers = MathHelper.clamp(layers, 1, 8);
 		BlockState state = world.getBlockState(pos);
 		int originLayers = 0;
@@ -256,7 +256,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		} else {
 			return false;
 		}
-		if (falling) {
+		if (fallingEffect) {
 			world.addBlockEvent(pos, CoreModule.BLOCK, originLayers, layers);
 		} else if (playSound) {
 			SoundType soundtype = CoreModule.BLOCK.getSoundType(CoreModule.BLOCK.getDefaultState());
@@ -265,7 +265,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (originLayers + layers > 8) {
 			pos = pos.up();
 			if (CoreModule.BLOCK.isValidPosition(CoreModule.BLOCK.getDefaultState(), world, pos) && world.getBlockState(pos).isReplaceable(useContext)) {
-				placeLayersOn(world, pos, layers - (8 - originLayers), falling, useContext, playSound);
+				placeLayersOn(world, pos, layers - (8 - originLayers), fallingEffect, useContext, playSound);
 			}
 		}
 		return true;
@@ -325,7 +325,13 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	}
 
 	public static boolean canFallThrough(BlockState state, World worldIn, BlockPos pos) {
-		return FallingBlock.canFallThrough(state) && state.getCollisionShape(worldIn, pos).isEmpty();
+		if (FallingBlock.canFallThrough(state) && state.getCollisionShape(worldIn, pos).isEmpty()) {
+			return true;
+		}
+		if (state.getBlock() instanceof ModSnowBlock && state.get(LAYERS) < 8) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -404,7 +410,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 			return hasAllProperties(state, CoreModule.WALL.getDefaultState());
 		}
 		if (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
-			return hasAllProperties(state, CoreModule.SLAB.getDefaultState());
+			return true;
 		}
 		if (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM) {
 			return hasAllProperties(state, CoreModule.STAIRS.getDefaultState());

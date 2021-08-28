@@ -39,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowTileBlock extends ModSnowBlock {
 	public ModSnowTileBlock(Block.Properties properties) {
@@ -96,29 +95,19 @@ public class ModSnowTileBlock extends ModSnowBlock {
 	}
 
 	@Override
-	protected boolean checkFallable(World worldIn, BlockPos pos, BlockState state) {
-		BlockState blockState = worldIn.getBlockState(pos.down());
-		if (blockState.getBlock() instanceof ModSnowTileBlock && blockState.get(LAYERS) < 8) {
-			if (!worldIn.isRemote) {
-				worldIn.setBlockState(pos, getContainedState(worldIn, pos));
-				FallingSnowEntity entity = new FallingSnowEntity(worldIn, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, state.get(LAYERS));
-				worldIn.addEntity(entity);
-			}
-			return true;
-		} else {
-			return super.checkFallable(worldIn, pos, state);
-		}
-	}
-
-	@Override
 	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
 		return getContainedState(worldIn, pos).allowsMovement(worldIn, pos, type);
 	}
 
-	public void setContainedState(IBlockReader world, BlockPos pos, BlockState state) {
+	public void setContainedState(IWorld world, BlockPos pos, BlockState state) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof SnowTile) {
-			((SnowTile) tile).setState(state);
+			if (state.isAir()) {
+				BlockState newState = CoreModule.BLOCK.getDefaultState().with(LAYERS, tile.getBlockState().get(LAYERS));
+				world.setBlockState(pos, newState, 3);
+			} else {
+				((SnowTile) tile).setState(state);
+			}
 		}
 	}
 
