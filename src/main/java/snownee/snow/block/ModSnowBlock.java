@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.FenceGateBlock;
@@ -264,7 +265,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (originLayers + layers > 8) {
 			pos = pos.up();
 			if (CoreModule.BLOCK.isValidPosition(CoreModule.BLOCK.getDefaultState(), world, pos) && world.getBlockState(pos).isReplaceable(useContext)) {
-				world.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
+				placeLayersOn(world, pos, layers - (8 - originLayers), falling, useContext, playSound);
 			}
 		}
 		return true;
@@ -353,6 +354,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 				if (state2 != null && canContainState(state2) && state2.isValidPosition(worldIn, pos)) {
 					if (!worldIn.isRemote) {
 						worldIn.setBlockState(pos, state2, 16 | 32);
+						block.onBlockPlacedBy(worldIn, pos, state, player, context.getItem());
 						int i = state.get(LAYERS);
 						if (placeLayersOn(worldIn, pos, i, false, context, true) && !player.isCreative()) {
 							context.getItem().shrink(1);
@@ -389,7 +391,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (block.isIn(CoreModule.NOT_CONTAINABLES)) {
 			return false;
 		}
-		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			return true;
 		}
 		if (block instanceof FenceBlock) {
@@ -421,7 +423,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 			return true;
 		}
 		Block block = state.getBlock();
-		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			if (block != CoreModule.TILE_BLOCK) {
 				world.setBlockState(pos, CoreModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
 			}
