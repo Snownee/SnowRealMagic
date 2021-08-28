@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IGrowable;
 import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.WitherRoseBlock;
@@ -40,7 +41,7 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 
-public class ModSnowTileBlock extends ModSnowBlock {
+public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	public ModSnowTileBlock(Block.Properties properties) {
 		super(properties);
 	}
@@ -224,6 +225,33 @@ public class ModSnowTileBlock extends ModSnowBlock {
 			return new WrappedWorld(world);
 		} else {
 			return world;
+		}
+	}
+
+	@Override
+	public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient) {
+		BlockState contained = getContainedState(worldIn, pos);
+		Block block = contained.getBlock();
+		return block instanceof IGrowable && ((IGrowable) block).canGrow(worldIn, pos, contained, isClient);
+	}
+
+	@Override
+	public boolean canUseBonemeal(World worldIn, Random rand, BlockPos pos, BlockState state) {
+		BlockState contained = getContainedState(worldIn, pos);
+		Block block = contained.getBlock();
+		return block instanceof IGrowable && ((IGrowable) block).canUseBonemeal(worldIn, rand, pos, contained);
+	}
+
+	@Override
+	public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state) {
+		BlockState contained = getContainedState(worldIn, pos);
+		Block block = contained.getBlock();
+		if (block instanceof IGrowable) {
+			((IGrowable) block).grow(worldIn, rand, pos, contained);
+			BlockState stateNow = worldIn.getBlockState(pos);
+			if (stateNow.getBlock() != state.getBlock()) {
+				convert(worldIn, pos, stateNow, state.get(LAYERS), 3);
+			}
 		}
 	}
 
