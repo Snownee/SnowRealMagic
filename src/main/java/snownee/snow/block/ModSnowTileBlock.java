@@ -89,8 +89,11 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
 		BlockState state = super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 		if (state.getBlock() instanceof ModSnowTileBlock) {
-			BlockState blockState = getContainedState(worldIn, currentPos).updatePostPlacement(facing, facingState, worldIn, currentPos, facingPos);
-			setContainedState(worldIn, currentPos, blockState);
+			BlockState contained = getContainedState(worldIn, currentPos);
+			BlockState containedNew = contained.updatePostPlacement(facing, facingState, worldIn, currentPos, facingPos);
+			if (contained != containedNew) {
+				setContainedState(worldIn, currentPos, containedNew, state);
+			}
 		}
 		return state;
 	}
@@ -100,12 +103,12 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		return getContainedState(worldIn, pos).allowsMovement(worldIn, pos, type);
 	}
 
-	public void setContainedState(IWorld world, BlockPos pos, BlockState state) {
+	public void setContainedState(IWorld world, BlockPos pos, BlockState state, BlockState snow) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof SnowTile) {
 			if (state.isAir()) {
-				BlockState newState = CoreModule.BLOCK.getDefaultState().with(LAYERS, tile.getBlockState().get(LAYERS));
-				world.setBlockState(pos, newState, 3);
+				snow = CoreModule.BLOCK.getDefaultState().with(LAYERS, snow.get(LAYERS));
+				world.setBlockState(pos, snow, 3);
 			} else {
 				((SnowTile) tile).setState(state);
 			}
