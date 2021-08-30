@@ -42,7 +42,7 @@ public class SnowGenerator implements IWorldGenerator {
 		}
 
 		if (pos.getY() >= 0 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
-			ModSnowBlock.placeLayersOn(world, pos, 1, false, false);
+			ModSnowBlock.placeLayersOn(world, pos, 1, false, false, 2);
 		}
 	}
 

@@ -57,7 +57,7 @@ public class SnowRealMagic {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		GameRegistry.registerWorldGenerator(new SnowGenerator(), 5);
+		GameRegistry.registerWorldGenerator(new SnowGenerator(), ModConfig.snowWorldGenPriority);
 	}
 
 	@EventHandler

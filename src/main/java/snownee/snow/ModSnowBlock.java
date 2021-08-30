@@ -169,14 +169,14 @@ public class ModSnowBlock extends BlockSnow {
 
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-		if (ModConfig.snowGravity) {
+		if (ModConfig.snowGravity && !BlockFalling.fallInstantly) {
 			worldIn.scheduleUpdate(pos, this, tickRate(worldIn));
 		}
 	}
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		if (ModConfig.snowGravity) {
+		if (ModConfig.snowGravity && !BlockFalling.fallInstantly) {
 			worldIn.scheduleUpdate(pos, this, tickRate(worldIn));
 		}
 	}
@@ -275,7 +275,7 @@ public class ModSnowBlock extends BlockSnow {
 		}
 		if (accumulate) {
 			//			world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
-			if (i < 8 && placeLayersOn(world, pos, 1, false, false)) {
+			if (i < 8 && placeLayersOn(world, pos, 1, false, false, 3)) {
 				AxisAlignedBB aabb = new AxisAlignedBB(pos);
 				for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, aabb)) {
 					entity.setPositionAndUpdate(entity.posX, entity.posY + (ModConfig.thinnerBoundingBox ? 0.0625D : 0.125D), entity.posZ);
@@ -311,7 +311,7 @@ public class ModSnowBlock extends BlockSnow {
 		return false;
 	}
 
-	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, boolean playSound) {
+	public static boolean placeLayersOn(World world, BlockPos pos, int layers, boolean falling, boolean playSound, int flags) {
 		if (!Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos)) {
 			return false;
 		}
@@ -331,7 +331,7 @@ public class ModSnowBlock extends BlockSnow {
 			}
 		}
 		if (flag || state.getBlock() == Blocks.SNOW_LAYER || state.getBlock().isReplaceable(world, pos)) {
-			world.setBlockState(pos, base.withProperty(LAYERS, MathHelper.clamp(originLayers + layers, 1, 8)));
+			world.setBlockState(pos, base.withProperty(LAYERS, MathHelper.clamp(originLayers + layers, 1, 8)), flags);
 			if (flag) {
 				TileEntity tile = world.getTileEntity(pos);
 				if (tile instanceof SnowTile) {
@@ -347,7 +347,7 @@ public class ModSnowBlock extends BlockSnow {
 			if (originLayers + layers > 8) {
 				pos = pos.up();
 				if (world.getBlockState(pos).getBlock().isReplaceable(world, pos)) {
-					world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)));
+					world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(LAYERS, MathHelper.clamp(originLayers + layers - 8, 1, 8)), flags);
 				}
 			}
 			return true;
@@ -512,7 +512,7 @@ public class ModSnowBlock extends BlockSnow {
 						if (!worldIn.isRemote) {
 							worldIn.setBlockState(pos, state2, 16 | 32);
 							int i = state.getValue(LAYERS);
-							if (placeLayersOn(worldIn, pos, i, false, true) && !playerIn.isCreative()) {
+							if (placeLayersOn(worldIn, pos, i, false, true, 3) && !playerIn.isCreative()) {
 								stack.shrink(1);
 							}
 						}

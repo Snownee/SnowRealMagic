@@ -27,6 +27,9 @@ public final class ModConfig {
 	@Config.Name("ReplaceSnowWorldGen")
 	public static boolean replaceSnowWorldGen = true;
 
+	@Config.Name("SnowWorldGenPriority")
+	public static int snowWorldGenPriority = 5;
+
 	@Config.Name("SnowGravity")
 	public static boolean snowGravity = true;
 

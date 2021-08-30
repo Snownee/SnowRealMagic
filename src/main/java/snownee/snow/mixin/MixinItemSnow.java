@@ -48,7 +48,7 @@ public abstract class MixinItemSnow extends ItemBlock {
 				}
 
 				if (ModSnowBlock.canContainState(state)) {
-					ModSnowBlock.placeLayersOn(worldIn, blockpos, 1, false, true);
+					ModSnowBlock.placeLayersOn(worldIn, blockpos, 1, false, true, 3);
 					if (player instanceof EntityPlayerMP) {
 						CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, itemstack);
 					}
