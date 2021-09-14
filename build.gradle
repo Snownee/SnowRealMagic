@@ -17,7 +17,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = "${version_major}.${version_minor}.${version_patch}"
-group = "snownee"
+group = "snownee.snow"
 archivesBaseName = "SnowRealMagic-${minecraft_version}"
 
 if (System.getenv().BUILD_NUMBER != null) {
