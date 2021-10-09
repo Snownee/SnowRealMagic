@@ -94,6 +94,11 @@ public class FallingSnowEntity extends Entity {
 						setDead();
 						return;
 					}
+					if (state.getMaterial() == Material.LEAVES && state.getCollisionBoundingBox(world, pos) != null) {
+						ModSnowBlock.placeLayersOn(world, pos.up(), layers, true, true, 3);
+						setDead();
+						return;
+					}
 					if (block instanceof IFluidBlock || block instanceof BlockLiquid) {
 						setDead();
 						return;
