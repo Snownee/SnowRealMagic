@@ -40,6 +40,9 @@ public class SnowGenerator implements IWorldGenerator {
 			// SereneSeasons will generate snow layer in populate event too
 			return;
 		}
+		if (state.getBlock() != Blocks.AIR && !ModSnowBlock.canContainState(state)) {
+			return;
+		}
 
 		if (pos.getY() >= 0 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
 			ModSnowBlock.placeLayersOn(world, pos, 1, false, false, 2);
