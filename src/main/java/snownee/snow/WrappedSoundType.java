@@ -52,7 +52,7 @@ public final class WrappedSoundType extends SoundType {
 	private static final Map<SoundType, SoundType> wrappedSounds = Maps.newConcurrentMap();
 
 	public static SoundType get(SoundType soundType) {
-		if (soundType == SoundType.SNOW) {
+		if (soundType == SoundType.SNOW || soundType instanceof WrappedSoundType) {
 			return soundType;
 		}
 		return wrappedSounds.computeIfAbsent(soundType, WrappedSoundType::new);

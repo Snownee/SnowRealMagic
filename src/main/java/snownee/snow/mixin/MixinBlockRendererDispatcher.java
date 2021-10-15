@@ -14,19 +14,22 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SnowBlock;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.crash.ReportedException;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IModelData;
 import snownee.snow.CoreModule;
+import snownee.snow.block.ISnowVariant;
 import snownee.snow.block.SnowTile;
 
 @Mixin(BlockRendererDispatcher.class)
@@ -36,38 +39,63 @@ public abstract class MixinBlockRendererDispatcher {
 	@Final
 	private BlockModelRenderer blockModelRenderer;
 
+	@SuppressWarnings("deprecation")
 	@Inject(
 			method = "renderModel(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockDisplayReader;Lcom/mojang/blaze3d/matrix/MatrixStack;Lcom/mojang/blaze3d/vertex/IVertexBuilder;ZLjava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z", at = @At(
-				"RETURN"
-			), remap = false
+				"HEAD"
+			), remap = false, cancellable = true
 	)
 	private void srm_renderModel(BlockState blockStateIn, BlockPos posIn, IBlockDisplayReader lightReaderIn, MatrixStack matrixStackIn, IVertexBuilder vertexBuilderIn, boolean checkSides, Random rand, IModelData modelData, CallbackInfoReturnable<Boolean> info) {
-		if (blockStateIn.getBlock() == CoreModule.TILE_BLOCK && blockStateIn.get(BlockStateProperties.LAYERS_1_8) < 8) {
-			TileEntity tileEntity = lightReaderIn.getTileEntity(posIn);
-			if (tileEntity instanceof SnowTile) {
-				BlockState state = ((SnowTile) tileEntity).getState();
-				try {
-					if (state.getRenderType() == BlockRenderType.MODEL) {
-						String namespace = state.getBlock().getRegistryName().getNamespace();
-						if (namespace.equals("projectvibrantjourneys") || namespace.equals("foragecraft")) {
-							if (blockStateIn.get(BlockStateProperties.LAYERS_1_8) > 3)
-								return;
-							matrixStackIn.push();
-							matrixStackIn.translate(0.001, 0.101, 0.001);
-							matrixStackIn.scale(0.998f, 1, 0.998f);
-						} else {
-							matrixStackIn.push();
+		if (!(blockStateIn.getBlock() instanceof ISnowVariant)) {
+			return;
+		}
+		if (blockStateIn.hasProperty(SnowBlock.LAYERS) && blockStateIn.get(SnowBlock.LAYERS) == 8) {
+			return;
+		}
+		BlockState state = modelData.getData(SnowTile.BLOCKSTATE);
+		if (state == null || state.isAir() || state.getRenderType() != BlockRenderType.MODEL) {
+			return;
+		}
+		try {
+			RenderType cutout = RenderType.getCutout();
+			RenderType solid = RenderType.getSolid();
+			RenderType layer = MinecraftForgeClient.getRenderLayer();
+			boolean canRender;
+			if (layer == null) {
+				canRender = layer == cutout;
+			} else {
+				canRender = RenderTypeLookup.canRenderInLayer(state, layer);
+			}
+			if (canRender) {
+				matrixStackIn.push();
+				if (blockStateIn.hasProperty(SnowBlock.LAYERS)) {
+					String namespace = state.getBlock().getRegistryName().getNamespace();
+					if (namespace.equals("projectvibrantjourneys") || namespace.equals("foragecraft")) {
+						if (blockStateIn.get(SnowBlock.LAYERS) > 3) {
+							matrixStackIn.pop();
+							return;
 						}
-						blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
-						matrixStackIn.pop();
+						matrixStackIn.translate(0.001, 0.101, 0.001);
+						matrixStackIn.scale(0.998f, 1, 0.998f);
 					}
-				} catch (Throwable throwable) {
-					CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Tesselating block in world");
-					CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being tesselated");
-					CrashReportCategory.addBlockInfo(crashreportcategory, posIn, blockStateIn);
-					throw new ReportedException(crashreport);
+				}
+				blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				matrixStackIn.pop();
+			}
+			if (blockStateIn.getBlock() == CoreModule.TILE_BLOCK) {
+				if (layer != solid) {
+					info.setReturnValue(true);
+				}
+			} else {
+				if (layer != cutout) {
+					info.setReturnValue(true);
 				}
 			}
+		} catch (Throwable throwable) {
+			CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Tesselating block in world");
+			CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being tesselated");
+			CrashReportCategory.addBlockInfo(crashreportcategory, posIn, blockStateIn);
+			throw new ReportedException(crashreport);
 		}
 	}
 

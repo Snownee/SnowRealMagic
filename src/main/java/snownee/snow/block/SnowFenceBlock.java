@@ -8,20 +8,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.block.SixWayBlock;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -34,16 +28,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.kiwi.RenderLayer;
-import snownee.kiwi.RenderLayer.Layer;
-import snownee.kiwi.block.ModBlock;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.WrappedSoundType;
 
-@RenderLayer(Layer.CUTOUT)
 public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVariant {
 
 	public static final BooleanProperty DOWN = SixWayBlock.DOWN;
@@ -60,11 +50,6 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
 		return new SnowTextureTile();
-	}
-
-	@Override
-	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-		return ModBlock.pickBlock(state, target, world, pos, player);
 	}
 
 	@Override
@@ -113,15 +98,6 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
 	}
 
 	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-		if (material == Material.WOOD) {
-			CoreModule.fillTextureItems(ItemTags.WOODEN_FENCES, this, items);
-		} else {
-			CoreModule.fillTextureItems(ItemTags.FENCES, this, items, item -> !item.isIn(ItemTags.WOODEN_FENCES));
-		}
-	}
-
-	@Override
 	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
@@ -139,6 +115,7 @@ public class SnowFenceBlock extends FenceBlock implements IWaterLoggableSnowVari
 		return shape;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public SoundType getSoundType(BlockState state) {
 		return WrappedSoundType.get(super.getSoundType(state));

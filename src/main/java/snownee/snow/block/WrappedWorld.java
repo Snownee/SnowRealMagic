@@ -60,7 +60,7 @@ public class WrappedWorld extends World {
 	public BlockState getBlockState(BlockPos pos) {
 		BlockState state = world.getBlockState(pos);
 		if (state.isIn(CoreModule.TILE_BLOCK)) {
-			state = CoreModule.TILE_BLOCK.getContainedState(world, pos);
+			state = CoreModule.TILE_BLOCK.getRaw(state, world, pos);
 		}
 		return state;
 	}

@@ -19,10 +19,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
 import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
+@OnlyIn(Dist.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn);

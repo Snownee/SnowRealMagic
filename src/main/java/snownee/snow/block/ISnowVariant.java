@@ -2,28 +2,21 @@ package snownee.snow.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.state.Property;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import snownee.kiwi.tile.TextureTile;
+import net.minecraftforge.common.extensions.IForgeBlock;
 
-public interface ISnowVariant {
+public interface ISnowVariant extends IForgeBlock {
 	default BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos) {
-		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TextureTile) {
-			Item item = ((TextureTile) tile).getMark("0");
-			if (item instanceof BlockItem) {
-				BlockState newState = ((BlockItem) item).getBlock().getDefaultState();
-				for (Property property : state.getProperties()) {
-					if (newState.hasProperty(property)) {
-						newState = newState.with(property, state.get(property));
-					}
-				}
-				return newState;
+		if (state.hasTileEntity()) {
+			TileEntity tile = world.getTileEntity(pos);
+			if (tile instanceof SnowTile) {
+				return ((SnowTile) tile).getState();
 			}
 		}
 		return Blocks.AIR.getDefaultState();
@@ -31,5 +24,10 @@ public interface ISnowVariant {
 
 	default BlockState onShovel(BlockState state, World world, BlockPos pos) {
 		return getRaw(state, world, pos);
+	}
+
+	@Override
+	default ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
+		return getRaw(state, world, pos).getPickBlock(target, world, pos, player);
 	}
 }

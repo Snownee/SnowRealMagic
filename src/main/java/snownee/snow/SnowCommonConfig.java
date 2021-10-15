@@ -27,12 +27,14 @@ public final class SnowCommonConfig {
 	@Comment("Should snow melt if layers are more than 1")
 	public static boolean snowNaturalMelt = !ModList.get().isLoaded("terraforged");
 	public static boolean snowReduceFallDamage = true;
+	@Comment("block like grass will be generated with snow")
 	public static boolean replaceWorldFeature = true;
 	public static boolean sustainGrassIfLayerMoreThanOne = true;
 	@Comment(
 		"If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal via random tick."
 	)
 	public static boolean retainOriginalBlocks = false;
+	@Comment("Simulate some right clicking behaviors like bonemeal. may have some glitches")
 	public static boolean advancedBlockInteraction = true;
 
 }

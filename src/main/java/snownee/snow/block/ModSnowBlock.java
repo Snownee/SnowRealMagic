@@ -44,6 +44,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -57,7 +58,6 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.kiwi.tile.TextureTile;
 import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowClientConfig;
@@ -232,7 +232,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		BlockPos posDown = pos.down();
 		if ((worldIn.isAirBlock(posDown) || canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) && pos.getY() >= 0) {
 			if (!worldIn.isRemote) {
-				worldIn.setBlockState(pos, getContainedState(worldIn, pos));
+				worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 				FallingSnowEntity entity = new FallingSnowEntity(worldIn, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, state.get(LAYERS));
 				worldIn.addEntity(entity);
 			}
@@ -345,11 +345,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	}
 
 	@Override
-	public BlockState getRaw(BlockState state, IBlockReader world, BlockPos pos) {
-		return getContainedState(world, pos);
-	}
-
-	@Override
 	@SuppressWarnings("deprecation")
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 		if (state.getBlock() == CoreModule.BLOCK) {
@@ -385,10 +380,6 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		}
 	}
 
-	public BlockState getContainedState(IBlockReader world, BlockPos pos) {
-		return Blocks.AIR.getDefaultState();
-	}
-
 	public static boolean canContainState(BlockState state) {
 		if (!SnowCommonConfig.placeSnowInBlock || state.getBlock().hasTileEntity(state) || !state.getFluidState().isEmpty()) {
 			return false;
@@ -400,19 +391,19 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof FenceBlock) {
+		if (block instanceof FenceBlock && block.isIn(BlockTags.FENCES)) {
 			return hasAllProperties(state, CoreModule.FENCE.getDefaultState());
 		}
-		if (block instanceof FenceGateBlock) {
+		if (block instanceof FenceGateBlock && block.isIn(BlockTags.FENCE_GATES)) {
 			return hasAllProperties(state, CoreModule.FENCE_GATE.getDefaultState());
 		}
-		if (block instanceof WallBlock) {
+		if (block instanceof WallBlock && block.isIn(BlockTags.WALLS)) {
 			return hasAllProperties(state, CoreModule.WALL.getDefaultState());
 		}
-		if (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
+		if (block instanceof SlabBlock && state.get(SlabBlock.TYPE) == SlabType.BOTTOM && block.isIn(BlockTags.SLABS)) {
 			return true;
 		}
-		if (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM) {
+		if (block instanceof StairsBlock && state.get(StairsBlock.HALF) == Half.BOTTOM && block.isIn(BlockTags.STAIRS)) {
 			return hasAllProperties(state, CoreModule.STAIRS.getDefaultState());
 		}
 		return false;
@@ -422,13 +413,13 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		if (!SnowCommonConfig.placeSnowInBlock || state.hasTileEntity()) {
 			return false;
 		}
-		if (state.getBlock().isAir(state, world, pos)) {
-			if (state.getBlock() != CoreModule.BLOCK) {
+		Block block = state.getBlock();
+		if (block.isAir(state, world, pos)) {
+			if (block != CoreModule.BLOCK) {
 				world.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, layers), flags);
 			}
 			return true;
 		}
-		Block block = state.getBlock();
 		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			if (block != CoreModule.TILE_BLOCK) {
 				world.setBlockState(pos, CoreModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
@@ -442,25 +433,25 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 
 		BlockPos posDown = pos.down();
 		BlockState stateDown = world.getBlockState(posDown);
-		if (block instanceof StairsBlock && state.getBlock() != CoreModule.STAIRS) {
+		if (block instanceof StairsBlock && block != CoreModule.STAIRS && block.isIn(BlockTags.STAIRS)) {
 			BlockState newState = CoreModule.STAIRS.getDefaultState();
 			newState = copyProperties(state, newState);
 			world.setBlockState(pos, newState, flags);
-		} else if (block instanceof SlabBlock && state.getBlock() != CoreModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
+		} else if (block instanceof SlabBlock && block != CoreModule.SLAB && state.get(SlabBlock.TYPE) == SlabType.BOTTOM && block.isIn(BlockTags.SLABS)) {
 			// can't copy properties as this doesn't extend vanilla slabs
 			world.setBlockState(pos, CoreModule.SLAB.getDefaultState(), flags);
-		} else if (block instanceof FenceBlock && state.getBlock().getClass() != SnowFenceBlock.class) {
+		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class && block.isIn(BlockTags.FENCES)) {
 			Block newBlock = block.isIn(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
 			BlockState newState = newBlock.getDefaultState();
 			newState = copyProperties(state, newState);
 			newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlockState(pos, newState, flags);
-		} else if (block instanceof FenceGateBlock && state.getBlock() != CoreModule.FENCE_GATE) {
+		} else if (block instanceof FenceGateBlock && block != CoreModule.FENCE_GATE && block.isIn(BlockTags.FENCE_GATES)) {
 			BlockState newState = CoreModule.FENCE_GATE.getDefaultState();
 			newState = copyProperties(state, newState);
 			newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlockState(pos, newState, flags);
-		} else if (block instanceof WallBlock && state.getBlock() != CoreModule.WALL) {
+		} else if (block instanceof WallBlock && block != CoreModule.WALL && block.isIn(BlockTags.WALLS)) {
 			BlockState newState = CoreModule.WALL.getDefaultState();
 			newState = copyProperties(state, newState);
 			newState = newState.updatePostPlacement(Direction.DOWN, stateDown, world, pos, posDown);
@@ -470,8 +461,8 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		}
 
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TextureTile) {
-			((TextureTile) tile).setTexture("0", state);
+		if (tile instanceof SnowTile) {
+			((SnowTile) tile).setState(state);
 		}
 		return true;
 	}
@@ -487,7 +478,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
+	public static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 			Property<T> property = (Property<T>) entry.getKey();
 			if (!newState.hasProperty(property))
@@ -527,5 +518,10 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 				entityIn.setMotion(entityIn.getMotion().mul(d1, 1.0D, d1));
 			}
 		}
+	}
+
+	@Override
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
+		return super.getPickBlock(state, target, world, pos, player);
 	}
 }

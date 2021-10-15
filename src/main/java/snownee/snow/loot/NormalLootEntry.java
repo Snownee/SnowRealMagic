@@ -6,18 +6,23 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-import net.minecraft.item.Item;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.loot.LootPoolEntryType;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
 import net.minecraft.loot.StandaloneLootEntry;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.functions.ILootFunction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IItemProvider;
-import snownee.kiwi.tile.TextureTile;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
+import snownee.snow.block.SnowTile;
 
 public class NormalLootEntry extends StandaloneLootEntry {
 
@@ -25,13 +30,21 @@ public class NormalLootEntry extends StandaloneLootEntry {
 		super(weightIn, qualityIn, conditionsIn, functionsIn);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void func_216154_a(Consumer<ItemStack> consumer, LootContext context) {
 		TileEntity tile = context.get(LootParameters.BLOCK_ENTITY);
-		if (tile instanceof TextureTile) {
-			Item item = ((TextureTile) tile).getMark("0");
-			if (item != null) {
-				consumer.accept(new ItemStack(item));
+		if (tile instanceof SnowTile) {
+			BlockState state = ((SnowTile) tile).getState();
+			if (!state.isAir()) {
+				ResourceLocation resourcelocation = state.getBlock().getLootTable();
+				if (resourcelocation != LootTables.EMPTY) {
+					LootContext.Builder builder = new LootContext.Builder(context);
+					LootContext lootcontext = builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK);
+					ServerWorld serverworld = lootcontext.getWorld();
+					LootTable loottable = serverworld.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
+					loottable.generate(lootcontext).forEach(consumer::accept);
+				}
 			}
 		}
 	}
