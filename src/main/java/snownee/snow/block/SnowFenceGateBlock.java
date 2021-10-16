@@ -10,8 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -38,16 +36,9 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 
 	@Override
 	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-		} else if (ModUtil.shouldMelt(worldIn, pos)) {
+		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
-	}
-
-	@Override
-	public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
-		return VoxelShapes.fullCube();
 	}
 
 	@Override

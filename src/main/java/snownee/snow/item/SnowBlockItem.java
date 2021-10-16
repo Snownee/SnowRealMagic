@@ -35,7 +35,7 @@ public class SnowBlockItem extends BlockItem {
 				if (ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !world.isRemote && (player == null || !player.isCreative())) {
 					context.getItem().shrink(1);
 				}
-				return ActionResultType.SUCCESS;
+				return ActionResultType.func_233537_a_(world.isRemote);
 			}
 			if (state.isReplaceable(blockContext)) {
 				pos = pos.offset(context.getFace());
@@ -44,7 +44,7 @@ public class SnowBlockItem extends BlockItem {
 					if (ModSnowBlock.placeLayersOn(world, pos, 1, false, blockContext, true) && !world.isRemote && (player == null || !player.isCreative())) {
 						context.getItem().shrink(1);
 					}
-					return ActionResultType.SUCCESS;
+					return ActionResultType.func_233537_a_(world.isRemote);
 				}
 			}
 		}

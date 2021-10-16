@@ -39,7 +39,7 @@ public class SnowTextureTile extends SnowTile {
 	@Override
 	public void loadState(BlockState state, CompoundNBT data, boolean network) {
 		boolean changed = false;
-		if (data.contains("RB")) {
+		if (network && data.contains("RB")) {
 			changed = options.update(data.getBoolean("RO"), data.getBoolean("RB"));
 			if (changed && network && hasWorld() && world.isRemote) {
 				requestModelDataUpdate();
@@ -72,8 +72,10 @@ public class SnowTextureTile extends SnowTile {
 	@Override
 	public void saveState(CompoundNBT data, boolean network) {
 		data.putString("Block", getState().getBlock().getRegistryName().toString());
-		data.putBoolean("RB", options.renderBottom);
-		data.putBoolean("RO", options.renderOverlay);
+		if (network) {
+			data.putBoolean("RB", options.renderBottom);
+			data.putBoolean("RO", options.renderOverlay);
+		}
 	}
 
 	@Override
@@ -115,6 +117,17 @@ public class SnowTextureTile extends SnowTile {
 			BlockState state = getBlockState();
 			world.markAndNotifyBlock(pos, world.getChunkAt(pos), state, state, 11, 512);
 		}
+	}
+
+	@Override
+	public void onLoad() {
+		if (world.isRemote) {
+			Block block = getBlockState().getBlock();
+			if (block instanceof WatcherSnowVariant) {
+				((WatcherSnowVariant) block).onUpdateOptions(getBlockState(), world, pos, getModelData().getData(OPTIONS));
+			}
+		}
+		super.onLoad();
 	}
 
 }

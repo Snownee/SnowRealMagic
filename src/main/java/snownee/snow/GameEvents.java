@@ -40,7 +40,7 @@ public final class GameEvents {
 		}
 		BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
 		worldIn.setBlockState(pos, newState);
-		if (player instanceof ServerPlayerEntity) {
+		if (!player.isCreative() && player instanceof ServerPlayerEntity) {
 			if (newState.isSolid())
 				pos = pos.up();
 			Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));

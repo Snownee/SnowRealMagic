@@ -8,7 +8,6 @@ import net.minecraft.block.FenceBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -35,16 +34,9 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
-		} else if (ModUtil.shouldMelt(worldIn, pos)) {
+		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
-	}
-
-	@Override
-	public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
-		return super.getRenderShape(getDefaultState(), worldIn, pos);
 	}
 
 	@SuppressWarnings("deprecation")
