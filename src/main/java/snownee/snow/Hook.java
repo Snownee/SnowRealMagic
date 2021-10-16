@@ -9,8 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.lighting.LightEngine;
-import snownee.snow.block.ISnowVariant;
 import snownee.snow.block.SnowTextureTile;
+import snownee.snow.block.SnowVariant;
 
 public final class Hook {
 	private Hook() {
@@ -36,7 +36,7 @@ public final class Hook {
 		}
 		pos = pos.offset(direction);
 		state = level.getBlockState(pos);
-		if (!state.hasTileEntity() || !(state.getBlock() instanceof ISnowVariant)) {
+		if (!state.hasTileEntity() || !(state.getBlock() instanceof SnowVariant)) {
 			return false;
 		}
 		TileEntity blockEntity = level.getTileEntity(pos);

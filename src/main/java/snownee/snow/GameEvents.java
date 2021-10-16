@@ -18,7 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import snownee.snow.block.ISnowVariant;
+import snownee.snow.block.SnowVariant;
 
 @EventBusSubscriber
 public final class GameEvents {
@@ -31,14 +31,14 @@ public final class GameEvents {
 		World worldIn = event.getWorld();
 		BlockPos pos = event.getPos();
 		BlockState state = worldIn.getBlockState(pos);
-		if (!(state.getBlock() instanceof ISnowVariant)) {
+		if (!(state.getBlock() instanceof SnowVariant)) {
 			return;
 		}
 		PlayerEntity player = event.getPlayer();
 		if (!ForgeHooks.canHarvestBlock(CoreModule.BLOCK.getDefaultState(), player, worldIn, pos)) {
 			return;
 		}
-		BlockState newState = ((ISnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
+		BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
 		worldIn.setBlockState(pos, newState);
 		if (player instanceof ServerPlayerEntity) {
 			if (newState.isSolid())

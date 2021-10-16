@@ -20,7 +20,7 @@ import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.WrappedSoundType;
 
-public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVariant {
+public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVariant {
 
 	@SuppressWarnings("deprecation")
 	public SnowStairsBlock(Properties properties) {
@@ -72,5 +72,10 @@ public class SnowStairsBlock extends StairsBlock implements IWaterLoggableSnowVa
 	@Override
 	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
 		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
+	}
+
+	@Override
+	public double getYOffset() {
+		return 0.125;
 	}
 }

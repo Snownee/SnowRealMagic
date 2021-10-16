@@ -50,10 +50,6 @@
         "y": 270,
         "uvlock": true
       }
-    },
-    {
-      "when": { "down": "true" },
-      "apply": { "model": "block/snow_height2" }
     }
   ]
 }

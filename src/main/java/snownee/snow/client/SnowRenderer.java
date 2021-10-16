@@ -34,7 +34,6 @@ public class SnowRenderer extends TileEntityRenderer<SnowTile> {
 	protected static final Random RAND = new Random();
 	protected static BlockRendererDispatcher blockRenderer;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void render(SnowTile te, float partialTicks, MatrixStack matrixstack, IRenderTypeBuffer buffer, int light, int otherlight) {
 		if (!te.hasWorld() || te.getBlockState().get(SnowBlock.LAYERS) == 8) {

@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 
-public interface IWaterLoggableSnowVariant extends ISnowVariant, IWaterLoggable {
+public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
 	@Override
 	default boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
 		return fluidIn == Fluids.WATER;

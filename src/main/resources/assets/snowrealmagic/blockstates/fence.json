@@ -12,9 +12,6 @@
         },
         {   "when": { "west": "true" },
             "apply": { "model": "snowrealmagic:block/fence_side", "y": 270, "uvlock": true }
-        },
-        {   "when": { "down": "true" },
-            "apply": { "model": "block/snow_height2" }
         }
     ]
 }

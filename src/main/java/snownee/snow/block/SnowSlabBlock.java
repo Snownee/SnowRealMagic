@@ -33,7 +33,7 @@ import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.WrappedSoundType;
 
-public class SnowSlabBlock extends ModBlock implements IWaterLoggableSnowVariant {
+public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
 

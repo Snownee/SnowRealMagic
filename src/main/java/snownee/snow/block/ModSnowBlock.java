@@ -64,7 +64,7 @@ import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.entity.FallingSnowEntity;
 
-public class ModSnowBlock extends SnowBlock implements ISnowVariant {
+public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { VoxelShapes.empty(), Block.makeCuboidShape(0, 0, 0, 16, 1, 16), Block.makeCuboidShape(0, 0, 0, 16, 2, 16), Block.makeCuboidShape(0, 0, 0, 16, 3, 16), Block.makeCuboidShape(0, 0, 0, 16, 4, 16), Block.makeCuboidShape(0, 0, 0, 16, 5, 16), Block.makeCuboidShape(0, 0, 0, 16, 6, 16), Block.makeCuboidShape(0, 0, 0, 16, 7, 16) };
 
 	public ModSnowBlock(Block.Properties properties) {
@@ -105,7 +105,7 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 		return isValidPosition(state, worldIn, pos, false);
 	}
 
-	public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos, boolean ignoreSelf) {
+	public boolean isValidPosition(BlockState state, IBlockReader worldIn, BlockPos pos, boolean ignoreSelf) {
 		BlockState blockstate = worldIn.getBlockState(pos.down());
 		Block block = blockstate.getBlock();
 		if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8) {
@@ -524,4 +524,5 @@ public class ModSnowBlock extends SnowBlock implements ISnowVariant {
 	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
 		return super.getPickBlock(state, target, world, pos, player);
 	}
+
 }
