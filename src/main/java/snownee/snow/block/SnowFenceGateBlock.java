@@ -5,18 +5,14 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.WrappedSoundType;
 
 public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVariant {
 
@@ -39,11 +35,6 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
-	}
-
-	@Override
-	public SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
-		return WrappedSoundType.get(getRaw(state, world, pos).getSoundType(world, pos, entity));
 	}
 
 	@Override

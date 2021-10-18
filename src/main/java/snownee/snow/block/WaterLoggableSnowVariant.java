@@ -6,6 +6,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -33,5 +34,15 @@ public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
 	@Override
 	default Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
 		return Fluids.EMPTY;
+	}
+
+	@Override
+	default boolean hasTileEntity(BlockState state) {
+		return true;
+	}
+
+	@Override
+	default TileEntity createTileEntity(BlockState state, IBlockReader world) {
+		return new SnowTextureTile();
 	}
 }

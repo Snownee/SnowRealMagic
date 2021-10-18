@@ -7,7 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -25,13 +24,11 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.kiwi.block.ModBlock;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.WrappedSoundType;
 
 public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
@@ -39,16 +36,6 @@ public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant 
 
 	public SnowSlabBlock(Properties builder) {
 		super(builder);
-	}
-
-	@Override
-	public boolean hasTileEntity(BlockState state) {
-		return true;
-	}
-
-	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new SnowTextureTile();
 	}
 
 	@Override
@@ -101,11 +88,6 @@ public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant 
 	@Override
 	public boolean isTransparent(BlockState state) {
 		return true;
-	}
-
-	@Override
-	public SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
-		return WrappedSoundType.get(getRaw(state, world, pos).getSoundType(world, pos, entity));
 	}
 
 	@Override

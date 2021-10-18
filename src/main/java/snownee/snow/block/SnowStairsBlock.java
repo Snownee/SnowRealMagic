@@ -4,37 +4,22 @@ import java.util.Random;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.properties.Half;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.WrappedSoundType;
 
 public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVariant {
 
 	@SuppressWarnings("deprecation")
 	public SnowStairsBlock(Properties properties) {
 		super(Blocks.STONE.getDefaultState(), properties);
-	}
-
-	@Override
-	public boolean hasTileEntity(BlockState state) {
-		return true;
-	}
-
-	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new SnowTextureTile();
 	}
 
 	@Override
@@ -60,11 +45,6 @@ public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVar
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
 		return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
-	}
-
-	@Override
-	public SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, Entity entity) {
-		return WrappedSoundType.get(getRaw(state, world, pos).getSoundType(world, pos, entity));
 	}
 
 	@Override
