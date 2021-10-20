@@ -108,7 +108,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	public boolean isValidPosition(BlockState state, IBlockReader worldIn, BlockPos pos, boolean ignoreSelf) {
 		BlockState blockstate = worldIn.getBlockState(pos.down());
 		Block block = blockstate.getBlock();
-		if (block instanceof ModSnowBlock && blockstate.get(LAYERS) == 8) {
+		if (block instanceof SnowBlock && blockstate.get(LAYERS) == 8) {
 			return true;
 		} else if ((SnowCommonConfig.snowOnIce && (block == Blocks.ICE || block == Blocks.PACKED_ICE)) || !block.isIn(CoreModule.INVALID_SUPPORTERS)) {
 			if (ignoreSelf || state.getMaterial().isReplaceable() || canContainState(state)) {
@@ -132,6 +132,13 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	@Override
 	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
 		if (ModUtil.shouldMelt(worldIn, pos)) {
+			int layers = state.get(LAYERS);
+			if (layers == 8) {
+				BlockState upState = worldIn.getBlockState(pos.up());
+				if (upState.getBlock() instanceof SnowBlock) {
+					return;
+				}
+			}
 			if (state.getBlock() == CoreModule.TILE_BLOCK) {
 				state.removedByPlayer(worldIn, pos, null, false, null);
 			} else {
@@ -149,8 +156,8 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		if (random.nextInt(8) > 0) {
 			return;
 		}
-		BlockPos height = worldIn.getHeight(Heightmap.Type.WORLD_SURFACE, pos);
-		if (height.getY() != pos.getY() + 1) {
+		BlockPos height = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+		if (height.getY() != pos.getY()) {
 			return;
 		}
 
@@ -191,23 +198,16 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 				continue;
 			}
 			BlockState state = world.getBlockState(pos2);
-			boolean isAir = state.getBlock().isAir(state, world, pos2);
-			BlockPos height = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos2);
-			if (isAir) {
-				if (height.getY() != pos2.getY()) {
-					continue;
-				}
-			} else {
-				if (height.getY() != pos2.getY() + 1) {
-					continue;
-				}
+			BlockPos height = world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos2);
+			if (height.getY() != pos2.getY()) {
+				continue;
 			}
 
 			if (!CoreModule.BLOCK.isValidPosition(state, world, pos2)) {
 				continue;
 			}
 			int l;
-			if (state.getBlock() instanceof ModSnowBlock) {
+			if (state.getBlock() instanceof SnowBlock) {
 				l = state.get(LAYERS);
 			} else {
 				l = 0;
@@ -246,7 +246,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		layers = MathHelper.clamp(layers, 1, 8);
 		BlockState state = world.getBlockState(pos);
 		int originLayers = 0;
-		if (state.getBlock() instanceof ModSnowBlock) {
+		if (state.getBlock() instanceof SnowBlock) {
 			originLayers = state.get(LAYERS);
 			world.setBlockState(pos, state.with(LAYERS, MathHelper.clamp(originLayers + layers, 1, 8)));
 		} else if (canContainState(state) && state.isValidPosition(world, pos)) {
@@ -328,7 +328,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		if (FallingBlock.canFallThrough(state) && state.getCollisionShape(worldIn, pos).isEmpty()) {
 			return true;
 		}
-		if (state.getBlock() instanceof ModSnowBlock && state.get(LAYERS) < 8) {
+		if (state.getBlock() instanceof SnowBlock && state.get(LAYERS) < 8) {
 			return true;
 		}
 		return false;
@@ -372,7 +372,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	@Nullable
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
 		BlockState blockstate = context.getWorld().getBlockState(context.getPos());
-		if (blockstate.getBlock() instanceof ModSnowBlock) {
+		if (blockstate.getBlock() instanceof SnowBlock) {
 			int i = blockstate.get(LAYERS);
 			return blockstate.with(LAYERS, Math.min(8, i + 1));
 		} else {
@@ -409,21 +409,18 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean convert(IWorld world, BlockPos pos, BlockState state, int layers, int flags) {
 		if (!SnowCommonConfig.placeSnowInBlock || state.hasTileEntity()) {
 			return false;
 		}
 		Block block = state.getBlock();
-		if (block.isAir(state, world, pos)) {
-			if (block != CoreModule.BLOCK) {
-				world.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, layers), flags);
-			}
+		if (state.isAir()) {
+			world.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, layers), flags);
 			return true;
 		}
 		if (block.isIn(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
-			if (block != CoreModule.TILE_BLOCK) {
-				world.setBlockState(pos, CoreModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
-			}
+			world.setBlockState(pos, CoreModule.TILE_BLOCK.getDefaultState().with(LAYERS, layers), flags);
 			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof SnowTile) {
 				((SnowTile) tile).setState(state);

@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SnowBlock;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
@@ -30,6 +32,7 @@ public class WorldTickHandler {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void tick(TickEvent.WorldTickEvent event) {
 		if (SnowCommonConfig.retainOriginalBlocks || METHOD == null) {
 			return;
@@ -58,27 +61,47 @@ public class WorldTickHandler {
 			if (world.rand.nextInt(16) == 0) {
 				int x = chunk.getPos().getXStart();
 				int y = chunk.getPos().getZStart();
-				BlockPos pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, world.getBlockRandomPos(x, 0, y, 15)).down();
+				BlockPos.Mutable pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).toMutable();
+
+				if (!world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+					return;
+
+				if (blizzard > 0) {
+					doBlizzard(world, pos, blizzard);
+					return;
+				}
+
+				pos.move(Direction.DOWN);
 				Biome biome = world.getBiome(pos);
-
-				if (world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-				{
-					if (blizzard > 0) {
-						doBlizzard(world, pos, blizzard);
-						return;
-					}
-
-					if (!ModUtil.isColdAt(world, biome, pos)) {
-						return;
-					}
-					BlockState state = world.getBlockState(pos);
+				if (!ModUtil.isColdAt(world, biome, pos)) {
+					return;
+				}
+				BlockState state = world.getBlockState(pos);
+				if (!ModSnowBlock.canContainState(state)) {
+					state = world.getBlockState(pos.move(Direction.UP));
 					if (!ModSnowBlock.canContainState(state)) {
 						return;
 					}
-					if (world.getLightFor(LightType.BLOCK, pos.up()) > 11) {
-						return;
+				}
+
+				if (world.getLightFor(LightType.BLOCK, pos.move(Direction.UP)) > 11) {
+					return;
+				}
+				ModSnowBlock.convert(world, pos.move(Direction.DOWN), state, 1, 3);
+
+				for (int i = 0; i < 5; i++) {
+					state = world.getBlockState(pos.move(Direction.DOWN));
+					if (!state.isAir() && !ModSnowBlock.canContainState(state)) {
+						break;
 					}
-					ModSnowBlock.convert(world, pos, state, 1, 3);
+					if (CoreModule.BLOCK.isValidPosition(state, world, pos)) {
+						pos.move(Direction.UP);
+						if (world.getBlockState(pos).getBlock() instanceof SnowBlock || world.getLightFor(LightType.BLOCK, pos) > 11) {
+							break;
+						}
+						ModSnowBlock.convert(world, pos.move(Direction.DOWN), state, 1, 3);
+						//FIXME I should make snow melts somehow
+					}
 				}
 			}
 		});

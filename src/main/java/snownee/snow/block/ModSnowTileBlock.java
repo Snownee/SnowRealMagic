@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.block.TallGrassBlock;
@@ -175,7 +176,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 			return;
 		}
 		super.randomTick(state, worldIn, pos, random);
-		if (stateIn.getBlock() instanceof TallGrassBlock) {
+		if (stateIn.getBlock() instanceof TallGrassBlock || stateIn.getBlock() instanceof DoublePlantBlock) {
 			return;
 		}
 		BlockState stateNow = worldIn.getBlockState(pos);
