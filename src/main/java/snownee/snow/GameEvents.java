@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.items.ItemHandlerHelper;
 import snownee.snow.block.SnowVariant;
 
 @EventBusSubscriber
@@ -36,18 +37,28 @@ public final class GameEvents {
 		}
 		PlayerEntity player = event.getPlayer();
 		if (!ForgeHooks.canHarvestBlock(CoreModule.BLOCK.getDefaultState(), player, worldIn, pos)) {
-			return;
+			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
+				return;
+			}
+			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
+			worldIn.setBlockState(pos, newState);
+			ItemStack snowball = new ItemStack(Items.SNOWBALL);
+			if (!player.isCreative() || !player.inventory.hasItemStack(snowball)) {
+				ItemHandlerHelper.giveItemToPlayer(player, snowball);
+			}
+		} else {
+			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
+			worldIn.setBlockState(pos, newState);
+			if (!player.isCreative() && player instanceof ServerPlayerEntity) {
+				if (newState.isSolid())
+					pos = pos.up();
+				Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
+				player.getHeldItemMainhand().damageItem(1, player, stack -> {
+					stack.sendBreakAnimation(Hand.MAIN_HAND);
+				});
+			}
 		}
-		BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-		worldIn.setBlockState(pos, newState);
-		if (!player.isCreative() && player instanceof ServerPlayerEntity) {
-			if (newState.isSolid())
-				pos = pos.up();
-			Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
-			player.getHeldItemMainhand().damageItem(1, player, stack -> {
-				stack.sendBreakAnimation(Hand.MAIN_HAND);
-			});
-		}
+
 		event.setCanceled(true);
 		event.setCancellationResult(ActionResultType.SUCCESS);
 	}
