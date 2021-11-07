@@ -26,11 +26,10 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import snownee.kiwi.block.ModBlock;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant {
+public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
 
@@ -41,8 +40,17 @@ public class SnowSlabBlock extends ModBlock implements WaterLoggableSnowVariant 
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 		TileEntity tile = worldIn.getTileEntity(pos);
+		if (!(tile instanceof SnowTextureTile)) {
+			return ActionResultType.PASS;
+		}
+		SnowTextureTile snowTile = (SnowTextureTile) tile;
 		ItemStack stack = player.getHeldItem(handIn);
-		if (hit.getFace() == Direction.UP && tile instanceof SnowTextureTile && ((SnowTextureTile) tile).getState().getBlock().asItem() == stack.getItem() && stack.getItem() instanceof BlockItem && stack.getItem().isIn(ItemTags.SLABS)) {
+		if (stack.isEmpty() && player.getHeldItemOffhand().isEmpty()) {
+			snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
+			snowTile.refresh();
+			return ActionResultType.SUCCESS;
+		}
+		if (hit.getFace() == Direction.UP && snowTile.getState().getBlock().asItem() == stack.getItem() && stack.getItem() instanceof BlockItem && stack.getItem().isIn(ItemTags.SLABS)) {
 			Block block = ((BlockItem) stack.getItem()).getBlock();
 			if (block instanceof SlabBlock) {
 				BlockState state2 = block.getDefaultState().with(SlabBlock.TYPE, SlabType.DOUBLE);

@@ -33,6 +33,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.Property;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tags.BlockTags;
@@ -347,6 +348,27 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	@Override
 	@SuppressWarnings("deprecation")
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+		if (player.getHeldItemMainhand().isEmpty() && player.getHeldItemOffhand().isEmpty()) {
+			BlockState stateDown = worldIn.getBlockState(pos.down());
+			if (!(stateDown.getBlock() instanceof SnowBlock) && !stateDown.hasProperty(BlockStateProperties.SNOWY)) {
+				if (state.getBlock() == CoreModule.BLOCK) {
+					worldIn.setBlockState(pos, copyProperties(state, CoreModule.TILE_BLOCK.getDefaultState()), 16 | 32);
+				}
+				TileEntity blockEntity = worldIn.getTileEntity(pos);
+				if (blockEntity instanceof SnowTile) {
+					SnowTile snowTile = (SnowTile) blockEntity;
+					if (state.getBlock() == CoreModule.TILE_BLOCK && snowTile.getState().isAir()) {
+						worldIn.setBlockState(pos, copyProperties(state, CoreModule.BLOCK.getDefaultState()), 16 | 32);
+					} else {
+						snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
+						if (worldIn.isRemote) {
+							worldIn.markAndNotifyBlock(pos, worldIn.getChunkAt(pos), state, state, 11, 512);
+						}
+					}
+				}
+				return ActionResultType.SUCCESS;
+			}
+		}
 		if (state.getBlock() == CoreModule.BLOCK) {
 			BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, handIn, hit));
 			Block block = Block.getBlockFromItem(context.getItem().getItem());

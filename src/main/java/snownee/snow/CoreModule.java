@@ -14,11 +14,15 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.loot.LootPoolEntryType;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import snownee.kiwi.AbstractModule;
@@ -103,6 +107,14 @@ public class CoreModule extends AbstractModule {
 		Predicate<RenderType> blockRenderTypes = ImmutableSet.of(RenderType.getSolid(), RenderType.getCutout(), RenderType.getCutoutMipped(), RenderType.getTranslucent())::contains;
 		for (Block block : Arrays.asList(TILE_BLOCK, FENCE, FENCE2, FENCE_GATE, SLAB, STAIRS, WALL))
 			RenderTypeLookup.setRenderLayer(block, blockRenderTypes);
+	}
+
+	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
+
+	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
+	public void registerExtraModel(ModelRegistryEvent event) {
+		ModelLoader.addSpecialModel(OVERLAY_MODEL);
 	}
 
 	//	@SubscribeEvent

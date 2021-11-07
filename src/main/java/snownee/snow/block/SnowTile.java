@@ -19,6 +19,20 @@ import snownee.snow.CoreModule;
 
 public class SnowTile extends BaseTile {
 
+	public static class Options {
+		public boolean renderOverlay;
+		public boolean renderBottom;
+
+		public boolean update(boolean ro, boolean rb) {
+			boolean changed = ro != renderOverlay || rb != renderBottom;
+			renderOverlay = ro;
+			renderBottom = rb;
+			return changed;
+		}
+	}
+
+	public Options options = new Options();
+	public static final ModelProperty<Options> OPTIONS = new ModelProperty<>();
 	public static final ModelProperty<BlockState> BLOCKSTATE = new ModelProperty<>();
 	protected BlockState state = Blocks.AIR.getDefaultState();
 	protected IModelData modelData;
@@ -62,7 +76,7 @@ public class SnowTile extends BaseTile {
 	}
 
 	@Override
-	protected void refresh() {
+	public void refresh() {
 		super.refresh();
 	}
 
@@ -78,14 +92,24 @@ public class SnowTile extends BaseTile {
 	}
 
 	public void loadState(BlockState state, CompoundNBT data, boolean network) {
+		boolean changed = false;
+		if (network && data.contains("RB")) {
+			changed = options.update(data.getBoolean("RO"), data.getBoolean("RB"));
+			if (changed && network && hasWorld() && world.isRemote) {
+				requestModelDataUpdate();
+			}
+		}
 		if (data.contains("Block")) {
 			ResourceLocation id = Util.RL(data.getString("Block"));
 			Block block = ForgeRegistries.BLOCKS.getValue(id);
 			if (block != null && block != Blocks.AIR) {
-				setState(block.getDefaultState(), network);
+				changed |= setState(block.getDefaultState(), network);
 			}
 		} else {
-			setState(NBTUtil.readBlockState(data.getCompound("State")), network);
+			changed |= setState(NBTUtil.readBlockState(data.getCompound("State")), network);
+		}
+		if (changed && network) {
+			refresh();
 		}
 	}
 
@@ -94,6 +118,10 @@ public class SnowTile extends BaseTile {
 			data.putString("Block", getState().getBlock().getRegistryName().toString());
 		} else {
 			data.put("State", NBTUtil.writeBlockState(getState()));
+		}
+		if (network) {
+			data.putBoolean("RB", options.renderBottom);
+			data.putBoolean("RO", options.renderOverlay);
 		}
 	}
 
@@ -118,7 +146,7 @@ public class SnowTile extends BaseTile {
 	@Override
 	public IModelData getModelData() {
 		if (modelData == null) {
-			modelData = new ModelDataMap.Builder().withInitial(BLOCKSTATE, state).build();
+			modelData = new ModelDataMap.Builder().withInitial(BLOCKSTATE, state).withInitial(OPTIONS, options).build();
 		}
 		return modelData;
 	}

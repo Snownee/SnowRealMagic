@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import snownee.snow.CoreModule;
-import snownee.snow.block.SnowTextureTile.Options;
+import snownee.snow.block.SnowTile.Options;
 
 public interface WatcherSnowVariant extends SnowVariant {
 
