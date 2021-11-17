@@ -376,7 +376,7 @@ public class ModSnowBlock extends BlockSnow {
 		if (state.getValue(LAYERS) == 8) {
 			return false;
 		}
-		if (state.getBlock() == this && state.getValue(TILE)) {
+		if (ModConfig.placeSnowInBlock && state.getBlock() == this && state.getValue(TILE)) {
 			return getContainedState(worldIn, pos).getMaterial().isReplaceable();
 		}
 		return ModConfig.snowAlwaysReplaceable || super.isReplaceable(worldIn, pos);
@@ -425,7 +425,7 @@ public class ModSnowBlock extends BlockSnow {
 	@Override
 	@SuppressWarnings("deprecation")
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-		if (state.getValue(TILE)) {
+		if (ModConfig.placeSnowInBlock && state.getValue(TILE)) {
 			IBlockState stateIn = getContainedState(worldIn, pos);
 			Block block = stateIn.getBlock();
 			if (block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockPane) {
@@ -485,7 +485,7 @@ public class ModSnowBlock extends BlockSnow {
 
 	@Override
 	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-		if ((layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.CUTOUT_MIPPED) && state.getValue(TILE))
+		if (ModConfig.placeSnowInBlock && (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.CUTOUT_MIPPED) && state.getValue(TILE))
 			return true;
 		return layer == BlockRenderLayer.SOLID;
 	}
