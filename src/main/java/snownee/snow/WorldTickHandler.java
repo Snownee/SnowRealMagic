@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SnowBlock;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -90,6 +91,9 @@ public class WorldTickHandler {
 				ModSnowBlock.convert(world, pos.move(Direction.DOWN), state, 1, 3);
 
 				for (int i = 0; i < 5; i++) {
+					if (state.isIn(BlockTags.SLABS) || state.isIn(BlockTags.STAIRS)) {
+						break;
+					}
 					state = world.getBlockState(pos.move(Direction.DOWN));
 					if (!state.isAir() && !ModSnowBlock.canContainState(state)) {
 						break;
