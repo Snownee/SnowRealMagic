@@ -28,8 +28,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import snownee.snow.compat.FBPHack;
-import snownee.snow.compat.NoTreePunchingCompat;
 import snownee.snow.mixin.ItemBlockAccessor;
+
+import snownee.snow.compat.NoTreePunchingCompat;
+import snownee.snow.compat.XLFoodModCompat;
+import snownee.snow.compat.BiomesOPlentyCompat;
+import snownee.snow.compat.HarvestCraftCompat;
+import snownee.snow.compat.WeeeFlowersCompat;
+import snownee.snow.compat.PlantsCompat;
+import snownee.snow.compat.FerdinandsFlowersCompat;
+import snownee.snow.compat.PyrotechCompat;
 
 @Mod(
 		modid = SnowRealMagic.MODID, name = SnowRealMagic.NAME, version = "@VERSION_INJECT@", acceptedMinecraftVersions = "[1.12, 1.13)"
@@ -63,6 +71,13 @@ public class SnowRealMagic {
 	@EventHandler
 	public void preInit(FMLPostInitializationEvent event) {
 		NoTreePunchingCompat.init();
+        XLFoodModCompat.init();
+        BiomesOPlentyCompat.init();
+        HarvestCraftCompat.init();
+        WeeeFlowersCompat.init();
+        PlantsCompat.init();
+        FerdinandsFlowersCompat.init();
+        PyrotechCompat.init();
 	}
 
 	@SubscribeEvent

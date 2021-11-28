@@ -43,7 +43,15 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import snownee.snow.compat.NoTreePunchingCompat;
+import snownee.snow.compat.XLFoodModCompat;
+import snownee.snow.compat.BiomesOPlentyCompat;
+import snownee.snow.compat.HarvestCraftCompat;
+import snownee.snow.compat.WeeeFlowersCompat;
+import snownee.snow.compat.PlantsCompat;
+import snownee.snow.compat.FerdinandsFlowersCompat;
+import snownee.snow.compat.PyrotechCompat;
 
 public class ModSnowBlock extends BlockSnow {
 	protected static final AxisAlignedBB[] SNOW_AABB_MAGIC = new AxisAlignedBB[] { new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.3125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.4375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D) };
@@ -408,7 +416,7 @@ public class ModSnowBlock extends BlockSnow {
 		if (block instanceof BlockFence || block instanceof BlockWall || (block instanceof BlockPane && !(block instanceof BlockStainedGlassPane))) {
 			return true;
 		}
-		if (NoTreePunchingCompat.isRock(block)) {
+		if (NoTreePunchingCompat.isRock(block) || XLFoodModCompat.isPlant(block) || BiomesOPlentyCompat.isPlantOrGate(block) || HarvestCraftCompat.isGarden(block) || WeeeFlowersCompat.isFlower(block) || PlantsCompat.isPlant(block) || FerdinandsFlowersCompat.isFlower(block) || PyrotechCompat.isRock(block)) {
 			return true;
 		}
 		return false;
@@ -495,7 +503,7 @@ public class ModSnowBlock extends BlockSnow {
 		if (ModConfig.placeSnowInBlock) {
 			if (state.getValue(TILE)) {
 				IBlockState contained = getContainedState(worldIn, pos);
-				if (NoTreePunchingCompat.isRock(contained.getBlock())) {
+				if (NoTreePunchingCompat.isRock(contained.getBlock()) || XLFoodModCompat.isPlant(contained.getBlock()) || BiomesOPlentyCompat.isPlantOrGate(contained.getBlock()) || HarvestCraftCompat.isGarden(contained.getBlock()) || WeeeFlowersCompat.isFlower(contained.getBlock()) || PlantsCompat.isPlant(contained.getBlock()) || FerdinandsFlowersCompat.isFlower(contained.getBlock()) || PyrotechCompat.isRock(contained.getBlock())) {
 					try {
 						if (contained.getBlock().onBlockActivated(worldIn, pos, contained, playerIn, hand, facing, hitX, hitY, hitZ)) {
 							return worldIn.setBlockState(pos, state.withProperty(TILE, false));
