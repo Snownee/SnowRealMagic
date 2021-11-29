@@ -39,8 +39,8 @@ public class WorldTickHandler {
 			return;
 		}
 		ServerWorld world = (ServerWorld) event.world;
-		int blizzard = world.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH);
-		if (blizzard == 0 && !world.isRaining()) {
+		int blizzard = SnowCommonConfig.snowGravity ? world.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
+		if (blizzard <= 0 && !world.isRaining()) {
 			return;
 		}
 		if (world.getChunkProvider().getChunkGenerator() instanceof DebugChunkGenerator) {
@@ -115,7 +115,19 @@ public class WorldTickHandler {
 		if (pos.getY() == world.getHeight()) {
 			return;
 		}
+		int frequency = world.getGameRules().getInt(CoreModule.BLIZZARD_FREQUENCY);
+		frequency = MathHelper.clamp(frequency, 0, 10000);
+		if (frequency == 0) {
+			return;
+		}
+		int i = world.rand.nextInt(10000);
+		if (frequency != 10000 && i >= frequency) {
+			return;
+		}
 		blizzard = MathHelper.clamp(blizzard, 1, 8);
+		if (blizzard > 1) {
+			blizzard = world.rand.nextInt(blizzard) + 1;
+		}
 		pos = pos.up(64);
 		FallingSnowEntity entity = new FallingSnowEntity(world, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, blizzard);
 		world.addEntity(entity);

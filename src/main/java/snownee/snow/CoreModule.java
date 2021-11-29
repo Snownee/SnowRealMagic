@@ -99,6 +99,8 @@ public class CoreModule extends AbstractModule {
 
 	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.func_234903_a_("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
 
+	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_FREQUENCY = GameRules.func_234903_a_("blizzardFrequency", GameRules.Category.MISC, GameRules.IntegerValue.create(10000));
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	protected void clientInit(FMLClientSetupEvent event) {
