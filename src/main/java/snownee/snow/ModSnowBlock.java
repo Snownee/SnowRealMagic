@@ -183,7 +183,9 @@ public class ModSnowBlock extends BlockSnow {
 
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		if (ModConfig.snowGravity && !BlockFalling.fallInstantly) {
+		if (!ModConfig.snowGravity) {
+			super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+		} else if (!BlockFalling.fallInstantly) {
 			worldIn.scheduleUpdate(pos, this, tickRate(worldIn));
 		}
 	}
@@ -306,7 +308,14 @@ public class ModSnowBlock extends BlockSnow {
 				worldIn.setBlockToAir(pos);
 				BlockPos blockpos;
 
-				for (blockpos = pos.down(); (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos), worldIn, blockpos)) && blockpos.getY() > 0; blockpos = blockpos.down()) {
+				for (blockpos = pos.down(); blockpos.getY() > 0; blockpos = blockpos.down()) {
+					IBlockState state2 = worldIn.getBlockState(blockpos);
+					if (state2.getBlock() instanceof BlockSnow) {
+						return true;
+					}
+					if (!canFallThrough(state2, worldIn, blockpos)) {
+						break;
+					}
 				}
 
 				if (blockpos.getY() > 0) {
