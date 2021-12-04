@@ -1,29 +1,32 @@
 package snownee.snow.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
-public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
+public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, SimpleWaterloggedBlock {
 	@Override
-	default boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
-		return fluidIn == Fluids.WATER;
+	default boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+		return fluidIn.isSame(Fluids.WATER);
 	}
 
 	@Override
-	default boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+	default boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
 		BlockState raw = getRaw(state, worldIn, pos);
-		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
-			if (!worldIn.isRemote()) {
-				worldIn.setBlockState(pos, raw.with(BlockStateProperties.WATERLOGGED, true), 3);
-				worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.is(Fluids.WATER)) {
+			if (!worldIn.isClientSide()) {
+				worldIn.setBlock(pos, raw.setValue(BlockStateProperties.WATERLOGGED, true), 3);
+				worldIn.scheduleTick(pos, fluidStateIn.getType(), fluidStateIn.getType().getTickDelay(worldIn));
 			}
 			return true;
 		} else {
@@ -32,17 +35,13 @@ public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
 	}
 
 	@Override
-	default Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
-		return Fluids.EMPTY;
+	default ItemStack pickupBlock(LevelAccessor p_154560_, BlockPos p_154561_, BlockState p_154562_) {
+		return ItemStack.EMPTY;
 	}
 
 	@Override
-	default boolean hasTileEntity(BlockState state) {
-		return true;
+	default BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+		return new SnowCoveredBlockEntity(p_153215_, p_153216_);
 	}
 
-	@Override
-	default TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new SnowTextureTile();
-	}
 }

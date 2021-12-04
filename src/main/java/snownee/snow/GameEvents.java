@@ -1,21 +1,19 @@
 package snownee.snow;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -26,53 +24,46 @@ public final class GameEvents {
 
 	@SubscribeEvent
 	public static void onItemUse(PlayerInteractEvent.RightClickBlock event) {
-		if (event.getHand() != Hand.MAIN_HAND) {
+		if (event.getHand() != InteractionHand.MAIN_HAND) {
 			return;
 		}
-		World worldIn = event.getWorld();
+		Level worldIn = event.getWorld();
 		BlockPos pos = event.getPos();
 		BlockState state = worldIn.getBlockState(pos);
 		if (!(state.getBlock() instanceof SnowVariant)) {
 			return;
 		}
-		PlayerEntity player = event.getPlayer();
-		if (!ForgeHooks.canHarvestBlock(CoreModule.BLOCK.getDefaultState(), player, worldIn, pos)) {
+		Player player = event.getPlayer();
+		if (!ForgeHooks.isCorrectToolForDrops(CoreModule.BLOCK.defaultBlockState(), player)) {
 			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
 				return;
 			}
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-			worldIn.setBlockState(pos, newState);
+			worldIn.setBlockAndUpdate(pos, newState);
 			ItemStack snowball = new ItemStack(Items.SNOWBALL);
-			if (!player.isCreative() || !player.inventory.hasItemStack(snowball)) {
+			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
 				ItemHandlerHelper.giveItemToPlayer(player, snowball);
 			}
 		} else {
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-			worldIn.setBlockState(pos, newState);
-			if (!player.isCreative() && player instanceof ServerPlayerEntity) {
-				if (newState.isSolid())
-					pos = pos.up();
-				Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
-				player.getHeldItemMainhand().damageItem(1, player, stack -> {
-					stack.sendBreakAnimation(Hand.MAIN_HAND);
+			worldIn.setBlockAndUpdate(pos, newState);
+			if (!player.isCreative() && player instanceof ServerPlayer) {
+				if (newState.canOcclude())
+					pos = pos.above();
+				Block.popResource(worldIn, pos, new ItemStack(Items.SNOWBALL));
+				player.getMainHandItem().hurtAndBreak(1, player, stack -> {
+					stack.broadcastBreakEvent(InteractionHand.MAIN_HAND);
 				});
 			}
 		}
 
 		event.setCanceled(true);
-		event.setCancellationResult(ActionResultType.SUCCESS);
-	}
-
-	@SubscribeEvent
-	public static void onPlaceBlock(EntityPlaceEvent event) {
-		Entity entity = event.getEntity();
-		if (entity instanceof PlayerEntity) {
-		}
+		event.setCancellationResult(InteractionResult.SUCCESS);
 	}
 
 	@SubscribeEvent
 	public static void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerWorld) {
+		if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
 			WorldTickHandler.tick(event);
 		}
 	}

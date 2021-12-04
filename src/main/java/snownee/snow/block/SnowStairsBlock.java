@@ -2,58 +2,56 @@ package snownee.snow.block;
 
 import java.util.Random;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.properties.Half;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Half;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
-public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVariant {
+public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVariant {
 
 	@SuppressWarnings("deprecation")
 	public SnowStairsBlock(Properties properties) {
-		super(Blocks.STONE.getDefaultState(), properties);
+		super(Blocks.STONE.defaultBlockState(), properties);
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.hasTileEntity() && state.getBlock() != newState.getBlock()) {
-			worldIn.removeTileEntity(pos);
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (state.hasBlockEntity() && state.getBlock() != newState.getBlock()) {
+			worldIn.removeBlockEntity(pos);
 		}
-		super.onReplaced(state, worldIn, pos, newState, isMoving);
+		super.onRemove(state, worldIn, pos, newState, isMoving);
 	}
 
 	@Override
-	public boolean ticksRandomly(BlockState state) {
-		return true;
-	}
-
-	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
-			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
+			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context).setValue(HALF, Half.BOTTOM);
 	}
 
-	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
-		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
-	}
+	//	@Override
+	//	public float getPlayerRelativeBlockHardness(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
+	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
+	//	}
 
 	@Override
 	public double getYOffset() {
 		return 0.125;
+	}
+
+	@Override
+	public boolean isRandomlyTicking(BlockState state) {
+		return true;
 	}
 }

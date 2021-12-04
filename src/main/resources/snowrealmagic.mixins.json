@@ -1,19 +1,18 @@
 {
   "required": true,
   "package": "snownee.snow.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
-    "MixinBlock",
-    "MixinSpreadableSnowyDirtBlock",
-    "MixinSnowyDirtBlock",
-    "MixinDefaultBiomeFeatures",
-    "MixinLayerDecorator",
-    "MixinFreezeLayer",
-    "MixinDoublePlantBlock"
+    "BlockMixin",
+    "SpreadableSnowyDirtBlockMixin",
+    "SnowyDirtBlockMixin",
+    "DoublePlantBlockMixin",
+    "SnowAndFreezeFeatureMixin",
+    "IntegerValueAccessor"
   ],
   "client": [
-    "MixinBlockRendererDispatcher"
+    "BlockRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

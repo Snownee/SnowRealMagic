@@ -2,66 +2,67 @@ package snownee.snow.client;
 
 import java.util.Random;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SnowBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import snownee.kiwi.util.EnumUtil;
 import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
 @OnlyIn(Dist.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
-	public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
+	public FallingSnowRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn);
-		shadowSize = 0.5F;
+		shadowRadius = 0.5F;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
+	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, PoseStack matrixstack, MultiBufferSource buffer, int p_225623_6_) {
 		if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
 			return;
 		}
-		BlockState blockstate = CoreModule.BLOCK.getDefaultState().with(SnowBlock.LAYERS, entity.getLayers());
-		if (blockstate.getRenderType() != BlockRenderType.MODEL) {
+		BlockState blockstate = CoreModule.BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
+		if (blockstate.getRenderShape() != RenderShape.MODEL) {
 			return;
 		}
-		World world = entity.getWorldObj();
+		Level world = entity.getLevel();
 
-		matrixstack.push();
-		BlockPos blockpos = new BlockPos(entity.getPosX(), entity.getBoundingBox().maxY, entity.getPosZ());
+		matrixstack.pushPose();
+		BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		matrixstack.translate(-0.5D, 0.0D, -0.5D);
-		BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-		for (RenderType type : RenderType.getBlockRenderTypes()) {
-			if (RenderTypeLookup.canRenderInLayer(blockstate, type)) {
-				ForgeHooksClient.setRenderLayer(type);
-				blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getPositionRandom(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
+		BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
+		for (RenderType type : EnumUtil.BLOCK_RENDER_TYPES) {
+			if (ItemBlockRenderTypes.canRenderInLayer(blockstate, type)) {
+				ForgeHooksClient.setRenderType(type);
+				blockrendererdispatcher.getModelRenderer().tesselateBlock(world, blockrendererdispatcher.getBlockModel(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 			}
 		}
-		ForgeHooksClient.setRenderLayer(null);
-		matrixstack.pop();
+		ForgeHooksClient.setRenderType(null);
+		matrixstack.popPose();
 		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public ResourceLocation getEntityTexture(FallingSnowEntity entity) {
-		return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+	public ResourceLocation getTextureLocation(FallingSnowEntity entity) {
+		return InventoryMenu.BLOCK_ATLAS;
 	}
+
 }

@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Maps;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.SoundType;
 
 public final class WrappedSoundType extends SoundType {
 

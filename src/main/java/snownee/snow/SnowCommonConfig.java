@@ -1,9 +1,9 @@
 package snownee.snow;
 
-import net.minecraftforge.fml.ModList;
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Comment;
 import snownee.kiwi.config.KiwiConfig.Range;
+import snownee.kiwi.loader.Platform;
 
 @KiwiConfig
 public final class SnowCommonConfig {
@@ -25,7 +25,7 @@ public final class SnowCommonConfig {
 	public static boolean snowNeverMelt = false;
 	public static boolean snowMeltsInWarmBiomes = false;
 	@Comment("Should snow melt if layers are more than 1")
-	public static boolean snowNaturalMelt = !ModList.get().isLoaded("terraforged");
+	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
 	public static boolean snowReduceFallDamage = true;
 	@Comment("block like grass will be generated with snow")
 	public static boolean replaceWorldFeature = true;

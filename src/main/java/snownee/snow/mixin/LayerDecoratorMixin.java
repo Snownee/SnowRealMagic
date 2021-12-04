@@ -1,4 +1,6 @@
 package snownee.snow.mixin;
+/*
+package snownee.snow.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -6,12 +8,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.terraforged.mod.chunk.column.post.LayerDecorator;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.compat.terraforged.TerraForgedModule;
 
 @Mixin(LayerDecorator.class)
-public abstract class MixinLayerDecorator {
+public abstract class LayerDecoratorMixin {
 
 	@Redirect(
 			at = @At(
@@ -23,3 +24,4 @@ public abstract class MixinLayerDecorator {
 	}
 
 }
+*/
