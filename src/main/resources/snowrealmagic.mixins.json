@@ -12,7 +12,8 @@
     "IntegerValueAccessor"
   ],
   "client": [
-    "BlockRenderDispatcherMixin"
+    "BlockRenderDispatcherMixin",
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1
