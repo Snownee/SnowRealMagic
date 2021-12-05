@@ -1,11 +1,10 @@
 {
   "replace": false,
   "values": [
+    "#minecraft:snow",
     "snowrealmagic:fence",
     "snowrealmagic:fence2",
     "snowrealmagic:fence_gate",
-    "snowrealmagic:wall",
-    "snowrealmagic:snow",
-    "snow"
+    "snowrealmagic:wall"
   ]
 }

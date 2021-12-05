@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -291,11 +290,10 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 		double offsetY = originLayers / 8D;
 		layers *= 10;
 		for (int i = 0; i < layers; ++i) {
-			// TODO better particle
 			double d0 = RANDOM.nextGaussian() * 0.1D;
 			double d1 = RANDOM.nextGaussian() * 0.02D;
 			double d2 = RANDOM.nextGaussian() * 0.1D;
-			worldIn.addParticle(ParticleTypes.SPIT, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
+			worldIn.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
 		}
 		SoundType soundtype = getSoundType(state, worldIn, pos, null);
 		worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
@@ -317,7 +315,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			double d0 = pos.getX() + rand.nextDouble();
 			double d1 = pos.getY() - 0.05D;
 			double d2 = pos.getZ() + rand.nextDouble();
-			worldIn.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, stateIn), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			worldIn.addParticle(ParticleTypes.SNOWFLAKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
 		}
 	}
 

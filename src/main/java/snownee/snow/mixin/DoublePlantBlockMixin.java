@@ -45,12 +45,12 @@ public class DoublePlantBlockMixin {
 	}
 
 	@Inject(method = "playerWillDestroy", at = @At("TAIL"))
-	public void srm_playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player, CallbackInfo ci) {
+	private void srm_playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player, CallbackInfo ci) {
 		srm_preventCreativeDropFromBottomPart(worldIn, pos, state, player, ci);
 	}
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
-	public void srm_updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
+	private void srm_updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
 		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
 		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN && facingState.getBlock() instanceof EntitySnowLayerBlock) {
 			cir.setReturnValue(stateIn);
