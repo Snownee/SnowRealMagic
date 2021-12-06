@@ -20,7 +20,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = "${minecraft_version}-forge-${mod_version}"
-group = "${mod_base_package}.everpotion" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "${mod_base_package}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = mod_name
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
