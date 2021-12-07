@@ -39,7 +39,7 @@ public class SnowLayerBlockItem extends BlockItem {
 				}
 				return InteractionResult.sidedSuccess(level.isClientSide);
 			}
-			if (state.canBeReplaced(blockContext)) {
+			if (!state.canBeReplaced(blockContext)) {
 				pos = pos.relative(context.getClickedFace());
 				state = level.getBlockState(pos);
 				if (ModSnowLayerBlock.canContainState(state)) {
