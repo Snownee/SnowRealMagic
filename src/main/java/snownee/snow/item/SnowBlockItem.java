@@ -37,7 +37,7 @@ public class SnowBlockItem extends BlockItem {
 				}
 				return ActionResultType.func_233537_a_(world.isRemote);
 			}
-			if (state.isReplaceable(blockContext)) {
+			if (!state.isReplaceable(blockContext)) {
 				pos = pos.offset(context.getFace());
 				state = world.getBlockState(pos);
 				if (ModSnowBlock.canContainState(state)) {

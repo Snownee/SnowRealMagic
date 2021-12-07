@@ -70,6 +70,7 @@ public abstract class MixinBlockRendererDispatcher {
 			RenderType solid = RenderType.getSolid();
 			RenderType layer = MinecraftForgeClient.getRenderLayer();
 			boolean canRender;
+			boolean ret = false;
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
@@ -88,7 +89,7 @@ public abstract class MixinBlockRendererDispatcher {
 						matrixStackIn.scale(0.998f, 1, 0.998f);
 					}
 				}
-				blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				ret |= blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 				matrixStackIn.pop();
 			}
 			Options options = Optional.ofNullable(modelData.getData(SnowTile.OPTIONS)).orElse(defaultOptions);
@@ -96,7 +97,7 @@ public abstract class MixinBlockRendererDispatcher {
 				if (cachedSnowModel == null) {
 					cachedSnowModel = getModelForState(CoreModule.BLOCK.getDefaultState());
 				}
-				blockModelRenderer.renderModel(lightReaderIn, cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				ret |= blockModelRenderer.renderModel(lightReaderIn, cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
 			if (blockStateIn.getBlock() == CoreModule.SLAB || blockStateIn.getBlock() instanceof SnowBlock) {
@@ -113,12 +114,12 @@ public abstract class MixinBlockRendererDispatcher {
 						matrixStackIn.translate(-0.001, -1, -0.001);
 						pos = pos.down();
 					}
-					blockModelRenderer.renderModel(lightReaderIn, cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, rand, blockStateIn.getPositionRandom(pos), OverlayTexture.NO_OVERLAY, modelData);
+					ret |= blockModelRenderer.renderModel(lightReaderIn, cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, rand, blockStateIn.getPositionRandom(pos), OverlayTexture.NO_OVERLAY, modelData);
 					matrixStackIn.pop();
 				}
 			} else {
 				if (!options.renderOverlay) {
-					ci.setReturnValue(true);
+					ci.setReturnValue(ret);
 					return;
 				}
 			}
@@ -126,12 +127,12 @@ public abstract class MixinBlockRendererDispatcher {
 			// specify base model's render type
 			if (blockStateIn.getBlock() == CoreModule.TILE_BLOCK) {
 				if (layer != solid) {
-					ci.setReturnValue(true);
+					ci.setReturnValue(ret);
 					return;
 				}
 			} else {
 				if (layer != cutoutMipped) {
-					ci.setReturnValue(true);
+					ci.setReturnValue(ret);
 					return;
 				}
 			}
