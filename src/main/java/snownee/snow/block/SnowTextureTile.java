@@ -16,18 +16,11 @@ public class SnowTextureTile extends SnowTile {
 
 	public SnowTextureTile() {
 		super(CoreModule.TEXTURE_TILE);
-		options.renderOverlay = true;
 	}
 
 	@Override
 	public void loadState(BlockState state, CompoundNBT data, boolean network) {
 		boolean changed = false;
-		if (network && data.contains("RB")) {
-			changed = options.update(data.getBoolean("RO"), data.getBoolean("RB"));
-			if (changed && network && hasWorld() && world.isRemote) {
-				requestModelDataUpdate();
-			}
-		}
 		if (!network && data.contains("Items")) {
 			String idStr = data.getCompound("Items").getString("0");
 			ResourceLocation id = Util.RL(idStr);
@@ -55,10 +48,6 @@ public class SnowTextureTile extends SnowTile {
 	@Override
 	public void saveState(CompoundNBT data, boolean network) {
 		data.putString("Block", getState().getBlock().getRegistryName().toString());
-		if (network) {
-			data.putBoolean("RB", options.renderBottom);
-			data.putBoolean("RO", options.renderOverlay);
-		}
 	}
 
 	@Override
@@ -68,41 +57,12 @@ public class SnowTextureTile extends SnowTile {
 	}
 
 	@Override
-	public void onStateChanged() {
-		updateOptions();
-		super.onStateChanged();
-	}
-
-	public void updateOptions() {
-		if (!hasWorld() || world.isRemote) {
-			return;
-		}
-		Block block = getBlockState().getBlock();
-		if (block instanceof WatcherSnowVariant) {
-			if (((WatcherSnowVariant) block).onUpdateOptions(getBlockState(), world, pos, getModelData().getData(OPTIONS))) {
-				refresh();
-			}
-		}
-	}
-
-	@Override
 	public void refresh() {
 		super.refresh();
 		if (hasWorld() && world.isRemote) {
 			BlockState state = getBlockState();
 			world.markAndNotifyBlock(pos, world.getChunkAt(pos), state, state, 11, 512);
 		}
-	}
-
-	@Override
-	public void onLoad() {
-		if (world.isRemote) {
-			Block block = getBlockState().getBlock();
-			if (block instanceof WatcherSnowVariant) {
-				((WatcherSnowVariant) block).onUpdateOptions(getBlockState(), world, pos, getModelData().getData(OPTIONS));
-			}
-		}
-		super.onLoad();
 	}
 
 }

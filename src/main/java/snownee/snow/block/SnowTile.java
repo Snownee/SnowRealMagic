@@ -11,7 +11,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.tile.BaseTile;
 import snownee.kiwi.util.Util;
@@ -61,15 +60,17 @@ public class SnowTile extends BaseTile {
 			return false;
 		}
 		this.state = state;
-		if (FMLEnvironment.dist.isClient()) {
-			getModelData().setData(BLOCKSTATE, state);
-			onStateChanged();
-		}
-		if (update && world != null) {
+		if (hasWorld()) {
 			if (world.isRemote) {
-				world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);
-			} else {
-				refresh();
+				getModelData().setData(BLOCKSTATE, state);
+				onStateChanged();
+			}
+			if (update) {
+				if (world.isRemote) {
+					world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);
+				} else {
+					refresh();
+				}
 			}
 		}
 		return true;
@@ -93,8 +94,8 @@ public class SnowTile extends BaseTile {
 
 	public void loadState(BlockState state, CompoundNBT data, boolean network) {
 		boolean changed = false;
-		if (network && data.contains("RB")) {
-			changed = options.update(data.getBoolean("RO"), data.getBoolean("RB"));
+		if (data.contains("RO")) {
+			changed = options.update(data.getBoolean("RO"), false);
 			if (changed && network && hasWorld() && world.isRemote) {
 				requestModelDataUpdate();
 			}
@@ -119,8 +120,7 @@ public class SnowTile extends BaseTile {
 		} else {
 			data.put("State", NBTUtil.writeBlockState(getState()));
 		}
-		if (network) {
-			data.putBoolean("RB", options.renderBottom);
+		if (options.renderOverlay) {
 			data.putBoolean("RO", options.renderOverlay);
 		}
 	}

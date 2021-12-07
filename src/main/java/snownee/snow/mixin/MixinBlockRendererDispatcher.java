@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SnowBlock;
@@ -36,6 +37,7 @@ import snownee.snow.CoreModule;
 import snownee.snow.block.SnowTile;
 import snownee.snow.block.SnowTile.Options;
 import snownee.snow.block.SnowVariant;
+import snownee.snow.block.WatcherSnowVariant;
 
 @Mixin(BlockRendererDispatcher.class)
 public abstract class MixinBlockRendererDispatcher {
@@ -71,10 +73,15 @@ public abstract class MixinBlockRendererDispatcher {
 			RenderType layer = MinecraftForgeClient.getRenderLayer();
 			boolean canRender;
 			boolean ret = false;
+			Block blockIn = blockStateIn.getBlock();
+			Options options = Optional.ofNullable(modelData.getData(SnowTile.OPTIONS)).orElse(defaultOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
 				canRender = RenderTypeLookup.canRenderInLayer(state, layer);
+				if (layer == solid && blockIn instanceof WatcherSnowVariant) { // solid is the first rendertype
+					((WatcherSnowVariant) blockIn).updateOptions(blockStateIn, lightReaderIn, posIn, options);
+				}
 			}
 			if (canRender) {
 				matrixStackIn.push();
@@ -92,7 +99,6 @@ public abstract class MixinBlockRendererDispatcher {
 				ret |= blockModelRenderer.renderModel(lightReaderIn, getModelForState(state), state, posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 				matrixStackIn.pop();
 			}
-			Options options = Optional.ofNullable(modelData.getData(SnowTile.OPTIONS)).orElse(defaultOptions);
 			if (options.renderBottom && (layer == null || layer == solid)) {
 				if (cachedSnowModel == null) {
 					cachedSnowModel = getModelForState(CoreModule.BLOCK.getDefaultState());
@@ -100,7 +106,7 @@ public abstract class MixinBlockRendererDispatcher {
 				ret |= blockModelRenderer.renderModel(lightReaderIn, cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
-			if (blockStateIn.getBlock() == CoreModule.SLAB || blockStateIn.getBlock() instanceof SnowBlock) {
+			if (blockIn.matchesBlock(CoreModule.SLAB) || blockIn instanceof SnowBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (cachedOverlayModel == null) {
 						cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
@@ -108,7 +114,7 @@ public abstract class MixinBlockRendererDispatcher {
 					matrixStackIn.push();
 					matrixStackIn.scale(1.002F, 1, 1.002F);
 					BlockPos pos = posIn;
-					if (blockStateIn.getBlock() == CoreModule.SLAB) {
+					if (blockIn.matchesBlock(CoreModule.SLAB)) {
 						matrixStackIn.translate(-0.001, -0.375, -0.001);
 					} else {
 						matrixStackIn.translate(-0.001, -1, -0.001);
@@ -125,7 +131,7 @@ public abstract class MixinBlockRendererDispatcher {
 			}
 
 			// specify base model's render type
-			if (blockStateIn.getBlock() == CoreModule.TILE_BLOCK) {
+			if (blockIn.matchesBlock(CoreModule.TILE_BLOCK)) {
 				if (layer != solid) {
 					ci.setReturnValue(ret);
 					return;
@@ -137,7 +143,7 @@ public abstract class MixinBlockRendererDispatcher {
 				}
 			}
 
-			double yOffset = ((SnowVariant) blockStateIn.getBlock()).getYOffset();
+			double yOffset = ((SnowVariant) blockIn).getYOffset();
 			if (yOffset != 0) {
 				matrixStackIn.translate(0, yOffset, 0);
 			}

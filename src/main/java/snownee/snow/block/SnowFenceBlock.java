@@ -2,11 +2,9 @@ package snownee.snow.block;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
@@ -34,8 +32,4 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 		}
 	}
 
-	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		updateOptions(worldIn, pos);
-	}
 }
