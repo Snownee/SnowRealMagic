@@ -18,6 +18,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	public SnowCoveredBlockEntity(BlockPos pos, BlockState state) {
 		super(CoreModule.TEXTURE_TILE, pos, state);
+		options.renderOverlay = true; // stairs does not implement WatcherSnowVariant
 	}
 
 	@Override
