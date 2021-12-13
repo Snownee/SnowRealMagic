@@ -1,9 +1,13 @@
 {
   "itemGroup.snowrealmagic": "Snow! Real Magic!",
   "entity.snowrealmagic.snow": "Падающий блок",
-  "block.snowrealmagic.slab": "Плита покрытая снегом",
-  "block.snowrealmagic.stairs": "Ступеньки покрытые снегом",
-  "block.snowrealmagic.wall": "Ограда покрытая снегом",
-  "block.snowrealmagic.fence": "Забор покрытый снегом",
-  "block.snowrealmagic.fence_gate": "Калитка покрытая снегом"
+  "block.snowrealmagic.slab": "Заснеженная плита",
+  "block.snowrealmagic.stairs": "Заснеженные ступени",
+  "block.snowrealmagic.wall": "Заснеженная ограда",
+  "block.snowrealmagic.fence": "Заснеженный забор",
+  "block.snowrealmagic.fence_gate": "Заснеженная калитка",
+  "gamerule.blizzardStrength": "Сила метели",
+  "gamerule.blizzardStrength.description": "Снежные блоки будут падать с неба. 1~8 устанавливает максимальные слои. Добавлено: Snow! Real Magic!",
+  "gamerule.blizzardFrequency": "Частота метели",
+  "gamerule.blizzardFrequency.description": "Возможность делать метель. N/10000 в тик за чанк. Добавлено: Snow! Real Magic!"
 }
