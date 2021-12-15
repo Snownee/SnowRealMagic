@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -19,6 +20,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
@@ -396,9 +398,13 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 		if (blockstate.getBlock() instanceof SnowLayerBlock) {
 			int i = blockstate.getValue(LAYERS);
 			return blockstate.setValue(LAYERS, Math.min(8, i + 1));
-		} else {
-			return super.getStateForPlacement(context);
 		}
+		ItemStack stack = context.getItemInHand();
+		CompoundTag tag = BlockItem.getBlockEntityData(stack);
+		if (tag != null && tag.getString("id").equals("snowrealmagic:snow")) {
+			return CoreModule.TILE_BLOCK.defaultBlockState();
+		}
+		return defaultBlockState();
 	}
 
 	public static boolean canContainState(BlockState state) {

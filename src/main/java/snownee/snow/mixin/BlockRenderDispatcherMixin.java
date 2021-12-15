@@ -112,12 +112,11 @@ public abstract class BlockRenderDispatcherMixin {
 						cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
 					}
 					matrixStackIn.pushPose();
-					matrixStackIn.scale(1.002F, 1, 1.002F);
 					BlockPos pos = posIn;
 					if (blockStateIn.is(CoreModule.SLAB)) {
-						matrixStackIn.translate(-0.001, -0.375, -0.001);
+						matrixStackIn.translate(0, -0.375, 0);
 					} else {
-						matrixStackIn.translate(-0.001, -1, -0.001);
+						matrixStackIn.translate(0, -1, 0);
 						pos = pos.below();
 					}
 					ret |= modelRenderer.tesselateBlock(lightReaderIn, cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, rand, blockStateIn.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData);

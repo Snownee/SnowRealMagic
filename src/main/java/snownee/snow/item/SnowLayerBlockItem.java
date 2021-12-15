@@ -3,6 +3,7 @@ package snownee.snow.item;
 import java.util.Map;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
@@ -51,6 +53,20 @@ public class SnowLayerBlockItem extends BlockItem {
 			}
 		}
 		return super.useOn(context);
+	}
+
+	@Override
+	protected boolean updateCustomBlockEntityTag(BlockPos pos, Level worldIn, Player p_40599_, ItemStack stack, BlockState p_40601_) {
+		BlockEntity tile = worldIn.getBlockEntity(pos);
+		if (worldIn.isClientSide && tile != null) {
+			CompoundTag data = BlockItem.getBlockEntityData(stack);
+			if (data != null) {
+				data = data.copy();
+				tile.load(data);
+				tile.setChanged();
+			}
+		}
+		return super.updateCustomBlockEntityTag(pos, worldIn, p_40599_, stack, p_40601_);
 	}
 
 	@Override
