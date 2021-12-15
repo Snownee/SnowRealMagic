@@ -16,6 +16,7 @@ public class SnowTextureTile extends SnowTile {
 
 	public SnowTextureTile() {
 		super(CoreModule.TEXTURE_TILE);
+		options.renderOverlay = true;
 	}
 
 	@Override
