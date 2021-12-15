@@ -9,7 +9,8 @@
     "SnowyDirtBlockMixin",
     "DoublePlantBlockMixin",
     "SnowAndFreezeFeatureMixin",
-    "IntegerValueAccessor"
+    "IntegerValueAccessor",
+    "sodium.BlockRendererMixin"
   ],
   "client": [
     "BlockRenderDispatcherMixin",

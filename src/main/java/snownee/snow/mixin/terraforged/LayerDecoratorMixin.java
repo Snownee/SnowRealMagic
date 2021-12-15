@@ -1,4 +1,4 @@
-package snownee.snow.mixin;
+package snownee.snow.mixin.terraforged;
 /*
 package snownee.snow.mixin;
 

@@ -201,7 +201,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 				int layers = state.getValue(LAYERS);
 				worldIn.setBlockAndUpdate(pos, CoreModule.BLOCK.defaultBlockState().setValue(LAYERS, layers));
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 		}
 	}
 
