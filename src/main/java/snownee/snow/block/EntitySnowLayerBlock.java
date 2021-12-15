@@ -195,7 +195,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 		}
 		try {
 			BlockState contained = getRaw(state, worldIn, pos);
-			if (contained.getDestroySpeed(worldIn, pos) == 0) {
+			if (!contained.isAir() && contained.getDestroySpeed(worldIn, pos) == 0) {
 				worldIn.levelEvent(2001, pos, Block.getId(contained));
 				Block.dropResources(contained, worldIn, pos, null, player, ItemStack.EMPTY);
 				int layers = state.getValue(LAYERS);
