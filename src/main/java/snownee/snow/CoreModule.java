@@ -101,6 +101,9 @@ public class CoreModule extends AbstractModule {
 
 	public CoreModule() {
 		if (Platform.isPhysicalClient()) {
+			if (Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
+				SnowRealMagic.LOGGER.warn("Please install Indium mod to make Snow! Real Magic! work with Sodium.");
+			}
 			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(ClientVariables.OVERLAY_MODEL));
 		}
 	}
