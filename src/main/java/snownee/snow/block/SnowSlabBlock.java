@@ -64,7 +64,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 						CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, pos, stack);
 					}
 				}
-				SoundType soundtype = state2.getSoundType(worldIn, pos, player);
+				SoundType soundtype = state2.getSoundType();
 				worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 				return InteractionResult.SUCCESS;
 			}
@@ -103,5 +103,10 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	//	public float getPlayerRelativeBlockHardness(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
 	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	//	}
+
+	@Override
+	public double getYOffset() {
+		return -0.5;
+	}
 
 }

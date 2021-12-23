@@ -17,20 +17,22 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WitherRoseBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
@@ -39,11 +41,11 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.snow.CoreModule;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlock, BonemealableBlock {
+public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public EntitySnowLayerBlock(Block.Properties properties) {
 		super(properties);
 	}
@@ -68,7 +70,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		if (useContext.getItemInHand().is(CoreModule.BLOCK.asItem())) {
+		if (useContext.getItemInHand().is(Blocks.SNOW.asItem())) {
 			return super.canBeReplaced(state, useContext);
 		}
 		if (!super.canBeReplaced(state, useContext)) {
@@ -101,7 +103,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 		BlockEntity tile = world.getBlockEntity(pos);
 		if (tile instanceof SnowBlockEntity) {
 			if (state.isAir()) {
-				snow = CoreModule.BLOCK.defaultBlockState().setValue(LAYERS, snow.getValue(LAYERS));
+				snow = Blocks.SNOW.defaultBlockState().setValue(LAYERS, snow.getValue(LAYERS));
 				world.setBlock(pos, snow, 3);
 			} else {
 				((SnowBlockEntity) tile).setState(state);
@@ -115,23 +117,8 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 	}
 
 	@Override
-	public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-		if (willHarvest) {
-			playerWillDestroy(world, pos, state, player);
-		} else {
-			spawnDestroyParticles(world, player, pos, state);
-		}
-		BlockEntity tile = world.getBlockEntity(pos);
-		if (tile instanceof SnowBlockEntity) {
-			BlockState newState = ((SnowBlockEntity) tile).getState();
-			world.setBlockAndUpdate(pos, newState);
-		}
-		return true;
-	}
-
-	@Override
 	public String getDescriptionId() {
-		return CoreModule.BLOCK.getDescriptionId();
+		return Blocks.SNOW.getDescriptionId();
 	}
 
 	@Override
@@ -178,7 +165,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 		stateIn.randomTick(worldIn, pos, random);
 		BlockState stateNow2 = worldIn.getBlockState(pos);
 		if (stateNow2.getBlock() != state.getBlock()) {
-			convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 3);
+			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 3);
 		}
 	}
 
@@ -199,7 +186,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 				worldIn.levelEvent(2001, pos, Block.getId(contained));
 				Block.dropResources(contained, worldIn, pos, null, player, ItemStack.EMPTY);
 				int layers = state.getValue(LAYERS);
-				worldIn.setBlockAndUpdate(pos, CoreModule.BLOCK.defaultBlockState().setValue(LAYERS, layers));
+				worldIn.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
 			}
 		} catch (Throwable e) {
 		}
@@ -227,14 +214,14 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
 			if (stateNow.getBlock() != state.getBlock()) {
-				convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
 			}
 		}
 	}
 
 	@Override
 	public Item asItem() {
-		return CoreModule.ITEM;
+		return Items.SNOW;
 	}
 
 }

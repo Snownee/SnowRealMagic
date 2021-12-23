@@ -2,7 +2,7 @@ package snownee.snow;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.Maps;
 
@@ -13,37 +13,36 @@ public final class WrappedSoundType extends SoundType {
 
 	private final SoundType type;
 
-	@SuppressWarnings("deprecation")
 	private WrappedSoundType(SoundType type) {
 		super(type.getVolume(), type.getPitch(), null, null, null, null, null);
 		this.type = type;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getStepSound() {
 		return SoundType.SNOW.getStepSound();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getFallSound() {
 		return SoundType.SNOW.getFallSound();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getBreakSound() {
 		return type.getBreakSound();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getPlaceSound() {
 		return type.getPlaceSound();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public SoundEvent getHitSound() {
 		return type.getHitSound();

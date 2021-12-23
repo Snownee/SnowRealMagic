@@ -15,7 +15,6 @@ import snownee.snow.SnowCommonConfig;
 
 public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVariant {
 
-	@SuppressWarnings("deprecation")
 	public SnowStairsBlock(Properties properties) {
 		super(Blocks.STONE.defaultBlockState(), properties);
 	}

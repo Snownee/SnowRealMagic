@@ -1,5 +1,9 @@
 package snownee.snow;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.tool.attribute.v1.ToolManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,39 +14,42 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraft.world.phys.BlockHitResult;
 import snownee.snow.block.SnowVariant;
+import snownee.snow.block.entity.SnowBlockEntity;
 
-@EventBusSubscriber
 public final class GameEvents {
 
-	@SubscribeEvent
-	public static void onItemUse(PlayerInteractEvent.RightClickBlock event) {
-		if (event.getHand() != InteractionHand.MAIN_HAND) {
-			return;
+	public static void init() {
+		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
+		PlayerBlockBreakEvents.AFTER.register(GameEvents::onDestroyedByPlayer);
+		ServerTickEvents.END_WORLD_TICK.register(GameEvents::onWorldTick);
+	}
+
+	public static InteractionResult onItemUse(Player player, Level worldIn, InteractionHand hand, BlockHitResult hitResult) {
+		if (hand != InteractionHand.MAIN_HAND) {
+			return InteractionResult.PASS;
 		}
-		Level worldIn = event.getWorld();
-		BlockPos pos = event.getPos();
+		BlockPos pos = hitResult.getBlockPos();
 		BlockState state = worldIn.getBlockState(pos);
 		if (!(state.getBlock() instanceof SnowVariant)) {
-			return;
+			return InteractionResult.PASS;
 		}
-		Player player = event.getPlayer();
-		if (!ForgeHooks.isCorrectToolForDrops(CoreModule.BLOCK.defaultBlockState(), player)) {
+		ItemStack held = player.getMainHandItem();
+		if (!ToolManager.handleIsEffectiveOn(Blocks.SNOW.defaultBlockState(), held, player)) {
 			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
-				return;
+				return InteractionResult.PASS;
 			}
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
 			worldIn.setBlockAndUpdate(pos, newState);
 			ItemStack snowball = new ItemStack(Items.SNOWBALL);
 			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
-				ItemHandlerHelper.giveItemToPlayer(player, snowball);
+				if (!player.addItem(snowball)) {
+					player.drop(snowball, false);
+				}
 			}
 		} else {
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
@@ -51,20 +58,31 @@ public final class GameEvents {
 				if (newState.canOcclude())
 					pos = pos.above();
 				Block.popResource(worldIn, pos, new ItemStack(Items.SNOWBALL));
-				player.getMainHandItem().hurtAndBreak(1, player, stack -> {
+				held.hurtAndBreak(1, player, stack -> {
 					stack.broadcastBreakEvent(InteractionHand.MAIN_HAND);
 				});
 			}
 		}
 
-		event.setCanceled(true);
-		event.setCancellationResult(InteractionResult.SUCCESS);
+		return InteractionResult.sidedSuccess(worldIn.isClientSide);
 	}
 
-	@SubscribeEvent
-	public static void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
-			WorldTickHandler.tick(event);
+	public static void onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+		//		if (willHarvest) {
+		//			playerWillDestroy(world, pos, state, player);
+		//		} else {
+		//			Block.spawnDestroyParticles(world, player, pos, state);
+		//		}
+		if (blockEntity instanceof SnowBlockEntity) {
+			BlockState newState = ((SnowBlockEntity) blockEntity).getState();
+			world.setBlockAndUpdate(pos, newState);
 		}
 	}
+
+	public static void onWorldTick(ServerLevel world) {
+		if (SnowCommonConfig.placeSnowInBlock) {
+			WorldTickHandler.tick(world);
+		}
+	}
+
 }

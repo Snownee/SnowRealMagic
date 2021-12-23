@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "snowrealmagic",
+  "version": "${version}",
+
+  "name": "Snow! Real Magic!",
+  "description": "Tweak vanilla snow layer.",
+  "authors": ["Snownee"],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic",
+    "sources": "https://github.com/Snownee/SnowRealMagic",
+    "issues": "https://github.com/Snownee/SnowRealMagic/issues"
+  },
+
+  "license": "MIT",
+
+  "entrypoints": {
+  },
+  "mixins": [ "snowrealmagic.mixins.json" ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "minecraft": ">=1.18",
+    "java": ">=17",
+    "kiwi": ">=5.2"
+  },
+
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/rRBvGkz"
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-package snownee.snow;
+package snownee.snow.client;
 
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.ConfigType;
@@ -7,6 +7,5 @@ import snownee.kiwi.config.KiwiConfig.ConfigType;
 public final class SnowClientConfig {
 
 	public static boolean particleThroughLeaves = true;
-	public static boolean colorTint = true;
 
 }

@@ -4,6 +4,8 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,18 +18,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import snownee.kiwi.util.EnumUtil;
-import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn);
@@ -39,7 +36,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
 			return;
 		}
-		BlockState blockstate = CoreModule.BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
+		BlockState blockstate = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
 		if (blockstate.getRenderShape() != RenderShape.MODEL) {
 			return;
 		}
@@ -49,13 +46,8 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		matrixstack.translate(-0.5D, 0.0D, -0.5D);
 		BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
-		for (RenderType type : EnumUtil.BLOCK_RENDER_TYPES) {
-			if (ItemBlockRenderTypes.canRenderInLayer(blockstate, type)) {
-				ForgeHooksClient.setRenderType(type);
-				blockrendererdispatcher.getModelRenderer().tesselateBlock(world, blockrendererdispatcher.getBlockModel(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-			}
-		}
-		ForgeHooksClient.setRenderType(null);
+		RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(blockstate);
+		blockrendererdispatcher.getModelRenderer().tesselateBlock(world, blockrendererdispatcher.getBlockModel(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY);
 		matrixstack.popPose();
 		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
 	}

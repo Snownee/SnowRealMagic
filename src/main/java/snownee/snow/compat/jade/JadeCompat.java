@@ -1,3 +1,4 @@
+/*
 package snownee.snow.compat.jade;
 
 import static snownee.snow.CoreModule.*;
@@ -19,3 +20,4 @@ public class JadeCompat implements IWailaPlugin {
 	}
 
 }
+*/

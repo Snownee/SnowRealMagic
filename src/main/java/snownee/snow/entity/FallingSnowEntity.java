@@ -2,12 +2,15 @@ package snownee.snow.entity;
 
 import java.util.Random;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,12 +35,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
 import snownee.snow.CoreModule;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.ModSnowLayerBlock;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {
@@ -95,7 +95,7 @@ public class FallingSnowEntity extends Entity {
 		BlockPos pos = blockPosition();
 		if (!level.isClientSide) {
 			if (!onGround) {
-				if (fallTime > 100 && !level.isClientSide && (pos.getY() < 1 || pos.getY() > 256) || fallTime > 600) {
+				if (fallTime > 100 && !level.isClientSide && level.isOutsideBuildHeight(pos) || fallTime > 600) {
 					discard();
 				} else if (!pos.equals(prevPos)) {
 					prevPos = pos;
@@ -130,7 +130,7 @@ public class FallingSnowEntity extends Entity {
 
 				this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 
-				if (state.getBlock() != Blocks.MOVING_PISTON) {
+				if (!state.is(Blocks.MOVING_PISTON)) {
 					if (state.getCollisionShape(level, pos, CollisionContext.of(this)).isEmpty()) {
 						BlockPos posDown = pos.below();
 						BlockState stateDown = level.getBlockState(posDown);
@@ -139,7 +139,7 @@ public class FallingSnowEntity extends Entity {
 							pos = posDown;
 						}
 					}
-					ModSnowLayerBlock.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
+					Hooks.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
 					discard();
 					return;
 				}
@@ -154,12 +154,12 @@ public class FallingSnowEntity extends Entity {
 		entityData.set(LAYERS, layers);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public BlockPos getOrigin() {
 		return entityData.get(START_POS);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getLayers() {
 		return entityData.get(LAYERS);
 	}
@@ -170,7 +170,7 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public boolean displayFireAnimation() {
 		return false;
 	}
@@ -208,7 +208,7 @@ public class FallingSnowEntity extends Entity {
 
 	@Override
 	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
+		return new ClientboundAddEntityPacket(this, layers);
 	}
 
 }

@@ -1,44 +1,29 @@
 package snownee.snow;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import snownee.snow.block.ModSnowLayerBlock;
 import snownee.snow.entity.FallingSnowEntity;
+import snownee.snow.mixin.ChunkMapAccessor;
 
 public class WorldTickHandler {
-	private static Method METHOD;
-
-	static {
-		try {
-			METHOD = ObfuscationReflectionHelper.findMethod(ChunkMap.class, "m_140416_"); //getChunks
-		} catch (Exception e) {
-			SnowRealMagic.LOGGER.catching(e);
-		}
-	}
 
 	@SuppressWarnings("deprecation")
-	public static void tick(TickEvent.WorldTickEvent event) {
-		if (SnowCommonConfig.retainOriginalBlocks || METHOD == null) {
+	public static void tick(ServerLevel world) {
+		if (SnowCommonConfig.retainOriginalBlocks) {
 			return;
 		}
-		ServerLevel world = (ServerLevel) event.world;
 		int blizzard = SnowCommonConfig.snowGravity ? world.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
 		if (blizzard <= 0 && !world.isRaining()) {
 			return;
@@ -46,14 +31,7 @@ public class WorldTickHandler {
 		if (world.isDebug()) {
 			return;
 		}
-		Iterable<ChunkHolder> holders;
-		try {
-			holders = (Iterable<ChunkHolder>) METHOD.invoke(world.getChunkSource().chunkMap);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			SnowRealMagic.LOGGER.catching(e);
-			METHOD = null;
-			return;
-		}
+		Iterable<ChunkHolder> holders = ((ChunkMapAccessor) world.getChunkSource().chunkMap).callGetChunks();
 		holders.forEach(holder -> {
 			LevelChunk chunk = holder.getTickingChunk();
 			if (chunk == null || !world.shouldTickBlocksAt(chunk.getPos().toLong())) {
@@ -65,7 +43,7 @@ public class WorldTickHandler {
 				int y = chunk.getPos().getMinBlockZ();
 				MutableBlockPos pos = world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).mutable();
 
-				if (!world.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+				if (!world.isLoaded(pos)) // Forge: check area to avoid loading neighbors in unloaded chunks
 					return;
 
 				if (blizzard > 0) {
@@ -79,9 +57,9 @@ public class WorldTickHandler {
 					return;
 				}
 				BlockState state = world.getBlockState(pos);
-				if (!ModSnowLayerBlock.canContainState(state)) {
+				if (!Hooks.canContainState(state)) {
 					state = world.getBlockState(pos.move(Direction.UP));
-					if (!ModSnowLayerBlock.canContainState(state)) {
+					if (!Hooks.canContainState(state)) {
 						return;
 					}
 				}
@@ -89,22 +67,22 @@ public class WorldTickHandler {
 				if (world.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > 11) {
 					return;
 				}
-				ModSnowLayerBlock.convert(world, pos.move(Direction.DOWN), state, 1, 3);
+				Hooks.convert(world, pos.move(Direction.DOWN), state, 1, 3);
 
 				for (int i = 0; i < 5; i++) {
 					if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
 						break;
 					}
 					state = world.getBlockState(pos.move(Direction.DOWN));
-					if (!state.isAir() && !ModSnowLayerBlock.canContainState(state)) {
+					if (!state.isAir() && !Hooks.canContainState(state)) {
 						break;
 					}
-					if (CoreModule.BLOCK.canSurvive(state, world, pos)) {
+					if (Blocks.SNOW.canSurvive(state, world, pos)) {
 						pos.move(Direction.UP);
 						if (world.getBlockState(pos).getBlock() instanceof SnowLayerBlock || world.getBrightness(LightLayer.BLOCK, pos) > 11) {
 							break;
 						}
-						ModSnowLayerBlock.convert(world, pos.move(Direction.DOWN), state, 1, 3);
+						Hooks.convert(world, pos.move(Direction.DOWN), state, 1, 3);
 						//FIXME I should make snow melts somehow
 					}
 				}

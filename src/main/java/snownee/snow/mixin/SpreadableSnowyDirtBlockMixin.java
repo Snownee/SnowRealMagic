@@ -23,12 +23,9 @@ import snownee.snow.Hooks;
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadableSnowyDirtBlockMixin {
 
-	@SuppressWarnings("deprecation")
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
 	private void srm_randomTickProxy(BlockState blockState, ServerLevel level, BlockPos blockPos, Random random, CallbackInfo ci) {
 		if (!canBeGrass(blockState, level, blockPos)) {
-			if (!level.isAreaLoaded(blockPos, 3))
-				return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 			level.setBlockAndUpdate(blockPos, Blocks.DIRT.defaultBlockState());
 		} else {
 			if (level.getMaxLocalRawBrightness(blockPos.above()) >= 9) {

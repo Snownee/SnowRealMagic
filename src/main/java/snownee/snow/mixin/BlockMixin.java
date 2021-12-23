@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -18,8 +19,9 @@ public class BlockMixin {
 
 	@Inject(at = @At("HEAD"), method = "shouldRenderFace", cancellable = true)
 	private static void srm_shouldRenderFace(BlockState state, BlockGetter level, BlockPos pos, Direction direction, BlockPos relativePos, CallbackInfoReturnable<Boolean> ci) {
-		if (Hooks.shouldRenderFaceSnow(state, level, pos, direction, relativePos)) {
-			ci.setReturnValue(true);
+		InteractionResult result = Hooks.shouldRenderFaceSnow(state, level, pos, direction, relativePos);
+		if (result.consumesAction()) {
+			ci.setReturnValue(result == InteractionResult.SUCCESS);
 		}
 	}
 

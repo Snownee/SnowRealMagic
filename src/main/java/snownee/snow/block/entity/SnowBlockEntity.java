@@ -1,6 +1,10 @@
 package snownee.snow.block.entity;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -8,17 +12,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.entity.BaseBlockEntity;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
-public class SnowBlockEntity extends BaseBlockEntity {
+public class SnowBlockEntity extends BaseBlockEntity implements RenderAttachmentBlockEntity {
 
 	public static class Options {
 		public boolean renderOverlay;
@@ -33,10 +32,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	}
 
 	public Options options = new Options();
-	public static final ModelProperty<Options> OPTIONS = new ModelProperty<>();
-	public static final ModelProperty<BlockState> BLOCKSTATE = new ModelProperty<>();
 	protected BlockState state = Blocks.AIR.defaultBlockState();
-	protected IModelData modelData;
 
 	public SnowBlockEntity(BlockPos pos, BlockState state) {
 		this(CoreModule.TILE, pos, state);
@@ -44,6 +40,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 
 	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		options.renderBottom = !state.is(CoreModule.STAIRS);
 	}
 
 	public BlockState getState() {
@@ -63,10 +60,10 @@ public class SnowBlockEntity extends BaseBlockEntity {
 		}
 		this.state = state;
 		if (hasLevel()) {
-			if (level.isClientSide) {
-				getModelData().setData(BLOCKSTATE, state);
-				onStateChanged();
-			}
+			//			if (level.isClientSide) {
+			//				getModelData().setData(BLOCKSTATE, state);
+			//				onStateChanged();
+			//			}
 			if (update) {
 				if (level.isClientSide) {
 					level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
@@ -92,14 +89,14 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	public void loadState(CompoundTag data, boolean network) {
 		boolean changed = false;
 		if (data.contains("RO")) {
-			changed = options.update(data.getBoolean("RO"), false);
+			changed = options.update(data.getBoolean("RO"), true);
 			if (changed && network && hasLevel() && level.isClientSide) {
-				requestModelDataUpdate();
+				//				requestModelDataUpdate();
 			}
 		}
 		if (data.contains("Block")) {
 			ResourceLocation id = Util.RL(data.getString("Block"));
-			Block block = ForgeRegistries.BLOCKS.getValue(id);
+			Block block = Registry.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setState(block.defaultBlockState(), network);
 			}
@@ -113,7 +110,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 
 	public void saveState(CompoundTag data, boolean network) {
 		if (getState() == getState().getBlock().defaultBlockState()) {
-			data.putString("Block", getState().getBlock().getRegistryName().toString());
+			data.putString("Block", Registry.BLOCK.getKey(getState().getBlock()).toString());
 		} else {
 			data.put("State", NbtUtils.writeBlockState(getState()));
 		}
@@ -134,26 +131,8 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	}
 
 	@Override
-	public AABB getRenderBoundingBox() {
-		return new AABB(worldPosition);
+	public @Nullable Object getRenderAttachmentData() {
+		return this;
 	}
 
-	@Override
-	public IModelData getModelData() {
-		if (modelData == null) {
-			modelData = new ModelDataMap.Builder().withInitial(BLOCKSTATE, state).withInitial(OPTIONS, options).build();
-			//			if (hasLevel()) {
-			//				Block block = getBlockState().getBlock();
-			//				if (block instanceof WatcherSnowVariant) {
-			//					((WatcherSnowVariant) block).onUpdateOptions(getBlockState(), level, worldPosition, options);
-			//				}
-			//			}
-		}
-		return modelData;
-	}
-
-	// only run in client!
-	public void onStateChanged() {
-		requestModelDataUpdate();
-	}
 }

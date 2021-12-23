@@ -9,12 +9,13 @@
     "SnowyDirtBlockMixin",
     "DoublePlantBlockMixin",
     "SnowAndFreezeFeatureMixin",
-    "IntegerValueAccessor",
-    "sodium.BlockRendererMixin"
+    "ChunkMapAccessor",
+    "ModSnowLayerBlock",
+    "BlockItemMixin"
   ],
   "client": [
-    "BlockRenderDispatcherMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "BlockModelShaperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

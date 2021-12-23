@@ -1,0 +1,18 @@
+{
+  "KiwiConfig": [
+    {
+      "target": "snownee.snow.client.SnowClientConfig",
+      "data": {
+        "type": "CLIENT"
+      }
+    },
+    {
+      "target": "snownee.snow.SnowCommonConfig"
+    }
+  ],
+  "KiwiModule": [
+    {
+      "target": "snownee.snow.CoreModule"
+    }
+  ]
+}

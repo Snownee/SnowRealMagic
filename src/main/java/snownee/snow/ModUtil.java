@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.CommonLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -37,7 +38,7 @@ public class ModUtil {
 		if (world.getBrightness(LightLayer.BLOCK, pos) > 11)
 			return true;
 		Biome biome = world.getBiome(pos);
-		return snowMeltsInWarmBiomes(biome) && !isColdAt(world, biome, pos) && world.canSeeSky(pos);
+		return snowMeltsInWarmBiomes(world, biome) && !isColdAt(world, biome, pos) && world.canSeeSky(pos);
 	}
 
 	public static boolean isColdAt(Level world, Biome biome, BlockPos pos) {
@@ -52,12 +53,12 @@ public class ModUtil {
 		return biome.coldEnoughToSnow(pos);
 	}
 
-	public static boolean snowMeltsInWarmBiomes(Biome biome) {
+	public static boolean snowMeltsInWarmBiomes(CommonLevelAccessor level, Biome biome) {
 		if (enablesSeasonalEffects != null) {
-			ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
+			ResourceKey<Biome> biomeKey = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(biome).orElseThrow();
 			try {
 				return (boolean) enablesSeasonalEffects.invoke(null, biomeKey);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (Exception e) {
 				SnowRealMagic.LOGGER.catching(e);
 				enablesSeasonalEffects = null;
 			}

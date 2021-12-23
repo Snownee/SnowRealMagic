@@ -37,7 +37,7 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 			if (!state.isAir()) {
 				ResourceLocation resourcelocation = state.getBlock().getLootTable();
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
-					LootContext.Builder builder = new LootContext.Builder(context);
+					LootContext.Builder builder = new LootContext.Builder(context.getLevel());
 					LootContext lootcontext = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
 					ServerLevel serverworld = lootcontext.getLevel();
 					LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
