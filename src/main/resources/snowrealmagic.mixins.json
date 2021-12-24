@@ -15,7 +15,9 @@
   ],
   "client": [
     "CameraMixin",
-    "BlockModelShaperMixin"
+    "BlockModelShaperMixin",
+    "ModelBakeryMixin",
+    "SimpleBakedModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

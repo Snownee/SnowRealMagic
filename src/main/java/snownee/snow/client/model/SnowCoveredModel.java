@@ -27,6 +27,7 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClientConfig;
 
 public class SnowCoveredModel extends ForwardingBakedModel {
 
@@ -67,6 +68,12 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				return true;
 			});
 			model = shaper.getBlockModel(camo);
+			if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
+				BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
+				if (snowVariant != null) {
+					model = snowVariant;
+				}
+			}
 			((FabricBakedModel) model).emitBlockQuads(blockView, camo, pos, randomSupplier, context);
 			context.popTransform();
 		}
