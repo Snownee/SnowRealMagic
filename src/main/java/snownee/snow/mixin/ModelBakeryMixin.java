@@ -27,7 +27,6 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.profiling.ProfilerFiller;
-import snownee.snow.Hooks;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.SnowVariantModel;
 
@@ -68,12 +67,9 @@ public abstract class ModelBakeryMixin {
 		}
 		ResourceLocation variant = snowModelIdMapping.get(resourceLocation);
 		if (variant != null) {
-			Hooks.print(variant);
 			Variant variantState = (Variant) modelState;
 			variantState = new Variant(variant, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
-			Hooks.print(((ModelBakery) (Object) this).getModel(variant));
 			BakedModel model = ((ModelBakery) (Object) this).bake(variant, variantState);
-			Hooks.print(model);
 			((SnowVariantModel) blockModel).setSnowVariant(model);
 		}
 	}
