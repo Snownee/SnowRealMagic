@@ -1,3 +1,4 @@
+/*
 package snownee.snow.mixin.sodium;
 
 import java.util.List;
@@ -207,3 +208,4 @@ public abstract class BlockRendererMixin {
 	@Shadow
 	abstract void renderQuadList(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> quads, ModelQuadFacing facing);
 }
+*/

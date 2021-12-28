@@ -193,7 +193,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jade-324717:3544015")
     implementation fg.deobf("curse.maven:kiwi-303657:3549979")
     annotationProcessor "curse.maven:kiwi-303657:3549979"
-    implementation fg.deobf("curse.maven:sodium-reforged-532724:3556734")
+    //implementation fg.deobf("curse.maven:sodium-reforged-532724:3556734")
 
     // Examples using mod jars from ./libs
     //implementation fg.deobf("libs:Kiwi-1.18:5.1.0")

@@ -3,6 +3,7 @@ package snownee.snow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
@@ -39,21 +40,24 @@ public final class Hooks {
 		}
 	}
 
-	public static boolean shouldRenderFaceSnow(BlockState state, BlockGetter level, BlockPos pos, Direction direction, BlockPos relativePos) {
+	public static InteractionResult shouldRenderFaceSnow(BlockState state, BlockGetter level, BlockPos pos, Direction direction, BlockPos relativePos) {
 		if (!state.canOcclude()) {
-			return false;
+			return InteractionResult.PASS;
 		}
 		pos = pos.relative(direction);
 		state = level.getBlockState(pos);
 		if (!state.hasBlockEntity() || !(state.getBlock() instanceof SnowVariant)) {
-			return false;
+			return InteractionResult.PASS;
+		}
+		if (direction == Direction.UP) {
+			return InteractionResult.CONSUME;
 		}
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof SnowCoveredBlockEntity) {
 			if (!((SnowCoveredBlockEntity) blockEntity).getState().canOcclude())
-				return true;
+				return InteractionResult.SUCCESS;
 		}
-		return false;
+		return InteractionResult.PASS;
 	}
 
 	public static boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
