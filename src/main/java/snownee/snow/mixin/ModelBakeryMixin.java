@@ -42,7 +42,7 @@ public abstract class ModelBakeryMixin {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "fromStream", shift = Shift.BY, by = 2
+					value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockModel;fromStream(Ljava/io/Reader;)Lnet/minecraft/client/renderer/block/model/BlockModel;", shift = Shift.BY, by = 2
 			), method = "loadBlockModel", locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void srm_loadBlockModel(ResourceLocation resourceLocation, CallbackInfoReturnable<BlockModel> ci, Reader reader, Resource resource, BlockModel string2) throws IOException {
