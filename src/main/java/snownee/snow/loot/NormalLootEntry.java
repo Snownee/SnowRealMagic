@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -29,6 +29,7 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 		super(weightIn, qualityIn, conditionsIn, functionsIn);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void createItemStack(Consumer<ItemStack> consumer, LootContext context) {
 		BlockEntity tile = context.getParam(LootContextParams.BLOCK_ENTITY);
@@ -38,9 +39,11 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 				ResourceLocation resourcelocation = state.getBlock().getLootTable();
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
 					LootContext.Builder builder = new LootContext.Builder(context);
-					LootContext lootcontext = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
-					ServerLevel serverworld = lootcontext.getLevel();
-					LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
+					for (LootContextParam param : LootContextParamSets.BLOCK.getAllowed()) {
+						builder.withOptionalParameter(param, context.getParamOrNull(param));
+					}
+					LootContext lootcontext = builder.create(LootContextParamSets.BLOCK);
+					LootTable loottable = context.getLevel().getServer().getLootTables().get(resourcelocation);
 					loottable.getRandomItems(lootcontext).forEach(consumer::accept);
 				}
 			}
