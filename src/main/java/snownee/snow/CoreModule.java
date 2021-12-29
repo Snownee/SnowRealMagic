@@ -106,6 +106,7 @@ public class CoreModule extends AbstractModule {
 			}
 			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(ClientVariables.OVERLAY_MODEL));
 		}
+		GameEvents.init();
 	}
 
 	@Override

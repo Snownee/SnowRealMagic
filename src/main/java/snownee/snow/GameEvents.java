@@ -68,12 +68,7 @@ public final class GameEvents {
 	}
 
 	public static void onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
-		//		if (willHarvest) {
-		//			playerWillDestroy(world, pos, state, player);
-		//		} else {
-		//			Block.spawnDestroyParticles(world, player, pos, state);
-		//		}
-		if (blockEntity instanceof SnowBlockEntity) {
+		if (player.isCreative() && blockEntity instanceof SnowBlockEntity) {
 			BlockState newState = ((SnowBlockEntity) blockEntity).getState();
 			world.setBlockAndUpdate(pos, newState);
 		}
