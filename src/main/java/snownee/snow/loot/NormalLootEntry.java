@@ -40,8 +40,17 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
 					LootContext.Builder builder = new LootContext.Builder(context.getLevel());
 					for (LootContextParam param : LootContextParamSets.BLOCK.getAllowed()) {
+						if (param == LootContextParams.BLOCK_ENTITY) {
+							continue;
+						}
+						if (param == LootContextParams.BLOCK_STATE) {
+							builder.withParameter(LootContextParams.BLOCK_STATE, state);
+							continue;
+						}
 						builder.withOptionalParameter(param, context.getParamOrNull(param));
 					}
+					builder.withRandom(context.getRandom());
+					builder.withLuck(context.getLuck());
 					LootContext lootcontext = builder.create(LootContextParamSets.BLOCK);
 					LootTable loottable = context.getLevel().getServer().getLootTables().get(resourcelocation);
 					loottable.getRandomItems(lootcontext).forEach(consumer::accept);
