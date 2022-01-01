@@ -50,6 +50,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 		BlockModelShaper shaper = modelManager.getBlockModelShaper();
 		BakedModel model;
 
+		boolean useSnowVariant = false;
 		if (camo.getRenderShape() == RenderShape.MODEL) {
 			Vec3 offset = camo.getOffset(blockView, pos);
 			BlockColors blockColors = Minecraft.getInstance().getBlockColors();
@@ -72,6 +73,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
 				if (snowVariant != null) {
 					model = snowVariant;
+					useSnowVariant = true;
 				}
 			}
 			((FabricBakedModel) model).emitBlockQuads(blockView, camo, pos, randomSupplier, context);
@@ -109,7 +111,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 		}
 
 		//FIXME side cull face not working
-		if (snowBlockEntity.options.renderOverlay) {
+		if (snowBlockEntity.options.renderOverlay && (!useSnowVariant || state.is(CoreModule.TILE_BLOCK))) {
 			float yOffset = state.getBlock() instanceof SnowVariant ? (float) ((SnowVariant) state.getBlock()).getYOffset() : 0;
 			context.pushTransform(quad -> {
 				if (yOffset != 0) {

@@ -340,7 +340,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 		}
 		ItemStack stack = context.getItemInHand();
 		CompoundTag tag = BlockItem.getBlockEntityData(stack);
-		if (tag != null && tag.getString("id").equals("snowrealmagic:snow")) {
+		if (tag != null && "snowrealmagic:snow".equals(tag.getString("id"))) {
 			return CoreModule.TILE_BLOCK.defaultBlockState();
 		}
 		return defaultBlockState();

@@ -11,6 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
+import snownee.snow.SnowRealMagic;
+import snownee.snow.client.SnowClientConfig;
 
 public class SnowConnectedModel extends ForwardingBakedModel implements SnowVariantModel {
 
@@ -21,7 +23,7 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		BakedModel model = null;
-		if (pos != null && blockView.getBlockState(pos.below()).is(CoreModule.TILE_BLOCK)) {
+		if (SnowClientConfig.snowVariants && pos != null && blockView.getBlockState(pos.below()).is(CoreModule.TILE_BLOCK)) {
 			model = getSnowVariant();
 		}
 		if (model == null) {
@@ -32,12 +34,19 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 
 	@Override
 	public BakedModel getSnowVariant() {
-		return ((SnowVariantModel) wrapped).getSnowVariant();
+		if (wrapped instanceof SnowVariantModel) {
+			return ((SnowVariantModel) wrapped).getSnowVariant();
+		}
+		return null;
 	}
 
 	@Override
 	public void setSnowVariant(BakedModel model) {
-		((SnowVariantModel) wrapped).setSnowVariant(model);
+		if (wrapped instanceof SnowVariantModel) {
+			((SnowVariantModel) wrapped).setSnowVariant(model);
+		} else {
+			SnowRealMagic.LOGGER.error("Cannot set snow variant model for {}", wrapped);
+		}
 	}
 
 }

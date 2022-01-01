@@ -25,7 +25,7 @@ public final class GameEvents {
 
 	public static void init() {
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
-		PlayerBlockBreakEvents.AFTER.register(GameEvents::onDestroyedByPlayer);
+		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
 		ServerTickEvents.END_WORLD_TICK.register(GameEvents::onWorldTick);
 	}
 
@@ -67,11 +67,13 @@ public final class GameEvents {
 		return InteractionResult.sidedSuccess(worldIn.isClientSide);
 	}
 
-	public static void onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+	public static boolean onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 		if ((player == null || player.isCreative()) && blockEntity instanceof SnowBlockEntity) {
 			BlockState newState = ((SnowBlockEntity) blockEntity).getState();
 			world.setBlockAndUpdate(pos, newState);
+			return false;
 		}
+		return true;
 	}
 
 	public static void onWorldTick(ServerLevel world) {
