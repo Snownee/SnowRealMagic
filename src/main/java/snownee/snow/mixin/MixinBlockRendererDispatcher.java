@@ -38,6 +38,7 @@ import snownee.snow.block.SnowTile;
 import snownee.snow.block.SnowTile.Options;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
+import snownee.snow.client.ClientVariables;
 
 @Mixin(BlockRendererDispatcher.class)
 public abstract class MixinBlockRendererDispatcher {
@@ -45,10 +46,6 @@ public abstract class MixinBlockRendererDispatcher {
 	@Shadow
 	@Final
 	private BlockModelRenderer blockModelRenderer;
-
-	private final Options defaultOptions = new Options();
-	private IBakedModel cachedSnowModel;
-	private IBakedModel cachedOverlayModel;
 
 	@SuppressWarnings("deprecation")
 	@Inject(
@@ -58,6 +55,9 @@ public abstract class MixinBlockRendererDispatcher {
 	)
 	private void srm_renderModel(BlockState blockStateIn, BlockPos posIn, IBlockDisplayReader lightReaderIn, MatrixStack matrixStackIn, IVertexBuilder vertexBuilderIn, boolean checkSides, Random rand, IModelData modelData, CallbackInfoReturnable<Boolean> ci) {
 		if (!(blockStateIn.getBlock() instanceof SnowVariant)) {
+			return;
+		}
+		if (!blockStateIn.hasTileEntity()) {
 			return;
 		}
 		if (blockStateIn.hasProperty(SnowBlock.LAYERS) && blockStateIn.get(SnowBlock.LAYERS) == 8) {
@@ -74,7 +74,7 @@ public abstract class MixinBlockRendererDispatcher {
 			boolean canRender;
 			boolean ret = false;
 			Block blockIn = blockStateIn.getBlock();
-			Options options = Optional.ofNullable(modelData.getData(SnowTile.OPTIONS)).orElse(defaultOptions);
+			Options options = Optional.ofNullable(modelData.getData(SnowTile.OPTIONS)).orElse(ClientVariables.fallbackOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
@@ -100,19 +100,18 @@ public abstract class MixinBlockRendererDispatcher {
 				matrixStackIn.pop();
 			}
 			if (options.renderBottom && (layer == null || layer == solid)) {
-				if (cachedSnowModel == null) {
-					cachedSnowModel = getModelForState(CoreModule.BLOCK.getDefaultState());
+				if (ClientVariables.cachedSnowModel == null) {
+					ClientVariables.cachedSnowModel = getModelForState(CoreModule.BLOCK.getDefaultState());
 				}
-				ret |= blockModelRenderer.renderModel(lightReaderIn, cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				ret |= blockModelRenderer.renderModel(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
 			if (blockIn.matchesBlock(CoreModule.SLAB) || blockIn instanceof SnowBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
-					if (cachedOverlayModel == null) {
-						cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
+					if (ClientVariables.cachedOverlayModel == null) {
+						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
 					}
 					matrixStackIn.push();
-					matrixStackIn.scale(1.002F, 1, 1.002F);
 					BlockPos pos = posIn;
 					if (blockIn.matchesBlock(CoreModule.SLAB)) {
 						matrixStackIn.translate(-0.001, -0.375, -0.001);
@@ -120,7 +119,7 @@ public abstract class MixinBlockRendererDispatcher {
 						matrixStackIn.translate(-0.001, -1, -0.001);
 						pos = pos.down();
 					}
-					ret |= blockModelRenderer.renderModel(lightReaderIn, cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, rand, blockStateIn.getPositionRandom(pos), OverlayTexture.NO_OVERLAY, modelData);
+					ret |= blockModelRenderer.renderModel(lightReaderIn, ClientVariables.cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, rand, blockStateIn.getPositionRandom(pos), OverlayTexture.NO_OVERLAY, modelData);
 					matrixStackIn.pop();
 				}
 			} else {
@@ -160,7 +159,7 @@ public abstract class MixinBlockRendererDispatcher {
 
 	@Inject(at = @At("HEAD"), method = "onResourceManagerReload")
 	private void srm_onResourceManagerReload(IResourceManager resourceManager, CallbackInfo ci) {
-		cachedSnowModel = null;
-		cachedOverlayModel = null;
+		ClientVariables.cachedSnowModel = null;
+		ClientVariables.cachedOverlayModel = null;
 	}
 }

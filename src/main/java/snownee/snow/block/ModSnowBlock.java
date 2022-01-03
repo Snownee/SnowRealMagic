@@ -61,8 +61,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
-import snownee.snow.SnowClientConfig;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.client.SnowClientConfig;
 import snownee.snow.entity.FallingSnowEntity;
 
 public class ModSnowBlock extends SnowBlock implements SnowVariant {

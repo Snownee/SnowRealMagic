@@ -127,7 +127,9 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	@Override
 	public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 		if (willHarvest) {
-			getBlock().onBlockHarvested(world, pos, state, player);
+			onBlockHarvested(world, pos, state, player);
+		} else {
+			world.playEvent(player, 2001, pos, getStateId(state));
 		}
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof SnowTile) {
@@ -196,6 +198,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
 		if (worldIn.isRemote) {
@@ -203,7 +206,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		}
 		try {
 			BlockState contained = getRaw(state, worldIn, pos);
-			if (contained.getBlockHardness(worldIn, pos) == 0) {
+			if (!contained.isAir() && contained.getBlockHardness(worldIn, pos) == 0) {
 				worldIn.playEvent(2001, pos, Block.getStateId(contained));
 				Block.spawnDrops(contained, worldIn, pos, null, player, ItemStack.EMPTY);
 				int layers = state.get(LAYERS);

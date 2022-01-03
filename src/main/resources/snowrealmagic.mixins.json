@@ -8,12 +8,13 @@
     "MixinSpreadableSnowyDirtBlock",
     "MixinSnowyDirtBlock",
     "MixinDefaultBiomeFeatures",
-    "MixinLayerDecorator",
-    "MixinFreezeLayer",
-    "MixinDoublePlantBlock"
+    "MixinDoublePlantBlock",
+    "terraforged.MixinLayerDecorator",
+    "terraforged.MixinFreezeLayer"
   ],
   "client": [
-    "MixinBlockRendererDispatcher"
+    "MixinBlockRendererDispatcher",
+    "sodium.BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

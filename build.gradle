@@ -114,6 +114,7 @@ dependencies {
     implementation fg.deobf("curse.maven:terraforged-363820:3365710")
     //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
 	implementation fg.deobf("curse.maven:kiwi-303657:3536245")
+    implementation fg.deobf("curse.maven:sodium-reforged-532724:3526076")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
