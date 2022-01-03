@@ -102,7 +102,7 @@ public abstract class BlockRendererMixin {
 						yOffset = 0.1;
 					}
 				}
-				ret |= renderModelWithYOffset(lightReaderIn, state, posIn, origin, model, buffers, cull, seed, modelData, yOffset);
+				ret |= renderModelWithYOffset(lightReaderIn, state, posIn, origin, getBlockModel(state), buffers, cull, seed, modelData, yOffset);
 			}
 
 			if (options.renderBottom && (layer == null || layer == solid)) {

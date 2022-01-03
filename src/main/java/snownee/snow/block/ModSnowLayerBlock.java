@@ -233,7 +233,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 
 	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
 		BlockPos posDown = pos.below();
-		if ((worldIn.isEmptyBlock(posDown) || canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) && pos.getY() >= 0) {
+		if (canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
 			if (!worldIn.isClientSide) {
 				worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
 				FallingSnowEntity entity = new FallingSnowEntity(worldIn, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, state.getValue(LAYERS));
@@ -327,8 +327,10 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	}
 
 	public static boolean canFallThrough(BlockState state, Level worldIn, BlockPos pos) {
-		if (FallingBlock.isFree(state) && state.getCollisionShape(worldIn, pos).isEmpty()) {
-			return true;
+		if (state.getCollisionShape(worldIn, pos).isEmpty()) {
+			if (FallingBlock.isFree(state) || canContainState(state)) {
+				return true;
+			}
 		}
 		if (state.getBlock() instanceof SnowLayerBlock && state.getValue(LAYERS) < 8) {
 			return true;
