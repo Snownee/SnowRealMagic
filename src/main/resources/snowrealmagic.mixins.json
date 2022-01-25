@@ -13,7 +13,10 @@
   ],
   "client": [
     "BlockRenderDispatcherMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "BlockModelShaperMixin",
+    "ModelBakeryMixin",
+    "SimpleBakedModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

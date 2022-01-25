@@ -6,7 +6,7 @@ license="MIT"
 modId="snowrealmagic"
 version="${file.jarVersion}"
 displayName="Snow! Real Magic!"
-authors="Snownee"
+authors="Snownee, minzhi, WZD"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
 description="Tweak vanilla snow layer."
 

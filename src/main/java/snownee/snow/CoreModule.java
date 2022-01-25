@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -41,6 +40,7 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
+import snownee.snow.client.ClientVariables;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
@@ -118,12 +118,10 @@ public class CoreModule extends AbstractModule {
 			ItemBlockRenderTypes.setRenderLayer(block, blockRenderTypes);
 	}
 
-	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
-
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void registerExtraModel(ModelRegistryEvent event) {
-		ForgeModelBakery.addSpecialModel(OVERLAY_MODEL);
+		ForgeModelBakery.addSpecialModel(ClientVariables.OVERLAY_MODEL);
 	}
 
 	@Override
