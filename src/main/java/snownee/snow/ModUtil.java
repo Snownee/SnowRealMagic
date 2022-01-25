@@ -17,6 +17,7 @@ public class ModUtil {
 	private static Method getBiomeTemperature;
 	private static Method enablesSeasonalEffects;
 	public static boolean terraforged = false;
+	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 
 	static {
 		if (Platform.isModLoaded("sereneseasons")) {
@@ -63,6 +64,6 @@ public class ModUtil {
 				enablesSeasonalEffects = null;
 			}
 		}
-		return SnowCommonConfig.snowMeltsInWarmBiomes;
+		return fabricSeasons || SnowCommonConfig.snowMeltsInWarmBiomes;
 	}
 }
