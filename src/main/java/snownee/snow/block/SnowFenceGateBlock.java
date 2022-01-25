@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
 public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, WatcherSnowVariant {
 
@@ -20,7 +20,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return new SnowBlockEntity(pos, state);
+		return new SnowCoveredBlockEntity(pos, state);
 	}
 
 	@Override
