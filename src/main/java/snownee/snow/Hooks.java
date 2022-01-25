@@ -278,8 +278,10 @@ public final class Hooks {
 	}
 
 	public static boolean canFallThrough(BlockState state, Level worldIn, BlockPos pos) {
-		if (FallingBlock.isFree(state) && state.getCollisionShape(worldIn, pos).isEmpty()) {
-			return true;
+		if (state.getCollisionShape(worldIn, pos).isEmpty()) {
+			if (FallingBlock.isFree(state) && state.getCollisionShape(worldIn, pos).isEmpty()) {
+				return true;
+			}
 		}
 		if (state.getBlock() instanceof SnowLayerBlock && state.getValue(SnowLayerBlock.LAYERS) < 8) {
 			return true;

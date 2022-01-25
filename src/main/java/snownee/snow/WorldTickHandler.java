@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.mixin.ChunkMapAccessor;
+import snownee.snow.mixin.ChunkMapAccess;
 
 public class WorldTickHandler {
 
@@ -31,7 +31,7 @@ public class WorldTickHandler {
 		if (world.isDebug()) {
 			return;
 		}
-		Iterable<ChunkHolder> holders = ((ChunkMapAccessor) world.getChunkSource().chunkMap).callGetChunks();
+		Iterable<ChunkHolder> holders = ((ChunkMapAccess) world.getChunkSource().chunkMap).callGetChunks();
 		holders.forEach(holder -> {
 			LevelChunk chunk = holder.getTickingChunk();
 			if (chunk == null || !world.shouldTickBlocksAt(chunk.getPos().toLong())) {

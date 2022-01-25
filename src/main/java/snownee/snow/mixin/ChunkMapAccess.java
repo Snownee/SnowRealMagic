@@ -7,7 +7,7 @@ import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
 
 @Mixin(ChunkMap.class)
-public interface ChunkMapAccessor {
+public interface ChunkMapAccess {
 
 	@Invoker
 	Iterable<ChunkHolder> callGetChunks();

@@ -5,11 +5,12 @@
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
     "BlockMixin",
+    "BlockStateMixin",
     "SpreadableSnowyDirtBlockMixin",
     "SnowyDirtBlockMixin",
     "DoublePlantBlockMixin",
     "SnowAndFreezeFeatureMixin",
-    "ChunkMapAccessor",
+    "ChunkMapAccess",
     "ModSnowLayerBlock",
     "BlockItemMixin"
   ],
