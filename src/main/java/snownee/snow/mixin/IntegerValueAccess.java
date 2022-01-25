@@ -7,7 +7,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 
 @Mixin(IntegerValue.class)
-public interface IntegerValueAccessor {
+public interface IntegerValueAccess {
 
 	@Invoker
 	static GameRules.Type<GameRules.IntegerValue> callCreate(int p_46313_) {

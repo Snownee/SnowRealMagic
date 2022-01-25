@@ -23,6 +23,7 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
 public final class Hooks {
+
 	private Hooks() {
 	}
 
