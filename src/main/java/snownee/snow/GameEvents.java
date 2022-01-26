@@ -1,10 +1,15 @@
 package snownee.snow;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.tool.attribute.v1.ToolManager;
+import net.minecraft.Util;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import snownee.kiwi.loader.Platform;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 
@@ -79,6 +85,13 @@ public final class GameEvents {
 	public static void onWorldTick(ServerLevel world) {
 		if (SnowCommonConfig.placeSnowInBlock) {
 			WorldTickHandler.tick(world);
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
+	public static void onPlayerJoin(LocalPlayer player) {
+		if (Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
+			player.sendMessage(new TextComponent("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."), Util.NIL_UUID);
 		}
 	}
 
