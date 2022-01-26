@@ -39,4 +39,8 @@ public final class SnowCommonConfig {
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
 
+	public static boolean canPlaceSnowInBlock() {
+		return placeSnowInBlock && !retainOriginalBlocks;
+	}
+
 }

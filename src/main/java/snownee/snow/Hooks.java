@@ -85,7 +85,7 @@ public final class Hooks {
 					if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 					}
-				} else if (!SnowCommonConfig.retainOriginalBlocks && SnowCommonConfig.replaceWorldFeature) {
+				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.canPlaceSnowInBlock()) {
 					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 || !CoreModule.BLOCK.defaultBlockState().canSurvive(worldgenlevel, pos)) {
 						continue;
 					}

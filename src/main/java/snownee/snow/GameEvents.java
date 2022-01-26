@@ -1,7 +1,6 @@
 package snownee.snow;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -12,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -58,13 +56,7 @@ public final class GameEvents {
 		}
 
 		event.setCanceled(true);
-		event.setCancellationResult(InteractionResult.SUCCESS);
+		event.setCancellationResult(InteractionResult.sidedSuccess(worldIn.isClientSide));
 	}
 
-	@SubscribeEvent
-	public static void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (SnowCommonConfig.placeSnowInBlock && event.side.isServer() && event.phase == TickEvent.Phase.END && event.world instanceof ServerLevel) {
-			WorldTickHandler.tick(event);
-		}
-	}
 }

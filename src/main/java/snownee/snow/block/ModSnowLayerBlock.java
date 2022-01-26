@@ -159,14 +159,25 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 		if (random.nextInt(8) > 0) {
 			return;
 		}
+		int layers = state.getValue(LAYERS);
 		BlockPos height = worldIn.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
-		if (height.getY() != pos.getY()) {
-			return;
+		if (layers == 8) {
+			if (height.getY() - 1 != pos.getY()) {
+				return;
+			}
+			BlockState upState = worldIn.getBlockState(pos.above());
+			if (upState.getBlock() instanceof SnowLayerBlock) {
+				return;
+			}
+		} else {
+			if (height.getY() != pos.getY()) {
+				return;
+			}
 		}
 
 		Biome biome = worldIn.getBiome(pos);
 		boolean flag = false;
-		if (worldIn.isRaining() && ModUtil.isColdAt(worldIn, biome, pos)) {
+		if (worldIn.isRaining() && biome.coldEnoughToSnow(pos)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
 				flag = true;
 			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
@@ -174,7 +185,6 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			}
 		}
 
-		int layers = state.getValue(LAYERS);
 		if (flag && layers < SnowCommonConfig.snowAccumulationMaxLayers) {
 			accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof ModSnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) < 10, true);
 		} else if (!SnowCommonConfig.snowNeverMelt && SnowCommonConfig.snowNaturalMelt && !worldIn.isRaining()) {
@@ -410,7 +420,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	}
 
 	public static boolean canContainState(BlockState state) {
-		if (!SnowCommonConfig.placeSnowInBlock || state.hasBlockEntity() || !state.getFluidState().isEmpty()) {
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity() || !state.getFluidState().isEmpty()) {
 			return false;
 		}
 		Block block = state.getBlock();
@@ -439,7 +449,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	}
 
 	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags) {
-		if (!SnowCommonConfig.placeSnowInBlock || state.hasBlockEntity()) {
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
 			return false;
 		}
 		Block block = state.getBlock();

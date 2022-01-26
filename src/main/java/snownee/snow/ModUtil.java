@@ -13,7 +13,6 @@ import snownee.kiwi.loader.Platform;
 
 public class ModUtil {
 
-	private static Method getBiomeTemperature;
 	private static Method enablesSeasonalEffects;
 	public static boolean terraforged = false;
 
@@ -22,7 +21,7 @@ public class ModUtil {
 			try {
 				Class<?> seasonHooks = Class.forName("sereneseasons.season.SeasonHooks");
 				Class<?> biomeConfig = Class.forName("sereneseasons.config.BiomeConfig");
-				getBiomeTemperature = seasonHooks.getDeclaredMethod("getBiomeTemperature", Level.class, Biome.class, BlockPos.class);
+				seasonHooks.getDeclaredMethod("getBiomeTemperature", Level.class, Biome.class, BlockPos.class);
 				enablesSeasonalEffects = biomeConfig.getDeclaredMethod("enablesSeasonalEffects", ResourceKey.class);
 				SnowRealMagic.LOGGER.info("Serene Seasons compatibility enabled");
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
@@ -34,22 +33,10 @@ public class ModUtil {
 	public static boolean shouldMelt(Level world, BlockPos pos) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (world.getBrightness(LightLayer.BLOCK, pos) > 11)
+		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
 		Biome biome = world.getBiome(pos);
-		return snowMeltsInWarmBiomes(biome) && !isColdAt(world, biome, pos) && world.canSeeSky(pos);
-	}
-
-	public static boolean isColdAt(Level world, Biome biome, BlockPos pos) {
-		if (getBiomeTemperature != null) {
-			try {
-				return (float) getBiomeTemperature.invoke(null, world, biome, pos) < 0.15f;
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				SnowRealMagic.LOGGER.catching(e);
-				getBiomeTemperature = null;
-			}
-		}
-		return biome.coldEnoughToSnow(pos);
+		return snowMeltsInWarmBiomes(biome) && !biome.shouldSnow(world, pos) && world.canSeeSky(pos);
 	}
 
 	public static boolean snowMeltsInWarmBiomes(Biome biome) {
