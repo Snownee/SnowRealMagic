@@ -79,7 +79,6 @@ public class BlockModelShaperMixin {
 		}
 		ClientVariables.cachedOverlayModel = null;
 		ClientVariables.cachedSnowModel = null;
-		ClientVariables.snowVariantMapping.clear();
 	}
 
 }
