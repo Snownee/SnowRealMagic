@@ -19,7 +19,8 @@
     "BlockModelShaperMixin",
     "ModelBakeryMixin",
     "SimpleBakedModelMixin",
-    "ModelManagerMixin"
+    "ModelManagerMixin",
+    "ClientPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

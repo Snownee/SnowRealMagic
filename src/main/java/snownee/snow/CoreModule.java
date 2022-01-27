@@ -1,6 +1,5 @@
 package snownee.snow;
 
-import dev.architectury.event.events.client.ClientPlayerEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
@@ -111,7 +110,6 @@ public class CoreModule extends AbstractModule {
 	@Environment(EnvType.CLIENT)
 	protected void clientInit(ClientInitEvent event) {
 		EntityRendererRegistry.register(ENTITY, FallingSnowRenderer::new);
-		ClientPlayerEvent.CLIENT_PLAYER_JOIN.register(GameEvents::onPlayerJoin);
 	}
 
 	//	@SubscribeEvent

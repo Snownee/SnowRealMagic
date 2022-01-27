@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.tool.attribute.v1.ToolManager;
 import net.minecraft.Util;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -89,9 +89,9 @@ public final class GameEvents {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static void onPlayerJoin(LocalPlayer player) {
+	public static void onPlayerJoin() {
 		if (Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
-			player.sendMessage(new TextComponent("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."), Util.NIL_UUID);
+			Minecraft.getInstance().player.sendMessage(new TextComponent("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."), Util.NIL_UUID);
 		}
 	}
 
