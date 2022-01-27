@@ -18,7 +18,8 @@
     "CameraMixin",
     "BlockModelShaperMixin",
     "ModelBakeryMixin",
-    "SimpleBakedModelMixin"
+    "SimpleBakedModelMixin",
+    "ModelManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
