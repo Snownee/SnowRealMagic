@@ -6,6 +6,7 @@ import java.util.function.BiPredicate;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -57,6 +58,8 @@ import snownee.snow.entity.FallingSnowEntity;
 @Mixin(SnowLayerBlock.class)
 public class ModSnowLayerBlock extends Block implements SnowVariant {
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
+	@Shadow
+	private static VoxelShape[] SHAPE_BY_LAYER;
 
 	public ModSnowLayerBlock(Block.Properties properties) {
 		super(properties);
@@ -67,7 +70,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 	@Overwrite
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		if (ModUtil.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			return super.getCollisionShape(state, worldIn, pos, context);
+			return SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1];
 		}
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (layers == 8) {
@@ -352,7 +355,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 			if (!state.is(this))
 				return;
 			//FIXME why
-			if (state.getBlock() == Blocks.SNOW || state.getBlock() == CoreModule.TILE_BLOCK) {
+			if (state.is(Blocks.SNOW) || state.is(CoreModule.TILE_BLOCK)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, DamageSource.FALL);
 				return;
 			}
