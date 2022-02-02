@@ -159,19 +159,27 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			return;
 		}
 		BlockState stateNow = worldIn.getBlockState(pos);
-		if (stateNow.getBlock() != state.getBlock()) {
+		if (!stateNow.is(this)) {
 			return;
 		}
 		stateIn.randomTick(worldIn, pos, random);
 		BlockState stateNow2 = worldIn.getBlockState(pos);
-		if (stateNow2.getBlock() != state.getBlock()) {
-			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 3);
+		if (!stateNow2.is(this)) {
+			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
+		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
+		if (result.consumesAction()) {
+			BlockState stateNow = worldIn.getBlockState(pos);
+			if (!stateNow.is(this)) {
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18);
+			}
+			return result;
+		}
 		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
 
