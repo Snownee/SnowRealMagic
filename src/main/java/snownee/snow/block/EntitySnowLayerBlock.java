@@ -61,6 +61,13 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 	}
 
 	@Override
+	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
+		shape = Shapes.joinUnoptimized(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos), BooleanOp.OR);
+		return Shapes.join(shape, Shapes.block(), BooleanOp.AND);
+	}
+
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		VoxelShape shape = super.getShape(state, worldIn, pos, context);
 		return Shapes.join(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context), BooleanOp.OR);

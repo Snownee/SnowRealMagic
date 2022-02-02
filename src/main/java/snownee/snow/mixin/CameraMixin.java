@@ -16,7 +16,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FogType;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.SnowCommonConfig;
 
 @Mixin(Camera.class)
@@ -37,14 +41,17 @@ public abstract class CameraMixin {
 		}
 		Camera.NearPlane camera$nearplane = getNearPlane();
 		Vec3 forward = new Vec3(forwards).scale(0.05F);
-
 		for (Vec3 vec3 : Arrays.asList(forward, camera$nearplane.getTopLeft(), camera$nearplane.getTopRight(), camera$nearplane.getBottomLeft(), camera$nearplane.getBottomRight())) {
 			Vec3 vec31 = position.add(vec3);
 			BlockPos blockpos = new BlockPos(vec31);
 			BlockState blockstate = level.getBlockState(blockpos);
 			if (blockstate.getBlock() instanceof SnowLayerBlock) {
-				ci.setReturnValue(FogType.POWDER_SNOW);
-				return;
+				VoxelShape shape = blockstate.getVisualShape(level, blockpos, CollisionContext.empty());
+				HitResult hitResult = shape.clip(position, vec31, blockpos);
+				if (hitResult != null && hitResult.getType() != Type.MISS) {
+					ci.setReturnValue(FogType.POWDER_SNOW);
+					return;
+				}
 			}
 		}
 	}
