@@ -37,7 +37,7 @@ public abstract class BlockItemMixin {
 		Level level = context.getLevel();
 		BlockPos pos = context.getClickedPos();
 		Player player = context.getPlayer();
-		if (SnowCommonConfig.placeSnowInBlock && level.getFluidState(pos).isEmpty()) {
+		if (SnowCommonConfig.canPlaceSnowInBlock() && level.getFluidState(pos).isEmpty()) {
 			BlockState state = level.getBlockState(pos);
 			BlockPlaceContext blockContext = new BlockPlaceContext(context);
 			if (Hooks.canContainState(state)) {

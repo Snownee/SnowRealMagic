@@ -4,6 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -103,7 +105,8 @@ public class CoreModule extends AbstractModule {
 		if (Platform.isPhysicalClient()) {
 			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(ClientVariables.OVERLAY_MODEL));
 		}
-		GameEvents.init();
+		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
+		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
 	}
 
 	@Override

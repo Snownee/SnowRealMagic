@@ -12,14 +12,11 @@ public final class SnowCommonConfig {
 	public static boolean placeSnowInBlock = true;
 	public static boolean snowGravity = true;
 	public static boolean snowAlwaysReplaceable = true;
-	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean snowAccumulationDuringSnowstorm = true;
-	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean snowAccumulationDuringSnowfall = false;
 	@Range(min = 1, max = 9)
 	@Comment("9 = Unlimited")
 	public static int snowAccumulationMaxLayers = 8;
-	@Comment("Unavailable if TerraForged mod installed")
 	@GameRestart
 	public static boolean thinnerBoundingBox = true;
 	public static boolean snowMakingIce = true;
@@ -38,5 +35,9 @@ public final class SnowCommonConfig {
 	public static boolean retainOriginalBlocks = false;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+
+	public static boolean canPlaceSnowInBlock() {
+		return placeSnowInBlock && !retainOriginalBlocks;
+	}
 
 }

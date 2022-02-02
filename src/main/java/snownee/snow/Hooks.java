@@ -110,7 +110,7 @@ public final class Hooks {
 					if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 					}
-				} else if (!SnowCommonConfig.retainOriginalBlocks && SnowCommonConfig.replaceWorldFeature) {
+				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.canPlaceSnowInBlock()) {
 					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
 						continue;
 					}
@@ -144,7 +144,7 @@ public final class Hooks {
 	}
 
 	public static boolean canContainState(BlockState state) {
-		if (!SnowCommonConfig.placeSnowInBlock || state.hasBlockEntity() || !state.getFluidState().isEmpty()) {
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity() || !state.getFluidState().isEmpty()) {
 			return false;
 		}
 		Block block = state.getBlock();
@@ -173,7 +173,7 @@ public final class Hooks {
 	}
 
 	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags) {
-		if (!SnowCommonConfig.placeSnowInBlock || state.hasBlockEntity()) {
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
 			return false;
 		}
 		Block block = state.getBlock();

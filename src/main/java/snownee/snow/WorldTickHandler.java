@@ -1,9 +1,10 @@
 package snownee.snow;
 
+import java.util.Random;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -15,79 +16,82 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.mixin.ChunkMapAccess;
 
 public class WorldTickHandler {
 
-	@SuppressWarnings("deprecation")
-	public static void tick(ServerLevel world) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
+	// See ServerLevel.tickChunk
+	public static void tick(ServerLevel level, LevelChunk chunk, Random random) {
+		if (random.nextInt(16) != 0) {
 			return;
 		}
-		int blizzard = SnowCommonConfig.snowGravity ? world.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
-		if (blizzard <= 0 && !world.isRaining()) {
-			return;
+		int x = chunk.getPos().getMinBlockX();
+		int y = chunk.getPos().getMinBlockZ();
+		MutableBlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(x, 0, y, 15)).mutable();
+
+		pos.move(Direction.DOWN);
+		Biome biome = level.getBiome(pos);
+		if (biome.shouldFreeze(level, pos)) {
+			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		}
-		if (world.isDebug()) {
-			return;
-		}
-		Iterable<ChunkHolder> holders = ((ChunkMapAccess) world.getChunkSource().chunkMap).callGetChunks();
-		holders.forEach(holder -> {
-			LevelChunk chunk = holder.getTickingChunk();
-			if (chunk == null || !world.shouldTickBlocksAt(chunk.getPos().toLong())) {
+
+		BlockState state = null;
+		if (level.isRaining()) {
+			state = level.getBlockState(pos);
+			int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
+			if (blizzard > 0) {
+				doBlizzard(level, pos, blizzard);
 				return;
 			}
-			// See ServerLevel.tickChunk
-			if (world.random.nextInt(16) == 0) {
-				int x = chunk.getPos().getMinBlockX();
-				int y = chunk.getPos().getMinBlockZ();
-				MutableBlockPos pos = world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, world.getBlockRandomPos(x, 0, y, 15)).mutable();
 
-				if (!world.isLoaded(pos)) // Forge: check area to avoid loading neighbors in unloaded chunks
-					return;
-
-				if (blizzard > 0) {
-					doBlizzard(world, pos, blizzard);
-					return;
-				}
-
-				pos.move(Direction.DOWN);
-				Biome biome = world.getBiome(pos);
-				if (!ModUtil.isColdAt(world, biome, pos)) {
-					return;
-				}
-				BlockState state = world.getBlockState(pos);
-				if (!Hooks.canContainState(state)) {
-					state = world.getBlockState(pos.move(Direction.UP));
-					if (!Hooks.canContainState(state)) {
-						return;
-					}
-				}
-
-				if (world.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > 11) {
-					return;
-				}
-				Hooks.convert(world, pos.move(Direction.DOWN), state, 1, 3);
-
-				for (int i = 0; i < 5; i++) {
-					if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
-						break;
-					}
-					state = world.getBlockState(pos.move(Direction.DOWN));
-					if (!state.isAir() && !Hooks.canContainState(state)) {
-						break;
-					}
-					if (Blocks.SNOW.canSurvive(state, world, pos)) {
-						pos.move(Direction.UP);
-						if (world.getBlockState(pos).getBlock() instanceof SnowLayerBlock || world.getBrightness(LightLayer.BLOCK, pos) > 11) {
-							break;
-						}
-						Hooks.convert(world, pos.move(Direction.DOWN), state, 1, 3);
-						//FIXME I should make snow melts somehow
-					}
-				}
+			Biome.Precipitation biome$precipitation = level.getBiome(pos).getPrecipitation();
+			if (biome$precipitation == Biome.Precipitation.RAIN && biome.coldEnoughToSnow(pos)) {
+				biome$precipitation = Biome.Precipitation.SNOW;
 			}
-		});
+
+			state.getBlock().handlePrecipitation(state, level, pos, biome$precipitation);
+		} else {
+			return;
+		}
+
+		if (!biome.coldEnoughToSnow(pos)) {
+			return;
+		}
+		if (!Hooks.canContainState(state)) {
+			if (SnowCommonConfig.snowAccumulationMaxLayers < 9 && state.is(Blocks.SNOW)) {
+				return;
+			}
+			state = level.getBlockState(pos.move(Direction.UP));
+			if (!state.isAir() && !Hooks.canContainState(state)) {
+				return;
+			}
+		}
+
+		if (state.isAir() && !Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
+			return;
+		}
+		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) >= 10) {
+			return;
+		}
+		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+
+		for (int i = 0; i < 5; i++) {
+			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
+				break;
+			}
+			state = level.getBlockState(pos.move(Direction.DOWN));
+			if (!state.isAir() && !Hooks.canContainState(state)) {
+				break;
+			}
+			if (Hooks.canSurvive(state, level, pos)) {
+				pos.move(Direction.UP);
+				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+					break;
+				}
+				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+				//FIXME I should make snow melts somehow
+			}
+		}
+
 	}
 
 	private static void doBlizzard(ServerLevel world, BlockPos pos, int blizzard) {
@@ -111,4 +115,5 @@ public class WorldTickHandler {
 		FallingSnowEntity entity = new FallingSnowEntity(world, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, blizzard);
 		world.addFreshEntity(entity);
 	}
+
 }

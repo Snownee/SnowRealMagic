@@ -2,15 +2,11 @@ package snownee.snow;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.tool.attribute.v1.ToolManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,12 +24,6 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 
 public final class GameEvents {
-
-	public static void init() {
-		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
-		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
-		ServerTickEvents.END_WORLD_TICK.register(GameEvents::onWorldTick);
-	}
 
 	public static InteractionResult onItemUse(Player player, Level worldIn, InteractionHand hand, BlockHitResult hitResult) {
 		if (hand != InteractionHand.MAIN_HAND) {
@@ -80,12 +70,6 @@ public final class GameEvents {
 			return false;
 		}
 		return true;
-	}
-
-	public static void onWorldTick(ServerLevel world) {
-		if (SnowCommonConfig.placeSnowInBlock) {
-			WorldTickHandler.tick(world);
-		}
 	}
 
 	@Environment(EnvType.CLIENT)
