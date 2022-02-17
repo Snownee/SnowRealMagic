@@ -125,7 +125,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 	public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
 		if (willHarvest) {
 			playerWillDestroy(world, pos, state, player);
-		} else {
+		} else if (player != null) {
 			spawnDestroyParticles(world, player, pos, state);
 		}
 		BlockEntity tile = world.getBlockEntity(pos);

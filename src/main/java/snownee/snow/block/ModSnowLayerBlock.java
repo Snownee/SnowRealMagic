@@ -177,7 +177,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 
 		Biome biome = worldIn.getBiome(pos);
 		boolean flag = false;
-		if (worldIn.isRaining() && biome.coldEnoughToSnow(pos)) {
+		if (worldIn.isRaining() && ModUtil.coldEnoughToSnow(worldIn, pos, biome)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
 				flag = true;
 			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {

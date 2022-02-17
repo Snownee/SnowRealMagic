@@ -63,6 +63,8 @@ minecraft {
 
             // Export mixin-changed classes
             property 'mixin.debug.export', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // These arguments allow for optional authentication with Mojang servers.
             // If you want to authenticate, put these properties in GRADLE_HOME/gradle.properties.
@@ -108,6 +110,8 @@ minecraft {
 
             // Export mixin-changed classes
             property 'mixin.debug.export', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Add mixin config to runtime
             args '-mixin.config=' + project.getProperty('mod_id') + '.mixins.json'
@@ -136,6 +140,8 @@ minecraft {
 
             // Export mixin-changed classes
             property 'mixin.debug.export', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Add mixin config to runtime
             args '-mixin.config=' + project.getProperty('mod_id') + '.mixins.json'
@@ -189,10 +195,11 @@ dependencies {
     //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
 	
-    implementation fg.deobf("curse.maven:jei-238222:3550020")
-    implementation fg.deobf("curse.maven:jade-324717:3544015")
-    implementation fg.deobf("curse.maven:kiwi-303657:3549979")
-    annotationProcessor "curse.maven:kiwi-303657:3549979"
+    implementation fg.deobf("curse.maven:jei-238222:3647796")
+    implementation fg.deobf("curse.maven:jade-324717:3636065")
+    implementation fg.deobf("curse.maven:serene-seasons-291874:3621343")
+    implementation fg.deobf("curse.maven:kiwi-303657:3623424")
+    annotationProcessor "curse.maven:kiwi-303657:3623424"
     //implementation fg.deobf("curse.maven:sodium-reforged-532724:3556734")
 
     // Examples using mod jars from ./libs

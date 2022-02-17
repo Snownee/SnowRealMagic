@@ -33,6 +33,7 @@ public class BlockModelShaperMixin {
 	@Shadow
 	private ModelManager modelManager;
 
+	@SuppressWarnings("deprecation")
 	@Inject(at = @At("TAIL"), method = "rebuildCache")
 	private void srm_rebuildCache(CallbackInfo ci) {
 		Map<BakedModel, BakedModel> transform = Maps.newHashMap();

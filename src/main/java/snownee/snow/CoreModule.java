@@ -30,6 +30,7 @@ import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.Skip;
 import snownee.kiwi.KiwiModule.Subscriber.Bus;
 import snownee.kiwi.loader.event.ClientInitEvent;
+import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.EnumUtil;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.ModSnowLayerBlock;
@@ -108,6 +109,11 @@ public class CoreModule extends AbstractModule {
 	@OnlyIn(Dist.CLIENT)
 	public void registerRenderers(RegisterRenderers event) {
 		event.registerEntityRenderer(ENTITY, FallingSnowRenderer::new);
+	}
+
+	@Override
+	protected void init(InitEvent event) {
+		ModUtil.init();
 	}
 
 	@Override

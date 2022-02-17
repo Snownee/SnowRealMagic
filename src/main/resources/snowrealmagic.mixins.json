@@ -4,22 +4,24 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
+    "IceBlockAccess",
+    "IntegerValueAccess",
     "BlockMixin",
     "BlockStateMixin",
-    "SpreadableSnowyDirtBlockMixin",
-    "SnowyDirtBlockMixin",
     "DoublePlantBlockMixin",
-    "SnowAndFreezeFeatureMixin",
     "ServerLevelMixin",
-    "IntegerValueAccess"
+    "SnowAndFreezeFeatureMixin",
+    "SnowyDirtBlockMixin",
+    "SpreadableSnowyDirtBlockMixin",
+    "sereneseasons.RandomUpdateHandlerMixin"
   ],
   "client": [
+    "BlockModelShaperMixin",
     "BlockRenderDispatcherMixin",
     "CameraMixin",
-    "BlockModelShaperMixin",
     "ModelBakeryMixin",
-    "SimpleBakedModelMixin",
-    "ModelManagerMixin"
+    "ModelManagerMixin",
+    "SimpleBakedModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

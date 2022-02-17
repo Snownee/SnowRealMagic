@@ -17,6 +17,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.block.ModSnowLayerBlock;
 import snownee.snow.entity.FallingSnowEntity;
+import snownee.snow.mixin.IceBlockAccess;
 
 public class WorldTickHandler {
 
@@ -35,13 +36,20 @@ public class WorldTickHandler {
 
 		pos.move(Direction.DOWN);
 		Biome biome = level.getBiome(pos);
+		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+		} else if (ModUtil.iceMeltsInWarmBiomes(biome)) {
+			state = level.getBlockState(pos);
+			if (state.is(Blocks.ICE) && ModUtil.shouldMelt(level, pos)) {
+				((IceBlockAccess) state.getBlock()).callMelt(state, level, pos);
+				state = level.getBlockState(pos);
+			}
 		}
 
-		BlockState state = null;
 		if (level.isRaining()) {
-			state = level.getBlockState(pos);
+			if (state == null)
+				state = level.getBlockState(pos);
 			int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
 			if (blizzard > 0) {
 				doBlizzard(level, pos, blizzard);
@@ -49,7 +57,7 @@ public class WorldTickHandler {
 			}
 
 			Biome.Precipitation biome$precipitation = level.getBiome(pos).getPrecipitation();
-			if (biome$precipitation == Biome.Precipitation.RAIN && biome.coldEnoughToSnow(pos)) {
+			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biome)) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
 
@@ -58,7 +66,7 @@ public class WorldTickHandler {
 			return;
 		}
 
-		if (!biome.coldEnoughToSnow(pos)) {
+		if (!ModUtil.coldEnoughToSnow(level, pos, biome)) {
 			return;
 		}
 		if (!ModSnowLayerBlock.canContainState(state)) {

@@ -66,6 +66,7 @@ public abstract class ModelBakeryMixin {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Inject(
 			at = @At(
 				"TAIL"
