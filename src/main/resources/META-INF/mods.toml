@@ -24,5 +24,12 @@ description="Tweak vanilla snow layer."
     ordering="BEFORE"
     side="BOTH"
 
+[[dependencies.snowrealmagic]]
+    modId="jade"
+    mandatory=false
+    versionRange="[4.2,)"
+    ordering="BEFORE"
+    side="BOTH"
+
 [modproperties.snowrealmagic]
     catalogueItemIcon="minecraft:snow_block" #Support for Catalogue mod
