@@ -23,7 +23,7 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		BakedModel model = null;
-		if (SnowClientConfig.snowVariants && pos != null && blockView.getBlockState(pos.below()).is(CoreModule.TILE_BLOCK)) {
+		if (SnowClientConfig.snowVariants && pos != null && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
 			model = getSnowVariant();
 		}
 		if (model == null) {

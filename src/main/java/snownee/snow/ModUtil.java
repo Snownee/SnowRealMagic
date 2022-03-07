@@ -17,7 +17,7 @@ public class ModUtil {
 			return false;
 		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
-		Biome biome = world.getBiome(pos);
+		Biome biome = world.getBiome(pos).value();
 		return snowMeltsInWarmBiomes(world, biome) && !biome.shouldSnow(world, pos) && world.canSeeSky(pos);
 	}
 

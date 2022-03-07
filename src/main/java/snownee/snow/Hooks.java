@@ -43,6 +43,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.lighting.LayerLightEngine;
+import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
@@ -99,7 +100,7 @@ public final class Hooks {
 				int i1 = worldgenlevel.getHeight(Heightmap.Types.MOTION_BLOCKING, k, l);
 				pos.set(k, i1, l);
 				belowPos.set(pos).move(Direction.DOWN, 1);
-				Biome biome = worldgenlevel.getBiome(pos);
+				Biome biome = worldgenlevel.getBiome(pos).value();
 				if (biome.shouldFreeze(worldgenlevel, belowPos, false)) {
 					worldgenlevel.setBlock(belowPos, Blocks.ICE.defaultBlockState(), 2);
 				}
@@ -192,25 +193,25 @@ public final class Hooks {
 
 		BlockPos posDown = pos.below();
 		BlockState stateDown = world.getBlockState(posDown);
-		if (block instanceof StairBlock && block != CoreModule.STAIRS && state.is(BlockTags.STAIRS)) {
+		if (block instanceof StairBlock && !CoreModule.STAIRS.is(state) && state.is(BlockTags.STAIRS)) {
 			BlockState newState = CoreModule.STAIRS.defaultBlockState();
 			newState = copyProperties(state, newState);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof SlabBlock && block != CoreModule.SLAB && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
+		} else if (block instanceof SlabBlock && !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
 			// can't copy properties as this doesn't extend vanilla slabs
 			world.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
 		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class && state.is(BlockTags.FENCES)) {
-			Block newBlock = state.is(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
+			KiwiGO<Block> newBlock = state.is(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
 			BlockState newState = newBlock.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof FenceGateBlock && block != CoreModule.FENCE_GATE && state.is(BlockTags.FENCE_GATES)) {
+		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state) && state.is(BlockTags.FENCE_GATES)) {
 			BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof WallBlock && block != CoreModule.WALL && state.is(BlockTags.WALLS)) {
+		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state) && state.is(BlockTags.WALLS)) {
 			BlockState newState = CoreModule.WALL.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);

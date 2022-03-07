@@ -2,7 +2,6 @@ package snownee.snow;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.tool.attribute.v1.ToolManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -15,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -34,8 +32,7 @@ public final class GameEvents {
 		if (!(state.getBlock() instanceof SnowVariant)) {
 			return InteractionResult.PASS;
 		}
-		ItemStack held = player.getMainHandItem();
-		if (!ToolManager.handleIsEffectiveOn(Blocks.SNOW.defaultBlockState(), held, player)) {
+		if (!player.hasCorrectToolForDrops(state)) {
 			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
 				return InteractionResult.PASS;
 			}
@@ -54,6 +51,7 @@ public final class GameEvents {
 				if (newState.canOcclude())
 					pos = pos.above();
 				Block.popResource(worldIn, pos, new ItemStack(Items.SNOWBALL));
+				ItemStack held = player.getMainHandItem();
 				held.hurtAndBreak(1, player, stack -> {
 					stack.broadcastBreakEvent(InteractionHand.MAIN_HAND);
 				});

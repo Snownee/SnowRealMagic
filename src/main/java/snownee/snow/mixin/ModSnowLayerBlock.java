@@ -65,7 +65,6 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 		super(properties);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	@Overwrite
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
@@ -124,7 +123,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 					return;
 				}
 			}
-			if (state.is(CoreModule.TILE_BLOCK)) {
+			if (CoreModule.TILE_BLOCK.is(state)) {
 				GameEvents.onDestroyedByPlayer(worldIn, null, pos, state, worldIn.getBlockEntity(pos));
 			} else {
 				dropResources(state, worldIn, pos);
@@ -157,7 +156,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 			}
 		}
 
-		Biome biome = worldIn.getBiome(pos);
+		Biome biome = worldIn.getBiome(pos).value();
 		boolean flag = false;
 		if (worldIn.isRaining() && biome.coldEnoughToSnow(pos)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
@@ -309,7 +308,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 				BlockEntity blockEntity = worldIn.getBlockEntity(pos);
 				if (blockEntity instanceof SnowBlockEntity) {
 					SnowBlockEntity snowTile = (SnowBlockEntity) blockEntity;
-					if (state.is(CoreModule.TILE_BLOCK) && snowTile.getState().isAir()) {
+					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getState().isAir()) {
 						worldIn.setBlock(pos, Hooks.copyProperties(state, Blocks.SNOW.defaultBlockState()), 16 | 32);
 					} else {
 						snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
@@ -365,7 +364,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 			if (!state.is(this))
 				return;
 			//FIXME why
-			if (state.is(Blocks.SNOW) || state.is(CoreModule.TILE_BLOCK)) {
+			if (state.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(state)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, DamageSource.FALL);
 				return;
 			}

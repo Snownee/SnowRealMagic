@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import snownee.kiwi.AbstractModule;
+import snownee.kiwi.KiwiGO;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
@@ -43,13 +44,13 @@ import snownee.snow.loot.NormalLootEntry;
 @KiwiModule
 public class CoreModule extends AbstractModule {
 
-	public static final Tag.Named<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
+	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
 
-	public static final Tag.Named<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
+	public static final TagKey<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
 
-	public static final Tag.Named<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
+	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
-	public static final Tag.Named<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
+	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
 
 	//	@NoItem
 	//	@Name("minecraft:snow")
@@ -58,42 +59,42 @@ public class CoreModule extends AbstractModule {
 	@NoItem
 	@Name("snow")
 	@RenderLayer(Layer.CUTOUT)
-	public static final EntitySnowLayerBlock TILE_BLOCK = new EntitySnowLayerBlock(blockProp(Blocks.SNOW));
+	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW)));
 
 	//	@Name("minecraft:snow")
 	//	public static final SnowLayerBlockItem ITEM = new SnowLayerBlockItem(BLOCK);
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowFenceBlock FENCE = new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).randomTicks());
+	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowFenceBlock FENCE2 = new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).randomTicks());
+	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowStairsBlock STAIRS = new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).randomTicks());
+	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowSlabBlock SLAB = new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).randomTicks());
+	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowFenceGateBlock FENCE_GATE = new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).randomTicks());
+	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final SnowWallBlock WALL = new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).randomTicks());
+	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).randomTicks()));
 
 	@Name("snow")
-	public static final BlockEntityType<SnowBlockEntity> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);
+	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);
 
-	public static final BlockEntityType<SnowCoveredBlockEntity> TEXTURE_TILE = blockEntity(SnowCoveredBlockEntity::new, null, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
+	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(SnowCoveredBlockEntity::new, null, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
 
 	@Name("snow")
-	public static final EntityType<FallingSnowEntity> ENTITY = FabricEntityTypeBuilder.<FallingSnowEntity>create(MobCategory.MISC, FallingSnowEntity::new).entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).build();
+	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> FabricEntityTypeBuilder.<FallingSnowEntity>create(MobCategory.MISC, FallingSnowEntity::new).entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).build());
 
 	public static final LootPoolEntryType NORMAL = new LootPoolEntryType(new NormalLootEntry.Serializer());
 
@@ -112,7 +113,7 @@ public class CoreModule extends AbstractModule {
 	@Override
 	@Environment(EnvType.CLIENT)
 	protected void clientInit(ClientInitEvent event) {
-		EntityRendererRegistry.register(ENTITY, FallingSnowRenderer::new);
+		EntityRendererRegistry.register(ENTITY.get(), FallingSnowRenderer::new);
 	}
 
 	//	@SubscribeEvent

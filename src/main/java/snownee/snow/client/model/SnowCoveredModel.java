@@ -81,8 +81,8 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 		}
 
 		if (snowBlockEntity.options.renderBottom) {
-			boolean slab = state.is(CoreModule.SLAB);
-			int layers = state.is(CoreModule.TILE_BLOCK) ? state.getValue(SnowLayerBlock.LAYERS) : 1;
+			boolean slab = CoreModule.SLAB.is(state);
+			int layers = CoreModule.TILE_BLOCK.is(state) ? state.getValue(SnowLayerBlock.LAYERS) : 1;
 			context.pushTransform(quad -> {
 				if (slab && quad.cullFace() == Direction.DOWN) {
 					return false;
@@ -111,7 +111,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 		}
 
 		//FIXME side cull face not working
-		if (snowBlockEntity.options.renderOverlay && (!useSnowVariant || state.is(CoreModule.TILE_BLOCK))) {
+		if (snowBlockEntity.options.renderOverlay && (!useSnowVariant || CoreModule.TILE_BLOCK.is(state))) {
 			float yOffset = state.getBlock() instanceof SnowVariant ? (float) ((SnowVariant) state.getBlock()).getYOffset() : 0;
 			context.pushTransform(quad -> {
 				if (yOffset != 0) {
@@ -122,12 +122,12 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				return true;
 			});
 			BlockPos pos2 = pos;
-			if (state.is(CoreModule.TILE_BLOCK) || state.is(CoreModule.SLAB)) {
+			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {
 				if (ClientVariables.cachedOverlayModel == null) {
 					ClientVariables.cachedOverlayModel = BakedModelManagerHelper.getModel(modelManager, ClientVariables.OVERLAY_MODEL);
 				}
 				model = ClientVariables.cachedOverlayModel;
-				if (state.is(CoreModule.TILE_BLOCK)) {
+				if (CoreModule.TILE_BLOCK.is(state)) {
 					pos2 = pos2.below();
 				}
 			} else {

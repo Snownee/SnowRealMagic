@@ -86,7 +86,7 @@ public abstract class BlockItemMixin {
 		if ((Object) this != Items.SNOW) {
 			return;
 		}
-		blockToItemMap.put(CoreModule.TILE_BLOCK, Items.SNOW);
+		blockToItemMap.put(CoreModule.TILE_BLOCK.get(), Items.SNOW);
 	}
 
 	//	@Override

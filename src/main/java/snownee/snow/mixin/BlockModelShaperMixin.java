@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import snownee.kiwi.KiwiGO;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.client.ClientVariables;
 import snownee.snow.client.model.ModelDefinition;
@@ -40,9 +41,9 @@ public class BlockModelShaperMixin {
 	@Inject(at = @At("TAIL"), method = "rebuildCache")
 	private void srm_rebuildCache(CallbackInfo ci) {
 		Map<BakedModel, BakedModel> transform = Maps.newHashMap();
-		List<Block> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
-		for (Block block : allBlocks) {
-			for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+		List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
+		for (KiwiGO<? extends Block> block : allBlocks) {
+			for (BlockState state : block.get().getStateDefinition().getPossibleStates()) {
 				BakedModel model = modelByStateCache.get(state);
 				if (model == null || model == modelManager.getMissingModel() || model instanceof SnowCoveredModel) {
 					continue;

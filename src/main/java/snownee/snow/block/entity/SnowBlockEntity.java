@@ -35,12 +35,12 @@ public class SnowBlockEntity extends BaseBlockEntity implements RenderAttachment
 	protected BlockState state = Blocks.AIR.defaultBlockState();
 
 	public SnowBlockEntity(BlockPos pos, BlockState state) {
-		this(CoreModule.TILE, pos, state);
+		this(CoreModule.TILE.get(), pos, state);
 	}
 
 	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
-		options.renderBottom = !state.is(CoreModule.STAIRS);
+		options.renderBottom = !CoreModule.STAIRS.is(state);
 	}
 
 	public BlockState getState() {

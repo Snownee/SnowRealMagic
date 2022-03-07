@@ -29,7 +29,7 @@ public class WorldTickHandler {
 		MutableBlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(x, 0, y, 15)).mutable();
 
 		pos.move(Direction.DOWN);
-		Biome biome = level.getBiome(pos);
+		Biome biome = level.getBiome(pos).value();
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		}
@@ -43,7 +43,7 @@ public class WorldTickHandler {
 				return;
 			}
 
-			Biome.Precipitation biome$precipitation = level.getBiome(pos).getPrecipitation();
+			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
 			if (biome$precipitation == Biome.Precipitation.RAIN && biome.coldEnoughToSnow(pos)) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
