@@ -74,7 +74,7 @@ public final class Hooks {
 				int i1 = worldgenlevel.getHeight(Heightmap.Types.MOTION_BLOCKING, k, l);
 				pos.set(k, i1, l);
 				belowPos.set(pos).move(Direction.DOWN, 1);
-				Biome biome = worldgenlevel.getBiome(pos);
+				Biome biome = worldgenlevel.getBiome(pos).value();
 				if (biome.shouldFreeze(worldgenlevel, belowPos, false)) {
 					worldgenlevel.setBlock(belowPos, Blocks.ICE.defaultBlockState(), 2);
 				}

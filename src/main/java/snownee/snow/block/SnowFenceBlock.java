@@ -25,10 +25,10 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public String getDescriptionId() {
-		if (this == CoreModule.FENCE) {
+		if (CoreModule.FENCE.is(this)) {
 			return super.getDescriptionId();
 		} else {
-			return CoreModule.FENCE.getDescriptionId();
+			return CoreModule.FENCE.get().getDescriptionId();
 		}
 	}
 

@@ -15,7 +15,7 @@ public interface WatcherSnowVariant extends SnowVariant {
 
 	default boolean updateOptions(BlockState state, BlockGetter level, BlockPos pos, Options options) {
 		boolean ro = level.getBlockState(pos.above()).isAir();
-		boolean rb = CoreModule.BLOCK.canSurvive(state, level, pos, true);
+		boolean rb = CoreModule.BLOCK.get().canSurvive(state, level, pos, true);
 		return options.update(ro, rb);
 	}
 

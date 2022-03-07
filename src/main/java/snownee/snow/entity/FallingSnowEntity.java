@@ -49,7 +49,7 @@ public class FallingSnowEntity extends Entity {
 	private EntityDimensions size;
 
 	public FallingSnowEntity(Level worldIn) {
-		super(CoreModule.ENTITY, worldIn);
+		super(CoreModule.ENTITY.get(), worldIn);
 		prevPos = BlockPos.ZERO;
 		layers = 1;
 		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
@@ -60,7 +60,7 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	public FallingSnowEntity(Level worldIn, double x, double y, double z, int layers) {
-		super(CoreModule.ENTITY, worldIn);
+		super(CoreModule.ENTITY.get(), worldIn);
 		blocksBuilding = true;
 		setPos(x, y + (1.0F - getBbHeight()) / 2.0F, z);
 		setDeltaMovement(Vec3.ZERO);

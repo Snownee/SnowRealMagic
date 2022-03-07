@@ -71,14 +71,14 @@ public class SnowLayerBlockItem extends BlockItem {
 
 	@Override
 	public void registerBlocks(Map<Block, Item> blockToItemMap, Item itemIn) {
-		blockToItemMap.put(CoreModule.TILE_BLOCK, CoreModule.ITEM);
-		super.registerBlocks(blockToItemMap, CoreModule.ITEM);
+		blockToItemMap.put(CoreModule.TILE_BLOCK.get(), CoreModule.ITEM.get());
+		super.registerBlocks(blockToItemMap, CoreModule.ITEM.get());
 	}
 
 	@Override
 	public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-		blockToItemMap.remove(CoreModule.TILE_BLOCK);
-		super.removeFromBlockToItemMap(blockToItemMap, CoreModule.ITEM);
+		blockToItemMap.remove(CoreModule.TILE_BLOCK.get());
+		super.removeFromBlockToItemMap(blockToItemMap, CoreModule.ITEM.get());
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class BlockStateMixin {
 	@Inject(at = @At("HEAD"), method = "getMaterial", cancellable = true)
 	private void srm_getMaterial(CallbackInfoReturnable<Material> ci) {
 		BlockStateBase state = (BlockStateBase) (Object) this;
-		if (state.getBlock() == Blocks.SNOW || state.getBlock() == CoreModule.TILE_BLOCK) {
+		if (state.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(state)) {
 			if (state.getValue(SnowLayerBlock.LAYERS) == 8) {
 				ci.setReturnValue(Material.SNOW);
 			}

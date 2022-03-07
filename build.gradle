@@ -195,16 +195,16 @@ dependencies {
     //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
 	
-    implementation fg.deobf("curse.maven:jei-238222:3647796")
-    implementation fg.deobf("curse.maven:jade-324717:3636065")
-    implementation fg.deobf("curse.maven:serene-seasons-291874:3621343")
-    implementation fg.deobf("curse.maven:kiwi-303657:3623424")
-    annotationProcessor "curse.maven:kiwi-303657:3623424"
+    implementation fg.deobf("curse.maven:jei-238222:3675691")
+    implementation fg.deobf("curse.maven:jade-324717:3671210")
+    //implementation fg.deobf("curse.maven:serene-seasons-291874:3621343")
+    //implementation fg.deobf("curse.maven:kiwi-303657:3623424")
+    //annotationProcessor "curse.maven:kiwi-303657:3623424"
     //implementation fg.deobf("curse.maven:sodium-reforged-532724:3556734")
 
     // Examples using mod jars from ./libs
-    //implementation fg.deobf("libs:Kiwi-1.18:5.1.0")
-    //annotationProcessor "libs:Kiwi-1.18:5.1.0"
+    implementation fg.deobf("libs:Kiwi-1.18.2-forge:6.0.0")
+    annotationProcessor "libs:Kiwi-1.18.2-forge:6.0.0"
     //implementation fg.deobf("libs:Jade-1.17.1:3.1.6")
 
     // For more info...

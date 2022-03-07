@@ -115,14 +115,14 @@ public abstract class BlockRenderDispatcherMixin {
 				ret |= modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
-			if (blockStateIn.is(CoreModule.TILE_BLOCK) || blockStateIn.is(CoreModule.SLAB)) {
+			if (CoreModule.TILE_BLOCK.is(blockStateIn) || CoreModule.SLAB.is(blockStateIn)) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (ClientVariables.cachedOverlayModel == null) {
 						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(ClientVariables.OVERLAY_MODEL);
 					}
 					matrixStackIn.pushPose();
 					BlockPos pos = posIn;
-					if (blockStateIn.is(CoreModule.SLAB)) {
+					if (CoreModule.SLAB.is(blockStateIn)) {
 						matrixStackIn.translate(0, -0.375, 0);
 					} else {
 						matrixStackIn.translate(0, -1, 0);
@@ -139,7 +139,7 @@ public abstract class BlockRenderDispatcherMixin {
 			}
 
 			// specify base model's render type
-			if (blockStateIn.is(CoreModule.TILE_BLOCK)) {
+			if (CoreModule.TILE_BLOCK.is(blockStateIn)) {
 				if (layer != solid) {
 					ci.setReturnValue(ret);
 					return;

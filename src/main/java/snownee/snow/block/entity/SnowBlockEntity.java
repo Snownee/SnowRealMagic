@@ -39,7 +39,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	protected IModelData modelData;
 
 	public SnowBlockEntity(BlockPos pos, BlockState state) {
-		this(CoreModule.TILE, pos, state);
+		this(CoreModule.TILE.get(), pos, state);
 	}
 
 	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

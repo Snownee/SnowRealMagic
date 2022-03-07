@@ -8,14 +8,15 @@ import mcp.mobius.waila.api.IWailaClientRegistration;
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.WailaPlugin;
 import net.minecraft.world.level.block.Block;
+import snownee.kiwi.KiwiGO;
 
 @WailaPlugin
 public class JadeCompat implements IWailaPlugin {
 
 	@Override
 	public void registerClient(IWailaClientRegistration registration) {
-		for (Block block : List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL))
-			registration.usePickedResult(block);
+		for (KiwiGO<? extends Block> block : List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL))
+			registration.usePickedResult(block.get());
 	}
 
 }

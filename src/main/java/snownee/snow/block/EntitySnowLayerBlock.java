@@ -75,7 +75,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		if (useContext.getItemInHand().is(CoreModule.BLOCK.asItem())) {
+		if (CoreModule.BLOCK.is(useContext.getItemInHand())) {
 			return super.canBeReplaced(state, useContext);
 		}
 		if (!super.canBeReplaced(state, useContext)) {
@@ -138,7 +138,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 
 	@Override
 	public String getDescriptionId() {
-		return CoreModule.BLOCK.getDescriptionId();
+		return CoreModule.BLOCK.get().getDescriptionId();
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 
 	@Override
 	public Item asItem() {
-		return CoreModule.ITEM;
+		return CoreModule.ITEM.get();
 	}
 
 }

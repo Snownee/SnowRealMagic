@@ -35,7 +35,7 @@ public class WorldTickHandler {
 			return;
 
 		pos.move(Direction.DOWN);
-		Biome biome = level.getBiome(pos);
+		Biome biome = level.getBiome(pos).value();
 		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
@@ -56,7 +56,7 @@ public class WorldTickHandler {
 				return;
 			}
 
-			Biome.Precipitation biome$precipitation = level.getBiome(pos).getPrecipitation();
+			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
 			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biome)) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
@@ -95,7 +95,7 @@ public class WorldTickHandler {
 			if (!state.isAir() && !ModSnowLayerBlock.canContainState(state)) {
 				break;
 			}
-			if (CoreModule.BLOCK.canSurvive(state, level, pos)) {
+			if (CoreModule.BLOCK.get().canSurvive(state, level, pos)) {
 				pos.move(Direction.UP);
 				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
 					break;

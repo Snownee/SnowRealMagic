@@ -60,6 +60,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import snownee.kiwi.KiwiGO;
 import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
@@ -142,7 +143,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 					return;
 				}
 			}
-			if (state.is(CoreModule.TILE_BLOCK)) {
+			if (CoreModule.TILE_BLOCK.is(state)) {
 				state.onDestroyedByPlayer(worldIn, pos, null, false, null);
 			} else {
 				dropResources(state, worldIn, pos);
@@ -175,7 +176,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			}
 		}
 
-		Biome biome = worldIn.getBiome(pos);
+		Biome biome = worldIn.getBiome(pos).value();
 		boolean flag = false;
 		if (worldIn.isRaining() && ModUtil.coldEnoughToSnow(worldIn, pos, biome)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
@@ -216,7 +217,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 				continue;
 			}
 
-			if (!CoreModule.BLOCK.canSurvive(state, world, pos2)) {
+			if (!CoreModule.BLOCK.get().canSurvive(state, world, pos2)) {
 				continue;
 			}
 			int l;
@@ -264,20 +265,20 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			world.setBlockAndUpdate(pos, state.setValue(LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
 		} else if (canContainState(state) && state.canSurvive(world, pos)) {
 			convert(world, pos, state, Mth.clamp(layers, 1, 8), 3);
-		} else if (CoreModule.BLOCK.canSurvive(state, world, pos)) {
+		} else if (CoreModule.BLOCK.get().canSurvive(state, world, pos)) {
 			world.setBlockAndUpdate(pos, CoreModule.BLOCK.defaultBlockState().setValue(LAYERS, Mth.clamp(layers, 1, 8)));
 		} else {
 			return false;
 		}
 		if (fallingEffect) {
-			world.blockEvent(pos, CoreModule.BLOCK, originLayers, layers);
+			world.blockEvent(pos, CoreModule.BLOCK.get(), originLayers, layers);
 		} else if (playSound) {
-			SoundType soundtype = CoreModule.BLOCK.getSoundType(CoreModule.BLOCK.defaultBlockState());
+			SoundType soundtype = CoreModule.BLOCK.get().getSoundType(CoreModule.BLOCK.defaultBlockState());
 			world.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
 		}
 		if (originLayers + layers > 8) {
 			pos = pos.above();
-			if (CoreModule.BLOCK.canSurvive(CoreModule.BLOCK.defaultBlockState(), world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
+			if (CoreModule.BLOCK.get().canSurvive(CoreModule.BLOCK.defaultBlockState(), world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
 				placeLayersOn(world, pos, layers - (8 - originLayers), fallingEffect, useContext, playSound);
 			}
 		}
@@ -287,8 +288,8 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
 		int i = state.getValue(LAYERS);
-		if (useContext.getItemInHand().is(CoreModule.BLOCK.asItem()) && i < 8) {
-			if (useContext.replacingClickedOnBlock() && state.getBlock() == CoreModule.BLOCK) {
+		if (CoreModule.BLOCK.is(useContext.getItemInHand()) && i < 8) {
+			if (useContext.replacingClickedOnBlock() && CoreModule.BLOCK.is(state)) {
 				return useContext.getClickedFace() == Direction.UP;
 			} else {
 				return true;
@@ -364,13 +365,13 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 		if (player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
 			BlockState stateDown = worldIn.getBlockState(pos.below());
 			if (!(stateDown.getBlock() instanceof SnowLayerBlock) && !stateDown.hasProperty(BlockStateProperties.SNOWY)) {
-				if (state.getBlock() == CoreModule.BLOCK) {
+				if (CoreModule.BLOCK.is(state)) {
 					worldIn.setBlock(pos, copyProperties(state, CoreModule.TILE_BLOCK.defaultBlockState()), 16 | 32);
 				}
 				BlockEntity blockEntity = worldIn.getBlockEntity(pos);
 				if (blockEntity instanceof SnowBlockEntity) {
 					SnowBlockEntity snowTile = (SnowBlockEntity) blockEntity;
-					if (state.getBlock() == CoreModule.TILE_BLOCK && snowTile.getState().isAir()) {
+					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getState().isAir()) {
 						worldIn.setBlock(pos, copyProperties(state, CoreModule.BLOCK.defaultBlockState()), 16 | 32);
 					} else {
 						snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
@@ -382,7 +383,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 				return InteractionResult.SUCCESS;
 			}
 		}
-		if (state.getBlock() == CoreModule.BLOCK) {
+		if (CoreModule.BLOCK.is(state)) {
 			BlockPlaceContext context = new BlockPlaceContext(player, handIn, player.getItemInHand(handIn), hit);
 			Block block = Block.byItem(context.getItemInHand().getItem());
 			if (block != null && block != Blocks.AIR && context.replacingClickedOnBlock()) {
@@ -468,25 +469,25 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 
 		BlockPos posDown = pos.below();
 		BlockState stateDown = world.getBlockState(posDown);
-		if (block instanceof StairBlock && block != CoreModule.STAIRS && state.is(BlockTags.STAIRS)) {
+		if (block instanceof StairBlock && !CoreModule.STAIRS.is(state) && state.is(BlockTags.STAIRS)) {
 			BlockState newState = CoreModule.STAIRS.defaultBlockState();
 			newState = copyProperties(state, newState);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof SlabBlock && block != CoreModule.SLAB && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
+		} else if (block instanceof SlabBlock && !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
 			// can't copy properties as this doesn't extend vanilla slabs
 			world.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
 		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class && state.is(BlockTags.FENCES)) {
-			Block newBlock = state.is(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
+			KiwiGO<Block> newBlock = state.is(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
 			BlockState newState = newBlock.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof FenceGateBlock && block != CoreModule.FENCE_GATE && state.is(BlockTags.FENCE_GATES)) {
+		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state) && state.is(BlockTags.FENCE_GATES)) {
 			BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof WallBlock && block != CoreModule.WALL && state.is(BlockTags.WALLS)) {
+		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state) && state.is(BlockTags.WALLS)) {
 			BlockState newState = CoreModule.WALL.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
@@ -529,7 +530,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			if (!state.is(this))
 				return;
 			//FIXME why
-			if (state.getBlock() == CoreModule.BLOCK || state.getBlock() == CoreModule.TILE_BLOCK) {
+			if (CoreModule.BLOCK.is(state) || CoreModule.TILE_BLOCK.is(state)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, DamageSource.FALL);
 				return;
 			}
@@ -557,7 +558,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	@Override
 	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
 		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
-		return stack.isEmpty() ? new ItemStack(CoreModule.ITEM) : stack;
+		return stack.isEmpty() ? CoreModule.ITEM.itemStack() : stack;
 	}
 
 }

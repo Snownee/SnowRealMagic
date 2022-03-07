@@ -1,4 +1,4 @@
-package snownee.snow.mixin.sereneseasons;
+/*package snownee.snow.mixin.sereneseasons;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,3 +30,4 @@ public abstract class RandomUpdateHandlerMixin {
 	abstract void adjustWeatherFrequency(Level world, Season season);
 
 }
+*/

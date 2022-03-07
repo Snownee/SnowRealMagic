@@ -4,8 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.fml.ModList;
-import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 public class ModUtil {
 
@@ -13,7 +11,7 @@ public class ModUtil {
 	public static boolean sereneseasons;
 
 	public static void init() {
-		sereneseasons = ModList.get().isLoaded("sereneseasons");
+		//		sereneseasons = ModList.get().isLoaded("sereneseasons");
 		if (sereneseasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding melting behavior.");
 		}
@@ -24,10 +22,10 @@ public class ModUtil {
 			return false;
 		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
-		Biome biome = world.getBiome(pos);
-		if (sereneseasons && SereneSeasonsCompat.shouldMelt(world, pos, biome)) {
-			return true;
-		}
+		Biome biome = world.getBiome(pos).value();
+		//		if (sereneseasons && SereneSeasonsCompat.shouldMelt(world, pos, biome)) {
+		//			return true;
+		//		}
 		return snowMeltsInWarmBiomes(biome) && !biome.shouldSnow(world, pos) && world.canSeeSky(pos);
 	}
 
@@ -40,9 +38,9 @@ public class ModUtil {
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Biome biome) {
-		if (sereneseasons) {
-			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
-		}
+		//		if (sereneseasons) {
+		//			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
+		//		}
 		return biome.coldEnoughToSnow(pos);
 	}
 

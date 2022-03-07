@@ -42,7 +42,7 @@ public class SnowConnectedModel extends BakedModelWrapper<BakedModel> implements
 	@Nonnull
 	@Override
 	public IModelData getModelData(@Nonnull BlockAndTintGetter blockView, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
-		if (SnowClientConfig.snowVariants && blockView.getBlockState(pos.below()).is(CoreModule.TILE_BLOCK)) {
+		if (SnowClientConfig.snowVariants && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
 			return USE_SNOW_VARIANT;
 		}
 		return super.getModelData(blockView, pos, state, tileData);
