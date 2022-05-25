@@ -20,7 +20,9 @@
     "CameraMixin",
     "ModelBakeryMixin",
     "ModelManagerMixin",
-    "SimpleBakedModelMixin"
+    "SimpleBakedModelMixin",
+    "sodium.BlockRendererMixin",
+    "sereneseasons.RandomUpdateHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

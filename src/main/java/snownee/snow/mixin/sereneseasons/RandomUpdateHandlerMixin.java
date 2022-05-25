@@ -1,4 +1,4 @@
-/*package snownee.snow.mixin.sereneseasons;
+package snownee.snow.mixin.sereneseasons;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,9 +19,9 @@ public abstract class RandomUpdateHandlerMixin {
 	@Inject(at = @At("HEAD"), method = "onWorldTick", cancellable = true)
 	private void srm_onWorldTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
 		if (event.phase == TickEvent.Phase.END && event.side == LogicalSide.SERVER) {
-		      Season.SubSeason subSeason = SeasonHelper.getSeasonState(event.world).getSubSeason();
-		      Season season = subSeason.getSeason();
-		      adjustWeatherFrequency(event.world, season);
+			Season.SubSeason subSeason = SeasonHelper.getSeasonState(event.world).getSubSeason();
+			Season season = subSeason.getSeason();
+			adjustWeatherFrequency(event.world, season);
 		}
 		ci.cancel();
 	}
@@ -30,4 +30,3 @@ public abstract class RandomUpdateHandlerMixin {
 	abstract void adjustWeatherFrequency(Level world, Season season);
 
 }
-*/

@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -35,7 +36,8 @@ public class WorldTickHandler {
 			return;
 
 		pos.move(Direction.DOWN);
-		Biome biome = level.getBiome(pos).value();
+		Holder<Biome> biomeHolder = level.getBiome(pos);
+		Biome biome = biomeHolder.value();
 		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
@@ -57,7 +59,7 @@ public class WorldTickHandler {
 			}
 
 			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
-			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biome)) {
+			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
 
@@ -66,7 +68,7 @@ public class WorldTickHandler {
 			return;
 		}
 
-		if (!ModUtil.coldEnoughToSnow(level, pos, biome)) {
+		if (!ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
 			return;
 		}
 		if (!ModSnowLayerBlock.canContainState(state)) {

@@ -1,6 +1,7 @@
-/*package snownee.snow.compat.sereneseasons;
+package snownee.snow.compat.sereneseasons;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import sereneseasons.api.season.Season;
@@ -12,8 +13,8 @@ import sereneseasons.season.SeasonHooks;
 
 public class SereneSeasonsCompat {
 
-	public static boolean shouldMelt(Level level, BlockPos pos, Biome biome) {
-		if (!BiomeConfig.enablesSeasonalEffects(level.getBiomeName(pos).orElse(null))) {
+	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
+		if (!BiomeConfig.enablesSeasonalEffects(biome)) {
 			return false;
 		}
 		if (!((Boolean) SeasonsConfig.generateSnowAndIce.get()).booleanValue() || !ServerConfig.isDimensionWhitelisted(level.dimension())) {
@@ -42,9 +43,8 @@ public class SereneSeasonsCompat {
 		return level.random.nextInt(meltRand >> 1) == 0 && !coldEnoughToSnow(level, pos, biome);
 	}
 
-	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Biome biome) {
+	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
 		return SeasonHooks.getBiomeTemperature(level, biome, pos) < 0.15F;
 	}
 
 }
-*/
