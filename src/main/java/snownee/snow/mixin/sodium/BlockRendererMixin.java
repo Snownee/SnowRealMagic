@@ -95,8 +95,7 @@ public abstract class BlockRendererMixin {
 			double yOffset = 0;
 			if (canRender && !state.isAir()) {
 				if (blockStateIn.hasProperty(SnowLayerBlock.LAYERS)) {
-					String namespace = state.getBlock().getRegistryName().getNamespace();
-					if ("projectvibrantjourneys".equals(namespace) || "foragecraft".equals(namespace)) {
+					if (state.is(CoreModule.OFFSET_Y)) {
 						if (blockStateIn.getValue(SnowLayerBlock.LAYERS) > 3) {
 							return;
 						}
