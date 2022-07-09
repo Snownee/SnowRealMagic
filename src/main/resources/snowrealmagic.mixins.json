@@ -24,7 +24,8 @@
     "ClientPacketListenerMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 1,
+    "maxShiftBy": 2
   },
   "minVersion": "0.8"
 }
