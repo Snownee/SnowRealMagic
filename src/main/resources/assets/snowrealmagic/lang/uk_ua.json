@@ -1,0 +1,13 @@
+{
+  "itemGroup.snowrealmagic": "Snow! Real Magic!",
+  "entity.snowrealmagic.snow": "Падаючий блок",
+  "block.snowrealmagic.slab": "Засніжена плита",
+  "block.snowrealmagic.stairs": "Засніжені сходи",
+  "block.snowrealmagic.wall": "Засніжена стіна",
+  "block.snowrealmagic.fence": "Засніжений паркан",
+  "block.snowrealmagic.fence_gate": "Засніжена хвіртка",
+  "gamerule.blizzardStrength": "Сила хуртовини",
+  "gamerule.blizzardStrength.description": "З неба падатимуть блоки снігу. 1~8, щоб встановити максимальну к-ть шарів. Додано модом Snow! Real Magic!",
+  "gamerule.blizzardFrequency": "Частота хуртовини",
+  "gamerule.blizzardFrequency.description": "Імовірність хуртовини. N/10000 за тік на чанк. Додано модом Snow! Real Magic!"
+}
