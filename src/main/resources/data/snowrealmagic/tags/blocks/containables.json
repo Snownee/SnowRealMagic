@@ -34,6 +34,19 @@
     {"id":"tconstruct:sky_slime_tall_grass","required":false},
     {"id":"tconstruct:blood_slime_fern","required":false},
     {"id":"tconstruct:ender_slime_fern","required":false},
-    {"id":"tconstruct:sky_slime_fern","required":false}
+    {"id":"tconstruct:sky_slime_fern","required":false},
+    {"id":"verdure:rock","required":false},
+    {"id":"verdure:pebbles","required":false},
+    {"id":"verdure:clover","required":false},
+    {"id":"verdure:daisies","required":false},
+    {"id":"verdure:blue_daisies","required":false},
+    {"id":"verdure:pink_daisies","required":false},
+    {"id":"verdure:wildflowers","required":false},
+    {"id":"verdure:fallen_oak_leaves","required":false},
+    {"id":"verdure:fallen_birch_leaves","required":false},
+    {"id":"verdure:fallen_spruce_leaves","required":false},
+    {"id":"verdure:fallen_jungle_leaves","required":false},
+    {"id":"verdure:fallen_acacia_leaves","required":false},
+    {"id":"verdure:fallen_dark_oak_leaves","required":false}
   ]
 }

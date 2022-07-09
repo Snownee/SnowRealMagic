@@ -86,8 +86,7 @@ public abstract class BlockRenderDispatcherMixin {
 			if (canRender && !state.isAir()) {
 				matrixStackIn.pushPose();
 				if (blockStateIn.hasProperty(SnowLayerBlock.LAYERS)) {
-					String namespace = state.getBlock().getRegistryName().getNamespace();
-					if ("projectvibrantjourneys".equals(namespace) || "foragecraft".equals(namespace)) {
+					if (state.is(CoreModule.OFFSET_Y)) {
 						if (blockStateIn.getValue(SnowLayerBlock.LAYERS) > 3) {
 							matrixStackIn.popPose();
 							return;
