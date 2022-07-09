@@ -14,6 +14,12 @@ repositories {
     maven { url = "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -47,7 +53,9 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     
-    modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
+    //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
+    modImplementation "curse.maven:kiwi-549404:3680804"
+    annotationProcessor "curse.maven:kiwi-549404:3680804"
 }
 
 loom {

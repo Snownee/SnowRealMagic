@@ -52,6 +52,8 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
 
+	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
+
 	//	@NoItem
 	//	@Name("minecraft:snow")
 	//	public static final ModSnowLayerBlock BLOCK = new ModSnowLayerBlock(blockProp(Blocks.SNOW));

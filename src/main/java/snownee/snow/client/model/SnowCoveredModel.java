@@ -60,9 +60,10 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 					color = blockColors.getColor(camo, blockView, pos, quad.colorIndex());
 					color |= 0xFF000000;
 				}
-				if (offset != Vec3.ZERO || color != -1) {
+				float offsetY = camo.is(CoreModule.OFFSET_Y) ? 0.101f : 0;
+				if (offsetY != 0 || offset != Vec3.ZERO || color != -1) {
 					for (int i = 0; i < 4; ++i) {
-						quad.pos(i, quad.x(i) + (float) offset.x, quad.y(i) + (float) offset.y, quad.z(i) + (float) offset.z);
+						quad.pos(i, quad.x(i) + (float) offset.x, quad.y(i) + (float) offset.y + offsetY, quad.z(i) + (float) offset.z);
 						quad.spriteColor(i, 0, color);
 					}
 				}
