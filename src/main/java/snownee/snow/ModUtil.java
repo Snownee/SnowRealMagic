@@ -15,6 +15,8 @@ public class ModUtil {
 	public static boolean shouldMelt(Level world, BlockPos pos) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
+		if (fabricSeasons && world.getBrightness(LightLayer.SKY, pos) > 0 && world.getBiome(pos).value().warmEnoughToRain(pos))
+			return true;
 		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
 		Biome biome = world.getBiome(pos).value();
@@ -22,6 +24,6 @@ public class ModUtil {
 	}
 
 	public static boolean snowMeltsInWarmBiomes(CommonLevelAccessor level, Biome biome) {
-		return fabricSeasons || SnowCommonConfig.snowMeltsInWarmBiomes;
+		return SnowCommonConfig.snowMeltsInWarmBiomes;
 	}
 }
