@@ -1,14 +1,13 @@
 package snownee.snow.mixin;
 
 import java.util.Optional;
-import java.util.Random;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -17,7 +16,6 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -25,13 +23,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
@@ -48,11 +46,11 @@ public abstract class BlockRenderDispatcherMixin {
 	private ModelBlockRenderer modelRenderer;
 
 	@Inject(
-			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLjava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z", at = @At(
+			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V", at = @At(
 				"HEAD"
 			), remap = false, cancellable = true
 	)
-	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, Random random, IModelData modelData, CallbackInfoReturnable<Boolean> ci) {
+	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, RandomSource random, ModelData modelData, @Nullable RenderType layer, CallbackInfo ci) {
 		if (!(blockStateIn.getBlock() instanceof SnowVariant)) {
 			return;
 		}
@@ -62,7 +60,7 @@ public abstract class BlockRenderDispatcherMixin {
 		if (blockStateIn.hasProperty(SnowLayerBlock.LAYERS) && blockStateIn.getValue(SnowLayerBlock.LAYERS) == 8) {
 			return;
 		}
-		BlockState state = modelData.getData(SnowBlockEntity.BLOCKSTATE);
+		BlockState state = modelData.get(SnowBlockEntity.BLOCKSTATE);
 		if (state == null || (!state.isAir() && state.getRenderShape() != RenderShape.MODEL)) {
 			return;
 		}
@@ -70,18 +68,17 @@ public abstract class BlockRenderDispatcherMixin {
 		try {
 			RenderType cutoutMipped = RenderType.cutoutMipped();
 			RenderType solid = RenderType.solid();
-			RenderType layer = MinecraftForgeClient.getRenderType();
 			boolean canRender;
-			boolean ret = false;
 			Block blockIn = blockStateIn.getBlock();
-			Options options = Optional.ofNullable(modelData.getData(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
+			BakedModel model = getBlockModel(state);
+			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
 				if (layer == solid && blockIn instanceof WatcherSnowVariant) { // solid is the first rendertype
 					((WatcherSnowVariant) blockIn).updateOptions(blockStateIn, lightReaderIn, posIn, options);
 				}
-				canRender = ItemBlockRenderTypes.canRenderInLayer(state, layer);
+				canRender = model.getRenderTypes(state, random, modelData).contains(layer);
 			}
 			if (canRender && !state.isAir()) {
 				matrixStackIn.pushPose();
@@ -95,7 +92,6 @@ public abstract class BlockRenderDispatcherMixin {
 						matrixStackIn.scale(0.998f, 1, 0.998f);
 					}
 				}
-				BakedModel model = getBlockModel(state);
 				if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
 					BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
 					if (snowVariant != null) {
@@ -103,7 +99,7 @@ public abstract class BlockRenderDispatcherMixin {
 						useSnowVariant = true;
 					}
 				}
-				ret |= modelRenderer.tesselateBlock(lightReaderIn, model, state, posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				modelRenderer.tesselateBlock(lightReaderIn, model, state, posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData, layer);
 				matrixStackIn.popPose();
 			}
 
@@ -111,7 +107,7 @@ public abstract class BlockRenderDispatcherMixin {
 				if (ClientVariables.cachedSnowModel == null) {
 					ClientVariables.cachedSnowModel = getBlockModel(CoreModule.BLOCK.defaultBlockState());
 				}
-				ret |= modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData);
+				modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData, layer);
 			}
 
 			if (CoreModule.TILE_BLOCK.is(blockStateIn) || CoreModule.SLAB.is(blockStateIn)) {
@@ -127,12 +123,12 @@ public abstract class BlockRenderDispatcherMixin {
 						matrixStackIn.translate(0, -1, 0);
 						pos = pos.below();
 					}
-					ret |= modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, random, blockStateIn.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData);
+					modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, random, blockStateIn.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData, layer);
 					matrixStackIn.popPose();
 				}
 			} else {
 				if (!options.renderOverlay || useSnowVariant) {
-					ci.setReturnValue(ret);
+					ci.cancel();
 					return;
 				}
 			}
@@ -140,12 +136,12 @@ public abstract class BlockRenderDispatcherMixin {
 			// specify base model's render type
 			if (CoreModule.TILE_BLOCK.is(blockStateIn)) {
 				if (layer != solid) {
-					ci.setReturnValue(ret);
+					ci.cancel();
 					return;
 				}
 			} else {
 				if (layer != cutoutMipped) {
-					ci.setReturnValue(ret);
+					ci.cancel();
 					return;
 				}
 			}

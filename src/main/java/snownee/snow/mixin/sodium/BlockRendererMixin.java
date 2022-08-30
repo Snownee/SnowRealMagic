@@ -3,8 +3,8 @@ package snownee.snow.mixin.sodium;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,21 +23,19 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
@@ -53,12 +51,10 @@ public abstract class BlockRendererMixin {
 	@Shadow
 	private LightPipelineProvider lighters;
 	@Shadow
-	private Random random;
-	@Shadow
 	private BlockOcclusionCache occlusionCache;
 
 	@Inject(method = "renderModel", at = @At("HEAD"), cancellable = true)
-	private void srm_renderModel(BlockAndTintGetter lightReaderIn, BlockState blockStateIn, BlockPos posIn, BlockPos origin, BakedModel modelIn, ChunkModelBuilder buffers, boolean cull, long seed, IModelData modelData, CallbackInfoReturnable<Boolean> ci) {
+	private void srm_renderModel(BlockAndTintGetter lightReaderIn, BlockState blockStateIn, BlockPos posIn, BlockPos origin, BakedModel modelIn, ChunkModelBuilder buffers, boolean cull, long seed, ModelData modelData, @Nullable RenderType layer, RandomSource random, CallbackInfoReturnable<Boolean> ci) {
 		if (!(blockStateIn.getBlock() instanceof SnowVariant)) {
 			return;
 		}
@@ -69,9 +65,9 @@ public abstract class BlockRendererMixin {
 			return;
 		}
 		if (modelData == null) {
-			modelData = EmptyModelData.INSTANCE;
+			modelData = ModelData.EMPTY;
 		}
-		BlockState state = modelData.getData(SnowBlockEntity.BLOCKSTATE);
+		BlockState state = modelData.get(SnowBlockEntity.BLOCKSTATE);
 		if (state == null || (!state.isAir() && state.getRenderShape() != RenderShape.MODEL)) {
 			return;
 		}
@@ -79,18 +75,18 @@ public abstract class BlockRendererMixin {
 		try {
 			RenderType cutoutMipped = RenderType.cutoutMipped();
 			RenderType solid = RenderType.solid();
-			RenderType layer = MinecraftForgeClient.getRenderType();
 			boolean canRender;
 			boolean ret = false;
 			Block blockIn = blockStateIn.getBlock();
-			Options options = Optional.ofNullable(modelData.getData(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
+			BakedModel model = getBlockModel(state);
+			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
 				if (layer == solid && blockIn instanceof WatcherSnowVariant) { // solid is the first rendertype
 					((WatcherSnowVariant) blockIn).updateOptions(blockStateIn, lightReaderIn, posIn, options);
 				}
-				canRender = ItemBlockRenderTypes.canRenderInLayer(state, layer);
+				canRender = model.getRenderTypes(state, random, modelData).contains(layer);
 			}
 			double yOffset = 0;
 			if (canRender && !state.isAir()) {
@@ -102,7 +98,6 @@ public abstract class BlockRendererMixin {
 						yOffset = 0.1;
 					}
 				}
-				BakedModel model = getBlockModel(state);
 				if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
 					BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
 					if (snowVariant != null) {
@@ -110,14 +105,14 @@ public abstract class BlockRendererMixin {
 						useSnowVariant = true;
 					}
 				}
-				ret |= renderModelWithYOffset(lightReaderIn, state, posIn, origin, model, buffers, cull, seed, modelData, yOffset);
+				ret |= renderModelWithYOffset(lightReaderIn, state, posIn, origin, model, buffers, cull, seed, modelData, layer, random, yOffset);
 			}
 
 			if (options.renderBottom && (layer == null || layer == solid)) {
 				if (ClientVariables.cachedSnowModel == null) {
 					ClientVariables.cachedSnowModel = getBlockModel(CoreModule.BLOCK.defaultBlockState());
 				}
-				ret |= renderModel(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedSnowModel, buffers, cull, seed, modelData);
+				ret |= renderModel(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedSnowModel, buffers, cull, seed, modelData, layer, random);
 			}
 
 			if (CoreModule.SLAB.is(blockStateIn) || blockIn instanceof SnowLayerBlock) {
@@ -132,7 +127,7 @@ public abstract class BlockRendererMixin {
 						yOffset = -1;
 						pos = pos.below();
 					}
-					ret |= renderModelWithYOffset(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedOverlayModel, buffers, cull, seed, modelData, yOffset);
+					ret |= renderModelWithYOffset(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedOverlayModel, buffers, cull, seed, modelData, layer, random, yOffset);
 				}
 			} else {
 				if (!options.renderOverlay || useSnowVariant) {
@@ -155,7 +150,7 @@ public abstract class BlockRendererMixin {
 			}
 
 			yOffset = ((SnowVariant) blockIn).getYOffset();
-			ret |= renderModelWithYOffset(lightReaderIn, blockStateIn, posIn, origin, modelIn, buffers, cull, seed, modelData, yOffset);
+			ret |= renderModelWithYOffset(lightReaderIn, blockStateIn, posIn, origin, modelIn, buffers, cull, seed, modelData, layer, random, yOffset);
 			ci.setReturnValue(ret);
 		} catch (Throwable throwable) {
 			CrashReport crashreport = CrashReport.forThrowable(throwable, "Tesselating block in world");
@@ -169,7 +164,7 @@ public abstract class BlockRendererMixin {
 		return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
 	}
 
-	private boolean renderModelWithYOffset(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, IModelData modelData, double yOffset) {
+	private boolean renderModelWithYOffset(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, ModelData modelData, @Nullable RenderType layer, RandomSource random, double yOffset) {
 		Vec3 offset = state.getOffset(world, pos);
 		if (yOffset != 0) {
 			offset = offset.add(0, yOffset, 0);
@@ -179,9 +174,9 @@ public abstract class BlockRendererMixin {
 		boolean rendered = false;
 
 		for (Direction dir : DirectionUtil.ALL_DIRECTIONS) {
-			this.random.setSeed(seed);
+			random.setSeed(seed);
 
-			List<BakedQuad> sided = model.getQuads(state, dir, this.random, modelData);
+			List<BakedQuad> sided = model.getQuads(state, dir, random, modelData, layer);
 
 			if (sided.isEmpty()) {
 				continue;
@@ -194,9 +189,9 @@ public abstract class BlockRendererMixin {
 			}
 		}
 
-		this.random.setSeed(seed);
+		random.setSeed(seed);
 
-		List<BakedQuad> all = model.getQuads(state, null, this.random, modelData);
+		List<BakedQuad> all = model.getQuads(state, null, random, modelData, layer);
 
 		if (!all.isEmpty()) {
 			this.renderQuadList(world, state, pos, origin, lighter, offset, buffers, all, ModelQuadFacing.UNASSIGNED);
@@ -208,7 +203,7 @@ public abstract class BlockRendererMixin {
 	}
 
 	@Shadow
-	abstract boolean renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, IModelData modelData);
+	abstract boolean renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, ModelData modelData, RenderType layer, RandomSource random);
 
 	@Shadow
 	abstract LightMode getLightingMode(BlockState state, BakedModel model);

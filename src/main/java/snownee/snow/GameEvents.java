@@ -25,13 +25,13 @@ public final class GameEvents {
 		if (event.getHand() != InteractionHand.MAIN_HAND) {
 			return;
 		}
-		Level worldIn = event.getWorld();
+		Level worldIn = event.getLevel();
 		BlockPos pos = event.getPos();
 		BlockState state = worldIn.getBlockState(pos);
 		if (!(state.getBlock() instanceof SnowVariant)) {
 			return;
 		}
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		if (!ForgeHooks.isCorrectToolForDrops(CoreModule.BLOCK.defaultBlockState(), player)) {
 			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
 				return;

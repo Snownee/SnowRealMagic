@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.26', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         //classpath 'org.parchmentmc:librarian:1.+'
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
@@ -190,72 +190,35 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
     
-    // Real mod deobf dependency examples - these get remapped to your current mappings
-    //compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}") // Adds JEI API as a compile dependency
-    //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
-    // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
-	
-    implementation fg.deobf("curse.maven:jei-238222:3675691")
-    implementation fg.deobf("curse.maven:jade-324717:3671210")
-    implementation fg.deobf("curse.maven:serene-seasons-291874:3804257")
-    implementation fg.deobf("curse.maven:kiwi-303657:3755791")
-    annotationProcessor "curse.maven:kiwi-303657:3755791"
-    implementation fg.deobf("curse.maven:rubidium-574856:3749094")
-    implementation fg.deobf("curse.maven:terraforged-363820:3799083")
+    implementation fg.deobf("curse.maven:jei-238222:3944627")
+    implementation fg.deobf("curse.maven:jade-324717:3916646")
+    implementation fg.deobf("curse.maven:kiwi-303657:3919782")
+    annotationProcessor "curse.maven:kiwi-303657:3919782"
+    
+    implementation fg.deobf("curse.maven:serene-seasons-291874:3926300")
+    implementation fg.deobf("curse.maven:rubidium-574856:3929559")
+    implementation fg.deobf("curse.maven:cloth-config-348521:3906388")
+    //implementation fg.deobf("curse.maven:terraforged-363820:3799083")
 
     // Examples using mod jars from ./libs
     //implementation fg.deobf("libs:Kiwi-1.18.2-forge:6.0.0")
     //annotationProcessor "libs:Kiwi-1.18.2-forge:6.0.0"
     //implementation fg.deobf("libs:Jade-1.17.1:3.1.6")
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
-// This block of code expands all the gradle properties in the specified resource targets.
-// It copies them into the targets and expands all the defined properties.
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString()]
-def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
-def replaceProperties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
-        mod_authors: mod_authors, mod_description: mod_description,
-        minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
-        loader_version_range: loader_version_range]
 processResources {
     from ('src/main/java') {
         include '**/*.json'
     }
-/*
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
-    filesMatching(resourceTargets) {
-        expand replaceProperties
-    }
-
-    intoTargets.each { target ->
-        if (file(target).exists()) {
-            copy {
-                from(sourceSets.main.resources) {
-                    include resourceTargets
-                    expand replaceProperties
-                }
-                into target
-            }
-        }
-    }
-*/
 }
 
 jar {
     manifest {
         attributes([
                 "Specification-Title": mod_id,
-                "Specification-Vendor": mod_authors,
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": mod_version,
-                "Implementation-Vendor": mod_authors,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs": "${mod_id}.mixins.json"
         ])

@@ -9,8 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.entity.BaseBlockEntity;
@@ -36,7 +35,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	public static final ModelProperty<Options> OPTIONS = new ModelProperty<>();
 	public static final ModelProperty<BlockState> BLOCKSTATE = new ModelProperty<>();
 	protected BlockState state = Blocks.AIR.defaultBlockState();
-	protected IModelData modelData;
+	protected ModelData modelData;
 
 	public SnowBlockEntity(BlockPos pos, BlockState state) {
 		this(CoreModule.TILE.get(), pos, state);
@@ -64,7 +63,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 		this.state = state;
 		if (hasLevel()) {
 			if (level.isClientSide) {
-				getModelData().setData(BLOCKSTATE, state);
+				modelData = getModelData().derive().with(BLOCKSTATE, state).build();
 				onStateChanged();
 			}
 			if (update) {
@@ -113,7 +112,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 
 	public void saveState(CompoundTag data, boolean network) {
 		if (getState() == getState().getBlock().defaultBlockState()) {
-			data.putString("Block", getState().getBlock().getRegistryName().toString());
+			data.putString("Block", ForgeRegistries.BLOCKS.getKey(getState().getBlock()).toString());
 		} else {
 			data.put("State", NbtUtils.writeBlockState(getState()));
 		}
@@ -139,9 +138,9 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	}
 
 	@Override
-	public IModelData getModelData() {
+	public ModelData getModelData() {
 		if (modelData == null) {
-			modelData = new ModelDataMap.Builder().withInitial(BLOCKSTATE, state).withInitial(OPTIONS, options).build();
+			modelData = ModelData.builder().with(BLOCKSTATE, state).with(OPTIONS, options).build();
 			//			if (hasLevel()) {
 			//				Block block = getBlockState().getBlock();
 			//				if (block instanceof WatcherSnowVariant) {

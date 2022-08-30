@@ -1,10 +1,9 @@
 package snownee.snow.block;
 
-import java.util.Random;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -168,7 +167,7 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		BlockState stateIn = getRaw(state, worldIn, pos);
 		if (SnowCommonConfig.retainOriginalBlocks) {
 			worldIn.setBlockAndUpdate(pos, stateIn);
@@ -227,14 +226,14 @@ public class EntitySnowLayerBlock extends ModSnowLayerBlock implements EntityBlo
 	}
 
 	@Override
-	public boolean isBonemealSuccess(Level worldIn, Random rand, BlockPos pos, BlockState state) {
+	public boolean isBonemealSuccess(Level worldIn, RandomSource rand, BlockPos pos, BlockState state) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isBonemealSuccess(worldIn, rand, pos, contained);
 	}
 
 	@Override
-	public void performBonemeal(ServerLevel worldIn, Random rand, BlockPos pos, BlockState state) {
+	public void performBonemeal(ServerLevel worldIn, RandomSource rand, BlockPos pos, BlockState state) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		if (block instanceof BonemealableBlock) {

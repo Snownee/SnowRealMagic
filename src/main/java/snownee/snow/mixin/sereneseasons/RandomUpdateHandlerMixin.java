@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import net.minecraftforge.fml.LogicalSide;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
@@ -17,16 +18,18 @@ import sereneseasons.handler.season.RandomUpdateHandler;
 public abstract class RandomUpdateHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onWorldTick", cancellable = true)
-	private void srm_onWorldTick(TickEvent.WorldTickEvent event, CallbackInfo ci) {
+	private static void srm_onWorldTick(LevelTickEvent event, CallbackInfo ci) {
 		if (event.phase == TickEvent.Phase.END && event.side == LogicalSide.SERVER) {
-			Season.SubSeason subSeason = SeasonHelper.getSeasonState(event.world).getSubSeason();
+			Season.SubSeason subSeason = SeasonHelper.getSeasonState(event.level).getSubSeason();
 			Season season = subSeason.getSeason();
-			adjustWeatherFrequency(event.world, season);
+			adjustWeatherFrequency(event.level, season);
 		}
 		ci.cancel();
 	}
 
 	@Shadow
-	abstract void adjustWeatherFrequency(Level world, Season season);
+	static void adjustWeatherFrequency(Level world, Season season) {
+		throw new AssertionError();
+	}
 
 }

@@ -1,6 +1,6 @@
 package snownee.snow;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -20,17 +20,15 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.Skip;
-import snownee.kiwi.KiwiModule.Subscriber.Bus;
 import snownee.kiwi.loader.event.ClientInitEvent;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.EnumUtil;
@@ -52,7 +50,7 @@ import snownee.snow.loot.NormalLootEntry;
 import snownee.snow.mixin.IntegerValueAccess;
 
 @KiwiModule
-@KiwiModule.Subscriber(Bus.MOD)
+@KiwiModule.Subscriber(modBus = true)
 public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
@@ -124,23 +122,21 @@ public class CoreModule extends AbstractModule {
 	@OnlyIn(Dist.CLIENT)
 	protected void clientInit(ClientInitEvent event) {
 		Predicate<RenderType> blockRenderTypes = EnumUtil.BLOCK_RENDER_TYPES::contains;
-		for (Supplier<? extends Block> block : Arrays.asList(TILE_BLOCK, FENCE, FENCE2, FENCE_GATE, SLAB, STAIRS, WALL))
+		for (Supplier<? extends Block> block : List.of(TILE_BLOCK, FENCE, FENCE2, FENCE_GATE, SLAB, STAIRS, WALL))
 			ItemBlockRenderTypes.setRenderLayer(block.get(), blockRenderTypes);
 	}
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public void registerExtraModel(ModelRegistryEvent event) {
-		ForgeModelBakery.addSpecialModel(ClientVariables.OVERLAY_MODEL);
+	public void registerExtraModel(ModelEvent.RegisterAdditional event) {
+		event.register(ClientVariables.OVERLAY_MODEL);
 	}
 
 	@Override
 	protected void gatherData(GatherDataEvent event) {
 		DataGenerator generator = event.getGenerator();
-		if (event.includeServer()) {
-			SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator, event.getExistingFileHelper());
-			generator.addProvider(blockTagsProvider);
-		}
+		SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator, event.getExistingFileHelper());
+		generator.addProvider(event.includeServer(), blockTagsProvider);
 	}
 
 	//	@SubscribeEvent

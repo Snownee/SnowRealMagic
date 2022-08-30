@@ -1,7 +1,6 @@
 package snownee.snow.block;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
@@ -16,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -130,12 +130,12 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		checkFallable(worldIn, pos, state);
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (ModUtil.shouldMelt(worldIn, pos)) {
 			int layers = state.getValue(LAYERS);
 			if (layers == 8) {
@@ -303,11 +303,12 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	public boolean triggerEvent(BlockState state, Level worldIn, BlockPos pos, int originLayers, int layers) {
 		double offsetY = originLayers / 8D;
 		layers *= 10;
+		RandomSource random = RandomSource.create();
 		for (int i = 0; i < layers; ++i) {
-			double d0 = RANDOM.nextGaussian() * 0.1D;
-			double d1 = RANDOM.nextGaussian() * 0.02D;
-			double d2 = RANDOM.nextGaussian() * 0.1D;
-			worldIn.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
+			double d0 = random.nextGaussian() * 0.1D;
+			double d1 = random.nextGaussian() * 0.02D;
+			double d2 = random.nextGaussian() * 0.1D;
+			worldIn.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + random.nextFloat(), pos.getY() + offsetY, pos.getZ() + random.nextFloat(), d0, d1, d2);
 		}
 		SoundType soundtype = getSoundType(state, worldIn, pos, null);
 		worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
@@ -316,7 +317,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
 		if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(32) > 0) {
 			return;
 		}

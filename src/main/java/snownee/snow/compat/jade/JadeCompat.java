@@ -4,10 +4,10 @@ import static snownee.snow.CoreModule.*;
 
 import java.util.List;
 
-import mcp.mobius.waila.api.IWailaClientRegistration;
-import mcp.mobius.waila.api.IWailaPlugin;
-import mcp.mobius.waila.api.WailaPlugin;
 import net.minecraft.world.level.block.Block;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
 import snownee.kiwi.KiwiGO;
 
 @WailaPlugin

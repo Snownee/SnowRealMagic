@@ -1,7 +1,5 @@
 package snownee.snow.entity;
 
-import java.util.Random;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,6 +12,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -108,7 +107,7 @@ public class FallingSnowEntity extends Entity {
 					}
 					if (state.getFluidState().is(FluidTags.LAVA)) {
 						if (level.isClientSide) {
-							Random random = level.random;
+							RandomSource random = level.random;
 							for (int i = 0; i < 10; ++i) {
 								double d0 = random.nextGaussian() * 0.02D;
 								double d1 = random.nextGaussian() * 0.02D;

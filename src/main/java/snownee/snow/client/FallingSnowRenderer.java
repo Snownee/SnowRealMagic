@@ -1,19 +1,18 @@
 package snownee.snow.client;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,9 +20,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import snownee.kiwi.util.EnumUtil;
+import net.minecraftforge.client.model.data.ModelData;
 import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
@@ -49,13 +46,11 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		matrixstack.translate(-0.5D, 0.0D, -0.5D);
 		BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
-		for (RenderType type : EnumUtil.BLOCK_RENDER_TYPES) {
-			if (ItemBlockRenderTypes.canRenderInLayer(blockstate, type)) {
-				ForgeHooksClient.setRenderType(type);
-				blockrendererdispatcher.getModelRenderer().tesselateBlock(world, blockrendererdispatcher.getBlockModel(blockstate), blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, new Random(), blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-			}
+		BakedModel model = blockrendererdispatcher.getBlockModel(blockstate);
+		RandomSource random = RandomSource.create(42);
+		for (RenderType type : model.getRenderTypes(blockstate, random, ModelData.EMPTY)) {
+			blockrendererdispatcher.getModelRenderer().tesselateBlock(world, model, blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, random, blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY, ModelData.EMPTY, type);
 		}
-		ForgeHooksClient.setRenderType(null);
 		matrixstack.popPose();
 		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
 	}

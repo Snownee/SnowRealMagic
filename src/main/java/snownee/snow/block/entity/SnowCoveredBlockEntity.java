@@ -50,7 +50,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	@Override
 	public void saveState(CompoundTag data, boolean network) {
-		data.putString("Block", getState().getBlock().getRegistryName().toString());
+		data.putString("Block", ForgeRegistries.BLOCKS.getKey(getState().getBlock()).toString());
 	}
 
 	@SuppressWarnings("deprecation")
