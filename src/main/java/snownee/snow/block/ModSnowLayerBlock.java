@@ -68,6 +68,7 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.client.SnowClientConfig;
 import snownee.snow.entity.FallingSnowEntity;
+import snownee.snow.network.SSnowLandEffectPacket;
 
 public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 	public static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
@@ -272,7 +273,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			return false;
 		}
 		if (fallingEffect) {
-			world.blockEvent(pos, CoreModule.BLOCK.get(), originLayers, layers);
+			SSnowLandEffectPacket.send(world, pos, originLayers, layers);
 		} else if (playSound) {
 			SoundType soundtype = CoreModule.BLOCK.get().getSoundType(CoreModule.BLOCK.defaultBlockState());
 			world.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
@@ -297,22 +298,6 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 			}
 		}
 		return (SnowCommonConfig.snowAlwaysReplaceable && state.getValue(LAYERS) < 8) || i == 1;
-	}
-
-	@Override
-	public boolean triggerEvent(BlockState state, Level worldIn, BlockPos pos, int originLayers, int layers) {
-		double offsetY = originLayers / 8D;
-		layers *= 10;
-		RandomSource random = RandomSource.create();
-		for (int i = 0; i < layers; ++i) {
-			double d0 = random.nextGaussian() * 0.1D;
-			double d1 = random.nextGaussian() * 0.02D;
-			double d2 = random.nextGaussian() * 0.1D;
-			worldIn.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + random.nextFloat(), pos.getY() + offsetY, pos.getZ() + random.nextFloat(), d0, d1, d2);
-		}
-		SoundType soundtype = getSoundType(state, worldIn, pos, null);
-		worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
-		return true;
 	}
 
 	@Override
