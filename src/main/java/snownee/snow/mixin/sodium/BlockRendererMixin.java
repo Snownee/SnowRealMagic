@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import me.jellysquid.mods.sodium.client.model.light.LightMode;
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
 import me.jellysquid.mods.sodium.client.model.light.LightPipelineProvider;
-import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
 import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
 import me.jellysquid.mods.sodium.client.render.pipeline.BlockRenderer;
@@ -183,7 +182,7 @@ public abstract class BlockRendererMixin {
 			}
 
 			if (!cull || this.occlusionCache.shouldDrawSide(state, world, pos, dir)) {
-				this.renderQuadList(world, state, pos, origin, lighter, offset, buffers, sided, ModelQuadFacing.fromDirection(dir));
+				this.renderQuadList(world, state, pos, origin, lighter, offset, buffers, sided, dir);
 
 				rendered = true;
 			}
@@ -194,7 +193,7 @@ public abstract class BlockRendererMixin {
 		List<BakedQuad> all = model.getQuads(state, null, random, modelData, layer);
 
 		if (!all.isEmpty()) {
-			this.renderQuadList(world, state, pos, origin, lighter, offset, buffers, all, ModelQuadFacing.UNASSIGNED);
+			this.renderQuadList(world, state, pos, origin, lighter, offset, buffers, all, null);
 
 			rendered = true;
 		}
@@ -209,5 +208,5 @@ public abstract class BlockRendererMixin {
 	abstract LightMode getLightingMode(BlockState state, BakedModel model);
 
 	@Shadow
-	abstract void renderQuadList(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> quads, ModelQuadFacing facing);
+	abstract void renderQuadList(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> quads, Direction cullFace);
 }
