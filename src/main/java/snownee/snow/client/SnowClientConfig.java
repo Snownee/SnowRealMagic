@@ -13,7 +13,7 @@ public final class SnowClientConfig {
 	public static boolean snowVariants = true;
 
 	public static void onChanged(String key) {
-		if ("snowVariants".equals(key)) {
+		if ("snowVariants".equals(key) && Minecraft.getInstance() != null && Minecraft.getInstance().level != null) {
 			Minecraft.getInstance().levelRenderer.allChanged();
 		}
 	}
