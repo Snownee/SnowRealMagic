@@ -10,6 +10,15 @@
       "target": "snownee.snow.SnowCommonConfig"
     }
   ],
+  "KiwiPacket": [
+    {
+      "target": "snownee.snow.network.SSnowLandEffectPacket",
+      "data": {
+        "dir": "PLAY_TO_CLIENT",
+        "value": "land_effect"
+      }
+    }
+  ],
   "KiwiModule": [
     {
       "target": "snownee.snow.CoreModule"
