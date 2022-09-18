@@ -98,7 +98,7 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> FabricEntityTypeBuilder.<FallingSnowEntity>create(MobCategory.MISC, FallingSnowEntity::new).entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).build());
 
-	public static final LootPoolEntryType NORMAL = new LootPoolEntryType(new NormalLootEntry.Serializer());
+	public static final KiwiGO<LootPoolEntryType> NORMAL = go(() -> new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register("blizzardStrength", GameRules.Category.MISC, GameRuleFactory.createIntRule(0));
 

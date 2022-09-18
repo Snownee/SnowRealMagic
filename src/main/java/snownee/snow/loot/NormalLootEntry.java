@@ -65,7 +65,7 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 
 	@Override
 	public LootPoolEntryType getType() {
-		return CoreModule.NORMAL;
+		return CoreModule.NORMAL.get();
 	}
 
 	public static class Serializer extends LootPoolSingletonContainer.Serializer<NormalLootEntry> {
