@@ -1,6 +1,5 @@
 package snownee.snow.client.model;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
@@ -16,6 +15,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
@@ -36,7 +36,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 	}
 
 	@Override
-	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 		Object data = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
 		if (!(data instanceof SnowBlockEntity))
 			return;

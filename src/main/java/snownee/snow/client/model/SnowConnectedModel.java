@@ -1,6 +1,5 @@
 package snownee.snow.client.model;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
@@ -8,6 +7,7 @@ import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
@@ -21,7 +21,7 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 	}
 
 	@Override
-	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 		BakedModel model = null;
 		if (SnowClientConfig.snowVariants && pos != null && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
 			model = getSnowVariant();

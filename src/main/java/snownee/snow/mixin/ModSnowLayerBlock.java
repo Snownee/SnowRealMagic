@@ -18,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -108,13 +109,13 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		checkFallable(worldIn, pos, state);
 	}
 
 	@Override
 	@Overwrite
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (ModUtil.shouldMelt(worldIn, pos)) {
 			int layers = state.getValue(SnowLayerBlock.LAYERS);
 			if (layers == 8) {
@@ -269,7 +270,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
 		if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(32) > 0) {
 			return;
 		}

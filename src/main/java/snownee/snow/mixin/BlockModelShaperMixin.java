@@ -1,10 +1,17 @@
 package snownee.snow.mixin;
 
-import static snownee.snow.CoreModule.*;
+import static snownee.snow.CoreModule.FENCE;
+import static snownee.snow.CoreModule.FENCE2;
+import static snownee.snow.CoreModule.FENCE_GATE;
+import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.STAIRS;
+import static snownee.snow.CoreModule.TILE_BLOCK;
+import static snownee.snow.CoreModule.WALL;
 
 import java.util.List;
 import java.util.Map;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,8 +40,10 @@ import snownee.snow.client.model.SnowCoveredModel;
 @Mixin(BlockModelShaper.class)
 public class BlockModelShaperMixin {
 
+	@Final
 	@Shadow
 	private Map<BlockState, BakedModel> modelByStateCache;
+	@Final
 	@Shadow
 	private ModelManager modelManager;
 

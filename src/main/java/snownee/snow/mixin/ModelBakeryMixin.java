@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +26,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import snownee.snow.client.ClientVariables;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
@@ -40,6 +41,9 @@ public abstract class ModelBakeryMixin {
 	@Shadow
 	private Map<ResourceLocation, UnbakedModel> topLevelModels;
 
+	@Shadow
+	@Final
+	private ResourceManager resourceManager;
 	private final Set<ResourceLocation> snowModels = Sets.newHashSet();
 
 	@Inject(
@@ -47,17 +51,20 @@ public abstract class ModelBakeryMixin {
 					value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockModel;fromStream(Ljava/io/Reader;)Lnet/minecraft/client/renderer/block/model/BlockModel;", shift = Shift.BY, by = 2
 			), method = "loadBlockModel", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void srm_loadBlockModel(ResourceLocation resourceLocation, CallbackInfoReturnable<BlockModel> ci, Reader reader, Resource resource, BlockModel blockModel) throws IOException {
-		if (resource == null || blockModel == null) {
+	private void srm_loadBlockModel(ResourceLocation resourceLocation, CallbackInfoReturnable<BlockModel> ci, Reader reader, String string, BlockModel blockModel) throws IOException {
+		if (blockModel == null) {
 			return;
 		}
-		if (resource.hasMetadata()) {
-			ModelDefinition def = resource.getMetadata(SnowVariantMetadataSectionSerializer.SERIALIZER);
-			if (def != null && def.model != null) {
-				loadingStack.add(def.model);
-				snowModels.add(def.model);
-				ClientVariables.snowVariantMapping.put(resourceLocation, def);
-			}
+		var file = new ResourceLocation(resourceLocation.getNamespace(), "models/" + resourceLocation.getPath() + ".json");
+		var resource = resourceManager.getResource(file);
+		if (resource.isEmpty()) {
+			return;
+		}
+		ModelDefinition def = resource.get().metadata().getSection(SnowVariantMetadataSectionSerializer.SERIALIZER).orElse(null);
+		if (def != null && def.model != null) {
+			loadingStack.add(def.model);
+			snowModels.add(def.model);
+			ClientVariables.snowVariantMapping.put(resourceLocation, def);
 		} else if (snowModels.contains(resourceLocation)) {
 			topLevelModels.put(resourceLocation, blockModel);
 		}

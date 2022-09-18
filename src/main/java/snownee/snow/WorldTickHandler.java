@@ -1,13 +1,12 @@
 package snownee.snow;
 
-import java.util.Random;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -20,7 +19,7 @@ import snownee.snow.entity.FallingSnowEntity;
 public class WorldTickHandler {
 
 	// See ServerLevel.tickChunk
-	public static void tick(ServerLevel level, LevelChunk chunk, Random random) {
+	public static void tick(ServerLevel level, LevelChunk chunk, RandomSource random) {
 		if (random.nextInt(16) != 0) {
 			return;
 		}
