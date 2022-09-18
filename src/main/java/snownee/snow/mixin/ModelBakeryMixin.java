@@ -51,7 +51,7 @@ public abstract class ModelBakeryMixin {
 					value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/BlockModel;fromStream(Ljava/io/Reader;)Lnet/minecraft/client/renderer/block/model/BlockModel;", shift = Shift.BY, by = 2
 			), method = "loadBlockModel", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void srm_loadBlockModel(ResourceLocation resourceLocation, CallbackInfoReturnable<BlockModel> ci, Reader reader, String string, BlockModel blockModel) throws IOException {
+	private void srm_loadBlockModel(ResourceLocation resourceLocation, CallbackInfoReturnable<BlockModel> ci, Reader reader, BlockModel blockModel) throws IOException {
 		if (blockModel == null) {
 			return;
 		}

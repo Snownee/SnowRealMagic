@@ -54,8 +54,8 @@ dependencies {
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
-    modImplementation "curse.maven:kiwi-549404:3909202"
-    annotationProcessor "curse.maven:kiwi-549404:3909202"
+    modImplementation "curse.maven:kiwi-549404:3909198"
+    annotationProcessor "curse.maven:kiwi-549404:3909198"
 }
 
 loom {
