@@ -16,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -37,7 +36,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -252,21 +250,6 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 	}
 
 	private static final Random RANDOM = new Random();
-
-	@Override
-	public boolean triggerEvent(BlockState state, Level worldIn, BlockPos pos, int originLayers, int layers) {
-		double offsetY = originLayers / 8D;
-		layers *= 10;
-		for (int i = 0; i < layers; ++i) {
-			double d0 = RANDOM.nextGaussian() * 0.1D;
-			double d1 = RANDOM.nextGaussian() * 0.02D;
-			double d2 = RANDOM.nextGaussian() * 0.1D;
-			worldIn.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
-		}
-		SoundType soundtype = getSoundType(state);
-		worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
-		return true;
-	}
 
 	@Override
 	@Environment(EnvType.CLIENT)

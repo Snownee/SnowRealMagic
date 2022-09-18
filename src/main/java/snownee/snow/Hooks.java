@@ -48,6 +48,7 @@ import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
+import snownee.snow.network.SSnowLandEffectPacket;
 
 public final class Hooks {
 	private Hooks() {
@@ -264,7 +265,7 @@ public final class Hooks {
 			return false;
 		}
 		if (fallingEffect) {
-			world.blockEvent(pos, Blocks.SNOW, originLayers, layers);
+			SSnowLandEffectPacket.send(world, pos, originLayers, layers);
 		} else if (playSound) {
 			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
 			world.playSound(null, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1) / 2F, soundtype.getPitch() * 0.8F);
