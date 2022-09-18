@@ -22,7 +22,7 @@
     "fabricloader": ">=0.11.3",
     "minecraft": ">=1.19",
     "java": ">=17",
-    "kiwi": ">=5.2"
+    "kiwi": ">=7.0"
   },
 
   "custom": {

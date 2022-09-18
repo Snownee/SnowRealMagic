@@ -265,6 +265,7 @@ public final class Hooks {
 			return false;
 		}
 		if (fallingEffect) {
+			//todo: check if it's available
 			SSnowLandEffectPacket.send(world, pos, originLayers, layers);
 		} else if (playSound) {
 			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
