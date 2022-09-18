@@ -14,9 +14,7 @@ import snownee.snow.WorldTickHandler;
 public class ServerLevelMixin {
 
 	@Redirect(
-			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I", remap = false
-			), slice = @Slice(
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"), slice = @Slice(
 			from = @At(
 					value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/SkeletonHorse;setTrap(Z)V"
 			), to = @At(
