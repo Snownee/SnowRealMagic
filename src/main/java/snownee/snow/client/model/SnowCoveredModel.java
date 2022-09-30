@@ -93,7 +93,10 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				}
 				if (slab) {
 					for (int i = 0; i < 4; ++i) {
-						quad.pos(i, quad.x(i), quad.y(i) + 0.5F, quad.z(i));
+						float x = quad.x(i);
+						float z = quad.z(i);
+						// 0.01/16
+						quad.pos(i, x > .5F ? x + .000625F : x - .000625F, quad.y(i) + 0.5F, z > .5F ? z + .000625F : z - .000625F);
 					}
 				}
 				return true;
