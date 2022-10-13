@@ -114,14 +114,15 @@ public abstract class BlockRenderDispatcherMixin {
 				ret |= modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
-			if (CoreModule.TILE_BLOCK.is(blockStateIn) || CoreModule.SLAB.is(blockStateIn)) {
+			boolean slab = CoreModule.SLAB.is(blockStateIn);
+			if (slab || CoreModule.TILE_BLOCK.is(blockStateIn)) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (ClientVariables.cachedOverlayModel == null) {
 						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(ClientVariables.OVERLAY_MODEL);
 					}
 					matrixStackIn.pushPose();
 					BlockPos pos = posIn;
-					if (CoreModule.SLAB.is(blockStateIn)) {
+					if (slab) {
 						matrixStackIn.translate(0, -0.375, 0);
 					} else {
 						matrixStackIn.translate(0, -1, 0);

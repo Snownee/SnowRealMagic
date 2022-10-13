@@ -92,6 +92,7 @@ public abstract class BlockRendererMixin {
 				canRender = ItemBlockRenderTypes.canRenderInLayer(state, layer);
 			}
 			double yOffset = 0;
+			boolean slab = CoreModule.SLAB.is(blockStateIn);
 			if (canRender && !state.isAir()) {
 				if (blockStateIn.hasProperty(SnowLayerBlock.LAYERS)) {
 					if (state.is(CoreModule.OFFSET_Y)) {
@@ -119,13 +120,13 @@ public abstract class BlockRendererMixin {
 				ret |= renderModel(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedSnowModel, buffers, cull, seed, modelData);
 			}
 
-			if (CoreModule.SLAB.is(blockStateIn) || blockIn instanceof SnowLayerBlock) {
+			if (slab || blockIn instanceof SnowLayerBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (ClientVariables.cachedOverlayModel == null) {
 						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(ClientVariables.OVERLAY_MODEL);
 					}
 					BlockPos pos = posIn;
-					if (CoreModule.SLAB.is(blockStateIn)) {
+					if (slab) {
 						yOffset = -0.375;
 					} else {
 						yOffset = -1;
