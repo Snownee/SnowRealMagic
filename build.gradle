@@ -202,6 +202,7 @@ dependencies {
     annotationProcessor "curse.maven:kiwi-303657:3755791"
     implementation fg.deobf("curse.maven:rubidium-574856:4024781")
     implementation fg.deobf("curse.maven:terraforged-363820:3799083")
+    implementation fg.deobf("curse.maven:immersive-weathering-592449:4021620")
 
     // Examples using mod jars from ./libs
     //implementation fg.deobf("libs:Kiwi-1.18.2-forge:6.0.0")
