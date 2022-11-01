@@ -23,7 +23,7 @@ public class ModUtil {
 	public static boolean shouldMelt(Level world, BlockPos pos) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
+		if (world.getBrightness(LightLayer.BLOCK, pos) > 11)
 			return true;
 		Holder<Biome> biome = world.getBiome(pos);
 		if (sereneseasons && SereneSeasonsCompat.shouldMelt(world, pos, biome)) {
