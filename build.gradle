@@ -33,7 +33,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20200723-1.16.1'
+    mappings channel: 'snapshot', version: '20210309-1.16.5'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -114,8 +114,8 @@ dependencies {
     implementation fg.deobf("curse.maven:terraforged-363820:3365710")
     //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
 	implementation fg.deobf("curse.maven:kiwi-303657:3536245")
-    implementation fg.deobf("curse.maven:sodium-reforged-532724:3526076")
-    implementation fg.deobf("curse.maven:bop-220318:3591343")
+    implementation fg.deobf("curse.maven:rubidium-574856:3949659")
+    //implementation fg.deobf("curse.maven:bop-220318:3591343")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

@@ -106,14 +106,15 @@ public abstract class MixinBlockRendererDispatcher {
 				ret |= blockModelRenderer.renderModel(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.getDefaultState(), posIn, matrixStackIn, vertexBuilderIn, false, rand, state.getPositionRandom(posIn), OverlayTexture.NO_OVERLAY, modelData);
 			}
 
-			if (blockIn.matchesBlock(CoreModule.SLAB) || blockIn instanceof SnowBlock) {
+			boolean slab = blockIn.matchesBlock(CoreModule.SLAB);
+			if (slab || blockIn instanceof SnowBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (ClientVariables.cachedOverlayModel == null) {
 						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
 					}
 					matrixStackIn.push();
 					BlockPos pos = posIn;
-					if (blockIn.matchesBlock(CoreModule.SLAB)) {
+					if (slab) {
 						matrixStackIn.translate(-0.001, -0.375, -0.001);
 					} else {
 						matrixStackIn.translate(-0.001, -1, -0.001);

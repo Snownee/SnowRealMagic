@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import me.jellysquid.mods.sodium.client.model.light.LightMode;
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
 import me.jellysquid.mods.sodium.client.model.light.LightPipelineProvider;
-import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuffers;
 import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
 import me.jellysquid.mods.sodium.client.render.pipeline.BlockRenderer;
@@ -106,13 +105,14 @@ public abstract class BlockRendererMixin {
 				ret |= renderModel(lightReaderIn, CoreModule.BLOCK.getDefaultState(), posIn, ClientVariables.cachedSnowModel, buffers, cull, seed, modelData);
 			}
 
-			if (blockStateIn.isIn(CoreModule.SLAB) || blockIn instanceof SnowBlock) {
+			boolean slab = blockIn.matchesBlock(CoreModule.SLAB);
+			if (slab || blockIn instanceof SnowBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
 					if (ClientVariables.cachedOverlayModel == null) {
 						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(CoreModule.OVERLAY_MODEL);
 					}
 					BlockPos pos = posIn;
-					if (blockStateIn.isIn(CoreModule.SLAB)) {
+					if (slab) {
 						yOffset = -0.375;
 					} else {
 						yOffset = -1;
@@ -174,7 +174,7 @@ public abstract class BlockRendererMixin {
 			}
 
 			if (!cull || this.occlusionCache.shouldDrawSide(state, world, pos, dir)) {
-				this.renderQuadList(world, state, pos, lighter, offset, buffers, sided, ModelQuadFacing.fromDirection(dir));
+				this.renderQuadList(world, state, pos, lighter, offset, buffers, sided, dir);
 
 				rendered = true;
 			}
@@ -185,7 +185,7 @@ public abstract class BlockRendererMixin {
 		List<BakedQuad> all = model.getQuads(state, null, this.random, modelData);
 
 		if (!all.isEmpty()) {
-			this.renderQuadList(world, state, pos, lighter, offset, buffers, all, ModelQuadFacing.UNASSIGNED);
+			this.renderQuadList(world, state, pos, lighter, offset, buffers, all, null);
 
 			rendered = true;
 		}
@@ -200,5 +200,5 @@ public abstract class BlockRendererMixin {
 	abstract LightMode getLightingMode(BlockState state, IBakedModel model);
 
 	@Shadow
-	abstract void renderQuadList(IBlockDisplayReader world, BlockState state, BlockPos pos, LightPipeline lighter, Vector3d offset, ChunkModelBuffers buffers, List<BakedQuad> quads, ModelQuadFacing facing);
+	abstract void renderQuadList(IBlockDisplayReader world, BlockState state, BlockPos pos, LightPipeline lighter, Vector3d offset, ChunkModelBuffers buffers, List<BakedQuad> quads, Direction facing);
 }
