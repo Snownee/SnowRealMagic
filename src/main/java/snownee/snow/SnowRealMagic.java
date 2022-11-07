@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import snownee.snow.compat.BiomesOPlentyCompat;
 import snownee.snow.compat.FBPHack;
 import snownee.snow.compat.FerdinandsFlowersCompat;
+import snownee.snow.compat.GreeneryCompat;
 import snownee.snow.compat.HarvestCraftCompat;
 import snownee.snow.compat.NoTreePunchingCompat;
 import snownee.snow.compat.PlantsCompat;
@@ -69,6 +70,7 @@ public class SnowRealMagic {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		GreeneryCompat.init();
 		NoTreePunchingCompat.init();
 		XLFoodModCompat.init();
 		BiomesOPlentyCompat.init();
