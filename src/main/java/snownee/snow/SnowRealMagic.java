@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import snownee.snow.compat.BiomesOPlentyCompat;
+import snownee.snow.compat.DefiledLandsCompat;
 import snownee.snow.compat.FBPHack;
 import snownee.snow.compat.FerdinandsFlowersCompat;
 import snownee.snow.compat.GreeneryCompat;
@@ -35,6 +36,7 @@ import snownee.snow.compat.HarvestCraftCompat;
 import snownee.snow.compat.NoTreePunchingCompat;
 import snownee.snow.compat.PlantsCompat;
 import snownee.snow.compat.PyrotechCompat;
+import snownee.snow.compat.PyrotechUBCCompat;
 import snownee.snow.compat.WeeeFlowersCompat;
 import snownee.snow.compat.XLFoodModCompat;
 import snownee.snow.mixin.ItemBlockAccessor;
@@ -70,7 +72,6 @@ public class SnowRealMagic {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		GreeneryCompat.init();
 		NoTreePunchingCompat.init();
 		XLFoodModCompat.init();
 		BiomesOPlentyCompat.init();
@@ -79,6 +80,9 @@ public class SnowRealMagic {
 		PlantsCompat.init();
 		FerdinandsFlowersCompat.init();
 		PyrotechCompat.init();
+		PyrotechUBCCompat.init();
+		GreeneryCompat.init();
+		DefiledLandsCompat.init();
 	}
 
 	@SubscribeEvent
