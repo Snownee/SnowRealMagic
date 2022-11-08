@@ -22,7 +22,7 @@ public final class GreeneryCompat {
 		ImmutableSet.Builder<Block> set = ImmutableSet.builder();
 		for (Block block : ForgeRegistries.BLOCKS) {
 			ResourceLocation name = block.getRegistryName();
-			if ("greenery".equals(name.getNamespace()) && name.getPath().contains("plant")) {
+			if ("greenery".equals(name.getNamespace()) && name.getPath().startsWith("plant/upland/")) {
 				set.add(block);
 			}
 		}
