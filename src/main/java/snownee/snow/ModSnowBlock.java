@@ -44,11 +44,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import snownee.snow.compat.BiomesOPlentyCompat;
+import snownee.snow.compat.DefiledLandsCompat;
 import snownee.snow.compat.FerdinandsFlowersCompat;
+import snownee.snow.compat.GreeneryCompat;
 import snownee.snow.compat.HarvestCraftCompat;
 import snownee.snow.compat.NoTreePunchingCompat;
 import snownee.snow.compat.PlantsCompat;
 import snownee.snow.compat.PyrotechCompat;
+import snownee.snow.compat.PyrotechUBCCompat;
 import snownee.snow.compat.WeeeFlowersCompat;
 import snownee.snow.compat.XLFoodModCompat;
 
@@ -424,10 +427,7 @@ public class ModSnowBlock extends BlockSnow {
 		if (block instanceof BlockFence || block instanceof BlockWall || (block instanceof BlockPane && !(block instanceof BlockStainedGlassPane))) {
 			return true;
 		}
-		if (isCompatBlock(block)) {
-			return true;
-		}
-		return false;
+		return isCompatBlock(block);
 	}
 
 	public IBlockState getContainedState(IBlockAccess world, BlockPos pos) {
@@ -559,6 +559,6 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	public static boolean isCompatBlock(Block block) {
-		return NoTreePunchingCompat.isRock(block) || XLFoodModCompat.isPlant(block) || BiomesOPlentyCompat.isPlantOrGate(block) || HarvestCraftCompat.isGarden(block) || WeeeFlowersCompat.isFlower(block) || PlantsCompat.isPlant(block) || FerdinandsFlowersCompat.isFlower(block) || PyrotechCompat.isRock(block);
+		return NoTreePunchingCompat.isRock(block) || XLFoodModCompat.isPlant(block) || BiomesOPlentyCompat.isPlantOrGate(block) || HarvestCraftCompat.isGarden(block) || WeeeFlowersCompat.isFlower(block) || PlantsCompat.isPlant(block) || FerdinandsFlowersCompat.isFlower(block) || PyrotechCompat.isRock(block) || PyrotechUBCCompat.isRock(block) || GreeneryCompat.isPlant(block) || DefiledLandsCompat.isDefiledPlant(block);
 	}
 }
