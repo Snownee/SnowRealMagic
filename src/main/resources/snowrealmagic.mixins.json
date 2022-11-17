@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "snownee.snow.mixin",
+  "plugin": "snownee.snow.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
@@ -19,6 +20,8 @@
     "CameraMixin",
     "BlockModelShaperMixin",
     "ModelBakeryMixin",
+    "ModelBakeryMixinNormalBake",
+    "ModelBakeryMixinOptifineBake",
     "SimpleBakedModelMixin",
     "ModelManagerMixin",
     "ClientPacketListenerMixin"

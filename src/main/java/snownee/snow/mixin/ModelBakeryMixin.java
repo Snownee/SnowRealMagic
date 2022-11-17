@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,12 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.google.common.collect.Sets;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.AtlasSet;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -31,7 +27,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import snownee.snow.client.ClientVariables;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
-import snownee.snow.client.model.SnowVariantModel;
 
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
@@ -67,20 +62,6 @@ public abstract class ModelBakeryMixin {
 			ClientVariables.snowVariantMapping.put(resourceLocation, def);
 		} else if (snowModels.contains(resourceLocation)) {
 			topLevelModels.put(resourceLocation, blockModel);
-		}
-	}
-
-	@Inject(at = @At("TAIL"), method = "bake", locals = LocalCapture.CAPTURE_FAILHARD)
-	private void srm_bake(ResourceLocation resourceLocation, ModelState modelState, CallbackInfoReturnable<BakedModel> ci, Triple triple, UnbakedModel unbakedModel, BakedModel blockModel) {
-		if (!(blockModel instanceof SnowVariantModel) || modelState.getClass() != Variant.class) {
-			return;
-		}
-		ModelDefinition def = ClientVariables.snowVariantMapping.get(resourceLocation);
-		if (def != null) {
-			Variant variantState = (Variant) modelState;
-			variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
-			BakedModel model = ((ModelBakery) (Object) this).bake(def.model, variantState);
-			((SnowVariantModel) blockModel).setSnowVariant(model);
 		}
 	}
 
