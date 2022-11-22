@@ -16,6 +16,9 @@
   "license": "MIT",
 
   "entrypoints": {
+    "jade": [
+      "snownee.snow.compat.jade.JadeCompat"
+    ]
   },
   "mixins": [ "snowrealmagic.mixins.json" ],
 

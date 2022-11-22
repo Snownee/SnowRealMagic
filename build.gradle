@@ -56,6 +56,8 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
     modImplementation "curse.maven:kiwi-549404:3998272"
     annotationProcessor "curse.maven:kiwi-549404:3998272"
+    
+    modImplementation "curse.maven:jade-324717:4096403"
 }
 
 loom {
