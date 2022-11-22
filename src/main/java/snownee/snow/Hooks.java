@@ -230,9 +230,9 @@ public final class Hooks {
 
 	@SuppressWarnings("unchecked")
 	private static <T extends Comparable<T>> boolean hasAllProperties(BlockState oldState, BlockState newState) {
-		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
+		for (Map.Entry<Property<?>, Comparable<?>> entry : newState.getValues().entrySet()) {
 			Property<T> property = (Property<T>) entry.getKey();
-			if (!newState.hasProperty(property))
+			if (!oldState.hasProperty(property))
 				return false;
 		}
 		return true;
