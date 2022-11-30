@@ -85,4 +85,10 @@ public class SnowTile extends TileEntity {
 		readFromNBT(tag);
 	}
 
+	@Override
+	public void invalidate() {
+//		System.out.println("111");
+		super.invalidate();
+	}
+
 }

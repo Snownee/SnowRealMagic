@@ -2,8 +2,8 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
-        maven { url = "https://repo.spongepowered.org/maven" }
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
@@ -39,7 +39,7 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven { url = "https://repo.spongepowered.org/maven" }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven {
         name = "jei"
         url = "http://dvs1.progwml6.com/files/maven"
