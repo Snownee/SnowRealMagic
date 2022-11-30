@@ -1,0 +1,13 @@
+{
+    "itemGroup.snowrealmagic": "Neve! Magia de verdade!",
+    "entity.snowrealmagic.snow": "Bloco caindo",
+    "block.snowrealmagic.slab": "Laje Coberta de Neve",
+    "block.snowrealmagic.stairs": "Escadas Cobertas de Neve",
+    "block.snowrealmagic.wall": "Parede Coberta de Neve",
+    "block.snowrealmagic.fence": "Cerca Coberta de Neve",
+    "block.snowrealmagic.fence_gate": "Portão de Cerca Coberto de Neve",
+    "gamerule.blizzardStrength": "Força da Nevasca",
+    "gamerule.blizzardStrength.description": "Blocos de neve cairão do céu. 1~8 para definir as camadas máximas. Adicionado por Neve! Magia de verdade!",
+    "gamerule.blizzardFrequency": "Frequência de nevasca",
+    "gamerule.blizzardFrequency.description": "A possibilidade de fazer nevasca. N/10000 por tick por chunk. Adicionado por Neve! Magia Real!"
+}  
