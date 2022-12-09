@@ -46,11 +46,11 @@ public abstract class BlockRenderDispatcherMixin {
 	private ModelBlockRenderer modelRenderer;
 
 	@Inject(
-			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V", at = @At(
+			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;Z)V", at = @At(
 				"HEAD"
 			), remap = false, cancellable = true
 	)
-	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, RandomSource random, ModelData modelData, @Nullable RenderType layer, CallbackInfo ci) {
+	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, RandomSource random, ModelData modelData, @Nullable RenderType layer, boolean queryModelSpecificData, CallbackInfo ci) {
 		if (!(blockStateIn.getBlock() instanceof SnowVariant)) {
 			return;
 		}
