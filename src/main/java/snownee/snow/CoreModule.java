@@ -53,8 +53,6 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
 
-	public static final TagKey<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
-
 	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
 	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");

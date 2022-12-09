@@ -21,7 +21,6 @@ public final class SnowCommonConfig {
 	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean thinnerBoundingBox = true;
 	public static boolean snowMakingIce = true;
-	public static boolean snowOnIce = false;
 	public static boolean snowNeverMelt = false;
 	public static boolean snowMeltsInWarmBiomes = false;
 	@Comment("Should snow melt if layers are more than 1")

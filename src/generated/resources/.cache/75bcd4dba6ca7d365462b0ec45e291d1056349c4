@@ -1,0 +1,18 @@
+// 1.19.2	2022-12-10T02:41:47.3033168	Tags for minecraft:block
+62ce7645ad0741a3ddddad8c5e97bafa72f3de64 data/minecraft/tags/blocks/fences.json
+c69c2d0eb5f9342e4ae4d6b600fa318183e4151f data/minecraft/tags/blocks/fence_gates.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/foxes_spawnable_on.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/goats_spawnable_on.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/inside_step_sound_blocks.json
+62ce7645ad0741a3ddddad8c5e97bafa72f3de64 data/minecraft/tags/blocks/mineable/pickaxe.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/mineable/shovel.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/mooshrooms_spawnable_on.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/rabbits_spawnable_on.json
+1b974e78cfc7bc0adf23b7edfd15a3f1046812f6 data/minecraft/tags/blocks/slabs.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/snow.json
+a4e8097fff07f9a74259d6b5dd583f3437ff28a2 data/minecraft/tags/blocks/snow_layer_can_survive_on.json
+df452e72045d7f8f7c5eef06331938e64e7eb4d0 data/minecraft/tags/blocks/stairs.json
+60678fcbe700a6c24cfd1f32b32977bfac70430a data/minecraft/tags/blocks/walls.json
+53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/wolves_spawnable_on.json
+665ff7ab6901ffeb785fb54663b5690cb42ca40b data/minecraft/tags/blocks/wooden_fences.json
+17d286cefc512519bc39cbb832d477349f57a35b data/snowrealmagic/tags/blocks/bottom_snow.json

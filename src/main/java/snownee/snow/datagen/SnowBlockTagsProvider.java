@@ -37,6 +37,7 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 		helper.add(BlockTags.FENCE_GATES, FENCE_GATE);
 		helper.add(BlockTags.FENCES, FENCE2);
 
+		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
 		tag(BOTTOM_SNOW).addTag(BlockTags.SNOW);
 		helper.add(BOTTOM_SNOW, FENCE, FENCE2, FENCE_GATE, WALL);
 	}

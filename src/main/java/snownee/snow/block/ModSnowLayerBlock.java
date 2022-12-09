@@ -108,22 +108,18 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 
 	@Override
 	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-		return canSurvive(state, worldIn, pos, false);
+		return canSurviveNew(state, worldIn, pos);
 	}
 
-	public boolean canSurvive(BlockState state, BlockGetter worldIn, BlockPos pos, boolean ignoreSelf) {
+	public boolean canSurviveNew(BlockState state, BlockGetter worldIn, BlockPos pos) {
 		BlockState blockstate = worldIn.getBlockState(pos.below());
-		Block block = blockstate.getBlock();
-		if (block instanceof SnowLayerBlock && blockstate.getValue(LAYERS) == 8) {
+		if (blockstate.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+			return false;
+		} else if (blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)) {
 			return true;
-		} else if ((SnowCommonConfig.snowOnIce && (blockstate.is(Blocks.ICE) || blockstate.is(Blocks.PACKED_ICE))) || !blockstate.is(CoreModule.INVALID_SUPPORTERS)) {
-			if (ignoreSelf || state.getMaterial().isReplaceable() || canContainState(state)) {
-				if (blockstate.is(BlockTags.LEAVES) || Block.isFaceFull(blockstate.getCollisionShape(worldIn, pos.below()), Direction.UP)) {
-					return true;
-				}
-			}
+		} else {
+			return Block.isFaceFull(blockstate.getCollisionShape(worldIn, pos.below()), Direction.UP) || blockstate.getBlock() instanceof SnowLayerBlock && blockstate.getValue(LAYERS) == 8;
 		}
-		return false;
 	}
 
 	protected int tickRate() {
