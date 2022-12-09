@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[42,)"
+loaderVersion="[43,)"
 license="MIT"
 
 [[mods]]
@@ -20,7 +20,7 @@ description="Tweak vanilla snow layer."
 [[dependencies.snowrealmagic]]
     modId="forge"
     mandatory=true
-    versionRange="[42,)"
+    versionRange="[43.2,)"
     ordering="NONE"
     side="BOTH"
 
