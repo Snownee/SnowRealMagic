@@ -21,12 +21,13 @@
     ]
   },
   "mixins": [ "snowrealmagic.mixins.json" ],
+  "accessWidener" : "snowrealmagic.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.11.3",
-    "minecraft": ">=1.19",
+    "minecraft": ">=1.19.3",
     "java": ">=17",
-    "kiwi": ">=8.1.1"
+    "kiwi": ">=9"
   },
 
   "custom": {

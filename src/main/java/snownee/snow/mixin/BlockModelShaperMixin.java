@@ -1,17 +1,11 @@
 package snownee.snow.mixin;
 
-import static snownee.snow.CoreModule.FENCE;
-import static snownee.snow.CoreModule.FENCE2;
-import static snownee.snow.CoreModule.FENCE_GATE;
-import static snownee.snow.CoreModule.SLAB;
-import static snownee.snow.CoreModule.STAIRS;
-import static snownee.snow.CoreModule.TILE_BLOCK;
-import static snownee.snow.CoreModule.WALL;
+import static snownee.snow.CoreModule.*;
 
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +17,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -40,15 +34,16 @@ import snownee.snow.client.model.SnowCoveredModel;
 @Mixin(BlockModelShaper.class)
 public class BlockModelShaperMixin {
 
-	@Final
 	@Shadow
 	private Map<BlockState, BakedModel> modelByStateCache;
-	@Final
 	@Shadow
 	private ModelManager modelManager;
 
-	@Inject(at = @At("TAIL"), method = "rebuildCache")
-	private void srm_rebuildCache(CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "replaceCache")
+	private void srm_replaceCache(Map<BlockState, BakedModel> map, CallbackInfo ci) {
+		if (!(modelByStateCache instanceof IdentityHashMap)) {
+			modelByStateCache = new IdentityHashMap<>(modelByStateCache);
+		}
 		Map<BakedModel, BakedModel> transform = Maps.newHashMap();
 		List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
 		for (KiwiGO<? extends Block> block : allBlocks) {
@@ -66,7 +61,7 @@ public class BlockModelShaperMixin {
 				continue;
 			}
 			for (ResourceLocation override : def.overrideBlock) {
-				Block block = Registry.BLOCK.get(override);
+				Block block = BuiltInRegistries.BLOCK.get(override);
 				if (block == null || block == Blocks.AIR) {
 					continue;
 				}

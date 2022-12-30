@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
+    "ChunkMapAccess",
+    "FenceGateBlockAccess",
     "BlockMixin",
     "BlockStateMixin",
     "SpreadableSnowyDirtBlockMixin",
@@ -12,16 +14,14 @@
     "DoublePlantBlockMixin",
     "SnowAndFreezeFeatureMixin",
     "ServerLevelMixin",
-    "ChunkMapAccess",
     "ModSnowLayerBlock",
     "BlockItemMixin"
   ],
   "client": [
     "CameraMixin",
     "BlockModelShaperMixin",
+    "ModelBakerImplMixinNormalBake",
     "ModelBakeryMixin",
-    "ModelBakeryMixinNormalBake",
-    "ModelBakeryMixinOptifineBake",
     "SimpleBakedModelMixin",
     "ModelManagerMixin",
     "ClientPacketListenerMixin"

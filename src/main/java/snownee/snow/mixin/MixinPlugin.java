@@ -25,9 +25,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		if ("snownee.snow.mixin.ModelBakeryMixinNormalBake".equals(mixinClassName)) {
 			return !FabricLoader.getInstance().isModLoaded("optifabric");
 		}
-		if ("snownee.snow.mixin.ModelBakeryMixinOptifineBake".equals(mixinClassName)) {
-			return FabricLoader.getInstance().isModLoaded("optifabric");
-		}
+		//		if ("snownee.snow.mixin.ModelBakeryMixinOptifineBake".equals(mixinClassName)) {
+		//			return FabricLoader.getInstance().isModLoaded("optifabric");
+		//		}
 		return true;
 	}
 

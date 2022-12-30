@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -31,19 +32,7 @@ public final class GameEvents {
 		if (!(state.getBlock() instanceof SnowVariant)) {
 			return InteractionResult.PASS;
 		}
-		if (!player.hasCorrectToolForDrops(state)) {
-			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
-				return InteractionResult.PASS;
-			}
-			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-			worldIn.setBlockAndUpdate(pos, newState);
-			ItemStack snowball = new ItemStack(Items.SNOWBALL);
-			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
-				if (!player.addItem(snowball)) {
-					player.drop(snowball, false);
-				}
-			}
-		} else {
+		if (player.hasCorrectToolForDrops(Blocks.SNOW.defaultBlockState())) {
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
 			worldIn.setBlockAndUpdate(pos, newState);
 			if (!player.isCreative() && player instanceof ServerPlayer) {
@@ -54,6 +43,18 @@ public final class GameEvents {
 				held.hurtAndBreak(1, player, stack -> {
 					stack.broadcastBreakEvent(InteractionHand.MAIN_HAND);
 				});
+			}
+		} else {
+			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
+				return InteractionResult.PASS;
+			}
+			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
+			worldIn.setBlockAndUpdate(pos, newState);
+			ItemStack snowball = new ItemStack(Items.SNOWBALL);
+			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
+				if (!player.addItem(snowball)) {
+					player.drop(snowball, false);
+				}
 			}
 		}
 
