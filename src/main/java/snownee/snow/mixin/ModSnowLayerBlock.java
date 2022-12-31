@@ -1,7 +1,6 @@
 package snownee.snow.mixin;
 
 import java.util.Random;
-import java.util.function.BiPredicate;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,26 +25,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
-import snownee.snow.GameEvents;
 import snownee.snow.Hooks;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
@@ -114,112 +108,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 	@Override
 	@Overwrite
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (ModUtil.shouldMelt(worldIn, pos)) {
-			int layers = state.getValue(SnowLayerBlock.LAYERS);
-			if (layers == 8) {
-				BlockState upState = worldIn.getBlockState(pos.above());
-				if (upState.getBlock() instanceof SnowLayerBlock) {
-					return;
-				}
-			}
-			if (CoreModule.TILE_BLOCK.is(state)) {
-				GameEvents.onDestroyedByPlayer(worldIn, null, pos, state, worldIn.getBlockEntity(pos));
-			} else {
-				dropResources(state, worldIn, pos);
-				worldIn.removeBlock(pos, false);
-			}
-			return;
-		}
-		if (ModUtil.terraforged) {
-			return;
-		}
-		if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
-			return;
-		}
-		if (random.nextInt(8) > 0) {
-			return;
-		}
-		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		BlockPos height = worldIn.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
-		if (layers == 8) {
-			if (height.getY() - 1 != pos.getY()) {
-				return;
-			}
-			BlockState upState = worldIn.getBlockState(pos.above());
-			if (upState.getBlock() instanceof SnowLayerBlock) {
-				return;
-			}
-		} else {
-			if (height.getY() != pos.getY()) {
-				return;
-			}
-		}
-
-		Biome biome = worldIn.getBiome(pos).value();
-		boolean flag = false;
-		if (worldIn.isRaining() && biome.coldEnoughToSnow(pos)) {
-			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
-				flag = true;
-			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
-				flag = true;
-			}
-		}
-
-		if (flag && layers < SnowCommonConfig.snowAccumulationMaxLayers) {
-			accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof ModSnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) < 10, true);
-		} else if (!SnowCommonConfig.snowNeverMelt && SnowCommonConfig.snowNaturalMelt && !worldIn.isRaining()) {
-			if (layers == 1) {
-				if (SnowCommonConfig.snowAccumulationMaxLayers > 8 && worldIn.getBlockState(pos.below()).getBlock() instanceof ModSnowLayerBlock) {
-					worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-				}
-			} else {
-				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.above()).getBlock() instanceof ModSnowLayerBlock), false);
-			}
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private static void accumulate(Level world, BlockPos pos, BlockState centerState, BiPredicate<LevelAccessor, BlockPos> filter, boolean accumulate) {
-		int i = centerState.getValue(SnowLayerBlock.LAYERS);
-		for (int j = 0; j < 8; j++) {
-			int k = j / 2;
-			Direction direction = Direction.from2DDataValue(k);
-			BlockPos pos2 = pos.relative(direction);
-			if (j % 2 == 1) {
-				pos2 = pos2.relative(Direction.from2DDataValue(k + 1));
-			}
-			if (!world.isLoaded(pos2) || !filter.test(world, pos2)) {
-				continue;
-			}
-			BlockState state = world.getBlockState(pos2);
-			BlockPos height = world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos2);
-			if (height.getY() != pos2.getY()) {
-				continue;
-			}
-
-			if (!Blocks.SNOW.canSurvive(state, world, pos2)) {
-				continue;
-			}
-			int l;
-			if (state.getBlock() instanceof SnowLayerBlock) {
-				l = state.getValue(SnowLayerBlock.LAYERS);
-			} else {
-				l = 0;
-			}
-			if (accumulate ? i > l : i < l) {
-				if (accumulate) {
-					Hooks.placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
-				} else {
-					world.setBlockAndUpdate(pos2, state.setValue(SnowLayerBlock.LAYERS, l - 1));
-				}
-				return;
-			}
-		}
-		if (accumulate) {
-			Hooks.placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
-		} else {
-			world.setBlockAndUpdate(pos, centerState.setValue(SnowLayerBlock.LAYERS, i - 1));
-		}
+		Hooks.randomTick(state, worldIn, pos, random);
 	}
 
 	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
