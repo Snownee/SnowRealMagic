@@ -45,9 +45,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 
 	@Override
 	public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPos2, boolean bl) {
-		if (!level.isClientSide) {
-			adjustSounds(blockState, level, blockPos);
-		}
+		adjustSounds(blockState, level, blockPos);
 		super.neighborChanged(blockState, level, blockPos, block, blockPos2, bl);
 	}
 

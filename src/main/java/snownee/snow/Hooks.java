@@ -264,6 +264,7 @@ public final class Hooks {
 		} else {
 			return false;
 		}
+		Block.pushEntitiesUp(state, world.getBlockState(pos), world, pos);
 		if (fallingEffect) {
 			//todo: check if it's available
 			SSnowLandEffectPacket.send(world, pos, originLayers, layers);
