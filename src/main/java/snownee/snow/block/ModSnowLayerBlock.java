@@ -268,6 +268,7 @@ public class ModSnowLayerBlock extends SnowLayerBlock implements SnowVariant {
 		} else {
 			return false;
 		}
+		Block.pushEntitiesUp(state, world.getBlockState(pos), world, pos);
 		if (fallingEffect) {
 			SSnowLandEffectPacket.send(world, pos, originLayers, layers);
 		} else if (playSound) {
