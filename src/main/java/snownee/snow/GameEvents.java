@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -32,7 +34,7 @@ public final class GameEvents {
 			return;
 		}
 		Player player = event.getEntity();
-		if (!ForgeHooks.isCorrectToolForDrops(CoreModule.BLOCK.defaultBlockState(), player)) {
+		if (!ForgeHooks.isCorrectToolForDrops(Blocks.SNOW.defaultBlockState(), player)) {
 			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
 				return;
 			}
@@ -57,6 +59,10 @@ public final class GameEvents {
 
 		event.setCanceled(true);
 		event.setCancellationResult(InteractionResult.sidedSuccess(worldIn.isClientSide));
+	}
+
+	public static boolean onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+		return state.onDestroyedByPlayer(world, pos, player, false, state.getFluidState());
 	}
 
 }

@@ -15,13 +15,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelData;
-import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
 @OnlyIn(Dist.CLIENT)
@@ -36,7 +36,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
 			return;
 		}
-		BlockState blockstate = CoreModule.BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
+		BlockState blockstate = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
 		if (blockstate.getRenderShape() != RenderShape.MODEL) {
 			return;
 		}

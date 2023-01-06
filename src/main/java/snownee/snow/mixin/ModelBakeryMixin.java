@@ -30,7 +30,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowVariantModel;
@@ -65,7 +65,7 @@ public abstract class ModelBakeryMixin {
 		if (def != null && def.model != null) {
 			loadingStack.add(def.model);
 			snowModels.add(def.model);
-			ClientVariables.snowVariantMapping.put(resourceLocation, def);
+			SnowClient.snowVariantMapping.put(resourceLocation, def);
 		} else if (snowModels.contains(resourceLocation)) {
 			topLevelModels.put(resourceLocation, blockModel);
 		}
@@ -81,7 +81,7 @@ public abstract class ModelBakeryMixin {
 		if (!(blockModel instanceof SnowVariantModel) || modelState.getClass() != Variant.class) {
 			return;
 		}
-		ModelDefinition def = ClientVariables.snowVariantMapping.get(resourceLocation);
+		ModelDefinition def = SnowClient.snowVariantMapping.get(resourceLocation);
 		if (def != null) {
 			Variant variantState = (Variant) modelState;
 			variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());

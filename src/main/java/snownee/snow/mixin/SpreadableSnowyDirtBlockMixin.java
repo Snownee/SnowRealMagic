@@ -52,7 +52,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 
 	@Inject(at = @At("HEAD"), method = "canBeGrass", cancellable = true)
 	private static void srm_canBeGrass(BlockState state, LevelReader viewableWorld, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(Hooks.canSurvive(state, viewableWorld, blockPos));
+		cir.setReturnValue(Hooks.canGrassSurvive(state, viewableWorld, blockPos));
 	}
 
 	@Shadow

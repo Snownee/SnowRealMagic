@@ -30,6 +30,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,7 +41,7 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowBlockEntity.Options;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowClientConfig;
 import snownee.snow.client.model.SnowVariantModel;
 
@@ -78,7 +79,7 @@ public abstract class BlockRendererMixin {
 			boolean ret = false;
 			Block blockIn = blockStateIn.getBlock();
 			BakedModel model = getBlockModel(state);
-			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
+			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(SnowClient.fallbackOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
@@ -108,16 +109,16 @@ public abstract class BlockRendererMixin {
 			}
 
 			if (options.renderBottom && (layer == null || layer == solid)) {
-				if (ClientVariables.cachedSnowModel == null) {
-					ClientVariables.cachedSnowModel = getBlockModel(CoreModule.BLOCK.defaultBlockState());
+				if (SnowClient.cachedSnowModel == null) {
+					SnowClient.cachedSnowModel = getBlockModel(Blocks.SNOW.defaultBlockState());
 				}
-				ret |= renderModel(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedSnowModel, buffers, cull, seed, modelData, layer, random);
+				ret |= renderModel(lightReaderIn, Blocks.SNOW.defaultBlockState(), posIn, origin, SnowClient.cachedSnowModel, buffers, cull, seed, modelData, layer, random);
 			}
 
 			if (CoreModule.SLAB.is(blockStateIn) || blockIn instanceof SnowLayerBlock) {
 				if (options.renderOverlay && layer == cutoutMipped) {
-					if (ClientVariables.cachedOverlayModel == null) {
-						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(ClientVariables.OVERLAY_MODEL);
+					if (SnowClient.cachedOverlayModel == null) {
+						SnowClient.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(SnowClient.OVERLAY_MODEL);
 					}
 					BlockPos pos = posIn;
 					if (CoreModule.SLAB.is(blockStateIn)) {
@@ -126,7 +127,7 @@ public abstract class BlockRendererMixin {
 						yOffset = -1;
 						pos = pos.below();
 					}
-					ret |= renderModelWithYOffset(lightReaderIn, CoreModule.BLOCK.defaultBlockState(), posIn, origin, ClientVariables.cachedOverlayModel, buffers, cull, seed, modelData, layer, random, yOffset);
+					ret |= renderModelWithYOffset(lightReaderIn, Blocks.SNOW.defaultBlockState(), posIn, origin, SnowClient.cachedOverlayModel, buffers, cull, seed, modelData, layer, random, yOffset);
 				}
 			} else {
 				if (!options.renderOverlay || useSnowVariant) {

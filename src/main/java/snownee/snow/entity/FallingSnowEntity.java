@@ -35,8 +35,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import snownee.snow.CoreModule;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.ModSnowLayerBlock;
+import snownee.snow.mixin.ModSnowLayerBlock;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {
@@ -138,7 +139,7 @@ public class FallingSnowEntity extends Entity {
 							pos = posDown;
 						}
 					}
-					ModSnowLayerBlock.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
+					Hooks.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
 					discard();
 					return;
 				}

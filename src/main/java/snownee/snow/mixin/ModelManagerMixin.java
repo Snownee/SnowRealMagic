@@ -9,7 +9,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 
 @Mixin(ModelManager.class)
 public class ModelManagerMixin {
@@ -19,6 +19,6 @@ public class ModelManagerMixin {
 	// because some other mods will manually rebuild the cache
 	@Inject(at = @At("HEAD"), method = "prepare")
 	private void srm_prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller, CallbackInfoReturnable<ModelBakery> ci) {
-		ClientVariables.snowVariantMapping.clear();
+		SnowClient.snowVariantMapping.clear();
 	}
 }

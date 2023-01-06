@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import snownee.snow.CoreModule;
 import snownee.snow.block.EntitySnowLayerBlock;
 
 @Mixin(DoublePlantBlock.class)
@@ -38,7 +37,7 @@ public class DoublePlantBlockMixin {
 			BlockState blockstate = world.getBlockState(blockpos);
 			if (blockstate.getBlock() instanceof EntitySnowLayerBlock) {
 				world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-				world.setBlock(blockpos, CoreModule.BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)), 35);
+				world.setBlock(blockpos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)), 35);
 				world.levelEvent(player, 2001, blockpos, Block.getId(state));
 			}
 		}

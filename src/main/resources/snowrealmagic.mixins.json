@@ -7,12 +7,13 @@
     "IceBlockAccess",
     "IntegerValueAccess",
     "BlockMixin",
-    "BlockStateMixin",
+    "BlockItemMixin",
     "DoublePlantBlockMixin",
     "ServerLevelMixin",
     "SnowAndFreezeFeatureMixin",
     "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin"
+    "SpreadableSnowyDirtBlockMixin",
+    "ModSnowLayerBlock"
   ],
   "client": [
     "BlockModelShaperMixin",

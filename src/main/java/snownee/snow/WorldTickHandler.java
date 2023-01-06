@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import snownee.snow.block.ModSnowLayerBlock;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.mixin.IceBlockAccess;
 
@@ -70,38 +69,38 @@ public class WorldTickHandler {
 		if (!ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
 			return;
 		}
-		if (!ModSnowLayerBlock.canContainState(state)) {
+		if (!Hooks.canContainState(state)) {
 			if (SnowCommonConfig.snowAccumulationMaxLayers < 9 && state.is(Blocks.SNOW)) {
 				return;
 			}
 			state = level.getBlockState(pos.move(Direction.UP));
-			if (!state.isAir() && !ModSnowLayerBlock.canContainState(state)) {
+			if (!state.isAir() && !Hooks.canContainState(state)) {
 				return;
 			}
 		}
 
-		if (state.isAir() && !Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
+		if (state.isAir() && !Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 			return;
 		}
 		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) >= 10) {
 			return;
 		}
-		ModSnowLayerBlock.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
 
 		for (int i = 0; i < 5; i++) {
 			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
 				break;
 			}
 			state = level.getBlockState(pos.move(Direction.DOWN));
-			if (!state.isAir() && !ModSnowLayerBlock.canContainState(state)) {
+			if (!state.isAir() && !Hooks.canContainState(state)) {
 				break;
 			}
-			if (CoreModule.BLOCK.get().canSurvive(state, level, pos)) {
+			if (Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 				pos.move(Direction.UP);
 				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
 					break;
 				}
-				ModSnowLayerBlock.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
 				//FIXME I should make snow melts somehow
 			}
 		}

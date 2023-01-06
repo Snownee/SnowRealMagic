@@ -26,6 +26,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,7 +36,7 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.WatcherSnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowBlockEntity.Options;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowClientConfig;
 import snownee.snow.client.model.SnowVariantModel;
 
@@ -71,7 +72,7 @@ public abstract class BlockRenderDispatcherMixin {
 			boolean canRender;
 			Block blockIn = blockStateIn.getBlock();
 			BakedModel model = getBlockModel(state);
-			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(ClientVariables.fallbackOptions);
+			Options options = Optional.ofNullable(modelData.get(SnowBlockEntity.OPTIONS)).orElse(SnowClient.fallbackOptions);
 			if (layer == null) {
 				canRender = layer == cutoutMipped;
 			} else {
@@ -104,16 +105,16 @@ public abstract class BlockRenderDispatcherMixin {
 			}
 
 			if (options.renderBottom && (layer == null || layer == solid)) {
-				if (ClientVariables.cachedSnowModel == null) {
-					ClientVariables.cachedSnowModel = getBlockModel(CoreModule.BLOCK.defaultBlockState());
+				if (SnowClient.cachedSnowModel == null) {
+					SnowClient.cachedSnowModel = getBlockModel(Blocks.SNOW.defaultBlockState());
 				}
-				modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedSnowModel, CoreModule.BLOCK.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData, layer);
+				modelRenderer.tesselateBlock(lightReaderIn, SnowClient.cachedSnowModel, Blocks.SNOW.defaultBlockState(), posIn, matrixStackIn, vertexBuilderIn, false, random, state.getSeed(posIn), OverlayTexture.NO_OVERLAY, modelData, layer);
 			}
 
 			if (CoreModule.TILE_BLOCK.is(blockStateIn) || CoreModule.SLAB.is(blockStateIn)) {
 				if (options.renderOverlay && layer == cutoutMipped) {
-					if (ClientVariables.cachedOverlayModel == null) {
-						ClientVariables.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(ClientVariables.OVERLAY_MODEL);
+					if (SnowClient.cachedOverlayModel == null) {
+						SnowClient.cachedOverlayModel = Minecraft.getInstance().getModelManager().getModel(SnowClient.OVERLAY_MODEL);
 					}
 					matrixStackIn.pushPose();
 					BlockPos pos = posIn;
@@ -123,7 +124,7 @@ public abstract class BlockRenderDispatcherMixin {
 						matrixStackIn.translate(0, -1, 0);
 						pos = pos.below();
 					}
-					modelRenderer.tesselateBlock(lightReaderIn, ClientVariables.cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, random, blockStateIn.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData, layer);
+					modelRenderer.tesselateBlock(lightReaderIn, SnowClient.cachedOverlayModel, blockStateIn, pos, matrixStackIn, vertexBuilderIn, false, random, blockStateIn.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData, layer);
 					matrixStackIn.popPose();
 				}
 			} else {
@@ -163,7 +164,7 @@ public abstract class BlockRenderDispatcherMixin {
 
 	@Inject(at = @At("HEAD"), method = "onResourceManagerReload")
 	private void srm_onResourceManagerReload(ResourceManager resourceManager, CallbackInfo ci) {
-		ClientVariables.cachedSnowModel = null;
-		ClientVariables.cachedOverlayModel = null;
+		SnowClient.cachedSnowModel = null;
+		SnowClient.cachedOverlayModel = null;
 	}
 }

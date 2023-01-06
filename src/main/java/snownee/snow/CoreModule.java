@@ -31,7 +31,6 @@ import snownee.kiwi.loader.event.ClientInitEvent;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.EnumUtil;
 import snownee.snow.block.EntitySnowLayerBlock;
-import snownee.snow.block.ModSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
@@ -39,11 +38,10 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.item.SnowLayerBlockItem;
 import snownee.snow.loot.NormalLootEntry;
 import snownee.snow.mixin.IntegerValueAccess;
 
@@ -60,15 +58,8 @@ public class CoreModule extends AbstractModule {
 	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
 
 	@NoItem
-	@Name("minecraft:snow")
-	public static final KiwiGO<ModSnowLayerBlock> BLOCK = go(() -> new ModSnowLayerBlock(blockProp(Blocks.SNOW)));
-
-	@NoItem
 	@Name("snow")
-	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(BLOCK.get())));
-
-	@Name("minecraft:snow")
-	public static final KiwiGO<SnowLayerBlockItem> ITEM = go(() -> new SnowLayerBlockItem(BLOCK.get()));
+	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW)));
 
 	@NoItem
 	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).randomTicks()));
@@ -124,7 +115,7 @@ public class CoreModule extends AbstractModule {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void registerExtraModel(ModelEvent.RegisterAdditional event) {
-		event.register(ClientVariables.OVERLAY_MODEL);
+		event.register(SnowClient.OVERLAY_MODEL);
 	}
 
 	@Override
