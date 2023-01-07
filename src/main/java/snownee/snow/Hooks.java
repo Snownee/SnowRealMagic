@@ -258,9 +258,9 @@ public final class Hooks {
 		if (state.getBlock() instanceof SnowLayerBlock) {
 			originLayers = state.getValue(SnowLayerBlock.LAYERS);
 			world.setBlockAndUpdate(pos, state.setValue(SnowLayerBlock.LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
-		} else if (Hooks.canContainState(state) && state.canSurvive(world, pos)) {
-			Hooks.convert(world, pos, state, Mth.clamp(layers, 1, 8), 3);
-		} else if (Blocks.SNOW.canSurvive(state, world, pos)) {
+		} else if (canContainState(state) && state.canSurvive(world, pos)) {
+			convert(world, pos, state, Mth.clamp(layers, 1, 8), 3);
+		} else if (canSnowSurvive(state, world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
 			world.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Mth.clamp(layers, 1, 8)));
 		} else {
 			return false;
@@ -275,7 +275,7 @@ public final class Hooks {
 		}
 		if (originLayers + layers > 8) {
 			pos = pos.above();
-			if (Blocks.SNOW.canSurvive(Blocks.SNOW.defaultBlockState(), world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
+			if (canSnowSurvive(Blocks.SNOW.defaultBlockState(), world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
 				placeLayersOn(world, pos, layers - (8 - originLayers), fallingEffect, useContext, playSound);
 			}
 		}
@@ -382,7 +382,7 @@ public final class Hooks {
 			}
 			if (accumulate ? i > l : i < l) {
 				if (accumulate) {
-					Hooks.placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
+					placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
 				} else {
 					world.setBlockAndUpdate(pos2, state.setValue(SnowLayerBlock.LAYERS, l - 1));
 				}
@@ -390,7 +390,7 @@ public final class Hooks {
 			}
 		}
 		if (accumulate) {
-			Hooks.placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
+			placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
 		} else {
 			world.setBlockAndUpdate(pos, centerState.setValue(SnowLayerBlock.LAYERS, i - 1));
 		}
