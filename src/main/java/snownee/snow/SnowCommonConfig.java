@@ -9,6 +9,7 @@ import snownee.kiwi.loader.Platform;
 public final class SnowCommonConfig {
 
 	public static boolean placeSnowInBlock = true;
+	public static boolean placeSnowInBlockNaturally = true;
 	public static boolean snowGravity = true;
 	public static boolean snowAlwaysReplaceable = true;
 	@Comment("Unavailable if TerraForged mod installed")

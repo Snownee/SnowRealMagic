@@ -117,12 +117,12 @@ public final class Hooks {
 					if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 					}
-				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.canPlaceSnowInBlock()) {
+				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowInBlockNaturally && SnowCommonConfig.canPlaceSnowInBlock()) {
 					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
 						continue;
 					}
 					BlockState blockstate = worldgenlevel.getBlockState(pos);
-					if (convert(worldgenlevel, pos, blockstate, 1, 2)) {
+					if (convert(worldgenlevel, pos, blockstate, 1, 2, true)) {
 						blockstate = worldgenlevel.getBlockState(belowPos);
 						if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 							worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
@@ -175,7 +175,7 @@ public final class Hooks {
 		return false;
 	}
 
-	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags) {
+	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags, boolean canConvert) {
 		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
 			return false;
 		}
@@ -183,6 +183,9 @@ public final class Hooks {
 		if (state.isAir()) {
 			world.setBlock(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			return true;
+		}
+		if (!canConvert) {
+			return false;
 		}
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			world.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
@@ -251,15 +254,15 @@ public final class Hooks {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean placeLayersOn(Level world, BlockPos pos, int layers, boolean fallingEffect, BlockPlaceContext useContext, boolean playSound) {
+	public static boolean placeLayersOn(Level world, BlockPos pos, int layers, boolean fallingEffect, BlockPlaceContext useContext, boolean playSound, boolean canConvert) {
 		layers = Mth.clamp(layers, 1, 8);
 		BlockState state = world.getBlockState(pos);
 		int originLayers = 0;
 		if (state.getBlock() instanceof SnowLayerBlock) {
 			originLayers = state.getValue(SnowLayerBlock.LAYERS);
 			world.setBlockAndUpdate(pos, state.setValue(SnowLayerBlock.LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
-		} else if (canContainState(state) && state.canSurvive(world, pos)) {
-			convert(world, pos, state, Mth.clamp(layers, 1, 8), 3);
+		} else if (canConvert && canContainState(state) && state.canSurvive(world, pos)) {
+			convert(world, pos, state, Mth.clamp(layers, 1, 8), 3, canConvert);
 		} else if (canSnowSurvive(state, world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
 			world.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Mth.clamp(layers, 1, 8)));
 		} else {
@@ -276,7 +279,7 @@ public final class Hooks {
 		if (originLayers + layers > 8) {
 			pos = pos.above();
 			if (canSnowSurvive(Blocks.SNOW.defaultBlockState(), world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
-				placeLayersOn(world, pos, layers - (8 - originLayers), fallingEffect, useContext, playSound);
+				placeLayersOn(world, pos, layers - (8 - originLayers), fallingEffect, useContext, playSound, canConvert);
 			}
 		}
 		return true;
@@ -382,7 +385,7 @@ public final class Hooks {
 			}
 			if (accumulate ? i > l : i < l) {
 				if (accumulate) {
-					placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
+					placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowInBlockNaturally);
 				} else {
 					world.setBlockAndUpdate(pos2, state.setValue(SnowLayerBlock.LAYERS, l - 1));
 				}
@@ -390,7 +393,7 @@ public final class Hooks {
 			}
 		}
 		if (accumulate) {
-			placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false);
+			placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowInBlockNaturally);
 		} else {
 			world.setBlockAndUpdate(pos, centerState.setValue(SnowLayerBlock.LAYERS, i - 1));
 		}

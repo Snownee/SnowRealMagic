@@ -186,7 +186,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		stateIn.randomTick(worldIn, pos, random);
 		BlockState stateNow2 = worldIn.getBlockState(pos);
 		if (!stateNow2.is(this)) {
-			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18);
+			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18, true);
 		}
 	}
 
@@ -197,7 +197,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		if (result.consumesAction()) {
 			BlockState stateNow = worldIn.getBlockState(pos);
 			if (!stateNow.is(this)) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18);
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
 			}
 			return result;
 		}
@@ -242,8 +242,8 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		if (block instanceof BonemealableBlock) {
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
-			if (stateNow.getBlock() != state.getBlock()) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
+			if (stateNow.is(state.getBlock())) {
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
 			}
 		}
 	}

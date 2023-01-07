@@ -198,7 +198,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 						worldIn.setBlock(pos, state2, 16 | 32);
 						block.setPlacedBy(worldIn, pos, state, player, context.getItemInHand());
 						int i = state.getValue(SnowLayerBlock.LAYERS);
-						if (Hooks.placeLayersOn(worldIn, pos, i, false, context, true) && !player.isCreative()) {
+						if (Hooks.placeLayersOn(worldIn, pos, i, false, context, true, true) && !player.isCreative()) {
 							context.getItemInHand().shrink(1);
 						}
 					}

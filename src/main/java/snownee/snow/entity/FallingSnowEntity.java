@@ -138,7 +138,7 @@ public class FallingSnowEntity extends Entity {
 							pos = posDown;
 						}
 					}
-					Hooks.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true);
+					Hooks.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true, true);
 					discard();
 					return;
 				}
