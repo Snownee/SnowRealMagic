@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
@@ -214,7 +215,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		try {
 			BlockState contained = getRaw(state, worldIn, pos);
 			if (!contained.isAir() && contained.getDestroySpeed(worldIn, pos) == 0) {
-				worldIn.levelEvent(2001, pos, Block.getId(contained));
+				worldIn.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(contained));
 				Block.dropResources(contained, worldIn, pos, null, player, ItemStack.EMPTY);
 				int layers = state.getValue(LAYERS);
 				worldIn.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
@@ -260,4 +261,5 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
 		return stack.isEmpty() ? new ItemStack(Items.SNOW) : stack;
 	}
+
 }

@@ -1,20 +1,5 @@
 {
-	"credit": "Made by Snownee",
-	"parent": "block/block",
-	"textures": {
-		"particle": "block/snow"
-	},
-	"elements": [
-		{
-			"from": [0, 8, 0],
-			"to": [16, 10, 16],
-			"faces": {
-				"north": {"uv": [0, 6, 16, 8], "texture": "#particle", "cullface": "north"},
-				"east": {"uv": [0, 6, 16, 8], "texture": "#particle", "cullface": "east"},
-				"south": {"uv": [0, 6, 16, 8], "texture": "#particle", "cullface": "south"},
-				"west": {"uv": [0, 6, 16, 8], "texture": "#particle", "cullface": "west"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#particle"}
-			}
-		}
-	]
+  "textures": {
+    "particle": "block/snow"
+  }
 }

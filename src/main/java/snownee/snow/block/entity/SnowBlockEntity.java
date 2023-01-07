@@ -43,6 +43,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 
 	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		options.renderBottom = !CoreModule.STAIRS.is(state);
 	}
 
 	public BlockState getState() {

@@ -37,7 +37,6 @@ import net.minecraftforge.network.NetworkHooks;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.mixin.ModSnowLayerBlock;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {

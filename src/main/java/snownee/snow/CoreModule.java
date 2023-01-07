@@ -38,8 +38,8 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.SnowClient;
 import snownee.snow.client.FallingSnowRenderer;
+import snownee.snow.client.SnowClient;
 import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalLootEntry;
@@ -89,9 +89,9 @@ public class CoreModule extends AbstractModule {
 
 	public static final KiwiGO<LootPoolEntryType> NORMAL = go(() -> new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register("blizzardStrength", GameRules.Category.MISC, IntegerValueAccess.callCreate(0));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register(SnowRealMagic.MODID + ":blizzardStrength", GameRules.Category.MISC, IntegerValueAccess.callCreate(0));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRules.register("blizzardFrequency", GameRules.Category.MISC, IntegerValueAccess.callCreate(10000));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRules.register(SnowRealMagic.MODID + ":blizzardFrequency", GameRules.Category.MISC, IntegerValueAccess.callCreate(10000));
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)

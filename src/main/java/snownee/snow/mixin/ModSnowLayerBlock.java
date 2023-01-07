@@ -255,9 +255,4 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 		}
 	}
 
-	@Override
-	public double getYOffset() {
-		return -1;
-	}
-
 }
