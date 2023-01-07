@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 
 public class ForgeHookRenderAPI implements RenderAPI {
@@ -37,8 +36,6 @@ public class ForgeHookRenderAPI implements RenderAPI {
 			return false;
 		}
 		matrixStack.pushPose();
-		Vec3 offset = state.getOffset(world, pos);
-		matrixStack.translate(offset.x, offset.y, offset.z);
 		if (yOffset != 0) {
 			matrixStack.translate(-0.001, yOffset, -0.001);
 			matrixStack.scale(1.002f, 1, 1.002f);

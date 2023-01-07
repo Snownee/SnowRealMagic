@@ -14,9 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -37,7 +35,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -249,17 +246,6 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
 			}
 		}
-	}
-
-	@Override
-	public Item asItem() {
-		return Items.SNOW;
-	}
-
-	@Override
-	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
-		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
-		return stack.isEmpty() ? new ItemStack(Items.SNOW) : stack;
 	}
 
 }

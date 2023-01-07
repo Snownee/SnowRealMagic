@@ -11,9 +11,9 @@
     "DoublePlantBlockMixin",
     "ServerLevelMixin",
     "SnowAndFreezeFeatureMixin",
+    "SnowLayerBlockMixin",
     "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin",
-    "ModSnowLayerBlock"
+    "SpreadableSnowyDirtBlockMixin"
   ],
   "client": [
     "BlockModelShaperMixin",

@@ -92,7 +92,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 	public void loadState(CompoundTag data, boolean network) {
 		boolean changed = false;
 		if (data.contains("RO")) {
-			changed = options.update(data.getBoolean("RO"), false);
+			changed = options.update(data.getBoolean("RO"), true);
 			if (changed && network && hasLevel() && level.isClientSide) {
 				requestModelDataUpdate();
 			}

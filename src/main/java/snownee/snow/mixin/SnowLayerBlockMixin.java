@@ -20,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,12 +47,12 @@ import snownee.snow.client.SnowClientConfig;
 import snownee.snow.entity.FallingSnowEntity;
 
 @Mixin(SnowLayerBlock.class)
-public class ModSnowLayerBlock extends Block implements SnowVariant {
+public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
 	@Shadow
 	private static VoxelShape[] SHAPE_BY_LAYER;
 
-	public ModSnowLayerBlock(Block.Properties properties) {
+	public SnowLayerBlockMixin(Block.Properties properties) {
 		super(properties);
 	}
 
@@ -253,6 +255,12 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 				entityIn.setDeltaMovement(entityIn.getDeltaMovement().multiply(d1, 1.0D, d1));
 			}
 		}
+	}
+
+	@Override
+	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
+		return stack.isEmpty() ? new ItemStack(Items.SNOW) : stack;
 	}
 
 }
