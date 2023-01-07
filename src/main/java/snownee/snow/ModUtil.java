@@ -25,11 +25,13 @@ public class ModUtil {
 			return false;
 		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
+		if (!world.isDay())
+			return false;
 		Holder<Biome> biome = world.getBiome(pos);
 		if (sereneseasons && SereneSeasonsCompat.shouldMelt(world, pos, biome)) {
 			return true;
 		}
-		return snowMeltsInWarmBiomes(biome) && !biome.value().shouldSnow(world, pos) && world.canSeeSky(pos);
+		return snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && world.canSeeSky(pos);
 	}
 
 	public static boolean snowMeltsInWarmBiomes(Holder<Biome> biome) {
