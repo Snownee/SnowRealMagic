@@ -2,6 +2,7 @@ package snownee.snow;
 
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Comment;
+import snownee.kiwi.config.KiwiConfig.Path;
 import snownee.kiwi.config.KiwiConfig.Range;
 import snownee.kiwi.loader.Platform;
 
@@ -38,6 +39,9 @@ public final class SnowCommonConfig {
 	public static boolean advancedBlockInteraction = true;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+
+	@Path("integration.accumulationWinterOnly")
+	public static boolean accumulationWinterOnly = false;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowInBlock && !retainOriginalBlocks;

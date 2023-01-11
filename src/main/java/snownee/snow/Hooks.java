@@ -6,6 +6,7 @@ import java.util.function.BiPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -299,15 +300,16 @@ public final class Hooks {
 
 	public static void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		boolean melt;
+		Holder<Biome> biome = worldIn.getBiome(pos);
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (layers == 8) {
 			BlockState upState = worldIn.getBlockState(pos.above());
 			if (upState.getBlock() instanceof SnowLayerBlock) {
 				return;
 			}
-			melt = ModUtil.shouldMelt(worldIn, pos.above());
+			melt = ModUtil.shouldMelt(worldIn, pos.above(), biome);
 		} else {
-			melt = ModUtil.shouldMelt(worldIn, pos);
+			melt = ModUtil.shouldMelt(worldIn, pos, biome);
 		}
 		if (ModUtil.terraforged) {
 			if (melt) {
@@ -323,6 +325,9 @@ public final class Hooks {
 		if (!melt && !SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
 			return;
 		}
+		if (!melt && SnowCommonConfig.accumulationWinterOnly && !ModUtil.isWinter(worldIn, pos, biome)) {
+			return;
+		}
 		if (random.nextInt(8) > 0) {
 			return;
 		}
@@ -332,9 +337,8 @@ public final class Hooks {
 			return;
 		}
 
-		Biome biome = worldIn.getBiome(pos).value();
 		boolean flag = false;
-		if (worldIn.isRaining() && biome.coldEnoughToSnow(pos)) {
+		if (worldIn.isRaining() && biome.value().coldEnoughToSnow(pos)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
 				flag = true;
 			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
@@ -355,7 +359,6 @@ public final class Hooks {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private static void accumulate(Level world, BlockPos pos, BlockState centerState, BiPredicate<LevelAccessor, BlockPos> filter, boolean accumulate) {
 		int i = centerState.getValue(SnowLayerBlock.LAYERS);
 		for (int j = 0; j < 8; j++) {

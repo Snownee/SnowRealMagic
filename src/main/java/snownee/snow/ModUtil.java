@@ -20,25 +20,28 @@ public class ModUtil {
 		}
 	}
 
-	public static boolean shouldMelt(Level world, BlockPos pos) {
+	public static boolean shouldMelt(Level level, BlockPos pos) {
+		return shouldMelt(level, pos, level.getBiome(pos));
+	}
+
+	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
+		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10)
 			return true;
-		if (!world.isDay())
+		if (!level.isDay())
 			return false;
-		Holder<Biome> biome = world.getBiome(pos);
-		if (sereneseasons && SereneSeasonsCompat.shouldMelt(world, pos, biome)) {
+		if (sereneseasons && SereneSeasonsCompat.shouldMelt(level, pos, biome)) {
 			return true;
 		}
-		return snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && world.canSeeSky(pos);
+		return snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(pos);
 	}
 
 	public static boolean snowMeltsInWarmBiomes(Holder<Biome> biome) {
 		return SnowCommonConfig.snowMeltsInWarmBiomes;
 	}
 
-	public static boolean iceMeltsInWarmBiomes(Biome biome) {
+	public static boolean iceMeltsInWarmBiomes(Holder<Biome> biome) {
 		return sereneseasons;
 	}
 
@@ -47,6 +50,13 @@ public class ModUtil {
 			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
 		}
 		return biome.value().coldEnoughToSnow(pos);
+	}
+
+	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
+		if (sereneseasons) {
+			return SereneSeasonsCompat.isWinter(level, pos, biome);
+		}
+		return false;
 	}
 
 }

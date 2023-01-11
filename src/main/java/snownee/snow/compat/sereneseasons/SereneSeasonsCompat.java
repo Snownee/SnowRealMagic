@@ -47,4 +47,11 @@ public class SereneSeasonsCompat {
 		return SeasonHooks.getBiomeTemperature(level, biome, pos) < 0.15F;
 	}
 
+	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
+		if (!BiomeConfig.enablesSeasonalEffects(biome)) {
+			return false;
+		}
+		return SeasonHelper.getSeasonState(level).getSeason() == Season.WINTER;
+	}
+
 }
