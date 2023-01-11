@@ -5,9 +5,11 @@ import static snownee.snow.CoreModule.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import snownee.kiwi.datagen.provider.KiwiBlockTagsProvider;
 import snownee.kiwi.datagen.provider.TagsProviderHelper;
+import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 
 public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
@@ -40,6 +42,9 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
 		tag(BOTTOM_SNOW).addTag(BlockTags.SNOW);
 		helper.add(BOTTOM_SNOW, FENCE, FENCE2, FENCE_GATE, WALL);
+
+		tag(CoreModule.NOT_CONTAINABLES);
+		tag(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK);
 	}
 
 }

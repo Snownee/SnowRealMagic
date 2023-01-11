@@ -374,12 +374,15 @@ public final class Hooks {
 				continue;
 			}
 
-			if (!Blocks.SNOW.canSurvive(state, world, pos2)) {
+			if (!canSnowSurvive(state, world, pos2)) {
 				continue;
 			}
 			int l;
 			if (state.getBlock() instanceof SnowLayerBlock) {
 				l = state.getValue(SnowLayerBlock.LAYERS);
+				if (accumulate && state.is(CoreModule.CANNOT_ACCUMULATE_ON)) {
+					continue;
+				}
 			} else {
 				l = 0;
 			}
