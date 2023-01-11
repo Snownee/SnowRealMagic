@@ -2,7 +2,10 @@ package snownee.snow.datagen;
 
 import static snownee.snow.CoreModule.*;
 
-import net.minecraft.data.DataGenerator;
+import java.util.concurrent.CompletableFuture;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,13 +19,13 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 
 	private final TagsProviderHelper<Block> helper;
 
-	public SnowBlockTagsProvider(DataGenerator pGenerator, ExistingFileHelper existingFileHelper) {
-		super(pGenerator, SnowRealMagic.MODID, existingFileHelper);
+	public SnowBlockTagsProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+		super(packOutput, lookupProvider, SnowRealMagic.MODID, existingFileHelper);
 		helper = new TagsProviderHelper<>(this);
 	}
 
 	@Override
-	protected void addTags() {
+	protected void addTags(HolderLookup.Provider provider) {
 		helper.getModEntries().filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).forEach(this::processTools);
 
 		helper.add(BlockTags.MINEABLE_WITH_SHOVEL, TILE_BLOCK);

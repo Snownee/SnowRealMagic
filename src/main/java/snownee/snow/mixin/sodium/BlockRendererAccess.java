@@ -17,7 +17,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-@Mixin(BlockRenderer.class)
+@Mixin(value = BlockRenderer.class, remap = false)
 public interface BlockRendererAccess {
 
 	@Invoker

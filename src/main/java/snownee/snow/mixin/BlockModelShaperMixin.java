@@ -1,5 +1,6 @@
 package snownee.snow.mixin;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +14,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -34,8 +35,11 @@ public class BlockModelShaperMixin {
 	private ModelManager modelManager;
 
 	@SuppressWarnings("deprecation")
-	@Inject(at = @At("TAIL"), method = "rebuildCache")
-	private void srm_rebuildCache(CallbackInfo ci) {
+	@Inject(at = @At("TAIL"), method = "replaceCache")
+	private void srm_replaceCache(Map<BlockState, BakedModel> map, CallbackInfo ci) {
+		if (!(modelByStateCache instanceof IdentityHashMap)) {
+			modelByStateCache = new IdentityHashMap<>(modelByStateCache);
+		}
 		Map<BakedModel, BakedModel> transform = Maps.newHashMap();
 		/*
 		List<Block> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
@@ -55,7 +59,7 @@ public class BlockModelShaperMixin {
 				continue;
 			}
 			for (ResourceLocation override : def.overrideBlock) {
-				Block block = Registry.BLOCK.get(override);
+				Block block = BuiltInRegistries.BLOCK.get(override);
 				if (block == null || block == Blocks.AIR) {
 					continue;
 				}

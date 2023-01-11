@@ -1,6 +1,7 @@
 package snownee.snow.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.block.entity.BaseBlockEntity;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
@@ -99,12 +99,12 @@ public class SnowBlockEntity extends BaseBlockEntity {
 		}
 		if (data.contains("Block")) {
 			ResourceLocation id = Util.RL(data.getString("Block"));
-			Block block = ForgeRegistries.BLOCKS.getValue(id);
+			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setState(block.defaultBlockState(), network);
 			}
 		} else {
-			changed |= setState(NbtUtils.readBlockState(data.getCompound("State")), network);
+			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
 		}
 		if (changed && network) {
 			refresh();
@@ -113,7 +113,7 @@ public class SnowBlockEntity extends BaseBlockEntity {
 
 	public void saveState(CompoundTag data, boolean network) {
 		if (getState() == getState().getBlock().defaultBlockState()) {
-			data.putString("Block", ForgeRegistries.BLOCKS.getKey(getState().getBlock()).toString());
+			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
 		} else {
 			data.put("State", NbtUtils.writeBlockState(getState()));
 		}

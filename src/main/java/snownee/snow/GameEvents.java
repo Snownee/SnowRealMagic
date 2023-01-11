@@ -12,11 +12,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.items.ItemHandlerHelper;
 import snownee.snow.block.SnowVariant;
 
 @EventBusSubscriber
@@ -24,41 +23,49 @@ public final class GameEvents {
 
 	@SubscribeEvent
 	public static void onItemUse(PlayerInteractEvent.RightClickBlock event) {
-		if (event.getHand() != InteractionHand.MAIN_HAND) {
-			return;
+		InteractionResult result = onItemUse(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+		if (result.consumesAction()) {
+			event.setCanceled(true);
+			event.setCancellationResult(result);
 		}
-		Level worldIn = event.getLevel();
-		BlockPos pos = event.getPos();
+	}
+
+	public static InteractionResult onItemUse(Player player, Level worldIn, InteractionHand hand, BlockHitResult hitResult) {
+		if (hand != InteractionHand.MAIN_HAND) {
+			return InteractionResult.PASS;
+		}
+		BlockPos pos = hitResult.getBlockPos();
 		BlockState state = worldIn.getBlockState(pos);
 		if (!(state.getBlock() instanceof SnowVariant)) {
-			return;
+			return InteractionResult.PASS;
 		}
-		Player player = event.getEntity();
-		if (!ForgeHooks.isCorrectToolForDrops(Blocks.SNOW.defaultBlockState(), player)) {
-			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
-				return;
-			}
-			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
-			worldIn.setBlockAndUpdate(pos, newState);
-			ItemStack snowball = new ItemStack(Items.SNOWBALL);
-			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
-				ItemHandlerHelper.giveItemToPlayer(player, snowball);
-			}
-		} else {
+		if (player.hasCorrectToolForDrops(Blocks.SNOW.defaultBlockState())) {
 			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
 			worldIn.setBlockAndUpdate(pos, newState);
 			if (!player.isCreative() && player instanceof ServerPlayer) {
 				if (newState.canOcclude())
 					pos = pos.above();
 				Block.popResource(worldIn, pos, new ItemStack(Items.SNOWBALL));
-				player.getMainHandItem().hurtAndBreak(1, player, stack -> {
+				ItemStack held = player.getMainHandItem();
+				held.hurtAndBreak(1, player, stack -> {
 					stack.broadcastBreakEvent(InteractionHand.MAIN_HAND);
 				});
 			}
+		} else {
+			if (!player.isSecondaryUseActive() || !SnowCommonConfig.sneakSnowball) {
+				return InteractionResult.PASS;
+			}
+			BlockState newState = ((SnowVariant) state.getBlock()).onShovel(state, worldIn, pos);
+			worldIn.setBlockAndUpdate(pos, newState);
+			ItemStack snowball = new ItemStack(Items.SNOWBALL);
+			if (!player.isCreative() || !player.getInventory().contains(snowball)) {
+				if (!player.addItem(snowball)) {
+					player.drop(snowball, false);
+				}
+			}
 		}
 
-		event.setCanceled(true);
-		event.setCancellationResult(InteractionResult.sidedSuccess(worldIn.isClientSide));
+		return InteractionResult.sidedSuccess(worldIn.isClientSide);
 	}
 
 	public static boolean onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {

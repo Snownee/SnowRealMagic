@@ -19,6 +19,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -222,7 +223,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(BlockGetter worldIn, BlockPos pos, BlockState state, boolean isClient) {
+	public boolean isValidBonemealTarget(LevelReader worldIn, BlockPos pos, BlockState state, boolean isClient) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(worldIn, pos, contained, isClient);

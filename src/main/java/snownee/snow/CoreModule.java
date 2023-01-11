@@ -123,7 +123,7 @@ public class CoreModule extends AbstractModule {
 	@Override
 	protected void gatherData(GatherDataEvent event) {
 		DataGenerator generator = event.getGenerator();
-		SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator, event.getExistingFileHelper());
+		SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
 		generator.addProvider(event.includeServer(), blockTagsProvider);
 	}
 

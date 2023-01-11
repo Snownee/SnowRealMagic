@@ -1,7 +1,7 @@
 package snownee.snow.block.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +28,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 			String idStr = data.getCompound("Items").getString("0");
 			ResourceLocation id = Util.RL(idStr);
 			if (id != null) {
-				Item item = Registry.ITEM.get(id);
+				Item item = BuiltInRegistries.ITEM.get(id);
 				if (item instanceof BlockItem) {
 					Block block = ((BlockItem) item).getBlock();
 					changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
@@ -36,12 +36,12 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 			}
 		} else if (data.contains("Block")) {
 			ResourceLocation id = Util.RL(data.getString("Block"));
-			Block block = Registry.BLOCK.get(id);
+			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
 			}
 		} else {
-			changed |= setState(NbtUtils.readBlockState(data.getCompound("State")), network);
+			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
 		}
 		if (changed && network) {
 			refresh();
@@ -50,7 +50,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	@Override
 	public void saveState(CompoundTag data, boolean network) {
-		data.putString("Block", Registry.BLOCK.getKey(getState().getBlock()).toString());
+		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
 	}
 
 	@SuppressWarnings("deprecation")

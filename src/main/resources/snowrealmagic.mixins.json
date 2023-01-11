@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
+    "FenceGateBlockAccess",
     "IceBlockAccess",
     "IntegerValueAccess",
     "BlockMixin",
@@ -19,6 +20,7 @@
     "BlockModelShaperMixin",
     "BlockRenderDispatcherMixin",
     "CameraMixin",
+    "ModelBakerImplMixinNormalBake",
     "ModelBakeryMixin",
     "ModelManagerMixin",
     "SimpleBakedModelMixin",
