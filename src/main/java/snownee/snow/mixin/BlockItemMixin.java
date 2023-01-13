@@ -41,7 +41,7 @@ public abstract class BlockItemMixin {
 			BlockState state = level.getBlockState(pos);
 			BlockPlaceContext blockContext = new BlockPlaceContext(context);
 			if (Hooks.canContainState(state)) {
-				if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true) && !level.isClientSide && (player == null || !player.isCreative())) {
+				if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide && (player == null || !player.isCreative())) {
 					context.getItemInHand().shrink(1);
 				}
 				ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
@@ -51,7 +51,7 @@ public abstract class BlockItemMixin {
 				pos = pos.relative(context.getClickedFace());
 				state = level.getBlockState(pos);
 				if (Hooks.canContainState(state)) {
-					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true) && !level.isClientSide && (player == null || !player.isCreative())) {
+					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide && (player == null || !player.isCreative())) {
 						context.getItemInHand().shrink(1);
 					}
 					ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));

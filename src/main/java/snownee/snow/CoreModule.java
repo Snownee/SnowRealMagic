@@ -36,7 +36,7 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalLootEntry;
@@ -46,13 +46,13 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
 
-	public static final TagKey<Block> INVALID_SUPPORTERS = blockTag(SnowRealMagic.MODID, "invalid_supporters");
-
 	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
 	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
 
 	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
+
+	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
 
 	//	@NoItem
 	//	@Name("minecraft:snow")
@@ -100,13 +100,13 @@ public class CoreModule extends AbstractModule {
 
 	public static final KiwiGO<LootPoolEntryType> NORMAL = go(() -> new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register("blizzardStrength", GameRules.Category.MISC, GameRuleFactory.createIntRule(0));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(SnowRealMagic.MODID + ":blizzardStrength", GameRules.Category.MISC, GameRuleFactory.createIntRule(0));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register("blizzardFrequency", GameRules.Category.MISC, GameRuleFactory.createIntRule(10000));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register(SnowRealMagic.MODID + ":blizzardFrequency", GameRules.Category.MISC, GameRuleFactory.createIntRule(10000));
 
 	public CoreModule() {
 		if (Platform.isPhysicalClient()) {
-			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(ClientVariables.OVERLAY_MODEL));
+			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(SnowClient.OVERLAY_MODEL));
 		}
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);

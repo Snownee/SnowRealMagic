@@ -6,8 +6,8 @@
   "block.snowrealmagic.wall": "Заснеженная ограда",
   "block.snowrealmagic.fence": "Заснеженный забор",
   "block.snowrealmagic.fence_gate": "Заснеженная калитка",
-  "gamerule.blizzardStrength": "Сила метели",
-  "gamerule.blizzardStrength.description": "Снежные блоки будут падать с неба. 1~8 устанавливает максимальные слои. Добавлено: Snow! Real Magic!",
-  "gamerule.blizzardFrequency": "Частота метели",
-  "gamerule.blizzardFrequency.description": "Возможность делать метель. N/10000 в тик за чанк. Добавлено: Snow! Real Magic!"
+  "gamerule.snowrealmagic:blizzardStrength": "Сила метели",
+  "gamerule.snowrealmagic:blizzardStrength.description": "Снежные блоки будут падать с неба. 1~8 устанавливает максимальные слои. Добавлено: Snow! Real Magic!",
+  "gamerule.snowrealmagic:blizzardFrequency": "Частота метели",
+  "gamerule.snowrealmagic:blizzardFrequency.description": "Возможность делать метель. N/10000 в тик за чанк. Добавлено: Snow! Real Magic!"
 }

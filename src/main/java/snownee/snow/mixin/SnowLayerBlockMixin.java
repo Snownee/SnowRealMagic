@@ -1,7 +1,5 @@
 package snownee.snow.mixin;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -49,12 +47,12 @@ import snownee.snow.client.SnowClientConfig;
 import snownee.snow.entity.FallingSnowEntity;
 
 @Mixin(SnowLayerBlock.class)
-public class ModSnowLayerBlock extends Block implements SnowVariant {
+public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
 	@Shadow
 	private static VoxelShape[] SHAPE_BY_LAYER;
 
-	public ModSnowLayerBlock(Block.Properties properties) {
+	public SnowLayerBlockMixin(Block.Properties properties) {
 		super(properties);
 	}
 
@@ -93,7 +91,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 	@Override
 	@Overwrite
 	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-		return Hooks.canSurvive(state, worldIn, pos, false);
+		return Hooks.canSnowSurvive(state, worldIn, pos);
 	}
 
 	protected int tickRate() {
@@ -137,8 +135,6 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 		}
 		return (SnowCommonConfig.snowAlwaysReplaceable && state.getValue(SnowLayerBlock.LAYERS) < 8) || i == 1;
 	}
-
-	private static final Random RANDOM = new Random();
 
 	@Override
 	@Environment(EnvType.CLIENT)
@@ -203,7 +199,7 @@ public class ModSnowLayerBlock extends Block implements SnowVariant {
 						worldIn.setBlock(pos, state2, 16 | 32);
 						block.setPlacedBy(worldIn, pos, state, player, context.getItemInHand());
 						int i = state.getValue(SnowLayerBlock.LAYERS);
-						if (Hooks.placeLayersOn(worldIn, pos, i, false, context, true) && !player.isCreative()) {
+						if (Hooks.placeLayersOn(worldIn, pos, i, false, context, true, true) && !player.isCreative()) {
 							context.getItemInHand().shrink(1);
 						}
 					}

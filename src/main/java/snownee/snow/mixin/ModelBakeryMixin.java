@@ -19,7 +19,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
 
@@ -46,7 +46,7 @@ public abstract class ModelBakeryMixin {
 		if (def != null && def.model != null) {
 			loadingStack.add(def.model);
 			snowModels.add(def.model);
-			ClientVariables.snowVariantMapping.put(resourceLocation, def);
+			SnowClient.snowVariantMapping.put(resourceLocation, def);
 		} else if (snowModels.contains(resourceLocation)) {
 			topLevelModels.put(resourceLocation, blockModel);
 		}

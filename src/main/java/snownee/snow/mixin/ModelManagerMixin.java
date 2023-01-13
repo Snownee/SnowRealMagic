@@ -12,7 +12,7 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 
 @Mixin(ModelManager.class)
 public class ModelManagerMixin {
@@ -22,6 +22,6 @@ public class ModelManagerMixin {
 	// because some other mods will manually rebuild the cache
 	@Inject(at = @At("HEAD"), method = "reload")
 	private void srm_reload(PreparableReloadListener.PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller profilerFiller, ProfilerFiller profilerFiller2, Executor executor, Executor executor2, CallbackInfoReturnable<CompletableFuture<Void>> ci) {
-		ClientVariables.snowVariantMapping.clear();
+		SnowClient.snowVariantMapping.clear();
 	}
 }

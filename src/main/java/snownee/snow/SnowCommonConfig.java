@@ -1,8 +1,9 @@
 package snownee.snow;
 
+import snownee.kiwi.KiwiModule.Skip;
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Comment;
-import snownee.kiwi.config.KiwiConfig.GameRestart;
+import snownee.kiwi.config.KiwiConfig.Path;
 import snownee.kiwi.config.KiwiConfig.Range;
 import snownee.kiwi.loader.Platform;
 
@@ -10,17 +11,19 @@ import snownee.kiwi.loader.Platform;
 public final class SnowCommonConfig {
 
 	public static boolean placeSnowInBlock = true;
+	public static boolean placeSnowInBlockNaturally = true;
 	public static boolean snowGravity = true;
 	public static boolean snowAlwaysReplaceable = true;
+	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean snowAccumulationDuringSnowstorm = true;
+	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean snowAccumulationDuringSnowfall = false;
 	@Range(min = 1, max = 9)
 	@Comment("9 = Unlimited")
 	public static int snowAccumulationMaxLayers = 8;
-	@GameRestart
+	@Comment("Unavailable if TerraForged mod installed")
 	public static boolean thinnerBoundingBox = true;
 	public static boolean snowMakingIce = true;
-	public static boolean snowOnIce = false;
 	public static boolean snowNeverMelt = false;
 	public static boolean snowMeltsInWarmBiomes = false;
 	@Comment("Should snow melt if layers are more than 1")
@@ -33,8 +36,14 @@ public final class SnowCommonConfig {
 		"If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal via random tick."
 	)
 	public static boolean retainOriginalBlocks = false;
+	@Comment("Simulate some right clicking behaviors like harvesting sweetberry. may have some glitches")
+	public static boolean advancedBlockInteraction = true;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+
+	@Skip
+	@Path("integration.accumulationWinterOnly")
+	public static boolean accumulationWinterOnly = false;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowInBlock && !retainOriginalBlocks;

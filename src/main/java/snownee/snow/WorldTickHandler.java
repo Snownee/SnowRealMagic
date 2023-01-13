@@ -3,6 +3,7 @@ package snownee.snow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.entity.FallingSnowEntity;
+import snownee.snow.mixin.IceBlockAccess;
 
 public class WorldTickHandler {
 
@@ -27,15 +29,26 @@ public class WorldTickHandler {
 		int y = chunk.getPos().getMinBlockZ();
 		MutableBlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(x, 0, y, 15)).mutable();
 
+		//		if (!level.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+		//			return;
+
 		pos.move(Direction.DOWN);
-		Biome biome = level.getBiome(pos).value();
+		Holder<Biome> biomeHolder = level.getBiome(pos);
+		Biome biome = biomeHolder.value();
+		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+		} else if (ModUtil.iceMeltsInWarmBiomes(biomeHolder)) {
+			state = level.getBlockState(pos);
+			if (state.is(Blocks.ICE) && ModUtil.shouldMelt(level, pos, biomeHolder)) {
+				((IceBlockAccess) state.getBlock()).callMelt(state, level, pos);
+				state = level.getBlockState(pos);
+			}
 		}
 
-		BlockState state = null;
 		if (level.isRaining()) {
-			state = level.getBlockState(pos);
+			if (state == null)
+				state = level.getBlockState(pos);
 			int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
 			if (blizzard > 0) {
 				doBlizzard(level, pos, blizzard);
@@ -43,7 +56,7 @@ public class WorldTickHandler {
 			}
 
 			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
-			if (biome$precipitation == Biome.Precipitation.RAIN && biome.coldEnoughToSnow(pos)) {
+			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
 
@@ -52,7 +65,7 @@ public class WorldTickHandler {
 			return;
 		}
 
-		if (!biome.coldEnoughToSnow(pos)) {
+		if (!ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
 			return;
 		}
 		if (!Hooks.canContainState(state)) {
@@ -65,13 +78,13 @@ public class WorldTickHandler {
 			}
 		}
 
-		if (state.isAir() && !Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
+		if (state.isAir() && !Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 			return;
 		}
 		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) >= 10) {
 			return;
 		}
-		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowInBlockNaturally);
 
 		for (int i = 0; i < 5; i++) {
 			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
@@ -81,12 +94,12 @@ public class WorldTickHandler {
 			if (!state.isAir() && !Hooks.canContainState(state)) {
 				break;
 			}
-			if (Hooks.canSurvive(state, level, pos)) {
+			if (Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 				pos.move(Direction.UP);
 				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
 					break;
 				}
-				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3);
+				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowInBlockNaturally);
 				//FIXME I should make snow melts somehow
 			}
 		}

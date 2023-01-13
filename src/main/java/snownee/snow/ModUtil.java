@@ -1,7 +1,7 @@
 package snownee.snow;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.CommonLevelAccessor;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -12,18 +12,36 @@ public class ModUtil {
 	public static boolean terraforged = false;
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 
-	public static boolean shouldMelt(Level world, BlockPos pos) {
-		if (SnowCommonConfig.snowNeverMelt)
-			return false;
-		if (fabricSeasons && world.getBrightness(LightLayer.SKY, pos) > 0 && world.getBiome(pos).value().warmEnoughToRain(pos))
-			return true;
-		if (world.getBrightness(LightLayer.BLOCK, pos) >= 10)
-			return true;
-		Biome biome = world.getBiome(pos).value();
-		return snowMeltsInWarmBiomes(world, biome) && !biome.shouldSnow(world, pos) && world.canSeeSky(pos);
+	public static boolean shouldMelt(Level level, BlockPos pos) {
+		return shouldMelt(level, pos, level.getBiome(pos));
 	}
 
-	public static boolean snowMeltsInWarmBiomes(CommonLevelAccessor level, Biome biome) {
+	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
+		if (SnowCommonConfig.snowNeverMelt)
+			return false;
+		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10)
+			return true;
+		if (!level.isDay())
+			return false;
+		if (snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos)) {
+			return fabricSeasons ? level.getBrightness(LightLayer.SKY, pos) > 0 : level.canSeeSky(pos);
+		}
+		return false;
+	}
+
+	public static boolean snowMeltsInWarmBiomes(Holder<Biome> biome) {
 		return SnowCommonConfig.snowMeltsInWarmBiomes;
+	}
+
+	public static boolean iceMeltsInWarmBiomes(Holder<Biome> biome) {
+		return fabricSeasons;
+	}
+
+	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
+		return biome.value().coldEnoughToSnow(pos);
+	}
+
+	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
+		return false;
 	}
 }

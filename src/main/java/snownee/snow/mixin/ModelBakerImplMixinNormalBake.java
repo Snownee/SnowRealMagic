@@ -13,7 +13,7 @@ import net.minecraft.client.resources.model.ModelBakery.ModelBakerImpl;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowVariantModel;
 
@@ -30,7 +30,7 @@ public class ModelBakerImplMixinNormalBake {
 		if (!(blockModel instanceof SnowVariantModel) || modelState.getClass() != Variant.class) {
 			return;
 		}
-		ModelDefinition def = ClientVariables.snowVariantMapping.get(resourceLocation);
+		ModelDefinition def = SnowClient.snowVariantMapping.get(resourceLocation);
 		if (def != null) {
 			Variant variantState = (Variant) modelState;
 			variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());

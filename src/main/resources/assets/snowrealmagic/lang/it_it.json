@@ -6,6 +6,6 @@
   "block.snowrealmagic.wall": "Muretto coperto di neve",
   "block.snowrealmagic.fence": "Staccionata coperta di neve",
   "block.snowrealmagic.fence_gate": "Cancelletto coperto di neve",
-  "gamerule.blizzardStrength": "Forza della bufera di neve",
-  "gamerule.blizzardStrength.description": "Dei blocchi di neve cadranno dal cielo. Aggiunto da Snow! Real Magic!"
+  "gamerule.snowrealmagic:blizzardStrength": "Forza della bufera di neve",
+  "gamerule.snowrealmagic:blizzardStrength.description": "Dei blocchi di neve cadranno dal cielo. Aggiunto da Snow! Real Magic!"
 }

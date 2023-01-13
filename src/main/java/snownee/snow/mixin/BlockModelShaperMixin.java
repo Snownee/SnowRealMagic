@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.SnowRealMagic;
-import snownee.snow.client.ClientVariables;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowConnectedModel;
 import snownee.snow.client.model.SnowCoveredModel;
@@ -56,7 +56,7 @@ public class BlockModelShaperMixin {
 				modelByStateCache.put(state, snowModel);
 			}
 		}
-		for (ModelDefinition def : ClientVariables.snowVariantMapping.values()) {
+		for (ModelDefinition def : SnowClient.snowVariantMapping.values()) {
 			if (def.overrideBlock == null) {
 				continue;
 			}
@@ -82,8 +82,8 @@ public class BlockModelShaperMixin {
 				SnowRealMagic.LOGGER.error("Cannot handle snow variant override: {}, {}", def.model, override);
 			}
 		}
-		ClientVariables.cachedOverlayModel = null;
-		ClientVariables.cachedSnowModel = null;
+		SnowClient.cachedOverlayModel = null;
+		SnowClient.cachedSnowModel = null;
 	}
 
 }
