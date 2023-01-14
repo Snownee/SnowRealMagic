@@ -22,6 +22,7 @@
     "ModelBakeryMixin",
     "ModelManagerMixin",
     "SimpleBakedModelMixin",
+    "SnowLayerBlockClientMixin",
     "sodium.BlockRendererAccess",
     "sodium.BlockRendererMixin",
     "sereneseasons.RandomUpdateHandlerMixin"
