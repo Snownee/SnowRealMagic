@@ -48,7 +48,7 @@ import snownee.snow.entity.FallingSnowEntity;
 
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
-	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
+	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Block.box(0, 0, 0, 16, 0.001, 16), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
 	@Shadow
 	private static VoxelShape[] SHAPE_BY_LAYER;
 
@@ -267,6 +267,11 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	public double getYOffset() {
 		return -1;
+	}
+
+	@Override
+	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
+		return state.getValue(BlockStateProperties.LAYERS);
 	}
 
 }

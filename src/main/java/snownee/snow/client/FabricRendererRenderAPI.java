@@ -32,12 +32,8 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		Vec3 offset = yOffset == 0 ? state.getOffset(world, pos) : state.getOffset(world, pos).add(0, yOffset, 0);
 		BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 		context.pushTransform(quad -> {
-			if (state.is(Blocks.SNOW)) {
-				if (quad.cullFace() != Direction.DOWN) { // still can be optimized here
-					quad.cullFace(null); // cancel the side cull face
-				} else if (yOffset != 0) { // is slab
-					return false;
-				}
+			if (state.is(Blocks.SNOW) && quad.cullFace() == Direction.DOWN && yOffset != 0) { // is slab
+				return false;
 			}
 			int color = -1;
 			if (quad.colorIndex() != -1) {

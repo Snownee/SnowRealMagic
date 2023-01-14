@@ -17,7 +17,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
@@ -59,19 +58,19 @@ public final class SnowClient {
 			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderBottom && (layer == null || layer == RenderType.solid())) {
-			boolean slab = CoreModule.SLAB.is(state);
-			int layers = CoreModule.TILE_BLOCK.is(state) ? state.getValue(SnowLayerBlock.LAYERS) : 1;
-			BlockState snow = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
-			if (layers == 1) {
-				if (cachedSnowModel == null) {
-					cachedSnowModel = getBlockModel(snow);
+			BlockState snow = state.getBlock() instanceof SnowVariant ? ((SnowVariant) state.getBlock()).getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
+			if (!snow.isAir()) {
+				if (snow == Blocks.SNOW.defaultBlockState()) {
+					if (cachedSnowModel == null) {
+						cachedSnowModel = getBlockModel(snow);
+					}
+					model = cachedSnowModel;
+				} else {
+					model = getBlockModel(snow);
 				}
-				model = cachedSnowModel;
-			} else {
-				model = getBlockModel(snow);
+				double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
+				rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 			}
-			double yOffset = slab ? 0.5 : 0;
-			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) && (!useVariant || CoreModule.TILE_BLOCK.is(state))) {
 			BlockPos pos2 = pos;

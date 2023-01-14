@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
 import snownee.kiwi.block.IKiwiBlock;
+import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
 
 public interface SnowVariant extends IKiwiBlock, FabricBlock {
@@ -58,14 +59,19 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 
 	@Override
 	default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos sourcePos) {
-		if (queryState != null && queryState.is(BlockTags.SNOW)) {
-			BlockState appearance = Blocks.SNOW.defaultBlockState();
-			if (state.hasProperty(BlockStateProperties.LAYERS)) {
-				appearance = appearance.setValue(BlockStateProperties.LAYERS, state.getValue(BlockStateProperties.LAYERS));
-			}
-			return appearance;
+		if (layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
+			return getSnowState(state, level, pos);
 		}
 		return getRaw(state, level, pos);
+	}
+
+	default int layers(BlockState state, BlockGetter world, BlockPos pos) {
+		return world.getBlockEntity(pos, CoreModule.TEXTURE_TILE.get()).map(be -> be.options.renderBottom ? 1 : 0).orElse(0);
+	}
+
+	default BlockState getSnowState(BlockState state, BlockGetter world, BlockPos pos) {
+		int layers = layers(state, world, pos);
+		return layers == 0 ? Blocks.AIR.defaultBlockState() : Blocks.SNOW.defaultBlockState().setValue(BlockStateProperties.LAYERS, layers);
 	}
 
 }

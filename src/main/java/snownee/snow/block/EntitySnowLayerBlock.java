@@ -37,7 +37,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -57,22 +56,26 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-		shape = Shapes.joinUnoptimized(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos), BooleanOp.OR);
-		return Shapes.join(shape, Shapes.block(), BooleanOp.AND);
+		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
+			return Shapes.or(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+		});
 	}
 
 	@Override
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
-		shape = Shapes.joinUnoptimized(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos), BooleanOp.OR);
-		return Shapes.join(shape, Shapes.block(), BooleanOp.AND);
+		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+			VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
+			return Shapes.or(shape, getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+		});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		VoxelShape shape = super.getShape(state, worldIn, pos, context);
-		return Shapes.join(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context), BooleanOp.OR);
+		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+			VoxelShape shape = super.getShape(state, worldIn, pos, context);
+			return Shapes.or(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
+		});
 	}
 
 	@Override

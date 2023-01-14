@@ -51,9 +51,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.lighting.LayerLightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
-import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
 
 public final class Hooks {
@@ -64,7 +62,7 @@ public final class Hooks {
 		BlockPos blockPos2 = blockPos.above();
 		BlockState blockState2 = viewableWorld.getBlockState(blockPos2);
 		if (blockState2.is(CoreModule.BOTTOM_SNOW)) {
-			if (blockState2.getBlock() == Blocks.SNOW) {
+			if (blockState2.is(Blocks.SNOW)) {
 				return SnowCommonConfig.sustainGrassIfLayerMoreThanOne || blockState2.getValue(SnowLayerBlock.LAYERS) == 1;
 			}
 			return true;
@@ -75,22 +73,22 @@ public final class Hooks {
 	}
 
 	public static InteractionResult shouldRenderFaceSnow(BlockState state, BlockGetter level, BlockPos pos, Direction direction, BlockPos relativePos) {
-		if (!state.canOcclude()) {
-			return InteractionResult.PASS;
-		}
-		pos = pos.relative(direction);
-		state = level.getBlockState(pos);
-		if (!state.hasBlockEntity() || !(state.getBlock() instanceof SnowVariant)) {
-			return InteractionResult.PASS;
-		}
-		if (direction == Direction.UP) {
-			return InteractionResult.CONSUME;
-		}
-		BlockEntity blockEntity = level.getBlockEntity(pos);
-		if (blockEntity instanceof SnowCoveredBlockEntity) {
-			if (!((SnowCoveredBlockEntity) blockEntity).getState().canOcclude())
-				return InteractionResult.SUCCESS;
-		}
+		//		if (!state.canOcclude()) {
+		//			return InteractionResult.PASS;
+		//		}
+		//		pos = pos.relative(direction);
+		//		state = level.getBlockState(pos);
+		//		if (!state.hasBlockEntity() || !(state.getBlock() instanceof SnowVariant)) {
+		//			return InteractionResult.PASS;
+		//		}
+		//		if (direction == Direction.UP) {
+		//			return InteractionResult.CONSUME;
+		//		}
+		//		BlockEntity blockEntity = level.getBlockEntity(pos);
+		//		if (blockEntity instanceof SnowCoveredBlockEntity) {
+		//			if (!((SnowCoveredBlockEntity) blockEntity).getState().canOcclude())
+		//				return InteractionResult.SUCCESS;
+		//		}
 		return InteractionResult.PASS;
 	}
 

@@ -36,8 +36,8 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.SnowClient;
 import snownee.snow.client.FallingSnowRenderer;
+import snownee.snow.client.SnowClient;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalLootEntry;
 
@@ -54,25 +54,18 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
 
-	//	@NoItem
-	//	@Name("minecraft:snow")
-	//	public static final ModSnowLayerBlock BLOCK = new ModSnowLayerBlock(blockProp(Blocks.SNOW));
-
 	@NoItem
 	@Name("snow")
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW)));
-
-	//	@Name("minecraft:snow")
-	//	public static final SnowLayerBlockItem ITEM = new SnowLayerBlockItem(BLOCK);
+	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).randomTicks()));
+	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).randomTicks().dynamicShape()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).randomTicks()));
+	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).randomTicks().dynamicShape()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
@@ -84,11 +77,11 @@ public class CoreModule extends AbstractModule {
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).randomTicks()));
+	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).randomTicks().dynamicShape()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).randomTicks()));
+	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).randomTicks().dynamicShape()));
 
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);
