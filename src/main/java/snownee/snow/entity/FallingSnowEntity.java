@@ -99,8 +99,7 @@ public class FallingSnowEntity extends Entity {
 				} else if (!pos.equals(prevPos)) {
 					prevPos = pos;
 					BlockState state = level.getBlockState(pos);
-					Block block = state.getBlock();
-					if (SnowCommonConfig.snowMakingIce && block == Blocks.WATER) {
+					if (SnowCommonConfig.snowMakingIce && state.is(Blocks.WATER)) {
 						level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 						discard();
 						return;
