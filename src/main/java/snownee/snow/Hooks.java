@@ -64,7 +64,7 @@ public final class Hooks {
 		BlockPos blockPos2 = blockPos.above();
 		BlockState blockState2 = viewableWorld.getBlockState(blockPos2);
 		if (blockState2.is(CoreModule.BOTTOM_SNOW)) {
-			if (blockState2.getBlock() == Blocks.SNOW) {
+			if (blockState2.is(Blocks.SNOW)) {
 				return SnowCommonConfig.sustainGrassIfLayerMoreThanOne || blockState2.getValue(SnowLayerBlock.LAYERS) == 1;
 			}
 			return true;
@@ -180,7 +180,6 @@ public final class Hooks {
 		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
 			return false;
 		}
-		Block block = state.getBlock();
 		if (state.isAir()) {
 			world.setBlock(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			return true;
@@ -188,6 +187,7 @@ public final class Hooks {
 		if (!canConvert) {
 			return false;
 		}
+		Block block = state.getBlock();
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			world.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			BlockEntity tile = world.getBlockEntity(pos);
