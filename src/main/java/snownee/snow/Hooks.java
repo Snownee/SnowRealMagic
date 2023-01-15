@@ -12,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
@@ -51,9 +50,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.lighting.LayerLightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
-import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
 
 public final class Hooks {
@@ -72,26 +69,6 @@ public final class Hooks {
 			int i = LayerLightEngine.getLightBlockInto(viewableWorld, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(viewableWorld, blockPos2));
 			return i < viewableWorld.getMaxLightLevel();
 		}
-	}
-
-	public static InteractionResult shouldRenderFaceSnow(BlockState state, BlockGetter level, BlockPos pos, Direction direction, BlockPos relativePos) {
-		if (!state.canOcclude()) {
-			return InteractionResult.PASS;
-		}
-		pos = pos.relative(direction);
-		state = level.getBlockState(pos);
-		if (!state.hasBlockEntity() || !(state.getBlock() instanceof SnowVariant)) {
-			return InteractionResult.PASS;
-		}
-		if (direction == Direction.UP) {
-			return InteractionResult.CONSUME;
-		}
-		BlockEntity blockEntity = level.getBlockEntity(pos);
-		if (blockEntity instanceof SnowCoveredBlockEntity) {
-			if (!((SnowCoveredBlockEntity) blockEntity).getState().canOcclude())
-				return InteractionResult.SUCCESS;
-		}
-		return InteractionResult.PASS;
 	}
 
 	public static boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {

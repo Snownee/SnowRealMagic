@@ -4,11 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
@@ -17,6 +21,19 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	@SuppressWarnings("deprecation")
 	public SnowStairsBlock(Properties properties) {
 		super(Blocks.STONE.defaultBlockState(), properties);
+	}
+
+	@Override
+	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+		return super.getShape(blockState, blockGetter, blockPos, collisionContext);
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+			VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
+			return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
+		});
 	}
 
 	@Override
@@ -52,5 +69,10 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	@Override
 	public boolean isRandomlyTicking(BlockState state) {
 		return true;
+	}
+
+	@Override
+	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
+		return 0;
 	}
 }

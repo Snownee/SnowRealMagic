@@ -73,12 +73,12 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return BOTTOM_SHAPE;
+		return BOTTOM_RENDER_SHAPE;
 	}
 
 	@Override
-	public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
-		return BOTTOM_RENDER_SHAPE;
+	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+		return BOTTOM_SHAPE;
 	}
 
 	@Override
