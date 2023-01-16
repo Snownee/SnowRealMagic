@@ -79,6 +79,11 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
+	public VoxelShape getOcclusionShape(BlockState p_60578_, BlockGetter p_60579_, BlockPos p_60580_) {
+		return super.getShape(p_60578_, p_60579_, p_60580_, CollisionContext.empty());
+	}
+
+	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
 		if (useContext.getItemInHand().is(Blocks.SNOW.asItem())) {
 			return super.canBeReplaced(state, useContext);

@@ -23,6 +23,7 @@
     "ModelBakerImplMixinNormalBake",
     "ModelBakeryMixin",
     "SimpleBakedModelMixin",
+    "SnowLayerBlockClientMixin",
     "ModelManagerMixin",
     "ClientPacketListenerMixin"
   ],
