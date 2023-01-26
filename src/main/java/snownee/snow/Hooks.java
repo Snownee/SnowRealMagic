@@ -315,7 +315,7 @@ public final class Hooks {
 		}
 
 		boolean flag = false;
-		if (worldIn.isRaining() && biome.value().coldEnoughToSnow(pos)) {
+		if (worldIn.isRaining() && ModUtil.coldEnoughToSnow(worldIn, pos, biome)) {
 			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
 				flag = true;
 			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
