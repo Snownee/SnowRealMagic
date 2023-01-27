@@ -7,12 +7,14 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
+import snownee.snow.block.WatcherSnowVariant;
 
 public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
@@ -39,6 +41,9 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
+				if (!network && block instanceof WatcherSnowVariant) {
+					options.renderBottom = data.getBoolean("RB");
+				}
 			}
 		} else {
 			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
@@ -51,6 +56,12 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	@Override
 	public void saveState(CompoundTag data, boolean network) {
 		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
+		if (!network && getBlockState().getBlock() instanceof WatcherSnowVariant variant) {
+			if (options.renderBottom) {
+				variant.updateOptions(getBlockState(), level, worldPosition, options); // data fix
+				data.putBoolean("RB", options.renderBottom);
+			}
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -66,6 +77,13 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 		if (hasLevel() && level.isClientSide) {
 			setChanged();
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
+		}
+	}
+
+	public static void updateOptions(LevelAccessor level, BlockPos pos) {
+		if (level.getBlockEntity(pos) instanceof SnowCoveredBlockEntity be) {
+			BlockState state = be.getBlockState();
+			((WatcherSnowVariant) state.getBlock()).updateOptions(state, level, pos, be.options);
 		}
 	}
 

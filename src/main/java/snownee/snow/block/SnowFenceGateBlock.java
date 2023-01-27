@@ -1,6 +1,7 @@
 package snownee.snow.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -9,7 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -77,12 +78,13 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 	}
 
 	@Override
-	public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPos2, boolean bl) {
+	public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor level, BlockPos blockPos, BlockPos blockPos2) {
 		adjustSounds(blockState, level, blockPos);
-		super.neighborChanged(blockState, level, blockPos, block, blockPos2, bl);
+		SnowCoveredBlockEntity.updateOptions(level, blockPos);
+		return super.updateShape(blockState, direction, blockState2, level, blockPos, blockPos2);
 	}
 
-	private void adjustSounds(BlockState blockState, Level level, BlockPos blockPos) {
+	private void adjustSounds(BlockState blockState, LevelAccessor level, BlockPos blockPos) {
 		BlockState raw = getRaw(blockState, level, blockPos);
 		if (raw.getBlock() instanceof FenceGateBlock) {
 			FenceGateBlockAccess rawFenceGate = (FenceGateBlockAccess) raw.getBlock();
@@ -91,10 +93,5 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 			fenceGate.setCloseSound(rawFenceGate.getCloseSound());
 		}
 	}
-
-	//	@Override
-	//	public float getPlayerRelativeBlockHardness(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
-	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
-	//	}
 
 }
