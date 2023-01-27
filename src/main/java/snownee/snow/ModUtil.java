@@ -3,7 +3,6 @@ package snownee.snow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
@@ -27,10 +26,10 @@ public class ModUtil {
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10)
-			return true;
 		if (!level.isDay())
 			return false;
+		if (SnowCommonConfig.snowNaturalMelt)
+			return true;
 		if (sereneseasons && SereneSeasonsCompat.shouldMelt(level, pos, biome)) {
 			return true;
 		}
