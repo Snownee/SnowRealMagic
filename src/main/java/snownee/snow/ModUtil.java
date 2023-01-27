@@ -29,8 +29,8 @@ public class ModUtil {
 			return false;
 		if (!level.isDay())
 			return false;
-		if (sereneseasons && SereneSeasonsCompat.shouldMelt(level, pos, biome))
-			return true;
+		if (sereneseasons)
+			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		if (snowAndIceMeltInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
 			return true;
 		if (layers == 1) {
