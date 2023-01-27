@@ -7,12 +7,14 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
+import snownee.snow.block.WatcherSnowVariant;
 
 public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
@@ -66,6 +68,20 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 		if (hasLevel() && level.isClientSide) {
 			setChanged();
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
+		}
+	}
+
+	@Override
+	public void onLoad() {
+		if (!level.isClientSide && getBlockState().getBlock() instanceof WatcherSnowVariant)
+			updateOptions(level, worldPosition);
+		super.onLoad();
+	}
+
+	public static void updateOptions(Level level, BlockPos pos) {
+		if (level.getBlockEntity(pos) instanceof SnowCoveredBlockEntity be) {
+			BlockState state = be.getBlockState();
+			((WatcherSnowVariant) state.getBlock()).updateOptions(state, level, pos, be.options);
 		}
 	}
 

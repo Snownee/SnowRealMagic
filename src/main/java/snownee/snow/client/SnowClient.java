@@ -50,9 +50,9 @@ public final class SnowClient {
 	}
 
 	public static boolean renderHook(BlockAndTintGetter world, BlockPos pos, BlockState state, BlockState camo, Options options, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, RenderAPI api) {
-		if (state.getBlock() instanceof WatcherSnowVariant) {
-			if (layer == null || layer == RenderType.solid()) {
-				((WatcherSnowVariant) state.getBlock()).updateOptions(state, world, pos, options);
+		if (layer == null || layer == RenderType.solid()) {
+			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
+				watcher.updateOptions(state, world, pos, options);
 			}
 		}
 		boolean rendered = false;
