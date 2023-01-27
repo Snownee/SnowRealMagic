@@ -19,10 +19,10 @@ public class ModUtil {
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10)
-			return true;
 		if (!level.isDay())
 			return false;
+		if (SnowCommonConfig.snowNaturalMelt)
+			return true;
 		if (snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos)) {
 			return fabricSeasons ? level.getBrightness(LightLayer.SKY, pos) > 0 : level.canSeeSky(pos);
 		}

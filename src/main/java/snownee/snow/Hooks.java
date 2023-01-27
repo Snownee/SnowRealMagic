@@ -50,6 +50,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.lighting.LayerLightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
+import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
 
@@ -275,59 +276,61 @@ public final class Hooks {
 	}
 
 	public static void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		boolean melt;
+		if (ModUtil.terraforged) {
+			return;
+		}
 		Holder<Biome> biome = worldIn.getBiome(pos);
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		if (layers == 8) {
-			BlockState upState = worldIn.getBlockState(pos.above());
-			if (upState.getBlock() instanceof SnowLayerBlock) {
+		boolean meltByTemperature = false;
+		boolean meltByBrightness = false;
+		if (!SnowCommonConfig.snowNeverMelt) {
+			if (layers == 8) {
+				BlockState upState = worldIn.getBlockState(pos.above());
+				if (upState.getBlock() instanceof SnowLayerBlock) {
+					return;
+				}
+				meltByTemperature = ModUtil.shouldMelt(worldIn, pos.above(), biome);
+			} else {
+				meltByTemperature = ModUtil.shouldMelt(worldIn, pos, biome);
+			}
+			meltByBrightness = worldIn.getBrightness(LightLayer.BLOCK, pos) >= 10;
+		}
+		if (!meltByBrightness && !meltByTemperature) {
+			if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
 				return;
 			}
-			melt = ModUtil.shouldMelt(worldIn, pos.above(), biome);
-		} else {
-			melt = ModUtil.shouldMelt(worldIn, pos, biome);
-		}
-		if (ModUtil.terraforged) {
-			if (melt) {
-				if (CoreModule.TILE_BLOCK.is(state)) {
-					GameEvents.onDestroyedByPlayer(worldIn, null, pos, state, worldIn.getBlockEntity(pos));
-				} else {
-					Block.dropResources(state, worldIn, pos);
-					worldIn.removeBlock(pos, false);
-				}
+			if (SnowCommonConfig.accumulationWinterOnly && !ModUtil.isWinter(worldIn, pos, biome)) {
+				return;
 			}
-			return;
-		}
-		if (!melt && !SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
-			return;
-		}
-		if (!melt && SnowCommonConfig.accumulationWinterOnly && !ModUtil.isWinter(worldIn, pos, biome)) {
-			return;
 		}
 		if (random.nextInt(8) > 0) {
 			return;
 		}
-		BlockPos height = worldIn.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
-
-		if (height.getY() > pos.getY()) {
-			return;
-		}
-
-		boolean flag = false;
-		if (worldIn.isRaining() && ModUtil.coldEnoughToSnow(worldIn, pos, biome)) {
-			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
-				flag = true;
-			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
-				flag = true;
+		if (!meltByBrightness) {
+			BlockPos height = worldIn.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
+			if (height.getY() > pos.getY()) {
+				return;
 			}
 		}
 
-		if (flag && layers < SnowCommonConfig.snowAccumulationMaxLayers) {
-			accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) < 10, true);
-		} else if (!SnowCommonConfig.snowNeverMelt && melt || SnowCommonConfig.snowNaturalMelt && !worldIn.isRaining()) {
+		boolean accumulate = false;
+		if (!meltByBrightness && worldIn.isRaining() && ModUtil.coldEnoughToSnow(worldIn, pos, biome)) {
+			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
+				accumulate = true;
+			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && worldIn.isThundering()) {
+				accumulate = true;
+			}
+		}
+
+		if (accumulate) {
+			if (layers < SnowCommonConfig.snowAccumulationMaxLayers) {
+				accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) < 10, true);
+			}
+		} else if (meltByBrightness || meltByTemperature) {
 			if (layers == 1) {
-				if (melt || SnowCommonConfig.snowAccumulationMaxLayers > 8 && worldIn.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock) {
-					worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+				if (meltByBrightness || SnowCommonConfig.snowAccumulationMaxLayers > 8 && worldIn.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock) {
+					SnowVariant snow = (SnowVariant) state.getBlock();
+					worldIn.setBlockAndUpdate(pos, snow.getRaw(state, worldIn, pos));
 				}
 			} else {
 				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.above()).getBlock() instanceof SnowLayerBlock), false);
