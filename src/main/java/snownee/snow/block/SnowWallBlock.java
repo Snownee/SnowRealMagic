@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -11,6 +13,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
 public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
 
@@ -50,9 +53,9 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 		}
 	}
 
-	//	@Override
-	//	public float getPlayerRelativeBlockHardness(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
-	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
-	//	}
+	@Override
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean p_60514_) {
+		SnowCoveredBlockEntity.updateOptions(level, pos);
+	}
 
 }

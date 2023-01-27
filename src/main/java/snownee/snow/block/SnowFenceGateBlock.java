@@ -78,9 +78,8 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 
 	@Override
 	public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPos2, boolean bl) {
-		if (!level.isClientSide) {
-			adjustSounds(blockState, level, blockPos);
-		}
+		adjustSounds(blockState, level, blockPos);
+		SnowCoveredBlockEntity.updateOptions(level, blockPos);
 		super.neighborChanged(blockState, level, blockPos, block, blockPos2, bl);
 	}
 
@@ -93,10 +92,5 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 			fenceGate.setCloseSound(rawFenceGate.getCloseSound());
 		}
 	}
-
-	//	@Override
-	//	public float getPlayerRelativeBlockHardness(BlockState state, Player player, BlockGetter worldIn, BlockPos pos) {
-	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
-	//	}
 
 }
