@@ -1,6 +1,12 @@
 {
   "multipart": [
     {
+      "__comment": "make it render anyway",
+      "apply": {
+        "model": "minecraft:block/air"
+      }
+    },
+    {
       "when": {
         "up": "true",
         "west": "none|low",
