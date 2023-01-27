@@ -1,12 +1,6 @@
 {
   "multipart": [
     {
-      "__comment": "make it render anyway",
-      "apply": {
-        "model": "minecraft:block/air"
-      }
-    },
-    {
       "when": {
         "up": "true",
         "west": "none|low",
@@ -55,6 +49,12 @@
         "model": "snowrealmagic:block/wall_side",
         "y": 270,
         "uvlock": true
+      }
+    },
+    {
+      "__comment": "make it render anyway",
+      "apply": {
+        "model": "minecraft:block/air"
       }
     }
   ]
