@@ -27,10 +27,13 @@ public class SnowTile extends TileEntity {
 	}
 
 	public void setState(IBlockState state) {
-		this.state = state;
-		if (world != null && !world.isRemote) {
-			IBlockState blockState = world.getBlockState(pos);
-			world.markAndNotifyBlock(pos, null, blockState, blockState, 11);
+		if (this.state != state) {
+			this.state = state;
+			if (world != null) {
+				markDirty();
+				IBlockState blockState = world.getBlockState(pos);
+				world.markAndNotifyBlock(pos, null, blockState, blockState, 7);
+			}
 		}
 	}
 
@@ -83,12 +86,6 @@ public class SnowTile extends TileEntity {
 	@Override
 	public final void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
-	}
-
-	@Override
-	public void invalidate() {
-//		System.out.println("111");
-		super.invalidate();
 	}
 
 }
