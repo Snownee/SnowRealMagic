@@ -280,6 +280,9 @@ public final class Hooks {
 		if (ModUtil.terraforged) {
 			return;
 		}
+		if (random.nextInt(8) > 0) {
+			return;
+		}
 		Holder<Biome> biome = worldIn.getBiome(pos);
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		boolean meltByTemperature = false;
@@ -290,22 +293,18 @@ public final class Hooks {
 				if (upState.getBlock() instanceof SnowLayerBlock) {
 					return;
 				}
-				meltByTemperature = ModUtil.shouldMelt(worldIn, pos.above(), biome);
-			} else {
-				meltByTemperature = ModUtil.shouldMelt(worldIn, pos, biome);
 			}
-			meltByBrightness = worldIn.getBrightness(LightLayer.BLOCK, pos) >= 10;
+			meltByTemperature = ModUtil.shouldMelt(worldIn, pos, biome, layers);
+			meltByBrightness = worldIn.getBrightness(LightLayer.BLOCK, pos) > 11;
 		}
-		if (!meltByBrightness && !meltByTemperature) {
+		boolean melt = meltByTemperature || meltByBrightness;
+		if (!melt) {
 			if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
 				return;
 			}
 			if (SnowCommonConfig.accumulationWinterOnly && !ModUtil.isWinter(worldIn, pos, biome)) {
 				return;
 			}
-		}
-		if (random.nextInt(8) > 0) {
-			return;
 		}
 		if (!meltByBrightness) {
 			BlockPos height = worldIn.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
@@ -325,14 +324,12 @@ public final class Hooks {
 
 		if (accumulate) {
 			if (layers < SnowCommonConfig.snowAccumulationMaxLayers) {
-				accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) < 10, true);
+				accumulate(worldIn, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) <= 10, true);
 			}
-		} else if (meltByBrightness || meltByTemperature) {
+		} else if (melt) {
 			if (layers == 1) {
-				if (meltByBrightness || SnowCommonConfig.snowAccumulationMaxLayers > 8 && worldIn.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock) {
-					SnowVariant snow = (SnowVariant) state.getBlock();
-					worldIn.setBlockAndUpdate(pos, snow.getRaw(state, worldIn, pos));
-				}
+				SnowVariant snow = (SnowVariant) state.getBlock();
+				worldIn.setBlockAndUpdate(pos, snow.getRaw(state, worldIn, pos));
 			} else {
 				accumulate(worldIn, pos, state, (w, p) -> !(w.getBlockState(p.above()).getBlock() instanceof SnowLayerBlock), false);
 			}

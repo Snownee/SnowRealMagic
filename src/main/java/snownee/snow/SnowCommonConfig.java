@@ -24,7 +24,7 @@ public final class SnowCommonConfig {
 	public static boolean thinnerBoundingBox = true;
 	public static boolean snowMakingIce = true;
 	public static boolean snowNeverMelt = false;
-	public static boolean snowMeltsInWarmBiomes = false;
+	public static boolean snowAndIceMeltInWarmBiomes = false;
 	@Comment("Should snow melt if layers are more than 1")
 	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
 	public static boolean snowReduceFallDamage = true;
