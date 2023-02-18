@@ -25,11 +25,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.MinecraftForgeClient;
 import snownee.snow.BufferBuilderDuck;
+import snownee.snow.ModConfig;
 import snownee.snow.SnowTile;
-
-import snownee.snow.compat.NoTreePunchingCompat;
-import snownee.snow.compat.PyrotechCompat;
-import snownee.snow.compat.PyrotechUBCCompat;
 
 @Mixin(BlockRendererDispatcher.class)
 public abstract class MixinBlockRendererDispatcher {
@@ -58,7 +55,7 @@ public abstract class MixinBlockRendererDispatcher {
 						//matrixStackIn.push();
 						IBakedModel model = getModelForState(state);
 						state = state.getBlock().getExtendedState(state, world, pos);
-						boolean translate = (NoTreePunchingCompat.isRock(state.getBlock()) || PyrotechCompat.isRock(state.getBlock()) || PyrotechUBCCompat.isRock(state.getBlock()));
+						boolean translate = ModConfig.yOffsetBlocksSet.contains(state.getBlock().getRegistryName());
 						if (translate) {
 							((BufferBuilderDuck) bufferBuilderIn).translateY(0.125);
 						}

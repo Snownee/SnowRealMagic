@@ -43,17 +43,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import snownee.snow.compat.BiomesOPlentyCompat;
-import snownee.snow.compat.DefiledLandsCompat;
-import snownee.snow.compat.FerdinandsFlowersCompat;
-import snownee.snow.compat.GreeneryCompat;
-import snownee.snow.compat.HarvestCraftCompat;
-import snownee.snow.compat.NoTreePunchingCompat;
-import snownee.snow.compat.PlantsCompat;
-import snownee.snow.compat.PyrotechCompat;
-import snownee.snow.compat.PyrotechUBCCompat;
-import snownee.snow.compat.WeeeFlowersCompat;
-import snownee.snow.compat.XLFoodModCompat;
 
 public class ModSnowBlock extends BlockSnow {
 	protected static final AxisAlignedBB[] SNOW_AABB_MAGIC = new AxisAlignedBB[] { new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.3125D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.4375D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5D, 1.0D) };
@@ -287,14 +276,14 @@ public class ModSnowBlock extends BlockSnow {
 		}
 		if (accumulate) {
 			//			world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
-			if (i < 8 && placeLayersOn(world, pos, 1, false, false, 3)) {
+			if (i < 8 && placeLayersOn(world, pos, 1, false, false, 2)) {
 				AxisAlignedBB aabb = new AxisAlignedBB(pos);
 				for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, aabb)) {
 					entity.setPositionAndUpdate(entity.posX, entity.posY + (ModConfig.thinnerBoundingBox ? 0.0625D : 0.125D), entity.posZ);
 				}
 			}
 		} else {
-			world.setBlockState(pos, centerState.withProperty(LAYERS, i - 1));
+			world.setBlockState(pos, centerState.withProperty(LAYERS, i - 1), 2);
 		}
 	}
 
@@ -559,6 +548,6 @@ public class ModSnowBlock extends BlockSnow {
 	}
 
 	public static boolean isCompatBlock(Block block) {
-		return NoTreePunchingCompat.isRock(block) || XLFoodModCompat.isPlant(block) || BiomesOPlentyCompat.isPlantOrGate(block) || HarvestCraftCompat.isGarden(block) || WeeeFlowersCompat.isFlower(block) || PlantsCompat.isPlant(block) || FerdinandsFlowersCompat.isFlower(block) || PyrotechCompat.isRock(block) || PyrotechUBCCompat.isRock(block) || GreeneryCompat.isPlant(block) || DefiledLandsCompat.isDefiledPlant(block);
+		return ModConfig.snowLoggableBlocksSet.contains(block.getRegistryName());
 	}
 }
