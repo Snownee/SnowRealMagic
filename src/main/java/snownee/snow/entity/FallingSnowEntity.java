@@ -39,6 +39,8 @@ import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.ModSnowBlock;
 
+import javax.annotation.Nonnull;
+
 public class FallingSnowEntity extends Entity {
 	public int fallTime;
 	private BlockPos prevPos;
@@ -72,16 +74,14 @@ public class FallingSnowEntity extends Entity {
 		size = new EntitySize(0.98f, 0.1225f * layers, true);
 	}
 
-	@Override
-	public EntitySize getSize(Pose poseIn) {
+	@Nonnull
+    @Override
+	public EntitySize getSize(@Nonnull Pose poseIn) {
 		return size;
 	}
 
 	@Override
 	public void tick() {
-		//        this.prevPosX = this.posX;
-		//        this.prevPosY = this.posY;
-		//        this.prevPosZ = this.posZ;
 
 		++fallTime;
 
@@ -210,7 +210,8 @@ public class FallingSnowEntity extends Entity {
 		compound.putInt("Layers", layers);
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public IPacket<?> createSpawnPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}

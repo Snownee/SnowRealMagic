@@ -2,7 +2,6 @@ package snownee.snow;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,7 +14,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -53,21 +51,12 @@ public final class GameEvents {
 				if (newState.isSolid())
 					pos = pos.up();
 				Block.spawnAsEntity(worldIn, pos, new ItemStack(Items.SNOWBALL));
-				player.getHeldItemMainhand().damageItem(1, player, stack -> {
-					stack.sendBreakAnimation(Hand.MAIN_HAND);
-				});
+				player.getHeldItemMainhand().damageItem(1, player, stack -> stack.sendBreakAnimation(Hand.MAIN_HAND));
 			}
 		}
 
 		event.setCanceled(true);
 		event.setCancellationResult(ActionResultType.SUCCESS);
-	}
-
-	@SubscribeEvent
-	public static void onPlaceBlock(EntityPlaceEvent event) {
-		Entity entity = event.getEntity();
-		if (entity instanceof PlayerEntity) {
-		}
 	}
 
 	@SubscribeEvent

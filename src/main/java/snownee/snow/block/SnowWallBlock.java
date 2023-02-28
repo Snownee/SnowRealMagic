@@ -11,6 +11,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
 
 	public SnowWallBlock(Properties properties) {
@@ -18,14 +20,14 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
 	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+	public float getPlayerRelativeBlockHardness(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
 		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	}
 

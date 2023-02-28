@@ -42,6 +42,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	public ModSnowTileBlock(Block.Properties properties) {
 		super(properties);
@@ -57,8 +59,9 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		return new SnowTile();
 	}
 
+	@Nonnull
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
+	public BlockRenderType getRenderType(@Nonnull BlockState state) {
 		return BlockRenderType.MODEL;
 	}
 
@@ -69,8 +72,9 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		return VoxelShapes.combineAndSimplify(shape, VoxelShapes.fullCube(), IBooleanFunction.AND);
 	}
 
+	@Nonnull
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
 		VoxelShape shape = super.getShape(state, worldIn, pos, context);
 		return VoxelShapes.combineAndSimplify(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context), IBooleanFunction.OR);
 	}
@@ -102,7 +106,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	}
 
 	@Override
-	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+	public boolean allowsMovement(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull PathType type) {
 		return getRaw(state, worldIn, pos).allowsMovement(worldIn, pos, type);
 	}
 
@@ -119,8 +123,9 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		}
 	}
 
+	@Nonnull
 	@Override
-	public PushReaction getPushReaction(BlockState state) {
+	public PushReaction getPushReaction(@Nonnull BlockState state) {
 		return PushReaction.BLOCK;
 	}
 
@@ -139,13 +144,14 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public String getTranslationKey() {
 		return CoreModule.BLOCK.getTranslationKey();
 	}
 
 	@Override
-	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+	public void onEntityCollision(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
 		if (entityIn instanceof LivingEntity) {
 			if (!worldIn.isRemote && worldIn.getDifficulty() != Difficulty.PEACEFUL) {
 				if (getRaw(state, worldIn, pos).getBlock() instanceof WitherRoseBlock) {
@@ -200,7 +206,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
+	public void onBlockClicked(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player) {
 		if (worldIn.isRemote) {
 			return;
 		}
@@ -212,7 +218,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 				int layers = state.get(LAYERS);
 				worldIn.setBlockState(pos, CoreModule.BLOCK.getDefaultState().with(LAYERS, layers));
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -225,21 +231,21 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 	}
 
 	@Override
-	public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient) {
+	public boolean canGrow(@Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, boolean isClient) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		return block instanceof IGrowable && ((IGrowable) block).canGrow(worldIn, pos, contained, isClient);
 	}
 
 	@Override
-	public boolean canUseBonemeal(World worldIn, Random rand, BlockPos pos, BlockState state) {
+	public boolean canUseBonemeal(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull BlockState state) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		return block instanceof IGrowable && ((IGrowable) block).canUseBonemeal(worldIn, rand, pos, contained);
 	}
 
 	@Override
-	public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state) {
+	public void grow(@Nonnull ServerWorld worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull BlockState state) {
 		BlockState contained = getRaw(state, worldIn, pos);
 		Block block = contained.getBlock();
 		if (block instanceof IGrowable) {
@@ -251,6 +257,7 @@ public class ModSnowTileBlock extends ModSnowBlock implements IGrowable {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public Item asItem() {
 		return CoreModule.ITEM;

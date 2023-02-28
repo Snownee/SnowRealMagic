@@ -24,6 +24,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowTile;
 
+import javax.annotation.Nonnull;
+
 public class NormalLootEntry extends StandaloneLootEntry {
 
 	private NormalLootEntry(int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
@@ -32,7 +34,7 @@ public class NormalLootEntry extends StandaloneLootEntry {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void func_216154_a(Consumer<ItemStack> consumer, LootContext context) {
+	protected void func_216154_a(@Nonnull Consumer<ItemStack> consumer, LootContext context) {
 		TileEntity tile = context.get(LootParameters.BLOCK_ENTITY);
 		if (tile instanceof SnowTile) {
 			BlockState state = ((SnowTile) tile).getState();
@@ -43,7 +45,7 @@ public class NormalLootEntry extends StandaloneLootEntry {
 					LootContext lootcontext = builder.withParameter(LootParameters.BLOCK_STATE, state).build(LootParameterSets.BLOCK);
 					ServerWorld serverworld = lootcontext.getWorld();
 					LootTable loottable = serverworld.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
-					loottable.generate(lootcontext).forEach(consumer::accept);
+					loottable.generate(lootcontext).forEach(consumer);
 				}
 			}
 		}
@@ -53,6 +55,7 @@ public class NormalLootEntry extends StandaloneLootEntry {
 		return builder(NormalLootEntry::new);
 	}
 
+	@Nonnull
 	@Override
 	public LootPoolEntryType func_230420_a_() {
 		return CoreModule.NORMAL;
@@ -60,12 +63,13 @@ public class NormalLootEntry extends StandaloneLootEntry {
 
 	public static class Serializer extends StandaloneLootEntry.Serializer<NormalLootEntry> {
 		@Override
-		public void func_230422_a_(JsonObject json, NormalLootEntry lootEntry, JsonSerializationContext context) {
-			super.func_230422_a_(json, lootEntry, context);
+		public void doSerialize(@Nonnull JsonObject json, @Nonnull NormalLootEntry lootEntry, @Nonnull JsonSerializationContext context) {
+			super.doSerialize(json, lootEntry, context);
 		}
 
+		@Nonnull
 		@Override
-		protected NormalLootEntry func_212829_b_(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
+		protected NormalLootEntry deserialize(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context, int weightIn, int qualityIn, @Nonnull ILootCondition[] conditionsIn, @Nonnull ILootFunction[] functionsIn) {
 			return new NormalLootEntry(weightIn, qualityIn, conditionsIn, functionsIn);
 		}
 	}

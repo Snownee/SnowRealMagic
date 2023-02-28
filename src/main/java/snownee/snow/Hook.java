@@ -41,8 +41,7 @@ public final class Hook {
 		}
 		TileEntity blockEntity = level.getTileEntity(pos);
 		if (blockEntity instanceof SnowTextureTile) {
-			if (!((SnowTextureTile) blockEntity).getState().isSolid())
-				return true;
+			return !((SnowTextureTile) blockEntity).getState().isSolid();
 		}
 		return false;
 	}

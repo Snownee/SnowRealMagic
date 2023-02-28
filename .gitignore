@@ -1,14 +1,5 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
 # idea
 out
-classes
 *.ipr
 *.iws
 *.iml
@@ -19,8 +10,9 @@ build
 .gradle
 
 # other
-eclipse
-run/*
-!run/scripts
-/logs
-/.factorypath
+run
+classes
+
+# Files from Forge MDK
+forge*changelog.txt
+logs/latest.log

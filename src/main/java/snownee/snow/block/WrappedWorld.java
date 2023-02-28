@@ -26,27 +26,30 @@ import net.minecraft.world.storage.ISpawnWorldInfo;
 import net.minecraft.world.storage.MapData;
 import snownee.snow.CoreModule;
 
+import javax.annotation.Nonnull;
+
 public class WrappedWorld extends World {
 
 	protected World world;
 
 	public WrappedWorld(World world) {
-		super((ISpawnWorldInfo) world.getWorldInfo(), world.func_234923_W_(), world.func_230315_m_(), world::getProfiler, world.isRemote, world.func_234925_Z_(), 0L);
+		super((ISpawnWorldInfo) world.getWorldInfo(), world.getDimensionKey(), world.getDimensionType(), world::getProfiler, world.isRemote, world.isDebug(), 0L);
 		this.world = world;
 	}
 
+	@Nonnull
 	@Override
 	public AbstractChunkProvider getChunkProvider() {
 		return world.getChunkProvider();
 	}
 
 	@Override
-	public TileEntity getTileEntity(BlockPos pos) {
+	public TileEntity getTileEntity(@Nonnull BlockPos pos) {
 		return null;
 	}
 
 	@Override
-	public boolean setBlockState(BlockPos pos, BlockState newState, int flags) {
+	public boolean setBlockState(@Nonnull BlockPos pos, @Nonnull BlockState newState, int flags) {
 		if (ModSnowBlock.canContainState(newState)) {
 			BlockState oldState = world.getBlockState(pos);
 			if (oldState.getBlock() instanceof ModSnowBlock) {
@@ -56,8 +59,9 @@ public class WrappedWorld extends World {
 		return world.setBlockState(pos, newState, flags);
 	}
 
+	@Nonnull
 	@Override
-	public BlockState getBlockState(BlockPos pos) {
+	public BlockState getBlockState(@Nonnull BlockPos pos) {
 		BlockState state = world.getBlockState(pos);
 		if (state.isIn(CoreModule.TILE_BLOCK)) {
 			state = CoreModule.TILE_BLOCK.getRaw(state, world, pos);
@@ -66,40 +70,43 @@ public class WrappedWorld extends World {
 	}
 
 	@Override
-	public int getLight(BlockPos pos) {
+	public int getLight(@Nonnull BlockPos pos) {
 		return world.getLight(pos);
 	}
 
 	@Override
-	public void notifyBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
+	public void notifyBlockUpdate(@Nonnull BlockPos pos, @Nonnull BlockState oldState, @Nonnull BlockState newState, int flags) {
 		world.notifyBlockUpdate(pos, oldState, newState, flags);
 	}
 
+	@Nonnull
 	@Override
 	public ITickList<Block> getPendingBlockTicks() {
 		return world.getPendingBlockTicks();
 	}
 
+	@Nonnull
 	@Override
 	public ITickList<Fluid> getPendingFluidTicks() {
 		return world.getPendingFluidTicks();
 	}
 
 	@Override
-	public void playEvent(PlayerEntity player, int type, BlockPos pos, int data) {
+	public void playEvent(PlayerEntity player, int type, @Nonnull BlockPos pos, int data) {
 	}
 
+	@Nonnull
 	@Override
 	public List<? extends PlayerEntity> getPlayers() {
 		return world.getPlayers();
 	}
 
 	@Override
-	public void playSound(PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch) {
+	public void playSound(PlayerEntity player, double x, double y, double z, @Nonnull SoundEvent soundIn, @Nonnull SoundCategory category, float volume, float pitch) {
 	}
 
 	@Override
-	public void playMovingSound(PlayerEntity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {
+	public void playMovingSound(PlayerEntity p_217384_1_, @Nonnull Entity p_217384_2_, @Nonnull SoundEvent p_217384_3_, @Nonnull SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {
 	}
 
 	@Override
@@ -108,7 +115,7 @@ public class WrappedWorld extends World {
 	}
 
 	@Override
-	public MapData getMapData(String mapName) {
+	public MapData getMapData(@Nonnull String mapName) {
 		return null;
 	}
 
@@ -119,7 +126,7 @@ public class WrappedWorld extends World {
 	}
 
 	@Override
-	public void registerMapData(MapData mapDataIn) {
+	public void registerMapData(@Nonnull MapData mapDataIn) {
 	}
 
 	@Override
@@ -128,39 +135,45 @@ public class WrappedWorld extends World {
 	}
 
 	@Override
-	public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
+	public void sendBlockBreakProgress(int breakerId, @Nonnull BlockPos pos, int progress) {
 	}
 
+	@Nonnull
 	@Override
 	public Scoreboard getScoreboard() {
 		return world.getScoreboard();
 	}
 
+	@Nonnull
 	@Override
 	public RecipeManager getRecipeManager() {
 		return world.getRecipeManager();
 	}
 
+	@Nonnull
 	@Override
 	public DynamicRegistries func_241828_r() {
 		return world.func_241828_r();
 	}
 
+	@Nonnull
 	@Override
 	public Biome getNoiseBiomeRaw(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
 		return world.getNoiseBiomeRaw(p_225604_1_, p_225604_2_, p_225604_3_);
 	}
 
 	@Override
-	public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_) {
+	public float func_230487_a_(@Nonnull Direction p_230487_1_, boolean p_230487_2_) {
 		return world.func_230487_a_(p_230487_1_, p_230487_2_);
 	}
 
+	@Nonnull
 	@Override
 	public ITagCollectionSupplier getTags() {
 		return world.getTags();
 	}
 
+	@Nonnull
 	@Override
 	public BiomeManager getBiomeManager() {
 		return world.getBiomeManager();

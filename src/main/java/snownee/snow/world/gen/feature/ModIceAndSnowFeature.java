@@ -21,6 +21,8 @@ import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.ModSnowBlock;
 
+import javax.annotation.Nonnull;
+
 public class ModIceAndSnowFeature extends IceAndSnowFeature {
 
 	public ModIceAndSnowFeature(Codec<NoFeatureConfig> codec) {
@@ -28,7 +30,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
 	}
 
 	@Override
-	public boolean /*place*/ func_241855_a(ISeedReader worldIn, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
+	public boolean generate(@Nonnull ISeedReader worldIn, @Nonnull ChunkGenerator generator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull NoFeatureConfig config) {
 		BlockPos.Mutable blockpos = new BlockPos.Mutable();
 		BlockPos.Mutable blockpos1 = new BlockPos.Mutable();
 

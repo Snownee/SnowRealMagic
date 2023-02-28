@@ -2,6 +2,7 @@ package snownee.snow;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +55,7 @@ public class ModUtil {
 
 	public static boolean snowMeltsInWarmBiomes(Biome biome) {
 		if (enablesSeasonalEffects != null) {
-			RegistryKey<Biome> biomeKey = RegistryKey.func_240903_a_(Registry.BIOME_KEY, biome.getRegistryName());
+			RegistryKey<Biome> biomeKey = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, Objects.requireNonNull(biome.getRegistryName()));
 			try {
 				return (boolean) enablesSeasonalEffects.invoke(null, biomeKey);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

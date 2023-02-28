@@ -97,9 +97,9 @@ public class CoreModule extends AbstractModule {
 	@Skip
 	public static final LootPoolEntryType NORMAL = Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, SnowRealMagic.MODID + ":normal", new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
-	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.func_234903_a_("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
+	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.register("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
 
-	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_FREQUENCY = GameRules.func_234903_a_("blizzardFrequency", GameRules.Category.MISC, GameRules.IntegerValue.create(10000));
+	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_FREQUENCY = GameRules.register("blizzardFrequency", GameRules.Category.MISC, GameRules.IntegerValue.create(10000));
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
@@ -118,24 +118,5 @@ public class CoreModule extends AbstractModule {
 	public void registerExtraModel(ModelRegistryEvent event) {
 		ModelLoader.addSpecialModel(OVERLAY_MODEL);
 	}
-
-	//	@SubscribeEvent
-	//	@OnlyIn(Dist.CLIENT)
-	//	public void onBlockTint(ColorHandlerEvent.Block event) {
-	//		if (!SnowClientConfig.colorTint)
-	//			return;
-	//		BlockColors blockColors = event.getBlockColors();
-	//		blockColors.register((state, world, pos, index) -> {
-	//			if (world == null || pos == null) {
-	//				return -1;
-	//			}
-	//			Block block = state.getBlock();
-	//			if (block instanceof ISnowVariant) {
-	//				BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
-	//				return blockColors.getColor(raw, world, pos, index); // getColor
-	//			}
-	//			return -1;
-	//		}, SLAB, STAIRS, WALL, FENCE, FENCE2, FENCE_GATE);
-	//	}
 
 }

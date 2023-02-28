@@ -1,5 +1,6 @@
 package snownee.snow.block;
 
+import java.util.Objects;
 import java.util.Random;
 
 import net.minecraft.block.BlockState;
@@ -15,6 +16,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVariant {
 
 	@SuppressWarnings("deprecation")
@@ -23,7 +26,7 @@ public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVar
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
 		if (state.hasTileEntity() && state.getBlock() != newState.getBlock()) {
 			worldIn.removeTileEntity(pos);
 		}
@@ -31,24 +34,24 @@ public class SnowStairsBlock extends StairsBlock implements WaterLoggableSnowVar
 	}
 
 	@Override
-	public boolean ticksRandomly(BlockState state) {
+	public boolean ticksRandomly(@Nonnull BlockState state) {
 		return true;
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		return super.getStateForPlacement(context).with(HALF, Half.BOTTOM);
+	public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
+		return Objects.requireNonNull(super.getStateForPlacement(context)).with(HALF, Half.BOTTOM);
 	}
 
 	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+	public float getPlayerRelativeBlockHardness(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
 		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	}
 

@@ -12,6 +12,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
@@ -29,14 +31,14 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
 	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+	public float getPlayerRelativeBlockHardness(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
 		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	}
 

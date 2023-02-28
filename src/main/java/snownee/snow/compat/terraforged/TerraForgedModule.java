@@ -26,7 +26,7 @@ public class TerraForgedModule extends AbstractModule {
 	public static void freezeGround(IWorld world, IChunk chunk, Biome biome, BlockPos.Mutable snowPos, BlockPos.Mutable underPos) {
 		if (!biome.doesSnowGenerate(world, snowPos) && ModIceAndSnowFeature.placeAdditional(biome, world, snowPos)) {
 			if (chunk instanceof ChunkPrimer) {
-				((ChunkPrimer) chunk).deferredTileEntities.remove(snowPos);
+				((ChunkPrimer) chunk).getDeferredTileEntities().remove(snowPos);
 			}
 			BlockState blockstate = world.getBlockState(underPos);
 			if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {

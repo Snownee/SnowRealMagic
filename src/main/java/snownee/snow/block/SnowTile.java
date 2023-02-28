@@ -16,6 +16,9 @@ import snownee.kiwi.tile.BaseTile;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class SnowTile extends BaseTile {
 
 	public static class Options {
@@ -61,7 +64,7 @@ public class SnowTile extends BaseTile {
 		}
 		this.state = state;
 		if (hasWorld()) {
-			if (world.isRemote) {
+			if (Objects.requireNonNull(world).isRemote) {
 				getModelData().setData(BLOCKSTATE, state);
 				onStateChanged();
 			}
@@ -82,7 +85,7 @@ public class SnowTile extends BaseTile {
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT compound) {
+	public void read(@Nonnull BlockState state, @Nonnull CompoundNBT compound) {
 		super.read(state, compound);
 		loadState(state, compound, false);
 	}
@@ -96,7 +99,7 @@ public class SnowTile extends BaseTile {
 		boolean changed = false;
 		if (data.contains("RO")) {
 			changed = options.update(data.getBoolean("RO"), false);
-			if (changed && network && hasWorld() && world.isRemote) {
+			if (changed && network && hasWorld() && Objects.requireNonNull(world).isRemote) {
 				requestModelDataUpdate();
 			}
 		}
@@ -116,7 +119,7 @@ public class SnowTile extends BaseTile {
 
 	public void saveState(CompoundNBT data, boolean network) {
 		if (getState() == getState().getBlock().getDefaultState()) {
-			data.putString("Block", getState().getBlock().getRegistryName().toString());
+			data.putString("Block", Objects.requireNonNull(getState().getBlock().getRegistryName()).toString());
 		} else {
 			data.put("State", NBTUtil.writeBlockState(getState()));
 		}
@@ -125,14 +128,16 @@ public class SnowTile extends BaseTile {
 		}
 	}
 
-	@Override
-	public CompoundNBT write(CompoundNBT compound) {
+	@Nonnull
+    @Override
+	public CompoundNBT write(@Nonnull CompoundNBT compound) {
 		super.write(compound);
 		saveState(compound, false);
 		return compound;
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	protected CompoundNBT writePacketData(CompoundNBT data) {
 		saveState(data, true);
 		return data;
@@ -143,7 +148,8 @@ public class SnowTile extends BaseTile {
 		return new AxisAlignedBB(pos);
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public IModelData getModelData() {
 		if (modelData == null) {
 			modelData = new ModelDataMap.Builder().withInitial(BLOCKSTATE, state).withInitial(OPTIONS, options).build();

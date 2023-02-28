@@ -11,14 +11,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 
+import javax.annotation.Nonnull;
+
 public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
 	@Override
-	default boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+	default boolean canContainFluid(@Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Fluid fluidIn) {
 		return fluidIn == Fluids.WATER;
 	}
 
 	@Override
-	default boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+	default boolean receiveFluid(@Nonnull IWorld worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull FluidState fluidStateIn) {
 		BlockState raw = getRaw(state, worldIn, pos);
 		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
 			if (!worldIn.isRemote()) {
@@ -31,8 +33,9 @@ public interface WaterLoggableSnowVariant extends SnowVariant, IWaterLoggable {
 		}
 	}
 
-	@Override
-	default Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
+	@Nonnull
+    @Override
+	default Fluid pickupFluid(@Nonnull IWorld worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state) {
 		return Fluids.EMPTY;
 	}
 

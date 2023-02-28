@@ -31,7 +31,7 @@ public class MixinDoublePlantBlock {
 	@Final
 	public static EnumProperty<DoubleBlockHalf> HALF;
 
-	@Inject(method = "func_241471_b_", at = @At("TAIL"))
+	@Inject(method = "removeBottomHalf", at = @At("TAIL"))
 	private static void srm_deleteBottomHalfDoublePlant(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
 		DoubleBlockHalf doubleblockhalf = state.get(HALF);
 		if (doubleblockhalf == DoubleBlockHalf.UPPER) {

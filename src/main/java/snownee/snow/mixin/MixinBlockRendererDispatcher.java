@@ -1,5 +1,6 @@
 package snownee.snow.mixin;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -86,7 +87,7 @@ public abstract class MixinBlockRendererDispatcher {
 			if (canRender) {
 				matrixStackIn.push();
 				if (blockStateIn.hasProperty(SnowBlock.LAYERS)) {
-					String namespace = state.getBlock().getRegistryName().getNamespace();
+					String namespace = Objects.requireNonNull(state.getBlock().getRegistryName()).getNamespace();
 					if ("projectvibrantjourneys".equals(namespace) || "foragecraft".equals(namespace)) {
 						if (blockStateIn.get(SnowBlock.LAYERS) > 3) {
 							matrixStackIn.pop();

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.BiPredicate;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -72,8 +73,9 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		super(properties);
 	}
 
+	@Nonnull
 	@Override
-	public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+	public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
 		if (ModUtil.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
 			return super.getCollisionShape(state, worldIn, pos, context);
 		}
@@ -85,14 +87,15 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+	public void onBlockAdded(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
 		if (SnowCommonConfig.snowGravity) {
 			worldIn.getPendingBlockTicks().scheduleTick(pos, this, tickRate());
 		}
 	}
 
+	@Nonnull
 	@Override
-	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updatePostPlacement(@Nonnull BlockState stateIn, @Nonnull Direction facing, @Nonnull BlockState facingState, @Nonnull IWorld worldIn, @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
 		if (SnowCommonConfig.snowGravity) {
 			worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, tickRate());
 			return stateIn;
@@ -102,7 +105,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+	public boolean isValidPosition(@Nonnull BlockState state, @Nonnull IWorldReader worldIn, @Nonnull BlockPos pos) {
 		return isValidPosition(state, worldIn, pos, false);
 	}
 
@@ -113,9 +116,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 			return true;
 		} else if ((SnowCommonConfig.snowOnIce && (block == Blocks.ICE || block == Blocks.PACKED_ICE)) || !block.isIn(CoreModule.INVALID_SUPPORTERS)) {
 			if (ignoreSelf || state.getMaterial().isReplaceable() || canContainState(state)) {
-				if (block.isIn(BlockTags.LEAVES) || Block.doesSideFillSquare(blockstate.getCollisionShape(worldIn, pos.down()), Direction.UP)) {
-					return true;
-				}
+				return block.isIn(BlockTags.LEAVES) || Block.doesSideFillSquare(blockstate.getCollisionShape(worldIn, pos.down()), Direction.UP);
 			}
 		}
 		return false;
@@ -126,12 +127,12 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void tick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		checkFallable(worldIn, pos, state);
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (ModUtil.shouldMelt(worldIn, pos)) {
 			int layers = state.get(LAYERS);
 			if (layers == 8) {
@@ -286,7 +287,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int originLayers, int layers) {
+	public boolean eventReceived(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, int originLayers, int layers) {
 		double offsetY = originLayers / 8D;
 		layers *= 10;
 		for (int i = 0; i < layers; ++i) {
@@ -303,7 +304,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+	public void animateTick(@Nonnull BlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
 		if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(32) > 0) {
 			return;
 		}
@@ -331,10 +332,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 				return true;
 			}
 		}
-		if (state.getBlock() instanceof SnowBlock && state.get(LAYERS) < 8) {
-			return true;
-		}
-		return false;
+		return state.getBlock() instanceof SnowBlock && state.get(LAYERS) < 8;
 	}
 
 	@Override
@@ -347,9 +345,10 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 		}
 	}
 
+	@Nonnull
 	@Override
 	@SuppressWarnings("deprecation")
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+	public ActionResultType onBlockActivated(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
 		if (player.getHeldItemMainhand().isEmpty() && player.getHeldItemOffhand().isEmpty()) {
 			BlockState stateDown = worldIn.getBlockState(pos.down());
 			if (!(stateDown.getBlock() instanceof SnowBlock) && !stateDown.hasProperty(BlockStateProperties.SNOWY)) {
@@ -510,7 +509,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
+	public void onFallenUpon(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState state = worldIn.getBlockState(pos.down());
 			if (!state.isIn(this))
@@ -527,7 +526,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	}
 
 	@Override
-	public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
+	public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
 		if (SnowCommonConfig.thinnerBoundingBox) {
 			double d0 = Math.abs(entityIn.getMotion().y);
 			if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {

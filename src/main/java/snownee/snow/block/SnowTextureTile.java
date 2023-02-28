@@ -12,6 +12,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 
+import java.util.Objects;
+
 public class SnowTextureTile extends SnowTile {
 
 	public SnowTextureTile() {
@@ -48,7 +50,7 @@ public class SnowTextureTile extends SnowTile {
 
 	@Override
 	public void saveState(CompoundNBT data, boolean network) {
-		data.putString("Block", getState().getBlock().getRegistryName().toString());
+		data.putString("Block", Objects.requireNonNull(getState().getBlock().getRegistryName()).toString());
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class SnowTextureTile extends SnowTile {
 	@Override
 	public void refresh() {
 		super.refresh();
-		if (hasWorld() && world.isRemote) {
+		if (hasWorld() && Objects.requireNonNull(world).isRemote) {
 			BlockState state = getBlockState();
 			world.markAndNotifyBlock(pos, world.getChunkAt(pos), state, state, 11, 512);
 		}

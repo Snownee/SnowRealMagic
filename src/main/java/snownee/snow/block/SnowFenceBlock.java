@@ -10,6 +10,8 @@ import snownee.snow.CoreModule;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
 
 	public SnowFenceBlock(Properties properties) {
@@ -17,13 +19,14 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public String getTranslationKey() {
 		if (this == CoreModule.FENCE) {
 			return super.getTranslationKey();

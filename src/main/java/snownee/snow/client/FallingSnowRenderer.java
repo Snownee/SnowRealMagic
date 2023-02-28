@@ -25,6 +25,8 @@ import net.minecraftforge.client.ForgeHooksClient;
 import snownee.snow.CoreModule;
 import snownee.snow.entity.FallingSnowEntity;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererManager renderManagerIn) {
@@ -34,7 +36,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, MatrixStack matrixstack, IRenderTypeBuffer buffer, int p_225623_6_) {
+	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, @Nonnull MatrixStack matrixstack, @Nonnull IRenderTypeBuffer buffer, int p_225623_6_) {
 		if (entity.getLayers() <= 0 && entity.getLayers() > 8) {
 			return;
 		}
@@ -59,9 +61,10 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);
 	}
 
-	@SuppressWarnings("deprecation")
+    @Nonnull
+    @SuppressWarnings("deprecation")
 	@Override
-	public ResourceLocation getEntityTexture(FallingSnowEntity entity) {
+	public ResourceLocation getEntityTexture(@Nonnull FallingSnowEntity entity) {
 		return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
 	}
 }

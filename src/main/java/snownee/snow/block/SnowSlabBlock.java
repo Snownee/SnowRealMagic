@@ -29,6 +29,8 @@ import net.minecraft.world.server.ServerWorld;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 
+import javax.annotation.Nonnull;
+
 public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
@@ -37,8 +39,9 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 		super(builder);
 	}
 
+	@Nonnull
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+	public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (!(tile instanceof SnowTextureTile)) {
 			return ActionResultType.PASS;
@@ -71,35 +74,37 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 		return ActionResultType.PASS;
 	}
 
+	@Nonnull
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
 		return BOTTOM_SHAPE;
 	}
 
+	@Nonnull
 	@Override
-	public VoxelShape getRenderShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
+	public VoxelShape getRenderShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
 		return BOTTOM_RENDER_SHAPE;
 	}
 
 	@Override
-	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+	public boolean allowsMovement(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull PathType type) {
 		return false;
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(@Nonnull BlockState state, @Nonnull ServerWorld worldIn, @Nonnull BlockPos pos, @Nonnull Random random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockState(pos, getRaw(state, worldIn, pos));
 		}
 	}
 
 	@Override
-	public boolean isTransparent(BlockState state) {
+	public boolean isTransparent(@Nonnull BlockState state) {
 		return true;
 	}
 
 	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
+	public float getPlayerRelativeBlockHardness(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
 		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	}
 
