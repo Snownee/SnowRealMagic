@@ -47,6 +47,8 @@
     {"id":"verdure:fallen_spruce_leaves","required":false},
     {"id":"verdure:fallen_jungle_leaves","required":false},
     {"id":"verdure:fallen_acacia_leaves","required":false},
-    {"id":"verdure:fallen_dark_oak_leaves","required":false}
+    {"id":"verdure:fallen_dark_oak_leaves","required":false},
+    {"id":"twigs:bamboo_leaves","required":false},
+    {"id":"twigs:azalea_flowers","required":false}
   ]
 }
