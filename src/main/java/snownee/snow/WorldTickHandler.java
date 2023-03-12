@@ -38,9 +38,9 @@ public class WorldTickHandler {
 		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
-		} else if (ModUtil.iceMeltsInWarmBiomes(biomeHolder)) {
+		} else if (ModUtil.snowAndIceMeltInWarmBiomes(biomeHolder)) {
 			state = level.getBlockState(pos);
-			if (state.is(Blocks.ICE) && ModUtil.shouldMelt(level, pos, biomeHolder)) {
+			if (state.is(Blocks.ICE) && biome.warmEnoughToRain(pos) && level.canSeeSky(pos.above())) {
 				((IceBlockAccess) state.getBlock()).callMelt(state, level, pos);
 				state = level.getBlockState(pos);
 			}
