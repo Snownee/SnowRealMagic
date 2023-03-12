@@ -41,6 +41,8 @@
     {"id":"natprog:create_ochrum_pebble","required":false},
     {"id":"natprog:create_scorchia_pebble","required":false},
     {"id":"natprog:create_scoria_pebble","required":false},
-    {"id":"natprog:create_veridium_pebble","required":false}
+    {"id":"natprog:create_veridium_pebble","required":false},
+    {"id":"twigs:twig","required":false},
+    {"id":"twigs:pebble","required":false}
   ]
 }
