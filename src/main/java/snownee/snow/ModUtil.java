@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
@@ -20,28 +21,29 @@ public class ModUtil {
 	}
 
 	public static boolean shouldMelt(Level level, BlockPos pos) {
-		return shouldMelt(level, pos, level.getBiome(pos));
+		return shouldMelt(level, pos, level.getBiome(pos), 1);
 	}
 
-	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
+	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
 		if (!level.isDay())
 			return false;
-		if (SnowCommonConfig.snowNaturalMelt)
+		if (sereneseasons && SereneSeasonsCompat.shouldMelt(level, pos, biome))
 			return true;
-		if (sereneseasons && SereneSeasonsCompat.shouldMelt(level, pos, biome)) {
+		if (snowAndIceMeltInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
 			return true;
+		if (layers == 1) {
+			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
+				return false;
+			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock))
+				return false;
 		}
-		return snowMeltsInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(pos);
+		return SnowCommonConfig.snowNaturalMelt;
 	}
 
-	public static boolean snowMeltsInWarmBiomes(Holder<Biome> biome) {
-		return SnowCommonConfig.snowMeltsInWarmBiomes;
-	}
-
-	public static boolean iceMeltsInWarmBiomes(Holder<Biome> biome) {
-		return sereneseasons;
+	public static boolean snowAndIceMeltInWarmBiomes(Holder<Biome> biome) {
+		return sereneseasons || SnowCommonConfig.snowAndIceMeltInWarmBiomes;
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
