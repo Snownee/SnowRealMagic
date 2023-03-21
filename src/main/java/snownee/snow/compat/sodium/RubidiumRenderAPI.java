@@ -54,7 +54,7 @@ public class RubidiumRenderAPI implements RenderAPI {
 			offset = offset.add(0, yOffset, 0);
 			cullSides = false;
 		}
-		LightPipeline lighter = lighters.getLighter(blockRenderer.callGetLightingMode(state, model));
+		LightPipeline lighter = lighters.getLighter(blockRenderer.callGetLightingMode(state, model, world, pos));
 		boolean rendered = false;
 		for (Direction dir : DirectionUtil.ALL_DIRECTIONS) {
 			random.setSeed(seed);

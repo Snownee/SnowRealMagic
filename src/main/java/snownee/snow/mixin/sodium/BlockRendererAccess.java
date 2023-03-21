@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 public interface BlockRendererAccess {
 
 	@Invoker
-	LightMode callGetLightingMode(BlockState state, BakedModel model);
+	LightMode callGetLightingMode(BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos);
 
 	@Invoker
 	void callRenderQuadList(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> sided, Direction dir);
