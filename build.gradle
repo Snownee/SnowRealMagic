@@ -200,7 +200,7 @@ dependencies {
     implementation fg.deobf("curse.maven:serene-seasons-291874:3804257")
     implementation fg.deobf("curse.maven:kiwi-303657:3755791")
     annotationProcessor "curse.maven:kiwi-303657:3755791"
-    implementation fg.deobf("curse.maven:rubidium-574856:4024781")
+    implementation fg.deobf("curse.maven:rubidium-574856:4451888")
     implementation fg.deobf("curse.maven:terraforged-363820:3799083")
     implementation fg.deobf("curse.maven:immersive-weathering-592449:4021620")
 

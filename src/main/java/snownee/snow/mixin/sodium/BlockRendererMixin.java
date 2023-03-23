@@ -174,7 +174,7 @@ public abstract class BlockRendererMixin {
 		if (yOffset != 0) {
 			offset = offset.add(0, yOffset, 0);
 		}
-		LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model));
+		LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model, world, pos));
 
 		boolean rendered = false;
 
@@ -211,7 +211,7 @@ public abstract class BlockRendererMixin {
 	abstract boolean renderModel(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, IModelData modelData);
 
 	@Shadow
-	abstract LightMode getLightingMode(BlockState state, BakedModel model);
+	abstract LightMode getLightingMode(BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos);
 
 	@Shadow
 	abstract void renderQuadList(BlockAndTintGetter world, BlockState state, BlockPos pos, BlockPos origin, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> quads, Direction facing);

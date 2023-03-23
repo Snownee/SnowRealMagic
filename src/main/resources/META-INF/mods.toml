@@ -28,7 +28,14 @@ description="Tweak vanilla snow layer."
     modId="jade"
     mandatory=false
     versionRange="[4.2,)"
-    ordering="BEFORE"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.snowrealmagic]]
+    modId="rubidium"
+    mandatory=false
+    versionRange="[0.5.5,)"
+    ordering="NONE"
     side="BOTH"
 
 [modproperties.snowrealmagic]
