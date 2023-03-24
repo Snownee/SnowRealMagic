@@ -39,6 +39,7 @@ public final class SnowCommonConfig {
 	public static boolean advancedBlockInteraction = true;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+	public static int mobSpawningMaxLayers = 8;
 
 	@Path("integration.accumulationWinterOnly")
 	public static boolean accumulationWinterOnly = false;

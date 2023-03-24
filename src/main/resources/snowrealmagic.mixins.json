@@ -7,6 +7,7 @@
     "FenceGateBlockAccess",
     "IceBlockAccess",
     "IntegerValueAccess",
+    "BlockAccess",
     "BlockMixin",
     "BlockItemMixin",
     "DoublePlantBlockMixin",
