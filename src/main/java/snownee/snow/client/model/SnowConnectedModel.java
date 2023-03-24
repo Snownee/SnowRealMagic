@@ -49,4 +49,9 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 		}
 	}
 
+	@Override
+	public boolean isVanillaAdapter() {
+		return false;
+	}
+
 }
