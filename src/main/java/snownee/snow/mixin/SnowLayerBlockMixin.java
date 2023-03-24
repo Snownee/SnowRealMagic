@@ -221,12 +221,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public void stepOn(Level worldIn, BlockPos pos, BlockState state, Entity entityIn) {
-		if (SnowCommonConfig.thinnerBoundingBox) {
+		if (!SnowCommonConfig.thinnerBoundingBox || !state.is(this))
+			return;
+		int layers = state.getValue(SnowLayerBlock.LAYERS) - 2;
+		if (layers > 0) {
 			double d0 = Math.abs(entityIn.getDeltaMovement().y);
 			if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {
-				if (!state.is(this))
-					return;
-				int layers = state.getValue(SnowLayerBlock.LAYERS) - 1;
 				double d1 = 1 - layers * 0.05f;
 				entityIn.setDeltaMovement(entityIn.getDeltaMovement().multiply(d1, 1.0D, d1));
 			}
