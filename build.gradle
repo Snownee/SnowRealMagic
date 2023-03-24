@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.12.54'
     id 'maven-publish'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -54,10 +55,13 @@ dependencies {
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
-    modImplementation "curse.maven:kiwi-549404:3998272"
-    annotationProcessor "curse.maven:kiwi-549404:3998272"
+    modImplementation "curse.maven:kiwi-549404:4424042"
+    annotationProcessor "curse.maven:kiwi-549404:4424042"
     
-    modImplementation "curse.maven:jade-324717:4096403"
+    modImplementation "curse.maven:jade-324717:4328558"
+    modImplementation "curse.maven:sodium-394468:3957319"
+    modImplementation "curse.maven:indium-459496:3957480"
+    implementation 'org.joml:joml:1.10.4'
 }
 
 loom {
@@ -120,5 +124,23 @@ publishing {
         // Notice: This block does NOT have the same function as the block in the top level.
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
+    }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN") // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    projectId = "iJNje1E8" // This can be the project ID or the slug. Either will work!
+    versionNumber = project.mod_version // You don't need to set this manually. Will fail if Modrinth has this version already
+    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+    gameVersions = ["1.19.2"] // Must be an array, even with only one version
+    loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
+    dependencies { // A special DSL for creating dependencies
+        // scope.type
+        // The scope can be `required`, `optional`, `incompatible`, or `embedded`
+        // The type can either be `project` or `version`
+        required.project "fabric-api"
+        required.project "kiwi"
+        optional.project "cloth-config"
     }
 }
