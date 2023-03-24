@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -18,6 +19,8 @@ import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
@@ -28,6 +31,8 @@ import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.loader.event.ClientInitEvent;
+import snownee.kiwi.loader.event.InitEvent;
+import snownee.snow.mixin.BlockAccess;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
@@ -110,6 +115,17 @@ public class CoreModule extends AbstractModule {
 		}
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
+	}
+
+	@Override
+	protected void init(InitEvent event) {
+		event.enqueueWork(() -> {
+			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
+				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers;
+			};
+			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
+			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
+		});
 	}
 
 	@Override

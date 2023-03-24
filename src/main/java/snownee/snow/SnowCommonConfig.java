@@ -35,6 +35,7 @@ public final class SnowCommonConfig {
 	public static boolean retainOriginalBlocks = false;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+	public static int mobSpawningMaxLayers = 8;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowInBlock && !retainOriginalBlocks;
