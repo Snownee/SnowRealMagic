@@ -2,6 +2,7 @@ package snownee.snow;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -31,7 +32,7 @@ public class ModUtil {
 			return false;
 		if (sereneseasons)
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
-		if (snowAndIceMeltInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
 			return true;
 		if (layers == 1) {
 			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
@@ -42,8 +43,14 @@ public class ModUtil {
 		return SnowCommonConfig.snowNaturalMelt;
 	}
 
-	public static boolean snowAndIceMeltInWarmBiomes(Holder<Biome> biome) {
-		return sereneseasons || SnowCommonConfig.snowAndIceMeltInWarmBiomes;
+	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
+		if (SnowCommonConfig.snowAndIceMeltInWarmBiomes) {
+			return true;
+		}
+		if (sereneseasons) {
+			return SereneSeasonsCompat.isSeasonal(dimension, biome);
+		}
+		return false;
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
