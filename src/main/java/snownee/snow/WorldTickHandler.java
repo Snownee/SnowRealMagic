@@ -36,12 +36,13 @@ public class WorldTickHandler {
 		pos.move(Direction.DOWN);
 		Holder<Biome> biomeHolder = level.getBiome(pos);
 		Biome biome = biomeHolder.value();
+		boolean coldEnoughToSnow = ModUtil.coldEnoughToSnow(level, pos, biomeHolder);
 		BlockState state = null;
 		if (biome.shouldFreeze(level, pos)) {
 			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
-		} else if (ModUtil.snowAndIceMeltInWarmBiomes(biomeHolder)) {
+		} else if (ModUtil.snowAndIceMeltInWarmBiomes(level.dimension(), biomeHolder)) {
 			state = level.getBlockState(pos);
-			if (state.is(Blocks.ICE) && biome.warmEnoughToRain(pos) && level.canSeeSky(pos.above())) {
+			if (state.is(Blocks.ICE) && !coldEnoughToSnow && level.canSeeSky(pos.above())) {
 				((IceBlockAccess) state.getBlock()).callMelt(state, level, pos);
 				state = level.getBlockState(pos);
 			}
@@ -57,7 +58,7 @@ public class WorldTickHandler {
 			}
 
 			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
-			if (biome$precipitation == Biome.Precipitation.RAIN && ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
+			if (biome$precipitation == Biome.Precipitation.RAIN && coldEnoughToSnow) {
 				biome$precipitation = Biome.Precipitation.SNOW;
 			}
 
@@ -66,7 +67,7 @@ public class WorldTickHandler {
 			return;
 		}
 
-		if (!ModUtil.coldEnoughToSnow(level, pos, biomeHolder)) {
+		if (!coldEnoughToSnow) {
 			return;
 		}
 		if (!Hooks.canContainState(state)) {
