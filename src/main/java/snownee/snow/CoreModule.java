@@ -15,6 +15,8 @@ import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,6 +47,7 @@ import snownee.snow.client.SnowClient;
 import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalLootEntry;
+import snownee.snow.mixin.BlockAccess;
 import snownee.snow.mixin.IntegerValueAccess;
 
 @KiwiModule
@@ -110,6 +113,13 @@ public class CoreModule extends AbstractModule {
 	@Override
 	protected void init(InitEvent event) {
 		ModUtil.init();
+		event.enqueueWork(() -> {
+			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
+				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers;
+			};
+			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
+			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
+		});
 	}
 
 	@Override
