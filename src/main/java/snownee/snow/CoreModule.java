@@ -19,6 +19,8 @@ import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import snownee.kiwi.AbstractModule;
@@ -30,6 +32,7 @@ import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.loader.event.ClientInitEvent;
+import snownee.kiwi.loader.event.InitEvent;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
@@ -42,6 +45,7 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalLootEntry;
+import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
@@ -106,6 +110,17 @@ public class CoreModule extends AbstractModule {
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
 		decorators.remove(BuiltInRegistries.BLOCK);
+	}
+
+	@Override
+	protected void init(InitEvent event) {
+		event.enqueueWork(() -> {
+			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
+				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers;
+			};
+			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
+			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
+		});
 	}
 
 	@Override
