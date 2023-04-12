@@ -2,6 +2,7 @@ package snownee.snow;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -22,7 +23,7 @@ public class ModUtil {
 			return false;
 		if (!level.isDay())
 			return false;
-		if (snowAndIceMeltInWarmBiomes(biome) && biome.value().warmEnoughToRain(pos)) {
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos)) {
 			BlockPos pos2 = layers == 8 ? pos.above() : pos;
 			if (fabricSeasons) {
 				return level.getBrightness(LightLayer.SKY, pos2) > 0;
@@ -39,7 +40,7 @@ public class ModUtil {
 		return SnowCommonConfig.snowNaturalMelt;
 	}
 
-	public static boolean snowAndIceMeltInWarmBiomes(Holder<Biome> biome) {
+	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
 		return fabricSeasons || SnowCommonConfig.snowAndIceMeltInWarmBiomes;
 	}
 
