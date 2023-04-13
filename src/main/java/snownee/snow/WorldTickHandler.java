@@ -56,12 +56,10 @@ public class WorldTickHandler {
 				return;
 			}
 
-			Biome.Precipitation biome$precipitation = biome.getPrecipitation();
-			if (biome$precipitation == Biome.Precipitation.RAIN && coldEnoughToSnow) {
-				biome$precipitation = Biome.Precipitation.SNOW;
+			Biome.Precipitation biome$precipitation = biome.getPrecipitationAt(pos);
+			if (biome$precipitation != Biome.Precipitation.NONE) {
+				state.getBlock().handlePrecipitation(state, level, pos, biome$precipitation);
 			}
-
-			state.getBlock().handlePrecipitation(state, level, pos, biome$precipitation);
 		} else {
 			return;
 		}
@@ -85,7 +83,7 @@ public class WorldTickHandler {
 		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) >= 10) {
 			return;
 		}
-		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowInBlockNaturally);
+		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
 
 		for (int i = 0; i < 5; i++) {
 			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
@@ -100,7 +98,7 @@ public class WorldTickHandler {
 				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
 					break;
 				}
-				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowInBlockNaturally);
+				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
 				//FIXME I should make snow melts somehow
 			}
 		}

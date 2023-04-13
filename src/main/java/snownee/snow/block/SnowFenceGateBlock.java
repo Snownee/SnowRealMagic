@@ -3,7 +3,6 @@ package snownee.snow.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -27,7 +27,7 @@ import snownee.snow.mixin.FenceGateBlockAccess;
 public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, WatcherSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
-		super(properties, SoundEvents.FENCE_GATE_CLOSE, SoundEvents.FENCE_GATE_OPEN);
+		super(properties, WoodType.OAK);
 	}
 
 	@Override
@@ -89,8 +89,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 		if (raw.getBlock() instanceof FenceGateBlock) {
 			FenceGateBlockAccess rawFenceGate = (FenceGateBlockAccess) raw.getBlock();
 			FenceGateBlockAccess fenceGate = (FenceGateBlockAccess) blockState.getBlock();
-			fenceGate.setOpenSound(rawFenceGate.getOpenSound());
-			fenceGate.setCloseSound(rawFenceGate.getCloseSound());
+			fenceGate.setType(rawFenceGate.getType());
 		}
 	}
 

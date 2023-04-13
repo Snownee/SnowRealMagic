@@ -1,8 +1,8 @@
 package snownee.snow;
 
 import snownee.kiwi.KiwiModule.Skip;
+import snownee.kiwi.config.ConfigUI;
 import snownee.kiwi.config.KiwiConfig;
-import snownee.kiwi.config.KiwiConfig.Comment;
 import snownee.kiwi.config.KiwiConfig.Path;
 import snownee.kiwi.config.KiwiConfig.Range;
 import snownee.kiwi.loader.Platform;
@@ -10,44 +10,44 @@ import snownee.kiwi.loader.Platform;
 @KiwiConfig
 public final class SnowCommonConfig {
 
-	public static boolean placeSnowInBlock = true;
-	public static boolean placeSnowInBlockNaturally = true;
 	public static boolean snowGravity = true;
-	public static boolean snowAlwaysReplaceable = true;
-	@Comment("Unavailable if TerraForged mod installed")
-	public static boolean snowAccumulationDuringSnowstorm = true;
-	@Comment("Unavailable if TerraForged mod installed")
-	public static boolean snowAccumulationDuringSnowfall = false;
-	@Range(min = 1, max = 9)
-	@Comment("9 = Unlimited")
-	public static int snowAccumulationMaxLayers = 8;
-	@Comment("Unavailable if TerraForged mod installed")
-	public static boolean thinnerBoundingBox = true;
 	public static boolean snowMakingIce = true;
+	public static boolean snowAlwaysReplaceable = true;
+	public static boolean thinnerBoundingBox = true;
 	public static boolean snowNeverMelt = false;
-	public static boolean snowAndIceMeltInWarmBiomes = false;
-	@Comment("Should snow melt if layers are more than 1")
-	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
 	public static boolean snowReduceFallDamage = true;
-	@Comment("block like grass will be generated with snow")
-	public static boolean replaceWorldFeature = true;
 	public static boolean sustainGrassIfLayerMoreThanOne = true;
-	@Comment(
-		"If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal via random tick."
-	)
-	public static boolean retainOriginalBlocks = false;
-	@Comment("Simulate some right clicking behaviors like harvesting sweetberry. may have some glitches")
-	public static boolean advancedBlockInteraction = true;
-	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
+	@Range(min = 1, max = 8)
+	@ConfigUI.Slider
 	public static int mobSpawningMaxLayers = 8;
+	@Path("snow-cover.placeSnowOnBlock")
+	public static boolean placeSnowOnBlock = true;
+	@Path("snow-cover.placeNaturally")
+	public static boolean placeSnowOnBlockNaturally = true;
+	@Path("snow-cover.replaceWorldgenFeature")
+	public static boolean replaceWorldFeature = true;
+	@Path("snow-cover.retainOriginalBlocks")
+	public static boolean retainOriginalBlocks = false;
+	@Path("accumulation.accumulatesDuringSnowfall")
+	public static boolean snowAccumulationDuringSnowfall = false;
+	@Path("accumulation.accumulatesDuringSnowstorm")
+	public static boolean snowAccumulationDuringSnowstorm = true;
+	@Path("accumulation.maxLayers")
+	@Range(min = 1, max = 9)
+	@ConfigUI.Slider
+	public static int snowAccumulationMaxLayers = 8;
+	@Path("accumulation.snowAndIceMeltInWarmBiomes")
+	public static boolean snowAndIceMeltInWarmBiomes = false;
+	@Path("accumulation.naturalMelting")
+	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
 
-	@Skip
+	@Skip // Unavailable on Fabric
 	@Path("integration.accumulationWinterOnly")
 	public static boolean accumulationWinterOnly = false;
 
 	public static boolean canPlaceSnowInBlock() {
-		return placeSnowInBlock && !retainOriginalBlocks;
+		return placeSnowOnBlock && !retainOriginalBlocks;
 	}
 
 }
