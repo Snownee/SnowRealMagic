@@ -7,7 +7,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -157,7 +156,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			if (!worldIn.isClientSide && worldIn.getDifficulty() != Difficulty.PEACEFUL) {
 				if (getRaw(state, worldIn, pos).getBlock() instanceof WitherRoseBlock) {
 					LivingEntity livingentity = (LivingEntity) entityIn;
-					if (!livingentity.isInvulnerableTo(DamageSource.WITHER)) {
+					if (!livingentity.isInvulnerableTo(worldIn.damageSources().wither())) {
 						livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40));
 					}
 				}
@@ -169,7 +168,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 						double d0 = Math.abs(entityIn.getX() - entityIn.xOld);
 						double d1 = Math.abs(entityIn.getZ() - entityIn.zOld);
 						if (d0 >= 0.003F || d1 >= 0.003F) {
-							entityIn.hurt(DamageSource.SWEET_BERRY_BUSH, 1.0F);
+							entityIn.hurt(worldIn.damageSources().sweetBerryBush(), 1.0F);
 						}
 					}
 				}

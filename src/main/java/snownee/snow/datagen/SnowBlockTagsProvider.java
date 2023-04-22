@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import snownee.kiwi.datagen.provider.KiwiBlockTagsProvider;
 import snownee.kiwi.datagen.provider.TagsProviderHelper;
+import snownee.kiwi.datagen.provider.TagsProviderHelper.OptionalEntry;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 
@@ -26,7 +27,7 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
-		helper.getModEntries().filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).forEach(this::processTools);
+		helper.getAllEntries().filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).map($ -> new OptionalEntry<>($, false)).forEach(this::processTools);
 
 		helper.add(BlockTags.MINEABLE_WITH_SHOVEL, TILE_BLOCK);
 		helper.add(BlockTags.INSIDE_STEP_SOUND_BLOCKS, TILE_BLOCK);

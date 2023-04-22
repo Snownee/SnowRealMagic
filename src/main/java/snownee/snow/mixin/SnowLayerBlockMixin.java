@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -211,11 +210,11 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 				return;
 			//FIXME why
 			if (state.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(state)) {
-				entityIn.causeFallDamage(fallDistance, 0.2F, DamageSource.FALL);
+				entityIn.causeFallDamage(fallDistance, 0.2F, worldIn.damageSources().fall());
 				return;
 			}
 			state = worldIn.getBlockState(pos);
-			entityIn.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, DamageSource.FALL);
+			entityIn.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, worldIn.damageSources().fall());
 			return;
 		}
 		super.fallOn(worldIn, state, pos, entityIn, fallDistance);

@@ -1,13 +1,13 @@
 {
-  "itemGroup.snowrealmagic": "Snow! Real Magic!",
+  "modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
   "entity.snowrealmagic.snow": "雪",
   "block.snowrealmagic.slab": "雪で覆われたハーフブロック",
   "block.snowrealmagic.stairs": "雪で覆われた階段",
   "block.snowrealmagic.wall": "雪で覆われた塀",
   "block.snowrealmagic.fence": "雪で覆われたフェンス",
   "block.snowrealmagic.fence_gate": "雪で覆われたフェンスゲート",
-  "gamerule.blizzardStrength": "Blizzard strength",
-  "gamerule.blizzardStrength.description": "空から雪の塊が降ってきます。1~8でレイヤーの最大値を設定できます。Snow! Real Magic!で追加",
-  "gamerule.blizzardFrequency": "Blizzard frequency",
-  "gamerule.blizzardFrequency.description": "ブリザードが起こる頻度。N/10000 毎ティック 毎チャンク。 Snow! Real Magic!で追加"
+  "gamerule.snowrealmagic:blizzardStrength": "Blizzard strength",
+  "gamerule.snowrealmagic:blizzardStrength.description": "空から雪の塊が降ってきます。1~8でレイヤーの最大値を設定できます。Snow! Real Magic!で追加",
+  "gamerule.snowrealmagic:blizzardFrequency": "Blizzard frequency",
+  "gamerule.snowrealmagic:blizzardFrequency.description": "ブリザードが起こる頻度。N/10000 毎ティック 毎チャンク。 Snow! Real Magic!で追加"
 }

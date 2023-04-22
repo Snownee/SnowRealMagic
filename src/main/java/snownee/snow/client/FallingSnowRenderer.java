@@ -43,7 +43,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		Level world = entity.getLevel();
 
 		matrixstack.pushPose();
-		BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		matrixstack.translate(-0.5D, 0.0D, -0.5D);
 		BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
 		BakedModel model = blockrendererdispatcher.getBlockModel(blockstate);

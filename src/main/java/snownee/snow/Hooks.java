@@ -96,7 +96,7 @@ public final class Hooks {
 					if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 					}
-				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowInBlockNaturally && SnowCommonConfig.canPlaceSnowInBlock()) {
+				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally && SnowCommonConfig.canPlaceSnowInBlock()) {
 					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
 						continue;
 					}
@@ -368,7 +368,7 @@ public final class Hooks {
 			}
 			if (accumulate ? i > l : i < l) {
 				if (accumulate) {
-					placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowInBlockNaturally);
+					placeLayersOn(world, pos2, 1, false, new DirectionalPlaceContext(world, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowOnBlockNaturally);
 				} else {
 					world.setBlockAndUpdate(pos2, state.setValue(SnowLayerBlock.LAYERS, l - 1));
 				}
@@ -376,7 +376,7 @@ public final class Hooks {
 			}
 		}
 		if (accumulate) {
-			placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowInBlockNaturally);
+			placeLayersOn(world, pos, 1, false, new DirectionalPlaceContext(world, pos, Direction.UP, ItemStack.EMPTY, Direction.DOWN), false, SnowCommonConfig.placeSnowOnBlockNaturally);
 		} else {
 			world.setBlockAndUpdate(pos, centerState.setValue(SnowLayerBlock.LAYERS, i - 1));
 		}

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[45,)"
 license="MIT"
 
 [[mods]]
@@ -8,19 +8,19 @@ version="${file.jarVersion}"
 displayName="Snow! Real Magic!"
 authors="Snownee, minzhi, WZD"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
-description="Tweak vanilla snow layer."
+description="Tweaks vanilla snow layer"
 
 [[dependencies.snowrealmagic]]
     modId="kiwi"
     mandatory=true
-    versionRange="[9, 10)"
+    versionRange="[10, 11)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.snowrealmagic]]
     modId="forge"
     mandatory=true
-    versionRange="[44,)"
+    versionRange="[45,)"
     ordering="NONE"
     side="BOTH"
 

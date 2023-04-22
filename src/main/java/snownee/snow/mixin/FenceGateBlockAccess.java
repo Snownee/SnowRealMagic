@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.FenceGateBlock;
 
-@Mixin(FenceGateBlock.class)
+@Mixin(value = FenceGateBlock.class, remap = false)
 public interface FenceGateBlockAccess {
 
 	@Accessor

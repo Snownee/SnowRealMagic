@@ -6,9 +6,8 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
-import me.jellysquid.mods.sodium.client.model.light.LightPipelineProvider;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
-import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -26,26 +25,19 @@ import snownee.snow.mixin.sodium.BlockRendererAccess;
 public class RubidiumRenderAPI implements RenderAPI {
 
 	private final BlockRendererAccess blockRenderer;
-	private final ModelData modelData;
-	private final long seed;
-	private final LightPipelineProvider lighters;
-	private final BlockOcclusionCache occlusionCache;
-	private final BlockPos origin;
+	private final BlockRenderContext ctx;
 	private final ChunkModelBuilder buffers;
 
-	public RubidiumRenderAPI(BlockRendererAccess blockRenderer, ModelData modelData, long seed, LightPipelineProvider lighters, BlockOcclusionCache occlusionCache, BlockPos origin, ChunkModelBuilder buffers) {
+	public RubidiumRenderAPI(BlockRendererAccess blockRenderer, BlockRenderContext ctx, ChunkModelBuilder buffers) {
 		this.blockRenderer = blockRenderer;
-		this.modelData = modelData;
-		this.seed = seed;
-		this.lighters = lighters;
-		this.occlusionCache = occlusionCache;
-		this.origin = origin;
+		this.ctx = ctx;
 		this.buffers = buffers;
 	}
 
 	@Override
 	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
 		RandomSource random = randomSupplier.get();
+		ModelData modelData = ctx.data();
 		if (layer != null && !model.getRenderTypes(state, random, modelData).contains(layer)) {
 			return false;
 		}
@@ -54,24 +46,24 @@ public class RubidiumRenderAPI implements RenderAPI {
 			offset = offset.add(0, yOffset, 0);
 			cullSides = false;
 		}
-		LightPipeline lighter = lighters.getLighter(blockRenderer.callGetLightingMode(state, model));
+		LightPipeline lighter = blockRenderer.getLighters().getLighter(blockRenderer.callGetLightingMode(state, model, world, pos));
 		boolean rendered = false;
 		for (Direction dir : DirectionUtil.ALL_DIRECTIONS) {
-			random.setSeed(seed);
+			random.setSeed(ctx.seed());
 			List<BakedQuad> sided = model.getQuads(state, dir, random, modelData, layer);
 			if (sided.isEmpty()) {
 				continue;
 			}
-			if (!cullSides || occlusionCache.shouldDrawSide(state, world, pos, dir)) {
-				blockRenderer.callRenderQuadList(world, state, pos, origin, lighter, offset, buffers, sided, dir);
+			if (!cullSides || blockRenderer.getOcclusionCache().shouldDrawSide(state, world, pos, dir)) {
+				blockRenderer.callRenderQuadList(ctx, lighter, offset, buffers, sided, dir);
 				rendered = true;
 			}
 		}
 
-		random.setSeed(seed);
+		random.setSeed(ctx.seed());
 		List<BakedQuad> all = model.getQuads(state, null, random, modelData, layer);
 		if (!all.isEmpty()) {
-			blockRenderer.callRenderQuadList(world, state, pos, origin, lighter, offset, buffers, all, null);
+			blockRenderer.callRenderQuadList(ctx, lighter, offset, buffers, all, null);
 			rendered = true;
 		}
 
