@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
+//TODO: move to CommonProxy
 public class ModUtil {
 
 	public static boolean terraforged;

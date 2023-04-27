@@ -46,7 +46,7 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.loot.NormalLootEntry;
+import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockAccess;
 import snownee.snow.mixin.IntegerValueAccess;
 
@@ -94,7 +94,7 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> EntityType.Builder.<FallingSnowEntity>of(FallingSnowEntity::new, MobCategory.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).sized(0.98F, 0.001F).build(SnowRealMagic.MODID + ".snow"));
 
-	public static final KiwiGO<LootPoolEntryType> NORMAL = go(() -> new LootPoolEntryType(new NormalLootEntry.Serializer()));
+	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register(SnowRealMagic.MODID + ":blizzardStrength", GameRules.Category.MISC, IntegerValueAccess.callCreate(0));
 

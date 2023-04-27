@@ -21,22 +21,23 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.util.CommonProxy;
 
-public class NormalLootEntry extends LootPoolSingletonContainer {
+public class NormalizeLoot extends LootPoolSingletonContainer {
 
-	private NormalLootEntry(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
+	private NormalizeLoot(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
 		super(weightIn, qualityIn, conditionsIn, functionsIn);
 	}
 
 	@Override
 	protected void createItemStack(Consumer<ItemStack> consumer, LootContext context) {
-		BlockEntity tile = context.getParam(LootContextParams.BLOCK_ENTITY);
+		BlockEntity tile = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
 		if (tile instanceof SnowBlockEntity) {
 			BlockState state = ((SnowBlockEntity) tile).getState();
 			if (!state.isAir()) {
 				ResourceLocation resourcelocation = state.getBlock().getLootTable();
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
-					LootContext.Builder builder = new LootContext.Builder(context);
+					LootContext.Builder builder = CommonProxy.copyLootContext(context);
 					LootContext lootcontext = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
 					LootTable loottable = lootcontext.getLevel().getServer().getLootTables().get(resourcelocation);
 					loottable.getRandomItems(lootcontext).forEach(consumer::accept);
@@ -46,18 +47,18 @@ public class NormalLootEntry extends LootPoolSingletonContainer {
 	}
 
 	public static LootPoolSingletonContainer.Builder<?> builder(ItemLike itemIn) {
-		return simpleBuilder(NormalLootEntry::new);
+		return simpleBuilder(NormalizeLoot::new);
 	}
 
 	@Override
 	public LootPoolEntryType getType() {
-		return CoreModule.NORMAL.get();
+		return CoreModule.NORMALIZE.get();
 	}
 
-	public static class Serializer extends LootPoolSingletonContainer.Serializer<NormalLootEntry> {
+	public static class Serializer extends LootPoolSingletonContainer.Serializer<NormalizeLoot> {
 		@Override
-		protected NormalLootEntry deserialize(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
-			return new NormalLootEntry(weightIn, qualityIn, conditionsIn, functionsIn);
+		protected NormalizeLoot deserialize(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
+			return new NormalizeLoot(weightIn, qualityIn, conditionsIn, functionsIn);
 		}
 	}
 }

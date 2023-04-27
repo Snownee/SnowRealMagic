@@ -19,12 +19,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelData;
 import snownee.snow.entity.FallingSnowEntity;
 
-@OnlyIn(Dist.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn);

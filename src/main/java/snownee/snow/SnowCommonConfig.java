@@ -1,6 +1,5 @@
 package snownee.snow;
 
-import snownee.kiwi.KiwiModule.Skip;
 import snownee.kiwi.config.ConfigUI;
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Path;

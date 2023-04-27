@@ -32,8 +32,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
@@ -153,12 +151,10 @@ public class FallingSnowEntity extends Entity {
 		entityData.set(LAYERS, layers);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public BlockPos getOrigin() {
 		return entityData.get(START_POS);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public int getLayers() {
 		return entityData.get(LAYERS);
 	}
@@ -169,7 +165,6 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public boolean displayFireAnimation() {
 		return false;
 	}
