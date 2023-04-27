@@ -5,7 +5,7 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "snowrealmagic:normal"
+          "type": "snowrealmagic:normalize"
         }
       ]
     }

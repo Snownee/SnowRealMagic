@@ -1,7 +1,5 @@
 package snownee.snow;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -70,7 +68,6 @@ public final class GameEvents {
 		return true;
 	}
 
-	@Environment(EnvType.CLIENT)
 	public static void onPlayerJoin() {
 		if (Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
 			Minecraft.getInstance().player.sendSystemMessage(Component.literal("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."));

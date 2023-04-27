@@ -44,7 +44,7 @@ import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.loot.NormalLootEntry;
+import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
@@ -97,7 +97,7 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> FabricEntityTypeBuilder.<FallingSnowEntity>create(MobCategory.MISC, FallingSnowEntity::new).entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).build());
 
-	public static final KiwiGO<LootPoolEntryType> NORMAL = go(() -> new LootPoolEntryType(new NormalLootEntry.Serializer()));
+	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(SnowRealMagic.MODID + ":blizzardStrength", GameRules.Category.MISC, GameRuleFactory.createIntRule(0));
 
@@ -128,24 +128,5 @@ public class CoreModule extends AbstractModule {
 	protected void clientInit(ClientInitEvent event) {
 		EntityRendererRegistry.register(ENTITY.get(), FallingSnowRenderer::new);
 	}
-
-	//	@SubscribeEvent
-	//	@Environment(EnvType.CLIENT)
-	//	public void onBlockTint(ColorHandlerEvent.Block event) {
-	//		if (!SnowClientConfig.colorTint)
-	//			return;
-	//		BlockColors blockColors = event.getBlockColors();
-	//		blockColors.register((state, world, pos, index) -> {
-	//			if (world == null || pos == null) {
-	//				return -1;
-	//			}
-	//			Block block = state.getBlock();
-	//			if (block instanceof ISnowVariant) {
-	//				BlockState raw = ((ISnowVariant) block).getRaw(state, world, pos);
-	//				return blockColors.getColor(raw, world, pos, index); // getColor
-	//			}
-	//			return -1;
-	//		}, SLAB, STAIRS, WALL, FENCE, FENCE2, FENCE_GATE);
-	//	}
 
 }

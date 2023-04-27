@@ -2,8 +2,6 @@ package snownee.snow.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,7 +21,6 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.entity.FallingSnowEntity;
 
-@Environment(EnvType.CLIENT)
 public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	public FallingSnowRenderer(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn);

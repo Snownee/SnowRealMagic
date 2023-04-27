@@ -1,7 +1,5 @@
 package snownee.snow.entity;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -154,12 +152,10 @@ public class FallingSnowEntity extends Entity {
 		entityData.set(LAYERS, layers);
 	}
 
-	@Environment(EnvType.CLIENT)
 	public BlockPos getOrigin() {
 		return entityData.get(START_POS);
 	}
 
-	@Environment(EnvType.CLIENT)
 	public int getLayers() {
 		return entityData.get(LAYERS);
 	}
@@ -170,7 +166,6 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
 	public boolean displayFireAnimation() {
 		return false;
 	}

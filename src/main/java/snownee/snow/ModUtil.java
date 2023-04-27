@@ -9,6 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import snownee.kiwi.loader.Platform;
 
+//TODO: move to CommonProxy
 public class ModUtil {
 
 	public static boolean terraforged = false;
