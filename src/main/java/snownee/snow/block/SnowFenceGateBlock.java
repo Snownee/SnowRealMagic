@@ -26,6 +26,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			worldIn.updateNeighborsAt(pos, state.getBlock());
 		}
 	}
 

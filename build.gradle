@@ -21,6 +21,12 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -57,10 +63,10 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
     modImplementation "curse.maven:kiwi-549404:4424042"
     annotationProcessor "curse.maven:kiwi-549404:4424042"
-    
+
     modImplementation "curse.maven:jade-324717:4328558"
-    modImplementation "curse.maven:sodium-394468:3957319"
-    modImplementation "curse.maven:indium-459496:3957480"
+    modImplementation "maven.modrinth:sodium:mc1.19.2-0.4.4"
+    modImplementation "maven.modrinth:indium:1.0.9+mc1.19.2"
     implementation 'org.joml:joml:1.10.4'
 }
 

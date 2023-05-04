@@ -158,6 +158,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		BlockState stateIn = getRaw(state, worldIn, pos);
 		if (SnowCommonConfig.retainOriginalBlocks) {
 			worldIn.setBlockAndUpdate(pos, stateIn);
+			worldIn.updateNeighborsAt(pos, state.getBlock());
 			return;
 		}
 		super.randomTick(state, worldIn, pos, random);
