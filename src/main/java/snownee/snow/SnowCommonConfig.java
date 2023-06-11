@@ -35,8 +35,6 @@ public final class SnowCommonConfig {
 		"If you want to uninstall this mod, you probably want to make snow-covered blocks back to normal via random tick."
 	)
 	public static boolean retainOriginalBlocks = false;
-	@Comment("Simulate some right clicking behaviors like harvesting sweetberry. may have some glitches")
-	public static boolean advancedBlockInteraction = true;
 	@Comment("Sneak+rightclicking to make snowball")
 	public static boolean sneakSnowball = true;
 	public static int mobSpawningMaxLayers = 8;
