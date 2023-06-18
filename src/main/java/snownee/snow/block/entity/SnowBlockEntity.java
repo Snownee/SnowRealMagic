@@ -12,12 +12,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
-import snownee.kiwi.block.entity.BaseBlockEntity;
+import snownee.kiwi.block.entity.ModBlockEntity;
 import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
-public class SnowBlockEntity extends BaseBlockEntity {
+public class SnowBlockEntity extends ModBlockEntity {
 
 	public static class Options {
 		public boolean renderOverlay;

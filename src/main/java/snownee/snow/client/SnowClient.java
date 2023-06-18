@@ -52,6 +52,7 @@ public final class SnowClient {
 	public static boolean renderHook(BlockAndTintGetter world, BlockPos pos, BlockState state, BlockState camo, Options options, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, RenderAPI api) {
 		if (layer == null || layer == RenderType.solid()) {
 			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
+				//FIXME this is too late, find a new way to update that
 				watcher.updateOptions(state, world, pos, options);
 			}
 		}

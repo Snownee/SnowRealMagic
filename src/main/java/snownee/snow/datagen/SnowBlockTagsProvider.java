@@ -1,6 +1,13 @@
 package snownee.snow.datagen;
 
-import static snownee.snow.CoreModule.*;
+import static snownee.snow.CoreModule.BOTTOM_SNOW;
+import static snownee.snow.CoreModule.FENCE;
+import static snownee.snow.CoreModule.FENCE2;
+import static snownee.snow.CoreModule.FENCE_GATE;
+import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.STAIRS;
+import static snownee.snow.CoreModule.TILE_BLOCK;
+import static snownee.snow.CoreModule.WALL;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -12,7 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import snownee.kiwi.datagen.provider.KiwiBlockTagsProvider;
 import snownee.kiwi.datagen.provider.TagsProviderHelper;
-import snownee.kiwi.datagen.provider.TagsProviderHelper.OptionalEntry;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 
@@ -27,8 +33,6 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
-		helper.getAllEntries().filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).map($ -> new OptionalEntry<>($, false)).forEach(this::processTools);
-
 		helper.add(BlockTags.MINEABLE_WITH_SHOVEL, TILE_BLOCK);
 		helper.add(BlockTags.INSIDE_STEP_SOUND_BLOCKS, TILE_BLOCK);
 		helper.add(BlockTags.SNOW, TILE_BLOCK);
@@ -42,6 +46,9 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 		helper.add(BlockTags.SLABS, SLAB);
 		helper.add(BlockTags.FENCE_GATES, FENCE_GATE);
 		helper.add(BlockTags.FENCES, FENCE2);
+		helper.add(BlockTags.MINEABLE_WITH_PICKAXE, FENCE2);
+		helper.add(BlockTags.WOODEN_FENCES, FENCE);
+		helper.add(BlockTags.WALLS, WALL);
 
 		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
 		tag(BOTTOM_SNOW).addTag(BlockTags.SNOW);

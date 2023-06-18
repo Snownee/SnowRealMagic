@@ -5,13 +5,15 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
+    "BlockAccess",
+    "BlockItemMixin",
+    "BlockMixin",
+    "DoublePlantBlockMixin",
     "FenceGateBlockAccess",
     "IceBlockAccess",
     "IntegerValueAccess",
-    "BlockAccess",
-    "BlockMixin",
-    "BlockItemMixin",
-    "DoublePlantBlockMixin",
+    "LootContextAccess",
+    "LootParamsAccess",
     "ServerLevelMixin",
     "SnowAndFreezeFeatureMixin",
     "SnowLayerBlockMixin",
@@ -27,9 +29,9 @@
     "ModelManagerMixin",
     "SimpleBakedModelMixin",
     "SnowLayerBlockClientMixin",
+    "sereneseasons.RandomUpdateHandlerMixin",
     "sodium.BlockRendererAccess",
-    "sodium.BlockRendererMixin",
-    "sereneseasons.RandomUpdateHandlerMixin"
+    "sodium.BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

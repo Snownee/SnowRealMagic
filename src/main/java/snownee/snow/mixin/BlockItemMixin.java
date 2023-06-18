@@ -75,20 +75,4 @@ public abstract class BlockItemMixin {
 		}
 	}
 
-	//	@Inject(at = @At("HEAD"), method = "registerBlocks")
-	//	private void srm_registerBlocks(Map<Block, Item> blockToItemMap, Item itemIn, CallbackInfo ci) {
-	//		if ((Object) this != Items.SNOW) {
-	//			return;
-	//		}
-	//		blockToItemMap.put(CoreModule.TILE_BLOCK.get(), Items.SNOW);
-	//	}
-	//
-	//	@Inject(at = @At("HEAD"), method = "removeFromBlockToItemMap", remap = false)
-	//	public void srm_removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn, CallbackInfo ci) {
-	//		if ((Object) this != Items.SNOW) {
-	//			return;
-	//		}
-	//		blockToItemMap.remove(CoreModule.TILE_BLOCK.get());
-	//	}
-
 }

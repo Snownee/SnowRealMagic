@@ -91,8 +91,9 @@ public class FallingSnowEntity extends Entity {
 		move(MoverType.SELF, getDeltaMovement());
 
 		BlockPos pos = blockPosition();
+		Level level = level();
 		if (!level.isClientSide) {
-			if (!onGround) {
+			if (!onGround()) {
 				if (fallTime > 600 || (fallTime > 100 && level.isOutsideBuildHeight(pos))) {
 					discard();
 				} else if (!pos.equals(prevPos)) {
