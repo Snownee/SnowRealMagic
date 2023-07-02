@@ -1,6 +1,7 @@
 package snownee.snow.mixin;
 
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,8 +43,9 @@ import snownee.snow.entity.FallingSnowEntity;
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Block.box(0, 0, 0, 16, 0.001, 16), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
+	@Final
 	@Shadow
-	private static VoxelShape[] SHAPE_BY_LAYER;
+	protected static VoxelShape[] SHAPE_BY_LAYER;
 
 	public SnowLayerBlockMixin(Block.Properties properties) {
 		super(properties);

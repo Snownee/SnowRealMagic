@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,8 +27,10 @@ import snownee.snow.client.model.ModelDefinition;
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
 
+	@Final
 	@Shadow
 	private Set<ResourceLocation> loadingStack;
+	@Final
 	@Shadow
 	private Map<ResourceLocation, UnbakedModel> topLevelModels;
 

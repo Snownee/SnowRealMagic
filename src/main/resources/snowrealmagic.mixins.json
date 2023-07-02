@@ -12,6 +12,8 @@
     "DoublePlantBlockMixin",
     "FenceGateBlockAccess",
     "IceBlockAccess",
+    "LootContextAccess",
+    "LootParamsAccess",
     "ServerLevelMixin",
     "SnowAndFreezeFeatureMixin",
     "SnowLayerBlockMixin",

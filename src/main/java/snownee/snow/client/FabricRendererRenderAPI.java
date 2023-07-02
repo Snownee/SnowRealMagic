@@ -43,7 +43,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 			if (offset != Vec3.ZERO || color != -1) {
 				for (int i = 0; i < 4; ++i) {
 					quad.pos(i, quad.x(i) + (float) offset.x, quad.y(i) + (float) offset.y, quad.z(i) + (float) offset.z);
-					quad.spriteColor(i, 0, color);
+					quad.color(i, color);
 				}
 			}
 			return true;

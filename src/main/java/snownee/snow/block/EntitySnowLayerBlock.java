@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WitherRoseBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -126,11 +125,6 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
-	}
-
-	@Override
 	public String getDescriptionId() {
 		return Blocks.SNOW.getDescriptionId();
 	}
@@ -189,7 +183,9 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
 		if (result.consumesAction()) {
 			BlockState stateNow = worldIn.getBlockState(pos);
-			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+			if (!stateNow.is(this)) {
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+			}
 			return result;
 		}
 		return super.use(state, worldIn, pos, player, handIn, hit);
@@ -233,9 +229,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		if (block instanceof BonemealableBlock) {
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
-			if (stateNow.is(state.getBlock())) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
-			}
+			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
 		}
 	}
 

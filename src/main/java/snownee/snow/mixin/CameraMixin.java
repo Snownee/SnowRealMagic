@@ -3,6 +3,7 @@ package snownee.snow.mixin;
 import java.util.Arrays;
 
 import org.joml.Vector3f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,6 +31,7 @@ public abstract class CameraMixin {
 	private BlockGetter level;
 	@Shadow
 	private Vec3 position;
+	@Final
 	@Shadow
 	private Vector3f forwards;
 
@@ -56,5 +58,5 @@ public abstract class CameraMixin {
 	}
 
 	@Shadow
-	abstract Camera.NearPlane getNearPlane();
+	public abstract Camera.NearPlane getNearPlane();
 }

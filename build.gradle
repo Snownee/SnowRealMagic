@@ -58,10 +58,10 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
     //modImplementation "curse.maven:kiwi-549404:3998272"
     //annotationProcessor "curse.maven:kiwi-549404:3998272"
-    modImplementation "maven.modrinth:kiwi:N9Zh6hyE"
+    modImplementation "maven.modrinth:kiwi:CyGV9a95"
     
     //modImplementation "curse.maven:jade-324717:4096403"
-    modImplementation "maven.modrinth:jade:LmXOtmIi"
+    modImplementation "maven.modrinth:jade:kd04zQ7y"
 }
 
 loom {
@@ -134,7 +134,7 @@ modrinth {
     versionNumber = project.mod_version // You don't need to set this manually. Will fail if Modrinth has this version already
     versionType = "release" // This is the default -- can also be `beta` or `alpha`
     uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.19.4"] // Must be an array, even with only one version
+    gameVersions = ["1.20", "1.20.1"] // Must be an array, even with only one version
     loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
     dependencies { // A special DSL for creating dependencies
         // scope.type

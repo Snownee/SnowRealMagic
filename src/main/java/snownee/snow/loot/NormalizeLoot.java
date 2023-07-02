@@ -7,26 +7,30 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.util.CommonProxy;
+import snownee.snow.mixin.LootContextAccess;
+import snownee.snow.mixin.LootParamsAccess;
 
 public class NormalizeLoot extends LootPoolSingletonContainer {
 
 	private NormalizeLoot(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
 		super(weightIn, qualityIn, conditionsIn, functionsIn);
+	}
+
+	public static LootPoolSingletonContainer.Builder<?> builder() {
+		return simpleBuilder(NormalizeLoot::new);
 	}
 
 	@Override
@@ -37,17 +41,18 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 			if (!state.isAir()) {
 				ResourceLocation resourcelocation = state.getBlock().getLootTable();
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
-					LootContext.Builder builder = CommonProxy.copyLootContext(context);
-					LootContext lootcontext = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
-					LootTable loottable = lootcontext.getLevel().getServer().getLootTables().get(resourcelocation);
-					loottable.getRandomItems(lootcontext).forEach(consumer::accept);
+					LootParams.Builder builder = new LootParams.Builder(context.getLevel());
+					builder.withParameter(LootContextParams.BLOCK_STATE, state);
+					((LootParamsAccess) ((LootContextAccess) context).getParams()).getParams().forEach((p, v) -> {
+						if (p != LootContextParams.BLOCK_STATE && p != LootContextParams.BLOCK_ENTITY) {
+							builder.withOptionalParameter((LootContextParam<Object>) p, v);
+						}
+					});
+					builder.withLuck(context.getLuck());
+					state.getDrops(builder).forEach(consumer);
 				}
 			}
 		}
-	}
-
-	public static LootPoolSingletonContainer.Builder<?> builder(ItemLike itemIn) {
-		return simpleBuilder(NormalizeLoot::new);
 	}
 
 	@Override

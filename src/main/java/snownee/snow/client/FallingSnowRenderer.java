@@ -36,7 +36,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		if (blockstate.getRenderShape() != RenderShape.MODEL) {
 			return;
 		}
-		Level world = entity.getLevel();
+		Level world = entity.level();
 
 		matrixstack.pushPose();
 		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());

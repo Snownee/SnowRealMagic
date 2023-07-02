@@ -25,9 +25,9 @@
 
   "depends": {
     "fabricloader": ">=0.11.3",
-    "minecraft": ">=1.19.4",
+    "minecraft": ">=1.20",
     "java": ">=17",
-    "kiwi": ">=10"
+    "kiwi": ">=11"
   },
 
   "custom": {
