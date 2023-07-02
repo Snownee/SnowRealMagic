@@ -189,7 +189,9 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
 		if (result.consumesAction()) {
 			BlockState stateNow = worldIn.getBlockState(pos);
-			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+			if (!stateNow.is(this)) {
+				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+			}
 			return result;
 		}
 		return super.use(state, worldIn, pos, player, handIn, hit);
