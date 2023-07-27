@@ -41,6 +41,8 @@ public final class SnowCommonConfig {
 
 	@Path("integration.accumulationWinterOnly")
 	public static boolean accumulationWinterOnly = false;
+	@Path("debug.mobSpawningCommand")
+	public static boolean debugSpawningCommand = false;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowInBlock && !retainOriginalBlocks;

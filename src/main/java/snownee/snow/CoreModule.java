@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -23,7 +24,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.AbstractModule;
@@ -102,6 +105,7 @@ public class CoreModule extends AbstractModule {
 
 	public CoreModule() {
 		decorators.remove(ForgeRegistries.BLOCKS);
+		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
 	}
 
 	@SubscribeEvent
@@ -134,6 +138,11 @@ public class CoreModule extends AbstractModule {
 	@OnlyIn(Dist.CLIENT)
 	public void registerExtraModel(ModelEvent.RegisterAdditional event) {
 		event.register(SnowClient.OVERLAY_MODEL);
+	}
+
+	public void registerCommand(RegisterCommandsEvent event) {
+		if (SnowCommonConfig.debugSpawningCommand)
+			DebugMobSpawningCommand.register(event.getDispatcher());
 	}
 
 	@Override
