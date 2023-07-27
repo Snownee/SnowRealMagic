@@ -155,12 +155,12 @@ public final class Hooks {
 	}
 
 	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags, boolean canConvert) {
-		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
-			return false;
-		}
 		if (state.isAir()) {
 			world.setBlock(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			return true;
+		}
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
+			return false;
 		}
 		if (!canConvert) {
 			return false;
