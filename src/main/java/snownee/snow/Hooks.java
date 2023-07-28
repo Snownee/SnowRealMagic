@@ -280,7 +280,7 @@ public final class Hooks {
 		if (ModUtil.terraforged) {
 			return;
 		}
-		if (random.nextInt(8) > 0) {
+		if (random.nextInt(8) != 0) {
 			return;
 		}
 		Holder<Biome> biome = worldIn.getBiome(pos);

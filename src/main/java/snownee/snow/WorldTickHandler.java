@@ -22,7 +22,7 @@ public class WorldTickHandler {
 
 	// See ServerLevel.tickChunk
 	public static void tick(ServerLevel level, LevelChunk chunk, RandomSource random) {
-		if (random.nextInt(16) != 0) {
+		if (random.nextInt(SnowCommonConfig.weatherTickSlowness) != 0) {
 			return;
 		}
 		int x = chunk.getPos().getMinBlockX();

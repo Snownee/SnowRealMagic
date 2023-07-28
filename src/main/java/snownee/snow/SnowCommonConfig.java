@@ -45,6 +45,9 @@ public final class SnowCommonConfig {
 	public static boolean accumulationWinterOnly = false;
 	@Path("debug.mobSpawningCommand")
 	public static boolean debugSpawningCommand = false;
+	@Path("debug.weatherTickSlowness")
+	@Range(min = 1)
+	public static int weatherTickSlowness = 16;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !retainOriginalBlocks;
