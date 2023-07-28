@@ -175,14 +175,14 @@ public final class Hooks {
 	}
 
 	public static boolean convert(LevelAccessor world, BlockPos pos, BlockState state, int layers, int flags) {
-		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
-			return false;
-		}
-		Block block = state.getBlock();
 		if (state.isAir()) {
 			world.setBlock(pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			return true;
 		}
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
+			return false;
+		}
+		Block block = state.getBlock();
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			world.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
 			BlockEntity tile = world.getBlockEntity(pos);
