@@ -45,6 +45,8 @@ public final class SnowCommonConfig {
 	@Skip // Unavailable on Fabric
 	@Path("integration.accumulationWinterOnly")
 	public static boolean accumulationWinterOnly = false;
+	@Path("debug.mobSpawningCommand")
+	public static boolean debugSpawningCommand = false;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !retainOriginalBlocks;
