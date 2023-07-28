@@ -1,13 +1,11 @@
 package snownee.snow;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
-import net.minecraftforge.fml.common.Mod;
+import com.mojang.logging.LogUtils;
 
-@Mod(SnowRealMagic.MODID)
 public class SnowRealMagic {
 	public static final String MODID = "snowrealmagic";
 
-	public static final Logger LOGGER = LogManager.getLogger(SnowRealMagic.MODID);
+	public static final Logger LOGGER = LogUtils.getLogger();
 }
