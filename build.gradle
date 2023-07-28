@@ -12,7 +12,8 @@ version = project.minecraft_version + "-fabric-" + project.mod_version
 group = project.maven_group
 
 repositories {
-    maven { url = "https://maven.parchmentmc.org" }
+    maven { url "https://api.modrinth.com/maven" }
+    maven { url "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
@@ -59,7 +60,7 @@ dependencies {
     annotationProcessor "curse.maven:kiwi-549404:4424042"
     
     modImplementation "curse.maven:jade-324717:4328558"
-    modImplementation "curse.maven:sodium-394468:3957319"
+    modImplementation "maven.modrinth:sodium:mc1.19.2-0.4.4"
     modImplementation "curse.maven:indium-459496:3957480"
     implementation 'org.joml:joml:1.10.4'
 }

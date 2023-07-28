@@ -227,9 +227,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		if (block instanceof BonemealableBlock) {
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
-			if (stateNow.getBlock() != state.getBlock()) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
-			}
+			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3);
 		}
 	}
 
