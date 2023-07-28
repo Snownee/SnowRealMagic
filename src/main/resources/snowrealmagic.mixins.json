@@ -15,7 +15,8 @@
     "SnowAndFreezeFeatureMixin",
     "SnowLayerBlockMixin",
     "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin"
+    "SpreadableSnowyDirtBlockMixin",
+    "sereneseasons.RandomUpdateHandlerMixin"
   ],
   "client": [
     "BlockModelShaperMixin",
@@ -26,8 +27,7 @@
     "SimpleBakedModelMixin",
     "SnowLayerBlockClientMixin",
     "sodium.BlockRendererAccess",
-    "sodium.BlockRendererMixin",
-    "sereneseasons.RandomUpdateHandlerMixin"
+    "sodium.BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
