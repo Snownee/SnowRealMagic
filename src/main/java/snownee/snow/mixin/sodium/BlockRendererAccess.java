@@ -6,13 +6,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
+import me.jellysquid.mods.sodium.client.model.color.ColorProvider;
+import me.jellysquid.mods.sodium.client.model.color.ColorProviderRegistry;
 import me.jellysquid.mods.sodium.client.model.light.LightMode;
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
 import me.jellysquid.mods.sodium.client.model.light.LightPipelineProvider;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
-import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
+import me.jellysquid.mods.sodium.client.render.chunk.terrain.material.Material;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -25,15 +29,18 @@ import net.minecraft.world.phys.Vec3;
 public interface BlockRendererAccess {
 
 	@Invoker
-	LightMode callGetLightingMode(BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos);
+	LightMode callGetLightingMode(BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos, RenderType layer);
 
 	@Invoker
-	void callRenderQuadList(BlockRenderContext blockRenderContext, LightPipeline lighter, Vec3 offset, ChunkModelBuilder buffers, List<BakedQuad> sided, Direction dir);
+	void callRenderQuadList(BlockRenderContext ctx, Material material, LightPipeline lighter, ColorProvider<BlockState> colorizer, Vec3 offset, ChunkModelBuilder builder, List<BakedQuad> quads, Direction cullFace);
 
 	@Accessor
 	LightPipelineProvider getLighters();
 
 	@Accessor
 	BlockOcclusionCache getOcclusionCache();
+
+	@Accessor
+	ColorProviderRegistry getColorProviderRegistry();
 
 }

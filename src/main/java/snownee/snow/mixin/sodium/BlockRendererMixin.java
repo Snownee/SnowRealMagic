@@ -5,9 +5,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.minecraft.util.RandomSource;
@@ -28,11 +28,11 @@ public abstract class BlockRendererMixin {
 	private RandomSource random;
 
 	@Inject(method = "renderModel", at = @At("HEAD"), cancellable = true)
-	private void srm_renderModel(BlockRenderContext ctx, ChunkModelBuilder buffers, CallbackInfoReturnable<Boolean> ci) {
+	private void srm_renderModel(BlockRenderContext ctx, ChunkBuildBuffers buffers, CallbackInfo ci) {
 		if (!SnowClient.shouldRedirect(ctx.state())) {
 			return;
 		}
-		ModelData modelData = ctx.data();
+		ModelData modelData = ctx.modelData();
 		if (modelData == null) {
 			modelData = ModelData.EMPTY;
 		}
@@ -44,6 +44,7 @@ public abstract class BlockRendererMixin {
 		if (options == null) {
 			options = SnowClient.fallbackOptions;
 		}
-		ci.setReturnValue(SnowClient.renderHook(ctx.world(), ctx.pos(), ctx.state(), camo, options, ctx.layer(), () -> random, true, new RubidiumRenderAPI((BlockRendererAccess) this, ctx, buffers)));
+		SnowClient.renderHook(ctx.world(), ctx.pos(), ctx.state(), camo, options, ctx.renderLayer(), () -> random, true, new RubidiumRenderAPI((BlockRendererAccess) this, ctx, buffers));
+		ci.cancel();
 	}
 }

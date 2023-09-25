@@ -20,7 +20,7 @@ description="Tweaks vanilla snow layer"
 [[dependencies.snowrealmagic]]
     modId="rubidium"
     mandatory=false
-    versionRange="[0.6.5,)"
+    versionRange="[0.7.1,)"
     ordering="NONE"
     side="BOTH"
 
