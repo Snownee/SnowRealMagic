@@ -23,7 +23,7 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 
 	@Override
 	protected void addTags() {
-		helper.getModEntries().filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).forEach(this::processTools);
+		helper.getEntriesByModule("core").filter($ -> !SLAB.is($) && !STAIRS.is($) && !FENCE_GATE.is($)).forEach(this::processTools);
 
 		helper.add(BlockTags.MINEABLE_WITH_SHOVEL, TILE_BLOCK);
 		helper.add(BlockTags.INSIDE_STEP_SOUND_BLOCKS, TILE_BLOCK);

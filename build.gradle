@@ -196,12 +196,12 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
     
     implementation fg.deobf("curse.maven:jei-238222:3944627")
-    implementation fg.deobf("curse.maven:jade-324717:3916646")
-    implementation fg.deobf("curse.maven:kiwi-303657:3974084")
-    annotationProcessor "curse.maven:kiwi-303657:3919782"
+    implementation fg.deobf("curse.maven:jade-324717:4719987")
+    implementation fg.deobf("curse.maven:kiwi-303657:4451128")
+    annotationProcessor "curse.maven:kiwi-303657:4451128"
     
     implementation fg.deobf("curse.maven:serene-seasons-291874:4037228")
-    implementation fg.deobf("curse.maven:rubidium-574856:4568727")
+    implementation fg.deobf("curse.maven:rubidium-574856:4763255")
     implementation fg.deobf("curse.maven:cloth-config-348521:3906388")
     //implementation fg.deobf("curse.maven:terraforged-363820:3799083")
 
