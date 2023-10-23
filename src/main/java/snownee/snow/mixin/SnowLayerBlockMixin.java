@@ -1,10 +1,12 @@
 package snownee.snow.mixin;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,10 +42,10 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
 
-@Mixin(SnowLayerBlock.class)
+@Mixin(value = SnowLayerBlock.class, priority = 500)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
-	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
+	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16)};
 	@Final
 	@Shadow
 	protected static VoxelShape[] SHAPE_BY_LAYER;
@@ -52,17 +54,18 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		super(properties);
 	}
 
-	@Override
-	@Overwrite
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
+	private void getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> ci) {
 		if (ModUtil.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			return SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1];
+			ci.setReturnValue(SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1]);
+			return;
 		}
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (layers == 8) {
-			return Shapes.block();
+			ci.setReturnValue(Shapes.block());
+			return;
 		}
-		return SNOW_SHAPES_MAGIC[layers - 1];
+		ci.setReturnValue(SNOW_SHAPES_MAGIC[layers - 1]);
 	}
 
 	@Override
@@ -72,22 +75,17 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Overwrite
-	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
+	private void updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> ci) {
 		if (SnowCommonConfig.snowGravity) {
 			worldIn.scheduleTick(currentPos, this, tickRate());
-			return stateIn;
-		} else {
-			return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+			ci.setReturnValue(stateIn);
 		}
 	}
 
-	@Override
-	@Overwrite
-	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-		return Hooks.canSnowSurvive(state, worldIn, pos);
+	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
+	private void canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+		ci.setReturnValue(Hooks.canSnowSurvive(state, worldIn, pos));
 	}
 
 	protected int tickRate() {
@@ -99,10 +97,10 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		checkFallable(worldIn, pos, state);
 	}
 
-	@Override
-	@Overwrite
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
+	private void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		Hooks.randomTick(state, worldIn, pos, random);
+		ci.cancel();
 	}
 
 	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
@@ -118,18 +116,18 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		return false;
 	}
 
-	@Override
-	@Overwrite
-	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
+	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
+	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
 		int i = state.getValue(SnowLayerBlock.LAYERS);
 		if (useContext.getItemInHand().is(Blocks.SNOW.asItem()) && i < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
-				return useContext.getClickedFace() == Direction.UP;
+				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
 			} else {
-				return true;
+				ci.setReturnValue(true);
 			}
+			return;
 		}
-		return (SnowCommonConfig.snowAlwaysReplaceable && state.getValue(SnowLayerBlock.LAYERS) < 8) || i == 1;
+		ci.setReturnValue((SnowCommonConfig.snowAlwaysReplaceable && state.getValue(SnowLayerBlock.LAYERS) < 8) || i == 1);
 	}
 
 	@Override
@@ -187,21 +185,21 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
 
-	@Override
-	@Nullable
-	@Overwrite
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
+	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
+	private void getStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> ci) {
 		BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
 		if (blockstate.getBlock() instanceof SnowLayerBlock) {
 			int i = blockstate.getValue(SnowLayerBlock.LAYERS);
-			return blockstate.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1));
+			ci.setReturnValue(blockstate.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1)));
+			return;
 		}
 		ItemStack stack = context.getItemInHand();
 		CompoundTag tag = BlockItem.getBlockEntityData(stack);
 		if (tag != null && "snowrealmagic:snow".equals(tag.getString("id"))) {
-			return CoreModule.TILE_BLOCK.defaultBlockState();
+			ci.setReturnValue(CoreModule.TILE_BLOCK.defaultBlockState());
+			return;
 		}
-		return defaultBlockState();
+		ci.setReturnValue(defaultBlockState());
 	}
 
 	@Override
