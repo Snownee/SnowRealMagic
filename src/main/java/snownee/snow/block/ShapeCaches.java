@@ -12,9 +12,9 @@ import net.minecraft.world.level.block.TallFlowerBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.jade.Jade;
 import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
+import snownee.snow.SnowRealMagic;
 
 public class ShapeCaches {
 
@@ -47,7 +47,7 @@ public class ShapeCaches {
 			}
 			return cache.get(key, loader);
 		} catch (Exception e) {
-			Jade.LOGGER.catching(e);
+			SnowRealMagic.LOGGER.error("", e);
 			throw new RuntimeException(e);
 		}
 	}
