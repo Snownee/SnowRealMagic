@@ -20,7 +20,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	public SnowCoveredBlockEntity(BlockPos pos, BlockState state) {
 		super(CoreModule.TEXTURE_TILE.get(), pos, state);
-		options.renderOverlay = true; // stairs does not implement WatcherSnowVariant
+		options.renderOverlay = true;
 	}
 
 	@Override
@@ -41,9 +41,6 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
-				if (!network && block instanceof WatcherSnowVariant) {
-					options.renderBottom = data.getBoolean("RB");
-				}
 			}
 		} else {
 			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
@@ -56,12 +53,6 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	@Override
 	public void saveState(CompoundTag data, boolean network) {
 		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
-		if (!network && getBlockState().getBlock() instanceof WatcherSnowVariant variant) {
-			if (options.renderBottom) {
-				variant.updateOptions(getBlockState(), level, worldPosition, options); // data fix
-				data.putBoolean("RB", options.renderBottom);
-			}
-		}
 	}
 
 	@SuppressWarnings("deprecation")
