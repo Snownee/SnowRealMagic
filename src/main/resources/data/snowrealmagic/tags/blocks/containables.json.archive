@@ -1,5 +1,4 @@
 {
-  "_": "For archive",
   "replace": false,
   "values": [
     {"id":"foragecraft:stick","required":false},
