@@ -59,7 +59,7 @@ dependencies {
     //modImplementation "curse.maven:kiwi-549404:3998272"
     //annotationProcessor "curse.maven:kiwi-549404:3998272"
     modImplementation "maven.modrinth:kiwi:CyGV9a95"
-    
+
     //modImplementation "curse.maven:jade-324717:4096403"
     modImplementation "maven.modrinth:jade:kd04zQ7y"
 }
@@ -140,7 +140,7 @@ unifiedPublishing {
         mainPublication tasks.remapJar // Declares the publicated jar
 
         curseforge {
-            token = System.getenv("CURSE_TOKEN")
+            token = System.getenv("CURSE_TOKEN") ?: ""
             id = "560441" // Required, must be a string, ID of CurseForge project
 
             relations { // Optional, Inferred from the relations above by default
@@ -150,7 +150,7 @@ unifiedPublishing {
         }
 
         modrinth {
-            token = System.getenv("MODRINTH_TOKEN")
+            token = System.getenv("MODRINTH_TOKEN") ?: ""
             id = "iJNje1E8" // Required, must be a string, ID of Modrinth project
             displayName = project.mod_version
 
