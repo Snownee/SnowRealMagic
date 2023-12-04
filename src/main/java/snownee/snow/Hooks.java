@@ -136,19 +136,19 @@ public final class Hooks {
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof FenceBlock && state.is(BlockTags.FENCES)) {
+		if (block instanceof FenceBlock) {
 			return hasAllProperties(state, CoreModule.FENCE.defaultBlockState());
 		}
-		if (block instanceof FenceGateBlock && state.is(BlockTags.FENCE_GATES)) {
+		if (block instanceof FenceGateBlock) {
 			return hasAllProperties(state, CoreModule.FENCE_GATE.defaultBlockState());
 		}
-		if (block instanceof WallBlock && state.is(BlockTags.WALLS)) {
+		if (block instanceof WallBlock) {
 			return hasAllProperties(state, CoreModule.WALL.defaultBlockState());
 		}
-		if (block instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
+		if (block instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM) {
 			return true;
 		}
-		if (block instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.BOTTOM && state.is(BlockTags.STAIRS)) {
+		if (block instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.BOTTOM) {
 			return hasAllProperties(state, CoreModule.STAIRS.defaultBlockState());
 		}
 		return false;
@@ -177,25 +177,25 @@ public final class Hooks {
 
 		BlockPos posDown = pos.below();
 		BlockState stateDown = world.getBlockState(posDown);
-		if (block instanceof StairBlock && !CoreModule.STAIRS.is(state) && state.is(BlockTags.STAIRS)) {
+		if (block instanceof StairBlock && !CoreModule.STAIRS.is(state)) {
 			BlockState newState = CoreModule.STAIRS.defaultBlockState();
 			newState = copyProperties(state, newState);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof SlabBlock && !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && state.is(BlockTags.SLABS)) {
+		} else if (block instanceof SlabBlock && !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM) {
 			// can't copy properties as this doesn't extend vanilla slabs
 			world.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
-		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class && state.is(BlockTags.FENCES)) {
-			KiwiGO<Block> newBlock = state.is(BlockTags.WOODEN_FENCES) ? CoreModule.FENCE : CoreModule.FENCE2;
+		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class) {
+			KiwiGO<Block> newBlock = state.is(BlockTags.WOODEN_FENCES) || state.getSoundType() == SoundType.WOOD ? CoreModule.FENCE : CoreModule.FENCE2;
 			BlockState newState = newBlock.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state) && state.is(BlockTags.FENCE_GATES)) {
+		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state)) {
 			BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
-		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state) && state.is(BlockTags.WALLS)) {
+		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state)) {
 			BlockState newState = CoreModule.WALL.defaultBlockState();
 			newState = copyProperties(state, newState);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
