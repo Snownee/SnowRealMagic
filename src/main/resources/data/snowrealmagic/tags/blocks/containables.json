@@ -1,5 +1,6 @@
 {
   "values": [
+    "#snowrealmagic:offset_y",
     "minecraft:grass",
     {"id": "#c:grass", "required": false},
     {"id": "#c:grass_like", "required": false},
@@ -22,17 +23,6 @@
     {"id":"byg:leaf_pile","required":false},
     {"id":"byg:flower_patch","required":false},
     {"id":"byg:clover_patch","required":false},
-    {"id":"projectvibrantjourneys:twigs","required":false},
-    {"id":"projectvibrantjourneys:mossy_rocks","required":false},
-    {"id":"projectvibrantjourneys:sandstone_rocks","required":false},
-    {"id":"projectvibrantjourneys:fallen_leaves","required":false},
-    {"id":"projectvibrantjourneys:rocks","required":false},
-    {"id":"projectvibrantjourneys:seashells","required":false},
-    {"id":"projectvibrantjourneys:pinecones","required":false},
-    {"id":"projectvibrantjourneys:charred_bones","required":false},
-    {"id":"projectvibrantjourneys:bones","required":false},
-    {"id":"projectvibrantjourneys:ice_chunks","required":false},
-    {"id":"projectvibrantjourneys:red_sandstone_rocks","required":false},
     {"id":"twigs:bamboo_leaves","required":false},
     {"id":"twigs:azalea_flowers","required":false}
   ]
