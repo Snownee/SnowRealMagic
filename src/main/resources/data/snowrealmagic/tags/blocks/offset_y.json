@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     {"id":"projectvibrantjourneys:twigs","required":false},
     {"id":"projectvibrantjourneys:mossy_rocks","required":false},

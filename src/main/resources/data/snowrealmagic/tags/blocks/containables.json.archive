@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     {"id":"foragecraft:stick","required":false},
     {"id":"foragecraft:rock","required":false},
