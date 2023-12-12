@@ -6,8 +6,8 @@ buildscript {
         maven { url='https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-    
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
@@ -91,11 +91,11 @@ repositories {
     maven {
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
-    maven { 
-        url "https://io.terraforged.com/repository/maven/" 
-    }
     maven {
-        url = "https://www.cursemaven.com"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
@@ -105,16 +105,16 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.7.1.153:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.7.1.153")
 
     //compile 'org.spongepowered:mixin:0.8'
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:terraforged-363820:3365710")
+    implementation fg.deobf("curse.maven:terraforged-363820:4044290")
     //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
-	implementation fg.deobf("curse.maven:kiwi-303657:3536245")
-    implementation fg.deobf("curse.maven:rubidium-574856:3949659")
+    implementation fg.deobf("curse.maven:kiwi-303657:3536245")
+    implementation fg.deobf("curse.maven:rubidium-574856:4743730")
     //implementation fg.deobf("curse.maven:bop-220318:3591343")
 }
 

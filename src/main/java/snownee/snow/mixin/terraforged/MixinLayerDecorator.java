@@ -15,7 +15,7 @@ public abstract class MixinLayerDecorator {
 
 	@Redirect(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isIn(Lnet/minecraft/block/Block;)Z"
+					value = "INVOKE", target = "Lnet/minecraft/block/BlockState;matchesBlock(Lnet/minecraft/block/Block;)Z"
 			), method = "fixBaseBlock"
 	)
 	private boolean srm_isIn(BlockState state, Block block) {

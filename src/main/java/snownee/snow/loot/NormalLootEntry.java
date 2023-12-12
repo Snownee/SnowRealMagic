@@ -60,12 +60,13 @@ public class NormalLootEntry extends StandaloneLootEntry {
 
 	public static class Serializer extends StandaloneLootEntry.Serializer<NormalLootEntry> {
 		@Override
-		public void func_230422_a_(JsonObject json, NormalLootEntry lootEntry, JsonSerializationContext context) {
-			super.func_230422_a_(json, lootEntry, context);
+		public void doSerialize(JsonObject json, NormalLootEntry lootEntry, JsonSerializationContext context) {
+			super.doSerialize(json, lootEntry, context);
 		}
 
+
 		@Override
-		protected NormalLootEntry func_212829_b_(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
+		protected NormalLootEntry deserialize(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, ILootCondition[] conditionsIn, ILootFunction[] functionsIn) {
 			return new NormalLootEntry(weightIn, qualityIn, conditionsIn, functionsIn);
 		}
 	}

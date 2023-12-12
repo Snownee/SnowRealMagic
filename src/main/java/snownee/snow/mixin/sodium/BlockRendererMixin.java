@@ -46,6 +46,9 @@ import snownee.snow.client.ClientVariables;
 public abstract class BlockRendererMixin {
 
 	@Shadow
+	protected abstract LightMode getLightingMode(BlockState state, IBakedModel model, IBlockDisplayReader world, BlockPos pos);
+
+	@Shadow
 	private LightPipelineProvider lighters;
 	@Shadow
 	private Random random;
@@ -128,7 +131,7 @@ public abstract class BlockRendererMixin {
 			}
 
 			// specify base model's render type
-			if (blockStateIn.isIn(CoreModule.TILE_BLOCK)) {
+			if (blockStateIn.matchesBlock(CoreModule.TILE_BLOCK)) {
 				if (layer != solid) {
 					ci.setReturnValue(ret);
 					return;
@@ -160,7 +163,7 @@ public abstract class BlockRendererMixin {
 		if (yOffset != 0) {
 			offset = offset.add(0, yOffset, 0);
 		}
-		LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model));
+		LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model, world, pos));
 
 		boolean rendered = false;
 
@@ -195,9 +198,6 @@ public abstract class BlockRendererMixin {
 
 	@Shadow
 	abstract boolean renderModel(IBlockDisplayReader world, BlockState state, BlockPos pos, IBakedModel model, ChunkModelBuffers buffers, boolean cull, long seed, IModelData modelData);
-
-	@Shadow
-	abstract LightMode getLightingMode(BlockState state, IBakedModel model);
 
 	@Shadow
 	abstract void renderQuadList(IBlockDisplayReader world, BlockState state, BlockPos pos, LightPipeline lighter, Vector3d offset, ChunkModelBuffers buffers, List<BakedQuad> quads, Direction facing);

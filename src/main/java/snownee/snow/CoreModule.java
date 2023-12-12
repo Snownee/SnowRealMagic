@@ -97,9 +97,9 @@ public class CoreModule extends AbstractModule {
 	@Skip
 	public static final LootPoolEntryType NORMAL = Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, SnowRealMagic.MODID + ":normal", new LootPoolEntryType(new NormalLootEntry.Serializer()));
 
-	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.func_234903_a_("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
+	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_STRENGTH = GameRules.register("blizzardStrength", GameRules.Category.MISC, GameRules.IntegerValue.create(0));
 
-	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_FREQUENCY = GameRules.func_234903_a_("blizzardFrequency", GameRules.Category.MISC, GameRules.IntegerValue.create(10000));
+	public static final GameRules.RuleKey<GameRules.IntegerValue> BLIZZARD_FREQUENCY = GameRules.register("blizzardFrequency", GameRules.Category.MISC, GameRules.IntegerValue.create(10000));
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
