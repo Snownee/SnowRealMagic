@@ -513,7 +513,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState state = worldIn.getBlockState(pos.down());
-			if (!state.isIn(this))
+			if (!state.matchesBlock(this))
 				return;
 			if (state.getBlock() == CoreModule.BLOCK || state.getBlock() == CoreModule.TILE_BLOCK) {
 				entityIn.onLivingFall(fallDistance, 0.2F);
@@ -532,7 +532,7 @@ public class ModSnowBlock extends SnowBlock implements SnowVariant {
 			double d0 = Math.abs(entityIn.getMotion().y);
 			if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {
 				BlockState state = worldIn.getBlockState(pos);
-				if (!state.isIn(this))
+				if (!state.matchesBlock(this))
 					return;
 				int layers = state.get(LAYERS) - 1;
 				double d1 = 1 - layers * 0.05f;

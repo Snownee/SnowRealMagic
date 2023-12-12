@@ -28,7 +28,7 @@ public class ModIceAndSnowFeature extends IceAndSnowFeature {
 	}
 
 	@Override
-	public boolean /*place*/ func_241855_a(ISeedReader worldIn, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
+	public boolean generate(ISeedReader worldIn, ChunkGenerator generator, Random random, BlockPos pos, NoFeatureConfig config) {
 		BlockPos.Mutable blockpos = new BlockPos.Mutable();
 		BlockPos.Mutable blockpos1 = new BlockPos.Mutable();
 

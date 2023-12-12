@@ -52,7 +52,7 @@ public abstract class MixinSpreadableSnowyDirtBlock {
 	}
 
 	@Shadow
-	public static boolean isSnowyAndNotUnderwater(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
+	private static boolean isSnowyAndNotUnderwater(BlockState p_220256_0_, IWorldReader p_220256_1_, BlockPos p_220256_2_) {
 		return false;
 	}
 

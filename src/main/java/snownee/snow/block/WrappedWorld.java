@@ -31,7 +31,7 @@ public class WrappedWorld extends World {
 	protected World world;
 
 	public WrappedWorld(World world) {
-		super((ISpawnWorldInfo) world.getWorldInfo(), world.func_234923_W_(), world.func_230315_m_(), world::getProfiler, world.isRemote, world.func_234925_Z_(), 0L);
+		super((ISpawnWorldInfo) world.getWorldInfo(), world.getDimensionKey(), world.getDimensionType(), world::getProfiler, world.isRemote, world.isDebug(), 0L);
 		this.world = world;
 	}
 
@@ -59,7 +59,7 @@ public class WrappedWorld extends World {
 	@Override
 	public BlockState getBlockState(BlockPos pos) {
 		BlockState state = world.getBlockState(pos);
-		if (state.isIn(CoreModule.TILE_BLOCK)) {
+		if (state.matchesBlock(CoreModule.TILE_BLOCK)) {
 			state = CoreModule.TILE_BLOCK.getRaw(state, world, pos);
 		}
 		return state;
