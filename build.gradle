@@ -114,8 +114,9 @@ dependencies {
     implementation fg.deobf("curse.maven:terraforged-363820:4044290")
     //compile fg.deobf("curse.maven:serene-seasons-291874:3154197")
     implementation fg.deobf("curse.maven:kiwi-303657:3536245")
-    implementation fg.deobf("curse.maven:rubidium-574856:4743730")
+    compileOnly fg.deobf("curse.maven:rubidium-574856:4743730")
     //implementation fg.deobf("curse.maven:bop-220318:3591343")
+    runtimeOnly fg.deobf("curse.maven:enablemultiplayermode-910522:4740559")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
