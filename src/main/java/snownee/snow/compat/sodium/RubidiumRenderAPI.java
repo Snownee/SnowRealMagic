@@ -47,7 +47,7 @@ public class RubidiumRenderAPI implements RenderAPI {
 		}
 		Material material = DefaultMaterials.forRenderLayer(ctx.renderLayer());
 		ChunkModelBuilder meshBuilder = buffers.get(material);
-		ColorProvider<BlockState> colorizer = blockRenderer.getColorProviderRegistry().getColorProvider(ctx.state().getBlock());
+		ColorProvider<BlockState> colorizer = blockRenderer.getColorProviderRegistry().getColorProvider(state.getBlock());
 		Vec3 offset = state.getOffset(world, pos);
 		if (yOffset != 0) {
 			offset = offset.add(0, yOffset, 0);
