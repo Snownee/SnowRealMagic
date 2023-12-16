@@ -38,7 +38,7 @@ public class ModelBakerImplMixinNormalBake {
 			Variant variantState = (Variant) modelState;
 			variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
 			BakedModel model = ((ModelBakerImpl) (Object) this).bake(def.model, variantState, sprites);
-			((SnowVariantModel) blockModel).setSnowVariant(model);
+			((SnowVariantModel) blockModel).srm$setSnowVariant(model);
 		}
 	}
 

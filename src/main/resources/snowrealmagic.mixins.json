@@ -22,12 +22,9 @@
     "sereneseasons.RandomUpdateHandlerMixin"
   ],
   "client": [
-    "BlockModelShaperMixin",
     "BlockRenderDispatcherMixin",
     "CameraMixin",
     "ModelBakerImplMixinNormalBake",
-    "ModelBakeryMixin",
-    "ModelManagerMixin",
     "SimpleBakedModelMixin",
     "SnowLayerBlockClientMixin",
     "sodium.BlockRendererAccess",

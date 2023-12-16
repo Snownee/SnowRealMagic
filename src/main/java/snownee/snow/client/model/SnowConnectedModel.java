@@ -32,7 +32,7 @@ public class SnowConnectedModel extends BakedModelWrapper<BakedModel> implements
 	public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
 		BakedModel model = null;
 		if (extraData == USE_SNOW_VARIANT) {
-			model = getSnowVariant();
+			model = srm$getSnowVariant();
 		}
 		if (model == null) {
 			model = originalModel;
@@ -51,17 +51,17 @@ public class SnowConnectedModel extends BakedModelWrapper<BakedModel> implements
 	}
 
 	@Override
-	public BakedModel getSnowVariant() {
+	public BakedModel srm$getSnowVariant() {
 		if (originalModel instanceof SnowVariantModel) {
-			return ((SnowVariantModel) originalModel).getSnowVariant();
+			return ((SnowVariantModel) originalModel).srm$getSnowVariant();
 		}
 		return null;
 	}
 
 	@Override
-	public void setSnowVariant(BakedModel model) {
+	public void srm$setSnowVariant(BakedModel model) {
 		if (originalModel instanceof SnowVariantModel) {
-			((SnowVariantModel) originalModel).setSnowVariant(model);
+			((SnowVariantModel) originalModel).srm$setSnowVariant(model);
 		} else {
 			SnowRealMagic.LOGGER.error("Cannot set snow variant model for {}", originalModel);
 		}

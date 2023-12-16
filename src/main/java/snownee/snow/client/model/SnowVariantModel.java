@@ -4,8 +4,8 @@ import net.minecraft.client.resources.model.BakedModel;
 
 public interface SnowVariantModel {
 
-	BakedModel getSnowVariant();
+	BakedModel srm$getSnowVariant();
 
-	void setSnowVariant(BakedModel model);
+	void srm$setSnowVariant(BakedModel model);
 
 }

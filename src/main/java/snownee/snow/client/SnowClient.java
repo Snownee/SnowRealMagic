@@ -62,7 +62,7 @@ public final class SnowClient {
 		if (!camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			model = getBlockModel(camo);
 			if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
-				BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
+				BakedModel snowVariant = ((SnowVariantModel) model).srm$getSnowVariant();
 				if (snowVariant != null) {
 					model = snowVariant;
 					useVariant = true;
