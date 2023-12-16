@@ -8,10 +8,12 @@ import snownee.kiwi.config.KiwiConfig.ConfigType;
 public final class SnowClientConfig {
 
 	public static boolean particleThroughLeaves = true;
+
 	public static boolean snowVariants = true;
 
-	public static void onChanged(String key) {
-		if ("snowVariants".equals(key) && Minecraft.getInstance() != null && Minecraft.getInstance().level != null) {
+	@KiwiConfig.Listen("snowVariants")
+	public static void toggleSnowVariants(String key) {
+		if (Minecraft.getInstance().level != null) {
 			Minecraft.getInstance().levelRenderer.allChanged();
 		}
 	}
