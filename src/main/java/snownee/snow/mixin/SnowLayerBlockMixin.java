@@ -124,7 +124,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Overwrite
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
 		int i = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Blocks.SNOW.asItem()) && i < 8) {
+		if (useContext.getItemInHand().is(Items.SNOW) && i < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
 				return useContext.getClickedFace() == Direction.UP;
 			} else {
@@ -189,14 +189,21 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
 
+	/**
+	 * @author Snownee
+	 * @reason
+	 */
 	@Override
 	@Nullable
 	@Overwrite
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
-		if (blockstate.getBlock() instanceof SnowLayerBlock) {
-			int i = blockstate.getValue(SnowLayerBlock.LAYERS);
-			return blockstate.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1));
+		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+		if (state.hasProperty(SnowLayerBlock.LAYERS)) {
+			int i = state.getValue(SnowLayerBlock.LAYERS);
+			return state.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1));
+		} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+			return state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1));
 		}
 		ItemStack stack = context.getItemInHand();
 		CompoundTag tag = BlockItem.getBlockEntityData(stack);

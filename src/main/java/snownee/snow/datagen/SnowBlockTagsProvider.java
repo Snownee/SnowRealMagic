@@ -1,6 +1,6 @@
 package snownee.snow.datagen;
 
-import static snownee.snow.CoreModule.BOTTOM_SNOW;
+import static snownee.snow.CoreModule.SNOWY_SETTING;
 import static snownee.snow.CoreModule.FENCE;
 import static snownee.snow.CoreModule.FENCE2;
 import static snownee.snow.CoreModule.FENCE_GATE;
@@ -51,8 +51,8 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 		helper.add(BlockTags.WALLS, WALL);
 
 		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
-		tag(BOTTOM_SNOW).addTag(BlockTags.SNOW);
-		helper.add(BOTTOM_SNOW, FENCE, FENCE2, FENCE_GATE, WALL);
+		tag(SNOWY_SETTING).addTag(BlockTags.SNOW);
+		helper.add(SNOWY_SETTING, FENCE, FENCE2, FENCE_GATE, WALL);
 
 		tag(CoreModule.NOT_CONTAINABLES);
 		tag(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK);

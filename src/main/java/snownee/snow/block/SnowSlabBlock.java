@@ -103,4 +103,8 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	//		return getRaw(state, worldIn, pos).getPlayerRelativeBlockHardness(player, worldIn, pos);
 	//	}
 
+	@Override
+	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
+		return 1;
+	}
 }

@@ -29,12 +29,10 @@ import snownee.snow.client.model.SnowVariantModel;
 public final class SnowClient {
 
 	public static final Options fallbackOptions = new Options();
+	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
+	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
 	public static BakedModel cachedSnowModel;
 	public static BakedModel cachedOverlayModel;
-
-	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
-
-	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
 
 	public static boolean shouldRedirect(BlockState state) {
 		if (!(state.getBlock() instanceof SnowVariant)) {
@@ -71,20 +69,18 @@ public final class SnowClient {
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
 			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
-		if (options.renderBottom && (layer == null || layer == RenderType.solid())) {
-			BlockState snow = state.getBlock() instanceof SnowVariant ? ((SnowVariant) state.getBlock()).getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
-			if (!snow.isAir()) {
-				if (snow == Blocks.SNOW.defaultBlockState()) {
-					if (cachedSnowModel == null) {
-						cachedSnowModel = getBlockModel(snow);
-					}
-					model = cachedSnowModel;
-				} else {
-					model = getBlockModel(snow);
+		BlockState snow = state.getBlock() instanceof SnowVariant snowVariant ? snowVariant.getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
+		if (!snow.isAir() && (layer == null || layer == RenderType.solid())) {
+			if (snow == Blocks.SNOW.defaultBlockState()) {
+				if (cachedSnowModel == null) {
+					cachedSnowModel = getBlockModel(snow);
 				}
-				double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
-				rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
+				model = cachedSnowModel;
+			} else {
+				model = getBlockModel(snow);
 			}
+			double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
+			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) && (!useVariant || CoreModule.TILE_BLOCK.is(state))) {
 			BlockPos pos2 = pos;

@@ -1,17 +1,22 @@
 package snownee.snow.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
+import snownee.snow.Hooks;
 import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
@@ -67,4 +72,23 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 		SnowCoveredBlockEntity.updateOptions(level, pos);
 	}
 
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(OPTIONAL_LAYERS);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction direction, BlockState thatState, LevelAccessor level, BlockPos pos, BlockPos thatPos) {
+		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
+		if (!Hooks.canSnowSurvive(state, level, pos)) {
+			state = state.setValue(OPTIONAL_LAYERS, 0);
+		}
+		return state;
+	}
+
+	@Override
+	public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		return Hooks.canBeReplaced(state, context);
+	}
 }

@@ -70,9 +70,4 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	public boolean isRandomlyTicking(BlockState state) {
 		return true;
 	}
-
-	@Override
-	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
-		return 0;
-	}
 }

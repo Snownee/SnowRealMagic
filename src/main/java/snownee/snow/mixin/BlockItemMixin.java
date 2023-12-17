@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.block.SnowVariant;
 
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
@@ -44,7 +45,12 @@ public abstract class BlockItemMixin {
 			if (!state.canBeReplaced(blockContext)) {
 				pos = pos.relative(context.getClickedFace());
 				state = level.getBlockState(pos);
-				if (Hooks.canContainState(state)) {
+				blockContext = BlockPlaceContext.at(blockContext, pos, context.getClickedFace());
+				boolean canPlace = Hooks.canContainState(state);
+				if (state.getBlock() instanceof SnowVariant && blockContext.replacingClickedOnBlock()) {
+					canPlace = true;
+				}
+				if (canPlace) {
 					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide && (player == null || !player.isCreative())) {
 						context.getItemInHand().shrink(1);
 					}

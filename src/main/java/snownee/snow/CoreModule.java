@@ -1,24 +1,11 @@
 package snownee.snow;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.google.common.collect.Maps;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -26,20 +13,13 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
@@ -57,22 +37,15 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.FallingSnowRenderer;
-import snownee.snow.client.SnowClient;
-import snownee.snow.client.SnowVariantMetadataSectionSerializer;
-import snownee.snow.client.model.ModelDefinition;
-import snownee.snow.client.model.SnowConnectedModel;
-import snownee.snow.datagen.SnowBlockTagsProvider;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockAccess;
 import snownee.snow.mixin.IntegerValueAccess;
 
 @KiwiModule
-@KiwiModule.Subscriber(modBus = true)
 public class CoreModule extends AbstractModule {
 
-	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
+	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
 
 	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
@@ -122,12 +95,6 @@ public class CoreModule extends AbstractModule {
 		decorators.remove(ForgeRegistries.BLOCKS);
 	}
 
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public void registerRenderers(RegisterRenderers event) {
-		event.registerEntityRenderer(ENTITY.get(), FallingSnowRenderer::new);
-	}
-
 	@Override
 	protected void init(InitEvent event) {
 		ModUtil.init();
@@ -148,66 +115,5 @@ public class CoreModule extends AbstractModule {
 			ItemBlockRenderTypes.setRenderLayer(block.get(), blockRenderTypes);
 	}
 
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public void registerExtraModels(ModelEvent.RegisterAdditional event) {
-		event.register(SnowClient.OVERLAY_MODEL);
-
-		SnowClient.snowVariantMapping.clear();
-		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		ModelBakery.MODEL_LISTER.listMatchingResources(resourceManager).forEach((key, resource) -> {
-			ModelDefinition def;
-			try {
-				def = resource.metadata().getSection(SnowVariantMetadataSectionSerializer.SERIALIZER).orElse(null);
-			} catch (IOException e) {
-				return;
-			}
-			if (def == null || def.model == null) {
-				return;
-			}
-			SnowClient.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
-			event.register(def.model);
-		});
-	}
-
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public void replaceConnected(ModelEvent.ModifyBakingResult event) {
-		Map<ResourceLocation,BakedModel> models = event.getModels();
-		Map<BakedModel, BakedModel> transform = Maps.newHashMap();
-		for (ModelDefinition def : SnowClient.snowVariantMapping.values()) {
-			if (def.overrideBlock == null) {
-				continue;
-			}
-			for (ResourceLocation override : def.overrideBlock) {
-				Block block = BuiltInRegistries.BLOCK.get(override);
-				if (block == Blocks.AIR || !block.defaultBlockState().hasProperty(DoublePlantBlock.HALF)) {
-					SnowRealMagic.LOGGER.error("Cannot handle snow variant override: {}, {}", def.model, override);
-					continue;
-				}
-				for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-					if (state.getValue(DoublePlantBlock.HALF) != DoubleBlockHalf.UPPER) {
-						continue;
-					}
-					ModelResourceLocation location = BlockModelShaper.stateToModelLocation(override, state);
-					BakedModel model = models.get(location);
-					if (model == null || model instanceof SnowConnectedModel) {
-						continue;
-					}
-					BakedModel snowModel = transform.computeIfAbsent(model, SnowConnectedModel::new);
-					models.put(location, snowModel);
-				}
-			}
-		}
-		SnowClient.cachedOverlayModel = null;
-		SnowClient.cachedSnowModel = null;
-	}
-
-	@Override
-	protected void gatherData(GatherDataEvent event) {
-		DataGenerator generator = event.getGenerator();
-		SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
-		generator.addProvider(event.includeServer(), blockTagsProvider);
-	}
 
 }
