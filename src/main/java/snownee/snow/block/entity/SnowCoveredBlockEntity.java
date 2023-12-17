@@ -33,17 +33,17 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 				Item item = BuiltInRegistries.ITEM.get(id);
 				if (item instanceof BlockItem) {
 					Block block = ((BlockItem) item).getBlock();
-					changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
+					changed |= setContainedState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
 				}
 			}
 		} else if (data.contains("Block")) {
 			ResourceLocation id = Util.RL(data.getString("Block"));
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
-				changed |= setState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
+				changed |= setContainedState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);
 			}
 		} else {
-			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
+			changed |= setContainedState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
 		}
 		if (changed && network) {
 			refresh();
@@ -52,14 +52,14 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	@Override
 	public void saveState(CompoundTag data, boolean network) {
-		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
+		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void setBlockState(BlockState blockState) {
 		super.setBlockState(blockState);
-		setState(Hooks.copyProperties(getBlockState(), state), false);
+		setContainedState(Hooks.copyProperties(getBlockState(), state), false);
 	}
 
 	@Override

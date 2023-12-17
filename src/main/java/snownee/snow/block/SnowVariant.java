@@ -31,7 +31,7 @@ public interface SnowVariant extends IForgeBlock {
 		if (state.hasBlockEntity()) {
 			BlockEntity tile = world.getBlockEntity(pos);
 			if (tile instanceof SnowBlockEntity) {
-				return ((SnowBlockEntity) tile).getState();
+				return ((SnowBlockEntity) tile).getContainedState();
 			}
 		}
 		return Blocks.AIR.defaultBlockState();

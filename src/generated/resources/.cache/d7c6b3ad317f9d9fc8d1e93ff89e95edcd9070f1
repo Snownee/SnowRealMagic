@@ -1,4 +1,4 @@
-// 1.20.1	2023-12-17T17:20:29.9857918	Tags for minecraft:block mod id snowrealmagic
+// 1.20.1	2023-12-18T00:49:39.9239988	Tags for minecraft:block mod id snowrealmagic
 62ce7645ad0741a3ddddad8c5e97bafa72f3de64 data/minecraft/tags/blocks/fences.json
 c69c2d0eb5f9342e4ae4d6b600fa318183e4151f data/minecraft/tags/blocks/fence_gates.json
 53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/foxes_spawnable_on.json
@@ -15,6 +15,6 @@ df452e72045d7f8f7c5eef06331938e64e7eb4d0 data/minecraft/tags/blocks/stairs.json
 60678fcbe700a6c24cfd1f32b32977bfac70430a data/minecraft/tags/blocks/walls.json
 53de94430fad5ab20e45c8baf7a1024d76d78de4 data/minecraft/tags/blocks/wolves_spawnable_on.json
 665ff7ab6901ffeb785fb54663b5690cb42ca40b data/minecraft/tags/blocks/wooden_fences.json
-c355652a37cce0c0ccb94b0aa63ddc5e72a97a60 data/snowrealmagic/tags/blocks/cannot_accumulate_on.json
+3003df870d529e581408fbaf8e898d3f7b84c4f8 data/snowrealmagic/tags/blocks/cannot_accumulate_on.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/snowrealmagic/tags/blocks/not_containables.json
 17d286cefc512519bc39cbb832d477349f57a35b data/snowrealmagic/tags/blocks/snowy_setting.json

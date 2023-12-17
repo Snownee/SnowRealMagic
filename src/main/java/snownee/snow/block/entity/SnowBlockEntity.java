@@ -43,15 +43,15 @@ public class SnowBlockEntity extends ModBlockEntity {
 		super(type, pos, state);
 	}
 
-	public BlockState getState() {
+	public BlockState getContainedState() {
 		return state;
 	}
 
-	public void setState(BlockState state) {
-		setState(state, true);
+	public void setContainedState(BlockState state) {
+		setContainedState(state, true);
 	}
 
-	public boolean setState(BlockState state, boolean update) {
+	public boolean setContainedState(BlockState state, boolean update) {
 		if (state == null) {
 			state = Blocks.AIR.defaultBlockState();
 		}
@@ -98,10 +98,10 @@ public class SnowBlockEntity extends ModBlockEntity {
 			ResourceLocation id = Util.RL(data.getString("Block"));
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
-				changed |= setState(block.defaultBlockState(), network);
+				changed |= setContainedState(block.defaultBlockState(), network);
 			}
 		} else {
-			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
+			changed |= setContainedState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
 		}
 		if (changed && network) {
 			refresh();
@@ -109,10 +109,10 @@ public class SnowBlockEntity extends ModBlockEntity {
 	}
 
 	public void saveState(CompoundTag data, boolean network) {
-		if (getState() == getState().getBlock().defaultBlockState()) {
-			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
+		if (getContainedState() == getContainedState().getBlock().defaultBlockState()) {
+			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
 		} else {
-			data.put("State", NbtUtils.writeBlockState(getState()));
+			data.put("State", NbtUtils.writeBlockState(getContainedState()));
 		}
 		if (options.renderOverlay)
 			data.putBoolean("RO", options.renderOverlay);

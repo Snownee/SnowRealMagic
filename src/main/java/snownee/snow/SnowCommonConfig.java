@@ -17,6 +17,7 @@ public final class SnowCommonConfig {
 	public static boolean snowReduceFallDamage = true;
 	public static boolean sustainGrassIfLayerMoreThanOne = true;
 	public static boolean sneakSnowball = true;
+	public static boolean fancySnowOnUpperSlab = true;
 	@Range(min = 1, max = 8)
 	@ConfigUI.Slider
 	public static int mobSpawningMaxLayers = 8;
