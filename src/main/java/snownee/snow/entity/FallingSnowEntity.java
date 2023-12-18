@@ -2,7 +2,6 @@ package snownee.snow.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
@@ -10,10 +9,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.RandomSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -32,10 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.network.NetworkHooks;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.network.SLavaSmokeEffectPacket;
+import snownee.snow.util.CommonProxy;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {
@@ -104,17 +101,8 @@ public class FallingSnowEntity extends Entity {
 						discard();
 						return;
 					}
-					if (state.getFluidState().is(FluidTags.LAVA)) {
-						if (level.isClientSide) {
-							RandomSource random = level.random;
-							for (int i = 0; i < 10; ++i) {
-								double d0 = random.nextGaussian() * 0.02D;
-								double d1 = random.nextGaussian() * 0.02D;
-								double d2 = random.nextGaussian() * 0.02D;
-								level.addParticle(ParticleTypes.SMOKE, pos.getX() + random.nextFloat(), pos.getY() + 1, pos.getZ() + random.nextFloat(), d0, d1, d2);
-							}
-						}
-						level.playSound(null, pos.above(), SoundEvents.LAVA_AMBIENT, SoundSource.AMBIENT, 0.8F, 0.8F);
+					if (CommonProxy.isHot(state.getFluidState(), level, pos)) {
+						SLavaSmokeEffectPacket.send((ServerLevel) level, pos.above());
 						discard();
 						return;
 					}
@@ -203,7 +191,7 @@ public class FallingSnowEntity extends Entity {
 
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
+		return CommonProxy.getAddEntityPacket(this);
 	}
 
 }

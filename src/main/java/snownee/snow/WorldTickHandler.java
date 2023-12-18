@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import snownee.snow.block.SnowVariant;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.mixin.IceBlockAccess;
 
@@ -68,7 +69,7 @@ public class WorldTickHandler {
 			return;
 		}
 		if (!Hooks.canContainState(state)) {
-			if (SnowCommonConfig.snowAccumulationMaxLayers < 9 && state.is(Blocks.SNOW)) {
+			if (SnowCommonConfig.snowAccumulationMaxLayers < 9 && state.getBlock() instanceof SnowVariant) {
 				return;
 			}
 			state = level.getBlockState(pos.move(Direction.UP));

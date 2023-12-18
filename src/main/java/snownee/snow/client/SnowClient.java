@@ -50,7 +50,7 @@ public final class SnowClient {
 	public static boolean renderHook(BlockAndTintGetter world, BlockPos pos, BlockState state, BlockState camo, Options options, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, RenderAPI api) {
 		if (layer == null || layer == RenderType.solid()) {
 			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
-				//FIXME this is too late, find a new way to update that
+				//FIXME find out if still necessary
 				watcher.updateOptions(state, world, pos, options);
 			}
 		}
@@ -60,16 +60,17 @@ public final class SnowClient {
 		if (!camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			model = getBlockModel(camo);
 			if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
-				BakedModel snowVariant = ((SnowVariantModel) model).srm$getSnowVariant();
-				if (snowVariant != null) {
-					model = snowVariant;
+				BakedModel variantModel = ((SnowVariantModel) model).srm$getSnowVariant();
+				if (variantModel != null) {
+					model = variantModel;
 					useVariant = true;
 				}
 			}
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
 			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
-		BlockState snow = state.getBlock() instanceof SnowVariant snowVariant ? snowVariant.getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
+		SnowVariant snowVariant = (SnowVariant) state.getBlock();
+		BlockState snow = snowVariant.getSnowState(state, world, pos);
 		if (!snow.isAir() && (layer == null || layer == RenderType.solid())) {
 			if (snow == Blocks.SNOW.defaultBlockState()) {
 				if (cachedSnowModel == null) {
@@ -97,8 +98,11 @@ public final class SnowClient {
 					pos2 = pos.below();
 				}
 			} else {
-				yOffset = state.getBlock() instanceof SnowVariant ? (float) ((SnowVariant) state.getBlock()).getYOffset() : 0;
+				yOffset = (float) snowVariant.getYOffset();
 				model = getBlockModel(state);
+			}
+			if (snowVariant.layers(state, world, pos) == 8) {
+				yOffset -= 0.002;
 			}
 			rendered |= api.translateYAndRender(world, state, pos2, layer, randomSupplier, cullSides, model, yOffset);
 		}

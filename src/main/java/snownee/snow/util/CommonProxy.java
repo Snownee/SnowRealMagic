@@ -1,8 +1,15 @@
 package snownee.snow.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.commands.DebugMobSpawningCommand;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -10,6 +17,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.network.NetworkHooks;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
@@ -39,5 +47,13 @@ public class CommonProxy {
 
 		if (Platform.isPhysicalClient())
 			ClientProxy.init();
+	}
+
+	public static boolean isHot(FluidState fluidState, Level level, BlockPos pos) {
+		return fluidState.getType().getFluidType().getTemperature(fluidState, level, pos) > 380 || fluidState.is(FluidTags.LAVA);
+	}
+
+	public static Packet<ClientGamePacketListener> getAddEntityPacket(Entity entity) {
+		return NetworkHooks.getEntitySpawningPacket(entity);
 	}
 }

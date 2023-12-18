@@ -17,6 +17,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -38,7 +39,7 @@ public class DoublePlantBlockMixin {
 			if (blockstate.getBlock() instanceof EntitySnowLayerBlock) {
 				world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
 				world.setBlock(blockpos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)), 35);
-				world.levelEvent(player, 2001, blockpos, Block.getId(state));
+				world.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, blockpos, Block.getId(state));
 			}
 		}
 	}

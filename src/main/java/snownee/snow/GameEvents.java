@@ -57,7 +57,7 @@ public final class GameEvents {
 		if (level.isClientSide) {
 			return false;
 		}
-		BlockState newState = snowVariant.onShovel(state, level, pos);
+		BlockState newState = snowVariant.decreaseLayer(state, level, pos, true);
 		level.setBlockAndUpdate(pos, newState);
 		int layers = snowVariant.layers(state, level, pos);
 		BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Math.max(layers, 1));
