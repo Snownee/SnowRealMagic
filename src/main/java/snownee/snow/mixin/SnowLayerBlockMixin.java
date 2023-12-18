@@ -166,7 +166,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 				return InteractionResult.SUCCESS;
 			}
 		}
-		if (state.is(Blocks.SNOW)) {
+		if (getRaw(state, worldIn, pos).isAir()) {
 			BlockPlaceContext context = new BlockPlaceContext(player, handIn, player.getItemInHand(handIn), hit);
 			Block block = Block.byItem(context.getItemInHand().getItem());
 			if (block != null && block != Blocks.AIR && context.replacingClickedOnBlock()) {
