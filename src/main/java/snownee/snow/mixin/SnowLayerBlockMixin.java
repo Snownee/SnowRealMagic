@@ -201,10 +201,8 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
-			if (!state.is(this))
-				return;
-			//FIXME why
-			if (state.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(state)) {
+			BlockState stateBelow = worldIn.getBlockState(pos.below());
+			if (stateBelow.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(stateBelow)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, worldIn.damageSources().fall());
 				return;
 			}
@@ -213,7 +211,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			return;
 		}
 		super.fallOn(worldIn, state, pos, entityIn, fallDistance);
-	} //FIXME what if below block is snow as well
+	}
 
 	@Override
 	public void stepOn(Level worldIn, BlockPos pos, BlockState state, Entity entityIn) {
