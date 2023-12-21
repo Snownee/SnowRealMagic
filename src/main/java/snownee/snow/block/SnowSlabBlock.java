@@ -26,9 +26,9 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
+import snownee.snow.util.CommonProxy;
 
 public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
@@ -89,7 +89,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
+		if (SnowCommonConfig.retainOriginalBlocks || CommonProxy.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
 		}
 	}

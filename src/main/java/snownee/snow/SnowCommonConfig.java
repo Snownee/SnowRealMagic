@@ -34,7 +34,7 @@ public final class SnowCommonConfig {
 	@Path("accumulation.accumulatesDuringSnowstorm")
 	public static boolean snowAccumulationDuringSnowstorm = true;
 	@Path("accumulation.maxLayers")
-	@Range(min = 1, max = 9)
+	@Range(min = 0, max = 9)
 	@ConfigUI.Slider
 	public static int snowAccumulationMaxLayers = 8;
 	@Path("accumulation.snowAndIceMeltInWarmBiomes")

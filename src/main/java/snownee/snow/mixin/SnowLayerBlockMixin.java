@@ -34,11 +34,11 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
-import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
+import snownee.snow.util.CommonProxy;
 
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
@@ -55,7 +55,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	@Overwrite
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		if (ModUtil.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
+		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
 			return SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1];
 		}
 		int layers = state.getValue(SnowLayerBlock.LAYERS);

@@ -97,7 +97,6 @@ public class CoreModule extends AbstractModule {
 
 	@Override
 	protected void init(InitEvent event) {
-		ModUtil.init();
 		event.enqueueWork(() -> {
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers;

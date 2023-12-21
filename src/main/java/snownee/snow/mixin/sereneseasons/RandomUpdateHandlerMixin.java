@@ -28,7 +28,7 @@ public abstract class RandomUpdateHandlerMixin {
 	}
 
 	@Shadow
-	static void adjustWeatherFrequency(Level world, Season season) {
+	private static void adjustWeatherFrequency(Level world, Season season) {
 		throw new AssertionError();
 	}
 
