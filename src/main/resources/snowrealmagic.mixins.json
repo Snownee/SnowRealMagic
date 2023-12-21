@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "snowrealmagic.refmap.json",
   "mixins": [
+    "AbstractMegaTreeGrowerMixin",
     "BlockAccess",
     "BlockItemMixin",
     "BlockMixin",
