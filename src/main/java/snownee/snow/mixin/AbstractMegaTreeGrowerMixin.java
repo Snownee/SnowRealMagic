@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.grower.AbstractMegaTreeGrower;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import snownee.snow.Hooks;
 import snownee.snow.block.SnowVariant;
 
@@ -49,7 +48,7 @@ public class AbstractMegaTreeGrowerMixin {
 	}
 
 	@Inject(method = "placeMega", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-	private void srm_placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos origin, BlockState state, RandomSource random, int offsetX, int offsetY, CallbackInfoReturnable<Boolean> ci, ResourceKey<ConfiguredFeature<?, ?>> resourcekey, Holder<ConfiguredFeature<?, ?>> holder, SaplingGrowTreeEvent event, ConfiguredFeature<?, ?> configuredfeature) {
+	private void srm_placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos origin, BlockState state, RandomSource random, int offsetX, int offsetY, CallbackInfoReturnable<Boolean> ci, ResourceKey<ConfiguredFeature<?, ?>> resourcekey, Holder<ConfiguredFeature<?, ?>> holder, ConfiguredFeature<?, ?> configuredfeature) {
 		BlockPos[] positions = new BlockPos[4];
 		positions[0] = origin.offset(offsetX, 0, offsetY);
 		positions[1] = origin.offset(offsetX + 1, 0, offsetY);

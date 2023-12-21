@@ -3,6 +3,7 @@ package snownee.snow.mixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -15,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
@@ -43,6 +46,7 @@ import snownee.snow.util.CommonProxy;
 @Mixin(value = SnowLayerBlock.class, priority = 500)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
+	@Unique
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16)};
 	@Final
 	@Shadow
@@ -54,14 +58,21 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
 	private void getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> ci) {
+		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			ci.setReturnValue(SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1]);
+			ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
 			return;
 		}
-		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (layers == 8) {
 			ci.setReturnValue(Shapes.block());
 			return;
+		}
+		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
+			Entity entity = entityContext.getEntity();
+			if (entity.getType() == EntityType.FALLING_BLOCK || CoreModule.ENTITY.is(entity.getType())) {
+				ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
+				return;
+			}
 		}
 		ci.setReturnValue(SNOW_SHAPES_MAGIC[layers - 1]);
 	}
@@ -115,17 +126,16 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
-	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
-		int i = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Items.SNOW) && i < 8) {
+	private boolean canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
+		int layers = state.getValue(SnowLayerBlock.LAYERS);
+		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
-				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
+				return useContext.getClickedFace() == Direction.UP;
 			} else {
-				ci.setReturnValue(true);
+				return true;
 			}
-			return;
 		}
-		ci.setReturnValue((SnowCommonConfig.snowAlwaysReplaceable && state.getValue(SnowLayerBlock.LAYERS) < 8) || i == 1);
+		return layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8);
 	}
 
 	@Override

@@ -330,9 +330,11 @@ public final class Hooks {
 				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
 					return;
 				}
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
+			} else {
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
 			}
 			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
-			meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
 		}
 		boolean melt = meltByTemperature || meltByBrightness;
 		if (!melt) {
