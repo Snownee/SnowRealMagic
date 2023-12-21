@@ -1,5 +1,7 @@
 package snownee.snow.entity;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +12,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -36,11 +39,11 @@ import snownee.snow.util.CommonProxy;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {
+	protected static final EntityDataAccessor<BlockPos> START_POS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.BLOCK_POS);
+	private static final EntityDataAccessor<Integer> LAYERS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.INT);
 	public int fallTime;
 	private BlockPos prevPos;
 	private int layers;
-	protected static final EntityDataAccessor<BlockPos> START_POS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<Integer> LAYERS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.INT);
 	private EntityDimensions size;
 
 	public FallingSnowEntity(Level worldIn) {
@@ -62,14 +65,14 @@ public class FallingSnowEntity extends Entity {
 		xo = x;
 		yo = y;
 		zo = z;
-		this.layers = layers;
-		prevPos = blockPosition();
-		setData(prevPos, layers);
+		setLayers(this.layers = layers);
+		setStartPos(prevPos = blockPosition());
 		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
 	}
 
 	@Override
-	public EntityDimensions getDimensions(Pose poseIn) {
+	@NotNull
+	public EntityDimensions getDimensions(@NotNull Pose poseIn) {
 		return size;
 	}
 
@@ -116,7 +119,7 @@ public class FallingSnowEntity extends Entity {
 
 				this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 
-				if (state.getBlock() != Blocks.MOVING_PISTON) {
+				if (!state.is(Blocks.MOVING_PISTON)) {
 					if (state.getCollisionShape(level, pos, CollisionContext.of(this)).isEmpty()) {
 						BlockPos posDown = pos.below();
 						BlockState stateDown = level.getBlockState(posDown);
@@ -135,17 +138,20 @@ public class FallingSnowEntity extends Entity {
 		this.setDeltaMovement(getDeltaMovement().scale(0.98D));
 	}
 
-	public void setData(BlockPos pos, int layers) {
-		entityData.set(START_POS, pos);
-		entityData.set(LAYERS, layers);
+	public BlockPos getStartPos() {
+		return entityData.get(START_POS);
 	}
 
-	public BlockPos getOrigin() {
-		return entityData.get(START_POS);
+	public void setStartPos(BlockPos pos) {
+		entityData.set(START_POS, pos);
 	}
 
 	public int getLayers() {
 		return entityData.get(LAYERS);
+	}
+
+	public void setLayers(int layers) {
+		entityData.set(LAYERS, Mth.clamp(layers, 1, 8));
 	}
 
 	@Override
@@ -159,6 +165,7 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
+	@NotNull
 	protected Entity.MovementEmission getMovementEmission() {
 		return Entity.MovementEmission.NONE;
 	}
@@ -178,8 +185,9 @@ public class FallingSnowEntity extends Entity {
 	protected void readAdditionalSaveData(CompoundTag compound) {
 		fallTime = compound.getInt("Time");
 		if (compound.contains("Layers", Tag.TAG_INT)) {
-			layers = compound.getInt("Layers");
+			layers = Mth.clamp(compound.getInt("Layers"), 1, 8);
 			size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+			setLayers(layers);
 		}
 	}
 
@@ -190,6 +198,7 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
+	@NotNull
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return CommonProxy.getAddEntityPacket(this);
 	}

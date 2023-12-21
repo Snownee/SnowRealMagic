@@ -46,7 +46,7 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 		BakedModel model = blockrendererdispatcher.getBlockModel(blockstate);
 		RandomSource random = RandomSource.create(42);
 		for (RenderType type : model.getRenderTypes(blockstate, random, ModelData.EMPTY)) {
-			blockrendererdispatcher.getModelRenderer().tesselateBlock(world, model, blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, random, blockstate.getSeed(entity.getOrigin()), OverlayTexture.NO_OVERLAY, ModelData.EMPTY, type);
+			blockrendererdispatcher.getModelRenderer().tesselateBlock(world, model, blockstate, blockpos, matrixstack, buffer.getBuffer(type), false, random, blockstate.getSeed(entity.getStartPos()), OverlayTexture.NO_OVERLAY, ModelData.EMPTY, type);
 		}
 		matrixstack.popPose();
 		super.render(entity, p_225623_2_, p_225623_3_, matrixstack, buffer, p_225623_6_);

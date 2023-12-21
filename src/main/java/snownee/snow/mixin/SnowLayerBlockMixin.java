@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,6 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
@@ -43,6 +46,7 @@ import snownee.snow.util.CommonProxy;
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
+	@Unique
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[] { Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16) };
 	@Final
 	@Shadow
@@ -52,15 +56,25 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		super(properties);
 	}
 
+	/**
+	 * @author Snownee
+	 * @reason
+	 */
 	@Override
 	@Overwrite
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			return SHAPE_BY_LAYER[state.getValue(SnowLayerBlock.LAYERS) - 1];
-		}
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
+		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
+			return SHAPE_BY_LAYER[layers - 1];
+		}
 		if (layers == 8) {
 			return Shapes.block();
+		}
+		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
+			Entity entity = entityContext.getEntity();
+			if (entity.getType() == EntityType.FALLING_BLOCK || CoreModule.ENTITY.is(entity.getType())) {
+				return SHAPE_BY_LAYER[layers - 1];
+			}
 		}
 		return SNOW_SHAPES_MAGIC[layers - 1];
 	}
@@ -121,15 +135,15 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	@Overwrite
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		int i = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Items.SNOW) && i < 8) {
+		int layers = state.getValue(SnowLayerBlock.LAYERS);
+		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
 				return useContext.getClickedFace() == Direction.UP;
 			} else {
 				return true;
 			}
 		}
-		return (SnowCommonConfig.snowAlwaysReplaceable && state.getValue(SnowLayerBlock.LAYERS) < 8) || i == 1;
+		return layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8);
 	}
 
 	@Override
