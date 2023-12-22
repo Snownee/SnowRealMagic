@@ -118,7 +118,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		BlockEntity tile = world.getBlockEntity(pos);
 		if (tile instanceof SnowBlockEntity) {
 			if (state.isAir()) {
-				world.setBlock(pos, getSnowState(state, world, pos), 3);
+				world.setBlock(pos, getSnowState(snow, world, pos), 3);
 			} else {
 				((SnowBlockEntity) tile).setContainedState(state);
 			}

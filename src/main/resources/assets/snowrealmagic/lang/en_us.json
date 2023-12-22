@@ -11,6 +11,7 @@
   "gamerule.snowrealmagic:blizzardStrength.description": "Snow blocks will fall from sky. 1~8 to set the max layers. Added by Snow! Real Magic!",
   "gamerule.snowrealmagic:blizzardFrequency": "Joke feature: Blizzard frequency",
   "gamerule.snowrealmagic:blizzardFrequency.description": "The possibility to do blizzard. N/10000 per tick per chunk. Added by Snow! Real Magic!",
+  "commands.gamerule.snowrealmagic.hint": "Snow! Real Magic! is installed, this game rule is ignored. Use configuration instead.",
   "snowrealmagic.config.particleThroughLeaves.desc": "Generates snowflake particles under snow that on leaves",
   "snowrealmagic.config.snowVariants.desc": "Some snow-covered foliage will be rendered differently",
   "snowrealmagic.config.snowGravity.desc": "Snow will fall down like sand",
@@ -30,5 +31,5 @@
   "snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "Snow will accumulate only when it's thundering",
   "snowrealmagic.config.accumulation.maxLayers.desc": "The max layers of snow that can be accumulated. 9 is unlimited",
   "snowrealmagic.config.accumulation.naturalMelting.desc": "Snow does not melt with time if its layer is more than 1",
-  "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes\nAlways true if Fabric Seasons mod is installed"
+  "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes\nAlways true if some seasons mod is installed"
 }

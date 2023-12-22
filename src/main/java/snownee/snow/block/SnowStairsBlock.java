@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.util.CommonProxy;
 
 public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVariant {
 
@@ -45,7 +45,7 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
+		if (SnowCommonConfig.retainOriginalBlocks || CommonProxy.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
 		}
 	}

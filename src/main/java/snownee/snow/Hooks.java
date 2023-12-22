@@ -56,6 +56,7 @@ import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
+import snownee.snow.util.CommonProxy;
 
 public final class Hooks {
 	private Hooks() {
@@ -307,10 +308,14 @@ public final class Hooks {
 	}
 
 	public static void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		if (ModUtil.terraforged) {
+		randomTick(state, level, pos, random, 0.125f);
+	}
+
+	public static void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, float chance) {
+		if (CommonProxy.terraforged) {
 			return;
 		}
-		if (random.nextInt(8) != 0) {
+		if (chance != 1 && random.nextFloat() > chance) {
 			return;
 		}
 		Holder<Biome> biome = level.getBiome(pos);
@@ -326,15 +331,15 @@ public final class Hooks {
 					return;
 				}
 			}
-			meltByTemperature = ModUtil.shouldMelt(level, pos, biome, layers);
+			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
 			meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
 		}
 		boolean melt = meltByTemperature || meltByBrightness;
 		if (!melt) {
-			if (!SnowCommonConfig.snowAccumulationDuringSnowfall && !SnowCommonConfig.snowAccumulationDuringSnowstorm) {
+			if (!CommonProxy.snowAccumulationNow(level)) {
 				return;
 			}
-			if (SnowCommonConfig.accumulationWinterOnly && !ModUtil.isWinter(level, pos, biome)) {
+			if (SnowCommonConfig.accumulationWinterOnly && !CommonProxy.isWinter(level, pos, biome)) {
 				return;
 			}
 		}
@@ -350,24 +355,16 @@ public final class Hooks {
 		}
 
 		boolean accumulate = false;
-		if (!meltByBrightness && level.isRaining() && ModUtil.coldEnoughToSnow(level, pos, biome)) {
-			if (SnowCommonConfig.snowAccumulationDuringSnowfall) {
-				accumulate = true;
-			} else if (SnowCommonConfig.snowAccumulationDuringSnowstorm && level.isThundering()) {
-				accumulate = true;
-			}
+		if (layers < SnowCommonConfig.snowAccumulationMaxLayers && !meltByBrightness && level.isRaining() && CommonProxy.coldEnoughToSnow(level, pos, biome)) {
+			accumulate = CommonProxy.snowAccumulationNow(level);
 		}
 
 		if (accumulate) {
-			if (!level.getBlockState(pos.below()).is(CoreModule.CANNOT_ACCUMULATE_ON) && layers < SnowCommonConfig.snowAccumulationMaxLayers) {
+			if (!level.getBlockState(pos.below()).is(CoreModule.CANNOT_ACCUMULATE_ON)) {
 				accumulate(level, pos, state, (w, p) -> (SnowCommonConfig.snowAccumulationMaxLayers > 8 || !(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) && w.getBrightness(LightLayer.BLOCK, p) <= 10, true);
 			}
 		} else if (melt) {
-			if (layers == 1) {
-				level.setBlockAndUpdate(pos, snow.getRaw(state, level, pos));
-			} else {
-				accumulate(level, pos, state, (w, p) -> !(w.getBlockState(p.above()).getBlock() instanceof SnowLayerBlock), false);
-			}
+			accumulate(level, pos, state, (w, p) -> !(w.getBlockState(p.above()).getBlock() instanceof SnowLayerBlock), false);
 		}
 	}
 
