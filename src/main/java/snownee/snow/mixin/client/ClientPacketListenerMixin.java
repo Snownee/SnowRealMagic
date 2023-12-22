@@ -7,14 +7,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
-import snownee.snow.GameEvents;
+import snownee.snow.util.ClientProxy;
 
 @Mixin(ClientPacketListener.class)
 public class ClientPacketListenerMixin {
 
 	@Inject(at = @At("TAIL"), method = "handleLogin")
 	private void srm_handleLogin(ClientboundLoginPacket clientboundLoginPacket, CallbackInfo ci) {
-		GameEvents.onPlayerJoin();
+		ClientProxy.onPlayerJoin();
 	}
 
 }

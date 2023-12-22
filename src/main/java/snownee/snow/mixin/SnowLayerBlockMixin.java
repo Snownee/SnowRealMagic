@@ -19,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -119,7 +120,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
 	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
 		int i = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Blocks.SNOW.asItem()) && i < 8) {
+		if (useContext.getItemInHand().is(Items.SNOW) && i < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
 				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
 			} else {
@@ -187,10 +188,14 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
 	private void getStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> ci) {
-		BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
-		if (blockstate.getBlock() instanceof SnowLayerBlock) {
-			int i = blockstate.getValue(SnowLayerBlock.LAYERS);
-			ci.setReturnValue(blockstate.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1)));
+		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+		if (state.hasProperty(SnowLayerBlock.LAYERS)) {
+			int i = state.getValue(SnowLayerBlock.LAYERS);
+			ci.setReturnValue(state.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1)));
+			return;
+		} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+			ci.setReturnValue(state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1)));
 			return;
 		}
 		ItemStack stack = context.getItemInHand();
@@ -238,11 +243,6 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	//		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
 	//		return stack.isEmpty() ? new ItemStack(CoreModule.ITEM) : stack;
 	//	}
-
-	@Override
-	public double getYOffset() {
-		return -1;
-	}
 
 	@Override
 	public int layers(BlockState state, BlockGetter world, BlockPos pos) {

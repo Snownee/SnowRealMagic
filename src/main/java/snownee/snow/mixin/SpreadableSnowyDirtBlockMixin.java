@@ -33,7 +33,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 				for (int i = 0; i < 4; ++i) {
 					BlockPos blockPos2 = blockPos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
 					if (level.getBlockState(blockPos2).is(Blocks.DIRT) && canPropagate(blockstate, level, blockPos2)) {
-						level.setBlockAndUpdate(blockPos2, blockstate.setValue(SnowyDirtBlock.SNOWY, level.getBlockState(blockPos2.above()).is(CoreModule.BOTTOM_SNOW)));
+						level.setBlockAndUpdate(blockPos2, blockstate.setValue(SnowyDirtBlock.SNOWY, level.getBlockState(blockPos2.above()).is(CoreModule.SNOWY_SETTING)));
 					}
 				}
 			}

@@ -1,8 +1,5 @@
 package snownee.snow;
 
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -27,7 +24,6 @@ import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
-import snownee.kiwi.loader.Platform;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
@@ -37,7 +33,6 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.SnowClient;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockAccess;
@@ -45,7 +40,7 @@ import snownee.snow.mixin.BlockAccess;
 @KiwiModule
 public class CoreModule extends AbstractModule {
 
-	public static final TagKey<Block> BOTTOM_SNOW = blockTag(SnowRealMagic.MODID, "bottom_snow");
+	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
 
 	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
@@ -99,11 +94,6 @@ public class CoreModule extends AbstractModule {
 	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register(SnowRealMagic.MODID + ":blizzardFrequency", GameRules.Category.MISC, GameRuleFactory.createIntRule(10000));
 
 	public CoreModule() {
-		if (Platform.isPhysicalClient()) {
-			ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> out.accept(SnowClient.OVERLAY_MODEL));
-		}
-		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
-		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
 		decorators.remove(BuiltInRegistries.BLOCK);
 	}
 

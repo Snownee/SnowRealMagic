@@ -2,8 +2,11 @@ package snownee.snow.util;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.server.commands.DebugMobSpawningCommand;
 import snownee.kiwi.Mod;
+import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 
@@ -15,5 +18,7 @@ public class CommonProxy implements ModInitializer {
 			if (SnowCommonConfig.debugSpawningCommand)
 				DebugMobSpawningCommand.register(dispatcher);
 		});
+		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
+		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
 	}
 }

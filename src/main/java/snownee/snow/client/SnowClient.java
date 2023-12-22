@@ -57,20 +57,18 @@ public final class SnowClient {
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
 			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
-		if (options.renderBottom && (layer == null || layer == RenderType.solid())) {
-			BlockState snow = state.getBlock() instanceof SnowVariant ? ((SnowVariant) state.getBlock()).getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
-			if (!snow.isAir()) {
-				if (snow == Blocks.SNOW.defaultBlockState()) {
-					if (cachedSnowModel == null) {
-						cachedSnowModel = ClientProxy.getBlockModel(snow);
-					}
-					model = cachedSnowModel;
-				} else {
-					model = ClientProxy.getBlockModel(snow);
+		BlockState snow = state.getBlock() instanceof SnowVariant snowVariant ? snowVariant.getSnowState(state, world, pos) : Blocks.AIR.defaultBlockState();
+		if (!snow.isAir() && (layer == null || layer == RenderType.solid())) {
+			if (snow == Blocks.SNOW.defaultBlockState()) {
+				if (cachedSnowModel == null) {
+					cachedSnowModel = ClientProxy.getBlockModel(snow);
 				}
-				double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
-				rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
+				model = cachedSnowModel;
+			} else {
+				model = ClientProxy.getBlockModel(snow);
 			}
+			double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
+			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) && (!useVariant || CoreModule.TILE_BLOCK.is(state))) {
 			BlockPos pos2 = pos;

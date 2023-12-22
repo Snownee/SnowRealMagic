@@ -39,7 +39,7 @@ public final class WrappedSoundType extends SoundType {
 	@NotNull
 	@Override
 	public SoundEvent getPlaceSound() {
-		return type.getPlaceSound();
+		return SoundType.SNOW.getStepSound();
 	}
 
 	@NotNull

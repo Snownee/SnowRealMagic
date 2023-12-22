@@ -14,7 +14,7 @@ public class SnowyDirtBlockMixin {
 
 	@Inject(at = @At("HEAD"), method = "isSnowySetting", cancellable = true)
 	private static void srm_getStateForPlacementProxy(BlockState state, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(state.is(CoreModule.BOTTOM_SNOW));
+		ci.setReturnValue(state.is(CoreModule.SNOWY_SETTING));
 	}
 
 }

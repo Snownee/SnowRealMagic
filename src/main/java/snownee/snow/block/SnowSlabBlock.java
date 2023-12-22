@@ -104,8 +104,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	//	}
 
 	@Override
-	public double getYOffset() {
-		return -0.5;
+	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
+		return 1;
 	}
-
 }

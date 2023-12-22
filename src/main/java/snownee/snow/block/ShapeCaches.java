@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
-import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.SnowRealMagic;
 
 public class ShapeCaches {
@@ -28,6 +27,7 @@ public class ShapeCaches {
 	public static VoxelShape get(Cache<Key, VoxelShape> cache, BlockState state, BlockGetter level, BlockPos pos, Callable<? extends VoxelShape> loader) {
 		try {
 			SnowVariant snowVariant = (SnowVariant) state.getBlock();
+			int layers = snowVariant.layers(state, level, pos);
 			Key key;
 			if (CoreModule.TILE_BLOCK.is(state)) { // block like flowers has offset so we can't cache it
 				BlockState raw = snowVariant.getRaw(state, level, pos);
@@ -35,14 +35,8 @@ public class ShapeCaches {
 				if (!(clazz == TallGrassBlock.class || clazz == TallFlowerBlock.class)) {
 					return loader.call();
 				}
-				key = new Key(raw, snowVariant.layers(state, level, pos));
-			} else {
-				SnowCoveredBlockEntity be = (SnowCoveredBlockEntity) level.getBlockEntity(pos);
-				int layers = 0;
-				if (be != null && snowVariant instanceof WatcherSnowVariant watcher) {
-					watcher.updateOptions(state, level, pos, be.options);
-					layers = be.options.renderBottom ? 1 : 0;
-				}
+				key = new Key(raw, layers);
+			}else {
 				key = new Key(state, layers);
 			}
 			return cache.get(key, loader);

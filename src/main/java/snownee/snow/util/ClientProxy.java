@@ -22,6 +22,7 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.resources.model.BakedModel;
@@ -29,11 +30,13 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.KiwiGO;
+import snownee.kiwi.loader.Platform;
 import snownee.snow.CoreModule;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
@@ -52,6 +55,13 @@ public class ClientProxy implements ClientModInitializer {
 
 	public static BakedModel getBlockModel(ResourceLocation location) {
 		return Minecraft.getInstance().getModelManager().getModel(location);
+	}
+
+	public static void onPlayerJoin() {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player != null && Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
+			player.sendSystemMessage(Component.literal("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."));
+		}
 	}
 
 	@Override

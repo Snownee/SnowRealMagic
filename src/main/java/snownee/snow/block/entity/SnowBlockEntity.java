@@ -21,12 +21,10 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 
 	public static class Options {
 		public boolean renderOverlay;
-		public boolean renderBottom;
 
-		public boolean update(boolean ro, boolean rb) {
-			boolean changed = ro != renderOverlay || rb != renderBottom;
+		public boolean update(boolean ro) {
+			boolean changed = ro != renderOverlay;
 			renderOverlay = ro;
-			renderBottom = rb;
 			return changed;
 		}
 	}
@@ -40,7 +38,6 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 
 	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
-		options.renderBottom = !CoreModule.STAIRS.is(state);
 	}
 
 	public BlockState getState() {
@@ -89,7 +86,7 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 	public void loadState(CompoundTag data, boolean network) {
 		boolean changed = false;
 		if (data.contains("RO")) {
-			changed = options.update(data.getBoolean("RO"), true);
+			changed = options.update(data.getBoolean("RO"));
 			if (changed && network && hasLevel() && level.isClientSide) {
 				//				requestModelDataUpdate();
 			}

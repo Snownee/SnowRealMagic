@@ -16,12 +16,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.HitResult;
 import snownee.kiwi.block.IKiwiBlock;
-import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
 
 public interface SnowVariant extends IKiwiBlock, FabricBlock {
+	IntegerProperty OPTIONAL_LAYERS = IntegerProperty.create("layers", 0, 8);
+
 	default BlockState getRaw(BlockState state, BlockGetter world, BlockPos pos) {
 		if (state.hasBlockEntity()) {
 			BlockEntity tile = world.getBlockEntity(pos);
@@ -66,7 +68,7 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	}
 
 	default int layers(BlockState state, BlockGetter world, BlockPos pos) {
-		return world.getBlockEntity(pos, CoreModule.TEXTURE_TILE.get()).map(be -> be.options.renderBottom ? 1 : 0).orElse(0);
+		return 0;
 	}
 
 	default BlockState getSnowState(BlockState state, BlockGetter world, BlockPos pos) {

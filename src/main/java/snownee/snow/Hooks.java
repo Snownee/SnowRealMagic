@@ -13,6 +13,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -61,7 +62,7 @@ public final class Hooks {
 	public static boolean canGrassSurvive(BlockState blockState, LevelReader viewableWorld, BlockPos blockPos) {
 		BlockPos blockPos2 = blockPos.above();
 		BlockState blockState2 = viewableWorld.getBlockState(blockPos2);
-		if (blockState2.is(CoreModule.BOTTOM_SNOW)) {
+		if (blockState2.is(CoreModule.SNOWY_SETTING)) {
 			if (blockState2.is(Blocks.SNOW)) {
 				return SnowCommonConfig.sustainGrassIfLayerMoreThanOne || blockState2.getValue(SnowLayerBlock.LAYERS) == 1;
 			}
@@ -187,17 +188,17 @@ public final class Hooks {
 		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class) {
 			KiwiGO<Block> newBlock = state.is(BlockTags.WOODEN_FENCES) || state.getSoundType() == SoundType.WOOD ? CoreModule.FENCE : CoreModule.FENCE2;
 			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState);
+			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
 		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state)) {
 			BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
-			newState = copyProperties(state, newState);
+			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
 		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state)) {
 			BlockState newState = CoreModule.WALL.defaultBlockState();
-			newState = copyProperties(state, newState);
+			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			newState = newState.updateShape(Direction.DOWN, stateDown, world, pos, posDown);
 			world.setBlock(pos, newState, flags);
 		} else {
@@ -215,6 +216,8 @@ public final class Hooks {
 	private static <T extends Comparable<T>> boolean hasAllProperties(BlockState oldState, BlockState newState) {
 		for (Map.Entry<Property<?>, Comparable<?>> entry : newState.getValues().entrySet()) {
 			Property<T> property = (Property<T>) entry.getKey();
+			if (property == SnowVariant.OPTIONAL_LAYERS)
+				continue;
 			if (!oldState.hasProperty(property))
 				return false;
 		}
@@ -232,13 +235,20 @@ public final class Hooks {
 		return newState;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean placeLayersOn(Level world, BlockPos pos, int layers, boolean fallingEffect, BlockPlaceContext useContext, boolean playSound, boolean canConvert) {
 		layers = Mth.clamp(layers, 1, 8);
 		BlockState state = world.getBlockState(pos);
 		int originLayers = 0;
-		if (state.getBlock() instanceof SnowLayerBlock) {
+		if (state.hasProperty(SnowLayerBlock.LAYERS)) {
 			originLayers = state.getValue(SnowLayerBlock.LAYERS);
 			world.setBlockAndUpdate(pos, state.setValue(SnowLayerBlock.LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
+		} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			originLayers = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+			if (originLayers == 0 && !canSnowSurvive(state, world, pos)) {
+				return false;
+			}
+			world.setBlockAndUpdate(pos, state.setValue(SnowVariant.OPTIONAL_LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
 		} else if (canConvert && canContainState(state) && state.canSurvive(world, pos)) {
 			convert(world, pos, state, Mth.clamp(layers, 1, 8), 3, canConvert);
 		} else if (canSnowSurvive(state, world, pos) && world.getBlockState(pos).canBeReplaced(useContext)) {
@@ -379,5 +389,23 @@ public final class Hooks {
 		} else {
 			world.setBlockAndUpdate(pos, centerState.setValue(SnowLayerBlock.LAYERS, i - 1));
 		}
+	}
+
+	public static boolean isSnowySetting(BlockState state) {
+		if (state.is(CoreModule.SNOWY_SETTING)) {
+			return !state.hasProperty(SnowVariant.OPTIONAL_LAYERS) || state.getValue(SnowVariant.OPTIONAL_LAYERS) != 0;
+		}
+		return false;
+	}
+
+	public static boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+		if (!context.getItemInHand().is(Items.SNOW) || !context.replacingClickedOnBlock()) {
+			return false;
+		}
+		int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+		if (i == 8) {
+			return false;
+		}
+		return i > 0 || canSnowSurvive(state, context.getLevel(), context.getClickedPos());
 	}
 }
