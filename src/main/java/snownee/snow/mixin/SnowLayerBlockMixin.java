@@ -1,11 +1,13 @@
 package snownee.snow.mixin;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,7 +45,7 @@ import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.util.CommonProxy;
 
-@Mixin(SnowLayerBlock.class)
+@Mixin(value = SnowLayerBlock.class, priority = 500)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
 	@Unique
@@ -56,27 +58,25 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		super(properties);
 	}
 
-	/**
-	 * @author Snownee
-	 * @reason
-	 */
-	@Override
-	@Overwrite
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
+	private void getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> ci) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			return SHAPE_BY_LAYER[layers - 1];
+			ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
+			return;
 		}
 		if (layers == 8) {
-			return Shapes.block();
+			ci.setReturnValue(Shapes.block());
+			return;
 		}
 		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
 			Entity entity = entityContext.getEntity();
 			if (entity.getType() == EntityType.FALLING_BLOCK || CoreModule.ENTITY.is(entity.getType())) {
-				return SHAPE_BY_LAYER[layers - 1];
+				ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
+				return;
 			}
 		}
-		return SNOW_SHAPES_MAGIC[layers - 1];
+		ci.setReturnValue(SNOW_SHAPES_MAGIC[layers - 1]);
 	}
 
 	@Override
@@ -86,22 +86,17 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Overwrite
-	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
+	private void updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> ci) {
 		if (SnowCommonConfig.snowGravity) {
 			worldIn.scheduleTick(currentPos, this, tickRate());
-			return stateIn;
-		} else {
-			return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+			ci.setReturnValue(stateIn);
 		}
 	}
 
-	@Override
-	@Overwrite
-	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-		return Hooks.canSnowSurvive(state, worldIn, pos);
+	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
+	private void canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+		ci.setReturnValue(Hooks.canSnowSurvive(state, worldIn, pos));
 	}
 
 	protected int tickRate() {
@@ -113,10 +108,10 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		checkFallable(worldIn, pos, state);
 	}
 
-	@Override
-	@Overwrite
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
+	private void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		Hooks.randomTick(state, worldIn, pos, random);
+		ci.cancel();
 	}
 
 	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
@@ -132,9 +127,8 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		return false;
 	}
 
-	@Override
-	@Overwrite
-	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
+	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
+	private boolean canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
@@ -201,15 +195,9 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
 
-	/**
-	 * @author Snownee
-	 * @reason
-	 */
-	@Override
-	@Nullable
-	@Overwrite
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return Hooks.getStateForPlacement(context);
+	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
+	private void getStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> ci) {
+		ci.setReturnValue(Hooks.getStateForPlacement(context));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package snownee.snow.mixin;
+package snownee.snow.mixin.client;
 
 import java.util.function.Function;
 
@@ -22,7 +22,7 @@ import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowVariantModel;
 
 @Mixin(value = ModelBakerImpl.class, priority = 1001)
-public class ModelBakerImplMixinNormalBake {
+public class ModelBakerImplMixin {
 
 	@Inject(
 			at = @At(
