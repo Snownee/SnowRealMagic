@@ -1,8 +1,5 @@
 package snownee.snow.block.entity;
 
-import org.jetbrains.annotations.Nullable;
-
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +14,7 @@ import snownee.kiwi.util.Util;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
-public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentBlockEntity {
+public class SnowBlockEntity extends ModBlockEntity {
 
 	public static class Options {
 		public boolean renderOverlay;
@@ -40,15 +37,15 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 		super(type, pos, state);
 	}
 
-	public BlockState getState() {
+	public BlockState getContainedState() {
 		return state;
 	}
 
-	public void setState(BlockState state) {
-		setState(state, true);
+	public void setContainedState(BlockState state) {
+		setContainedState(state, true);
 	}
 
-	public boolean setState(BlockState state, boolean update) {
+	public boolean setContainedState(BlockState state, boolean update) {
 		if (state == null) {
 			state = Blocks.AIR.defaultBlockState();
 		}
@@ -95,10 +92,10 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 			ResourceLocation id = Util.RL(data.getString("Block"));
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
-				changed |= setState(block.defaultBlockState(), network);
+				changed |= setContainedState(block.defaultBlockState(), network);
 			}
 		} else {
-			changed |= setState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
+			changed |= setContainedState(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State")), network);
 		}
 		if (changed && network) {
 			refresh();
@@ -106,10 +103,10 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 	}
 
 	public void saveState(CompoundTag data, boolean network) {
-		if (getState() == getState().getBlock().defaultBlockState()) {
-			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getState().getBlock()).toString());
+		if (getContainedState() == getContainedState().getBlock().defaultBlockState()) {
+			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
 		} else {
-			data.put("State", NbtUtils.writeBlockState(getState()));
+			data.put("State", NbtUtils.writeBlockState(getContainedState()));
 		}
 		if (options.renderOverlay)
 			data.putBoolean("RO", options.renderOverlay);
@@ -125,11 +122,6 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderAttachmentB
 	protected CompoundTag writePacketData(CompoundTag data) {
 		saveState(data, true);
 		return data;
-	}
-
-	@Override
-	public @Nullable Object getRenderAttachmentData() {
-		return this;
 	}
 
 }

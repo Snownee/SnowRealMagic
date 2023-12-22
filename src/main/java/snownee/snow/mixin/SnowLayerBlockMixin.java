@@ -10,15 +10,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -153,7 +150,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 				BlockEntity blockEntity = worldIn.getBlockEntity(pos);
 				if (blockEntity instanceof SnowBlockEntity) {
 					SnowBlockEntity snowTile = (SnowBlockEntity) blockEntity;
-					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getState().isAir()) {
+					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getContainedState().isAir()) {
 						worldIn.setBlock(pos, Hooks.copyProperties(state, Blocks.SNOW.defaultBlockState()), 16 | 32);
 					} else {
 						snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
@@ -188,23 +185,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
 	private void getStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> ci) {
-		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
-		if (state.hasProperty(SnowLayerBlock.LAYERS)) {
-			int i = state.getValue(SnowLayerBlock.LAYERS);
-			ci.setReturnValue(state.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1)));
-			return;
-		} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
-			int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
-			ci.setReturnValue(state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1)));
-			return;
-		}
-		ItemStack stack = context.getItemInHand();
-		CompoundTag tag = BlockItem.getBlockEntityData(stack);
-		if (tag != null && "snowrealmagic:snow".equals(tag.getString("id"))) {
-			ci.setReturnValue(CoreModule.TILE_BLOCK.defaultBlockState());
-			return;
-		}
-		ci.setReturnValue(defaultBlockState());
+		ci.setReturnValue(Hooks.getStateForPlacement(context));
 	}
 
 	@Override

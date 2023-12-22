@@ -17,7 +17,8 @@
     "SnowAndFreezeFeatureMixin",
     "SnowLayerBlockMixin",
     "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin"
+    "SpreadableSnowyDirtBlockMixin",
+    "fabric.SnowBlockEntityMixin"
   ],
   "client": [
     "client.CameraMixin",

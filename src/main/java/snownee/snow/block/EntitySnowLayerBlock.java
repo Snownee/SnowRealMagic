@@ -119,7 +119,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 				snow = Blocks.SNOW.defaultBlockState().setValue(LAYERS, snow.getValue(LAYERS));
 				world.setBlock(pos, snow, 3);
 			} else {
-				((SnowBlockEntity) tile).setState(state);
+				((SnowBlockEntity) tile).setContainedState(state);
 			}
 		}
 	}

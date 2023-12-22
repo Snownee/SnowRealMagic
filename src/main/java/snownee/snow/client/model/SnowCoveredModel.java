@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.block.entity.RenderData;
 import snownee.snow.client.FabricRendererRenderAPI;
 import snownee.snow.client.SnowClient;
 
@@ -23,9 +23,9 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 		Object data = blockView.getBlockEntityRenderData(pos);
-		if (!(data instanceof SnowBlockEntity be))
+		if (!(data instanceof RenderData renderData))
 			return;
-		SnowClient.renderHook(blockView, pos, state, be.getState(), be.options, null, randomSupplier, true, new FabricRendererRenderAPI(context));
+		SnowClient.renderHook(blockView, pos, state, renderData.state(), renderData.options(), null, randomSupplier, true, new FabricRendererRenderAPI(context));
 	}
 
 	@Override

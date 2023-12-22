@@ -50,7 +50,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			snowTile.refresh();
 			return InteractionResult.SUCCESS;
 		}
-		if (hit.getDirection() == Direction.UP && snowTile.getState().getBlock().asItem() == stack.getItem() && stack.getItem() instanceof BlockItem && stack.is(ItemTags.SLABS)) {
+		if (hit.getDirection() == Direction.UP && snowTile.getContainedState().getBlock().asItem() == stack.getItem() && stack.getItem() instanceof BlockItem && stack.is(ItemTags.SLABS)) {
 			Block block = ((BlockItem) stack.getItem()).getBlock();
 			if (block instanceof SlabBlock) {
 				BlockState state2 = block.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);

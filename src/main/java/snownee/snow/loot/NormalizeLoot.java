@@ -37,7 +37,7 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 	protected void createItemStack(Consumer<ItemStack> consumer, LootContext context) {
 		BlockEntity tile = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
 		if (tile instanceof SnowBlockEntity) {
-			BlockState state = ((SnowBlockEntity) tile).getState();
+			BlockState state = ((SnowBlockEntity) tile).getContainedState();
 			if (!state.isAir()) {
 				ResourceLocation resourcelocation = state.getBlock().getLootTable();
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
