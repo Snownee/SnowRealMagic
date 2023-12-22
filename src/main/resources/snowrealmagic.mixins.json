@@ -8,7 +8,6 @@
     "BlockAccess",
     "BlockItemMixin",
     "BlockMixin",
-    "ChunkMapAccess",
     "DoublePlantBlockMixin",
     "FenceGateBlockAccess",
     "IceBlockAccess",
@@ -21,14 +20,10 @@
     "SpreadableSnowyDirtBlockMixin"
   ],
   "client": [
-    "BlockModelShaperMixin",
-    "CameraMixin",
-    "ClientPacketListenerMixin",
-    "ModelBakerImplMixinNormalBake",
-    "ModelBakeryMixin",
-    "ModelManagerMixin",
-    "SimpleBakedModelMixin",
-    "SnowLayerBlockClientMixin"
+    "client.CameraMixin",
+    "client.ClientPacketListenerMixin",
+    "client.SimpleBakedModelMixin",
+    "client.SnowLayerBlockClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

@@ -1,9 +1,6 @@
 package snownee.snow;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
@@ -31,7 +28,6 @@ import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
 import snownee.kiwi.loader.Platform;
-import snownee.kiwi.loader.event.ClientInitEvent;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
@@ -41,7 +37,6 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
-import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
@@ -121,12 +116,6 @@ public class CoreModule extends AbstractModule {
 			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
 		});
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	protected void clientInit(ClientInitEvent event) {
-		EntityRendererRegistry.register(ENTITY.get(), FallingSnowRenderer::new);
 	}
 
 }

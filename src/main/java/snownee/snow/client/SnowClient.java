@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 
-import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -25,6 +23,7 @@ import snownee.snow.block.WatcherSnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity.Options;
 import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowVariantModel;
+import snownee.snow.util.ClientProxy;
 
 public final class SnowClient {
 
@@ -47,9 +46,9 @@ public final class SnowClient {
 		boolean useVariant = false;
 		BakedModel model;
 		if (!camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
-			model = getBlockModel(camo);
+			model = ClientProxy.getBlockModel(camo);
 			if (SnowClientConfig.snowVariants && model instanceof SnowVariantModel) {
-				BakedModel snowVariant = ((SnowVariantModel) model).getSnowVariant();
+				BakedModel snowVariant = ((SnowVariantModel) model).srm$getSnowVariant();
 				if (snowVariant != null) {
 					model = snowVariant;
 					useVariant = true;
@@ -63,11 +62,11 @@ public final class SnowClient {
 			if (!snow.isAir()) {
 				if (snow == Blocks.SNOW.defaultBlockState()) {
 					if (cachedSnowModel == null) {
-						cachedSnowModel = getBlockModel(snow);
+						cachedSnowModel = ClientProxy.getBlockModel(snow);
 					}
 					model = cachedSnowModel;
 				} else {
-					model = getBlockModel(snow);
+					model = ClientProxy.getBlockModel(snow);
 				}
 				double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
 				rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
@@ -78,7 +77,7 @@ public final class SnowClient {
 			double yOffset;
 			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {
 				if (cachedOverlayModel == null) {
-					cachedOverlayModel = getBlockModel(OVERLAY_MODEL);
+					cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 				}
 				model = cachedOverlayModel;
 				if (CoreModule.SLAB.is(state)) {
@@ -89,18 +88,11 @@ public final class SnowClient {
 				}
 			} else {
 				yOffset = state.getBlock() instanceof SnowVariant ? (float) ((SnowVariant) state.getBlock()).getYOffset() : 0;
-				model = getBlockModel(state);
+				model = ClientProxy.getBlockModel(state);
 			}
 			rendered |= api.translateYAndRender(world, state, pos2, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		return rendered;
 	}
 
-	private static BakedModel getBlockModel(BlockState state) {
-		return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
-	}
-
-	private static BakedModel getBlockModel(ResourceLocation location) {
-		return BakedModelManagerHelper.getModel(Minecraft.getInstance().getModelManager(), OVERLAY_MODEL);
-	}
 }

@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -23,10 +22,9 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 
 	@Override
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-		Object data = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
-		if (!(data instanceof SnowBlockEntity))
+		Object data = blockView.getBlockEntityRenderData(pos);
+		if (!(data instanceof SnowBlockEntity be))
 			return;
-		SnowBlockEntity be = (SnowBlockEntity) data;
 		SnowClient.renderHook(blockView, pos, state, be.getState(), be.options, null, randomSupplier, true, new FabricRendererRenderAPI(context));
 	}
 

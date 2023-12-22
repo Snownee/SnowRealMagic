@@ -58,7 +58,7 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
     //modImplementation "curse.maven:kiwi-549404:3998272"
     //annotationProcessor "curse.maven:kiwi-549404:3998272"
-    modImplementation "maven.modrinth:kiwi:CyGV9a95"
+    modImplementation "maven.modrinth:kiwi:kyG6D8vz"
 
     //modImplementation "curse.maven:jade-324717:4096403"
     modImplementation "maven.modrinth:jade:kd04zQ7y"

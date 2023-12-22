@@ -7,8 +7,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
@@ -22,12 +20,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		if ("snownee.snow.mixin.ModelBakeryMixinNormalBake".equals(mixinClassName)) {
-			return !FabricLoader.getInstance().isModLoaded("optifabric");
-		}
-		//		if ("snownee.snow.mixin.ModelBakeryMixinOptifineBake".equals(mixinClassName)) {
-		//			return FabricLoader.getInstance().isModLoaded("optifabric");
-		//		}
 		return true;
 	}
 

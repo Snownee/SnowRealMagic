@@ -24,7 +24,7 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 		BakedModel model = null;
 		if (SnowClientConfig.snowVariants && pos != null && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
-			model = getSnowVariant();
+			model = srm$getSnowVariant();
 		}
 		if (model == null) {
 			model = wrapped;
@@ -33,17 +33,17 @@ public class SnowConnectedModel extends ForwardingBakedModel implements SnowVari
 	}
 
 	@Override
-	public BakedModel getSnowVariant() {
+	public BakedModel srm$getSnowVariant() {
 		if (wrapped instanceof SnowVariantModel) {
-			return ((SnowVariantModel) wrapped).getSnowVariant();
+			return ((SnowVariantModel) wrapped).srm$getSnowVariant();
 		}
 		return null;
 	}
 
 	@Override
-	public void setSnowVariant(BakedModel model) {
+	public void srm$setSnowVariant(BakedModel model) {
 		if (wrapped instanceof SnowVariantModel) {
-			((SnowVariantModel) wrapped).setSnowVariant(model);
+			((SnowVariantModel) wrapped).srm$setSnowVariant(model);
 		} else {
 			SnowRealMagic.LOGGER.error("Cannot set snow variant model for {}", wrapped);
 		}

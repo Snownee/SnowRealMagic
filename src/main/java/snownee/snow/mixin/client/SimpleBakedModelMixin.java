@@ -1,6 +1,7 @@
-package snownee.snow.mixin;
+package snownee.snow.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
@@ -9,16 +10,17 @@ import snownee.snow.client.model.SnowVariantModel;
 @Mixin(SimpleBakedModel.class)
 public abstract class SimpleBakedModelMixin implements SnowVariantModel {
 
-	private BakedModel snowVariant;
+	@Unique
+	private BakedModel srm$snowVariant;
 
 	@Override
-	public BakedModel getSnowVariant() {
-		return snowVariant;
+	public BakedModel srm$getSnowVariant() {
+		return srm$snowVariant;
 	}
 
 	@Override
-	public void setSnowVariant(BakedModel model) {
-		snowVariant = model;
+	public void srm$setSnowVariant(BakedModel model) {
+		srm$snowVariant = model;
 	}
 
 }
