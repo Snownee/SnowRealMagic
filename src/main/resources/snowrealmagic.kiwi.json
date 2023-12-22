@@ -10,18 +10,25 @@
       "target": "snownee.snow.SnowCommonConfig"
     }
   ],
+  "KiwiModule": [
+    {
+      "target": "snownee.snow.CoreModule"
+    }
+  ],
   "KiwiPacket": [
+    {
+      "target": "snownee.snow.network.SLavaSmokeEffectPacket",
+      "data": {
+        "dir": "PLAY_TO_CLIENT",
+        "value": "lava_smoke"
+      }
+    },
     {
       "target": "snownee.snow.network.SSnowLandEffectPacket",
       "data": {
         "dir": "PLAY_TO_CLIENT",
         "value": "land_effect"
       }
-    }
-  ],
-  "KiwiModule": [
-    {
-      "target": "snownee.snow.CoreModule"
     }
   ]
 }

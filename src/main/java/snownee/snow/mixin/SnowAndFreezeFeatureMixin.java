@@ -15,7 +15,7 @@ public class SnowAndFreezeFeatureMixin {
 
 	@Inject(at = @At("HEAD"), method = "place", cancellable = true)
 	private void place(FeaturePlaceContext<NoneFeatureConfiguration> ctx, CallbackInfoReturnable<Boolean> ci) {
-		Hooks.place(ctx);
+		Hooks.placeFeature(ctx);
 		ci.setReturnValue(true);
 	}
 

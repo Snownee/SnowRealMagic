@@ -13,7 +13,6 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -24,18 +23,15 @@ import snownee.snow.block.entity.SnowBlockEntity;
 public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	IntegerProperty OPTIONAL_LAYERS = IntegerProperty.create("layers", 0, 8);
 
-	default BlockState getRaw(BlockState state, BlockGetter world, BlockPos pos) {
-		if (state.hasBlockEntity()) {
-			BlockEntity tile = world.getBlockEntity(pos);
-			if (tile instanceof SnowBlockEntity) {
-				return ((SnowBlockEntity) tile).getContainedState();
-			}
+	default BlockState getRaw(BlockState state, BlockGetter level, BlockPos pos) {
+		if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+			return be.getContainedState();
 		}
 		return Blocks.AIR.defaultBlockState();
 	}
 
-	default BlockState onShovel(BlockState state, Level world, BlockPos pos) {
-		return getRaw(state, world, pos);
+	default BlockState decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
+		return getRaw(state, level, pos);
 	}
 
 	default double getYOffset() {
@@ -67,12 +63,16 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 		return getRaw(state, level, pos);
 	}
 
-	default int layers(BlockState state, BlockGetter world, BlockPos pos) {
+	default int layers(BlockState state, BlockGetter level, BlockPos pos) {
 		return 0;
 	}
 
-	default BlockState getSnowState(BlockState state, BlockGetter world, BlockPos pos) {
-		int layers = layers(state, world, pos);
+	default int maxLayers(BlockState state, Level level, BlockPos pos2) {
+		return 0;
+	}
+
+	default BlockState getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
+		int layers = layers(state, level, pos);
 		return layers == 0 ? Blocks.AIR.defaultBlockState() : Blocks.SNOW.defaultBlockState().setValue(BlockStateProperties.LAYERS, layers);
 	}
 

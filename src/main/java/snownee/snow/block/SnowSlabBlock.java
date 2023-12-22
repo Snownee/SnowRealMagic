@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -104,7 +105,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	//	}
 
 	@Override
-	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
-		return 1;
+	public BlockState getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
+		return Blocks.SNOW.defaultBlockState();
 	}
 }

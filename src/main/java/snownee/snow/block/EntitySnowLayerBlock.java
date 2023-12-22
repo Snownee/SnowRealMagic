@@ -1,5 +1,7 @@
 package snownee.snow.block;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -116,12 +118,16 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		BlockEntity tile = world.getBlockEntity(pos);
 		if (tile instanceof SnowBlockEntity) {
 			if (state.isAir()) {
-				snow = Blocks.SNOW.defaultBlockState().setValue(LAYERS, snow.getValue(LAYERS));
-				world.setBlock(pos, snow, 3);
+				world.setBlock(pos, getSnowState(state, world, pos), 3);
 			} else {
 				((SnowBlockEntity) tile).setContainedState(state);
 			}
 		}
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
+		Hooks.setPlacedBy(level, pos, state);
 	}
 
 	@Override

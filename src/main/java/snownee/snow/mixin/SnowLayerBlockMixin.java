@@ -129,12 +129,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public BlockState onShovel(BlockState state, Level world, BlockPos pos) {
+	public BlockState decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS) - 1;
 		if (layers > 0) {
 			return state.setValue(SnowLayerBlock.LAYERS, layers);
 		} else {
-			return getRaw(state, world, pos);
+			return getRaw(state, level, pos);
 		}
 	}
 
@@ -226,8 +226,13 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	//	}
 
 	@Override
-	public int layers(BlockState state, BlockGetter world, BlockPos pos) {
+	public int layers(BlockState state, BlockGetter level, BlockPos pos) {
 		return state.getValue(BlockStateProperties.LAYERS);
+	}
+
+	@Override
+	public int maxLayers(BlockState state, Level level, BlockPos pos2) {
+		return 8;
 	}
 
 }

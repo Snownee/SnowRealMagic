@@ -23,7 +23,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.Hooks;
-import snownee.snow.ModUtil;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.mixin.FenceGateBlockAccess;
@@ -70,9 +69,11 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks || ModUtil.shouldMelt(worldIn, pos)) {
+		if (SnowCommonConfig.retainOriginalBlocks) {
 			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			return;
 		}
+		Hooks.randomTick(state, worldIn, pos, random);
 	}
 
 	@Override

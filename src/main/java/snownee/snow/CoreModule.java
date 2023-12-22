@@ -2,12 +2,10 @@ package snownee.snow;
 
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +23,7 @@ import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
 import snownee.kiwi.loader.event.InitEvent;
+import snownee.kiwi.util.KiwiEntityTypeBuilder;
 import snownee.snow.block.EntitySnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
@@ -85,7 +84,7 @@ public class CoreModule extends AbstractModule {
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(SnowCoveredBlockEntity::new, null, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
 
 	@Name("snow")
-	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> FabricEntityTypeBuilder.<FallingSnowEntity>create(MobCategory.MISC, FallingSnowEntity::new).entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).build());
+	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> KiwiEntityTypeBuilder.<FallingSnowEntity>create().entityFactory((spawnEntity, world) -> new FallingSnowEntity(world)).dimensions(EntityDimensions.fixed(0.98F, 0.001F)).trackRangeChunks(10).trackedUpdateRate(20).build());
 
 	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
 
