@@ -65,11 +65,9 @@ public class CommonProxy implements ModInitializer {
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
 		if (SnowCommonConfig.snowNeverMelt)
 			return false;
-		if (!level.isDay())
-			return false;
 		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
 			return true;
-		if (layers == 1) {
+		if (layers <= 1) {
 			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
 				return false;
 			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock))
