@@ -24,3 +24,4 @@ run/*
 !run/scripts
 /logs
 /.factorypath
+/CHANGELOG.md
