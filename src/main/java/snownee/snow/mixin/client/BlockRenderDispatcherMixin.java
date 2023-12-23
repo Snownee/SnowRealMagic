@@ -12,7 +12,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
@@ -23,6 +22,7 @@ import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowBlockEntity.Options;
 import snownee.snow.client.ForgeHookRenderAPI;
 import snownee.snow.client.SnowClient;
+import snownee.snow.util.ClientProxy;
 
 @Mixin(BlockRenderDispatcher.class)
 public abstract class BlockRenderDispatcherMixin {
@@ -33,7 +33,7 @@ public abstract class BlockRenderDispatcherMixin {
 			), remap = false, cancellable = true
 	)
 	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, RandomSource random, ModelData modelData, @Nullable RenderType layer, CallbackInfo ci) {
-		if (!SnowClient.shouldRedirect(blockStateIn)) {
+		if (!ClientProxy.shouldRedirect(blockStateIn)) {
 			return;
 		}
 		BlockState camo = modelData.get(SnowBlockEntity.BLOCKSTATE);
@@ -46,11 +46,5 @@ public abstract class BlockRenderDispatcherMixin {
 		}
 		SnowClient.renderHook(lightReaderIn, posIn, blockStateIn, camo, options, layer, () -> random, checkSides, new ForgeHookRenderAPI(modelData, matrixStackIn, vertexBuilderIn));
 		ci.cancel();
-	}
-
-	@Inject(at = @At("HEAD"), method = "onResourceManagerReload")
-	private void srm_onResourceManagerReload(ResourceManager resourceManager, CallbackInfo ci) {
-		SnowClient.cachedSnowModel = null;
-		SnowClient.cachedOverlayModel = null;
 	}
 }

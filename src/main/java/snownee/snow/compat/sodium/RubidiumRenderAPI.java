@@ -41,7 +41,7 @@ public class RubidiumRenderAPI implements RenderAPI {
 	@Override
 	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
 		RandomSource random = randomSupplier.get();
-		ModelData modelData = ctx.modelData();
+		ModelData modelData = model.getModelData(world, pos, state, ctx.modelData());
 		if (layer != null && !model.getRenderTypes(state, random, modelData).contains(layer)) {
 			return false;
 		}

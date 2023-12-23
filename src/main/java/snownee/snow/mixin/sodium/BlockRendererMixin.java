@@ -19,6 +19,7 @@ import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowBlockEntity.Options;
 import snownee.snow.client.SnowClient;
 import snownee.snow.compat.sodium.RubidiumRenderAPI;
+import snownee.snow.util.ClientProxy;
 
 @Mixin(value = BlockRenderer.class, remap = false)
 public abstract class BlockRendererMixin {
@@ -29,7 +30,7 @@ public abstract class BlockRendererMixin {
 
 	@Inject(method = "renderModel", at = @At("HEAD"), cancellable = true)
 	private void srm_renderModel(BlockRenderContext ctx, ChunkBuildBuffers buffers, CallbackInfo ci) {
-		if (!SnowClient.shouldRedirect(ctx.state())) {
+		if (!ClientProxy.shouldRedirect(ctx.state())) {
 			return;
 		}
 		ModelData modelData = ctx.modelData();

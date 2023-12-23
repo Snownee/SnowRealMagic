@@ -41,7 +41,8 @@ public class ForgeHookRenderAPI implements RenderAPI {
 			matrixStack.scale(1.002f, 1, 1.002f);
 			cullSides = false;
 		}
-		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(world, model, state, pos, matrixStack, vertexBuilder, cullSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY, modelData, layer);
+		ModelData data = model.getModelData(world, pos, state, modelData);
+		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(world, model, state, pos, matrixStack, vertexBuilder, cullSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY, data, layer);
 		matrixStack.popPose();
 		return true;
 	}
