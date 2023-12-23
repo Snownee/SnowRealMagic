@@ -43,6 +43,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.KiwiGO;
 import snownee.kiwi.loader.Platform;
@@ -51,9 +52,8 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
-import snownee.snow.client.model.SnowConnectedModel;
-import snownee.snow.client.model.SnowCoveredModel;
 import snownee.snow.client.model.SnowVariantModel;
+import snownee.snow.client.model.SnowCoveredModel;
 import snownee.snow.client.model.WrapperUnbakedModel;
 
 public class ClientProxy implements ClientModInitializer {
@@ -85,7 +85,6 @@ public class ClientProxy implements ClientModInitializer {
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
 
-		SnowClient.snowVariantMapping.clear();
 		ModelLoadingPlugin.register(ctx -> {
 			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
 
@@ -103,6 +102,14 @@ public class ClientProxy implements ClientModInitializer {
 				}
 				SnowClient.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
 				extraModels.add(def.model);
+				if (def.overrideBlock != null) {
+					for (ResourceLocation id : def.overrideBlock) {
+						Block block = BuiltInRegistries.BLOCK.get(id);
+						if (block != Blocks.AIR) {
+							SnowClient.overrideBlocks.add(block);
+						}
+					}
+				}
 			});
 			ctx.addModels(extraModels);
 
@@ -134,11 +141,11 @@ public class ClientProxy implements ClientModInitializer {
 				}
 				Variant variantState = (Variant) modelState;
 				variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
-				((SnowVariantModel) model).srm$setSnowVariant(context.baker().bake(def.model, variantState));
-				if (def.overrideBlock != null) {
-					model = new SnowConnectedModel(model);
+				BakedModel variantModel = context.baker().bake(def.model, variantState);
+				if (variantModel == null) {
+					return model;
 				}
-				return model;
+				return new SnowVariantModel(model, variantModel);
 			});
 
 			SnowClient.cachedOverlayModel = null;

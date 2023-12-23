@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -17,14 +16,17 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import snownee.snow.client.model.SnowCoveredModel;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
 	private final RenderContext context;
+	private final BlockState selfState;
+	private final BakedModel unwrapped;
 
-	public FabricRendererRenderAPI(RenderContext context) {
+	public FabricRendererRenderAPI(RenderContext context, BlockState selfState, BakedModel unwrapped) {
 		this.context = context;
+		this.selfState = selfState;
+		this.unwrapped = unwrapped;
 	}
 
 	@Override
@@ -48,10 +50,10 @@ public class FabricRendererRenderAPI implements RenderAPI {
 			}
 			return true;
 		});
-		if (model instanceof SnowCoveredModel snowCovered) {
-			model = snowCovered.getWrappedModel();
+		if (state == selfState) {
+			model = unwrapped;
 		}
-		((FabricBakedModel) model).emitBlockQuads(world, state, pos, randomSupplier, context);
+		model.emitBlockQuads(world, state, pos, randomSupplier, context);
 		context.popTransform();
 		return true;
 	}

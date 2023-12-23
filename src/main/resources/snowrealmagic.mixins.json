@@ -26,7 +26,6 @@
   "client": [
     "client.CameraMixin",
     "client.ClientPacketListenerMixin",
-    "client.SimpleBakedModelMixin",
     "client.SnowLayerBlockClientMixin"
   ],
   "injectors": {
