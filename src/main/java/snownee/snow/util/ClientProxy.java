@@ -16,6 +16,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -23,16 +24,24 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.KiwiGO;
@@ -62,6 +71,14 @@ public class ClientProxy implements ClientModInitializer {
 		if (player != null && Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
 			player.sendSystemMessage(Component.literal("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."));
 		}
+	}
+
+	public static void renderFallingBlock(Entity entity, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
+		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+		poseStack.translate(-0.5D, 0.0D, -0.5D);
+		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+		RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
+		dispatcher.getModelRenderer().tesselateBlock(entity.level(), getBlockModel(state), state, blockpos, poseStack, bufferSource.getBuffer(type), false, RandomSource.create(42), state.getSeed(pos), OverlayTexture.NO_OVERLAY);
 	}
 
 	@Override
