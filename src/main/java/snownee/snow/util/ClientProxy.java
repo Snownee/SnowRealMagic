@@ -102,8 +102,8 @@ public class ClientProxy implements ClientModInitializer {
 				}
 				SnowClient.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
 				extraModels.add(def.model);
-				if (def.overrideBlock != null) {
-					for (ResourceLocation id : def.overrideBlock) {
+				if (def.overrideBlocks != null) {
+					for (ResourceLocation id : def.overrideBlocks) {
 						Block block = BuiltInRegistries.BLOCK.get(id);
 						if (block != Blocks.AIR) {
 							SnowClient.overrideBlocks.add(block);

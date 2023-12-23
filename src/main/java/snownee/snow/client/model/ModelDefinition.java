@@ -5,6 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 public class ModelDefinition {
 
 	public ResourceLocation model;
-	public ResourceLocation[] overrideBlock;
+	public ResourceLocation[] overrideBlocks;
 
 }
