@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
 
 import me.jellysquid.mods.sodium.client.model.color.ColorProvider;
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
@@ -48,6 +49,10 @@ public class RubidiumRenderAPI implements RenderAPI {
 		Material material = DefaultMaterials.forRenderLayer(ctx.renderLayer());
 		ChunkModelBuilder meshBuilder = buffers.get(material);
 		ColorProvider<BlockState> colorizer = blockRenderer.getColorProviderRegistry().getColorProvider(state.getBlock());
+		Vector3fc origin = ctx.origin();
+		BlockState oldState = ctx.state();
+		BakedModel oldModel = ctx.model();
+		ctx.update(pos, BlockPos.containing(origin.x(), origin.y(), origin.z()), state, model, ctx.seed(), modelData, ctx.renderLayer());
 		Vec3 offset = state.getOffset(world, pos);
 		if (yOffset != 0) {
 			offset = offset.add(0, yOffset, 0);
@@ -74,6 +79,7 @@ public class RubidiumRenderAPI implements RenderAPI {
 			rendered = true;
 		}
 
+		ctx.update(pos, BlockPos.containing(origin.x(), origin.y(), origin.z()), oldState, oldModel, ctx.seed(), modelData, ctx.renderLayer());
 		return rendered;
 	}
 
