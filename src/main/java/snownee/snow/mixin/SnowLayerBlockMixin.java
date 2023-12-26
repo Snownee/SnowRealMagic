@@ -128,16 +128,16 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
-	private boolean canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
+	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
 			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
-				return useContext.getClickedFace() == Direction.UP;
+				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
 			} else {
-				return true;
+				ci.setReturnValue(true);
 			}
 		}
-		return layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8);
+		ci.setReturnValue(layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8));
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -85,7 +86,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		if (useContext.getItemInHand().is(Blocks.SNOW.asItem())) {
+		if (useContext.getItemInHand().is(Items.SNOW)) {
 			return super.canBeReplaced(state, useContext);
 		}
 		if (!super.canBeReplaced(state, useContext)) {
