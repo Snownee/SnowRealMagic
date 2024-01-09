@@ -85,7 +85,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 
 	@Override
 	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		if (useContext.getItemInHand().is(Blocks.SNOW.asItem())) {
+		if (useContext.getItemInHand().is(Items.SNOW)) {
 			return super.canBeReplaced(state, useContext);
 		}
 		if (!super.canBeReplaced(state, useContext)) {

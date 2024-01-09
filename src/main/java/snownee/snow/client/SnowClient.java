@@ -18,6 +18,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
@@ -47,8 +48,9 @@ public final class SnowClient {
 		}
 		boolean rendered = false;
 		boolean useVariant = false;
+		boolean full = state.hasProperty(SnowLayerBlock.LAYERS) && state.getValue(SnowLayerBlock.LAYERS) == 8;
 		BakedModel model;
-		if (!camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
+		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			model = ClientProxy.getBlockModel(camo);
 			if (SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock())) {
 				useVariant = true;
