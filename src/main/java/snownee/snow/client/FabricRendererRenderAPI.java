@@ -50,7 +50,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 			}
 			return true;
 		});
-		if (state == selfState) {
+		if (state == selfState && model != SnowClient.cachedOverlayModel) {
 			model = unwrapped;
 		}
 		model.emitBlockQuads(world, state, pos, randomSupplier, context);
