@@ -14,8 +14,12 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
+import snownee.snow.CoreModule;
+import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.client.model.SnowVariantModel;
 
 public class ForgeHookRenderAPI implements RenderAPI {
 
@@ -42,9 +46,23 @@ public class ForgeHookRenderAPI implements RenderAPI {
 			cullSides = false;
 		}
 		ModelData data = model.getModelData(world, pos, state, modelData);
+		data = wrapModelData(world, state, pos, data);
 		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(world, model, state, pos, matrixStack, vertexBuilder, cullSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY, data, layer);
 		matrixStack.popPose();
 		return true;
+	}
+
+	// https://github.com/MinecraftForge/MinecraftForge/pull/7827
+	public static ModelData wrapModelData(BlockAndTintGetter world, BlockState state, BlockPos pos, ModelData modelData) {
+		if (SnowClientConfig.snowVariants) {
+			if (modelData.has(SnowBlockEntity.OPTIONS)) {
+				return SnowVariantModel.USE_SNOW_VARIANT;
+			}
+			if (state.hasProperty(DoublePlantBlock.HALF) && CoreModule.TILE_BLOCK.is(world.getBlockState(pos.below()))) {
+				return SnowVariantModel.USE_SNOW_VARIANT;
+			}
+		}
+		return modelData;
 	}
 
 }

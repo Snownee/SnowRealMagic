@@ -24,6 +24,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
+import snownee.snow.client.ForgeHookRenderAPI;
 import snownee.snow.client.RenderAPI;
 import snownee.snow.mixin.sodium.BlockRendererAccess;
 
@@ -43,6 +44,7 @@ public class RubidiumRenderAPI implements RenderAPI {
 	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
 		RandomSource random = randomSupplier.get();
 		ModelData modelData = model.getModelData(world, pos, state, ctx.modelData());
+		modelData = ForgeHookRenderAPI.wrapModelData(world, state, pos, modelData);
 		if (layer != null && !model.getRenderTypes(state, random, modelData).contains(layer)) {
 			return false;
 		}

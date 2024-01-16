@@ -1,6 +1,7 @@
 package snownee.snow.util;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -8,9 +9,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +40,7 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
+import snownee.snow.client.model.SnowVariantModel;
 
 public class ClientProxy {
 	public static void init() {
@@ -117,5 +124,19 @@ public class ClientProxy {
 			return false;
 		}
 		return true;
+	}
+
+	public static BakedModel onBakeModel(ResourceLocation resourceLocation, ModelState modelState, Function<Material, TextureAtlasSprite> sprites, ModelBaker modelBaker, BakedModel original) {
+		if (modelState.getClass() != Variant.class) {
+			return null;
+		}
+		ModelDefinition def = SnowClient.snowVariantMapping.get(resourceLocation);
+		if (def == null) {
+			return null;
+		}
+		Variant variantState = (Variant) modelState;
+		variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
+		BakedModel variantModel = modelBaker.bake(def.model, variantState, sprites);
+		return new SnowVariantModel(original, variantModel);
 	}
 }
