@@ -1,0 +1,6 @@
+{
+  "comment": "Disable this feature when our mod is present",
+  "replace": true,
+  "values": [
+  ]
+}
