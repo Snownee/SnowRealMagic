@@ -42,8 +42,11 @@ public class WorldTickHandler {
 
 	private static void doMelt(ServerLevel level, MutableBlockPos pos) {
 		BlockState state = level.getBlockState(pos);
-		if (state.is(Blocks.ICE) && level.canSeeSky(pos.above())) {
-			((IceBlockAccess) state.getBlock()).callMelt(state, level, pos);
+		if (state.getBlock() instanceof IceBlockAccess ice) {
+			Holder<Biome> biome = level.getBiome(pos);
+			if (CommonProxy.snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos)) {
+				ice.callMelt(state, level, pos);
+			}
 			return;
 		}
 		BlockState stateAbove = level.getBlockState(pos.move(Direction.UP));
