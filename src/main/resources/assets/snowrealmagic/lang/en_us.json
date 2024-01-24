@@ -30,6 +30,6 @@
   "snowrealmagic.config.accumulation.accumulatesDuringSnowfall.desc": "Snow will accumulate when it's raining",
   "snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "Snow will accumulate only when it's thundering",
   "snowrealmagic.config.accumulation.maxLayers.desc": "The max layers of snow that can be accumulated. 9 is unlimited",
-  "snowrealmagic.config.accumulation.naturalMelting.desc": "Snow does not melt with time if its layer is more than 1",
+  "snowrealmagic.config.accumulation.naturalMelting.desc": "Snow melts with time if its layer is more than 1",
   "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes\nAlways true if some seasons mod is installed"
 }
