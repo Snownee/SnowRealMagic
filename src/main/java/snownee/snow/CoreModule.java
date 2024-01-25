@@ -99,7 +99,9 @@ public class CoreModule extends AbstractModule {
 	protected void init(InitEvent event) {
 		event.enqueueWork(() -> {
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
-				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers;
+				final var below = blockPos.below();
+				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
+					   blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
 			};
 			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
