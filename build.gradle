@@ -62,6 +62,9 @@ dependencies {
 
     //modImplementation "curse.maven:jade-324717:4096403"
     modImplementation "maven.modrinth:jade:kd04zQ7y"
+
+    modRuntimeOnly "curse.maven:minihud-244260:4593082"
+    modRuntimeOnly "curse.maven:malilib-303119:4780782"
 }
 
 loom {
