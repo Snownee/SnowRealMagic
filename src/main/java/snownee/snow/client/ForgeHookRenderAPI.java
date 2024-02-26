@@ -74,7 +74,7 @@ public class ForgeHookRenderAPI implements RenderAPI {
 
 	// https://github.com/MinecraftForge/MinecraftForge/pull/7827
 	public static ModelData wrapModelData(BlockAndTintGetter world, BlockState state, BlockPos pos, ModelData modelData) {
-		if (SnowClientConfig.snowVariants) {
+		if (SnowClientConfig.snowVariants && modelData != SnowVariantModel.USE_SNOW_VARIANT) {
 			if (modelData.has(SnowBlockEntity.OPTIONS)) {
 				return SnowVariantModel.USE_SNOW_VARIANT;
 			}
