@@ -78,17 +78,17 @@ public final class Hooks {
 
 	public static boolean placeFeature(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
 		WorldGenLevel worldgenlevel = ctx.level();
-		BlockPos blockpos = ctx.origin();
+		BlockPos origin = ctx.origin();
 		MutableBlockPos pos = new MutableBlockPos();
 		MutableBlockPos belowPos = new MutableBlockPos();
 
 		for (int i = 0; i < 16; ++i) {
 			for (int j = 0; j < 16; ++j) {
-				int k = blockpos.getX() + i;
-				int l = blockpos.getZ() + j;
+				int k = origin.getX() + i;
+				int l = origin.getZ() + j;
 				int i1 = worldgenlevel.getHeight(Heightmap.Types.MOTION_BLOCKING, k, l);
 				pos.set(k, i1, l);
-				belowPos.set(pos).move(Direction.DOWN, 1);
+				belowPos.set(pos).move(Direction.DOWN);
 				Biome biome = worldgenlevel.getBiome(pos).value();
 				if (biome.shouldFreeze(worldgenlevel, belowPos, false)) {
 					worldgenlevel.setBlock(belowPos, Blocks.ICE.defaultBlockState(), 2);
@@ -101,14 +101,27 @@ public final class Hooks {
 						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 					}
 				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally && SnowCommonConfig.canPlaceSnowInBlock()) {
-					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
+					if (biome.warmEnoughToRain(pos)) {
 						continue;
 					}
+					if (!Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
+						pos.move(Direction.DOWN);
+						belowPos.move(Direction.DOWN);
+					}
 					BlockState blockstate = worldgenlevel.getBlockState(pos);
-					if (convert(worldgenlevel, pos, blockstate, 1, 2, true)) {
+					if (SnowCommonConfig.skipSnowLoggingMushroom && blockstate.getBlock().getClass() == MushroomBlock.class) {
+						continue; // related to MC-228895? mushroom can be generated at any light level, and it will be removed instantly if we place snow on it
+					}
+					if (!Hooks.canContainState(blockstate)) {
+						continue;
+					}
+					if (!blockstate.canSurvive(worldgenlevel, pos)) {
+						blockstate = Blocks.AIR.defaultBlockState();
+					}
+					if (convert(worldgenlevel, pos, blockstate, 1, Block.UPDATE_CLIENTS, true)) {
 						blockstate = worldgenlevel.getBlockState(belowPos);
 						if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
-							worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
+							worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), Block.UPDATE_CLIENTS);
 						}
 					}
 				}

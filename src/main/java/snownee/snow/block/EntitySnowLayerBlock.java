@@ -104,7 +104,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
-				setContainedState(worldIn, currentPos, containedNew, state);
+				state = setContainedState(worldIn, currentPos, containedNew, state);
 			}
 		}
 		return state;
@@ -115,15 +115,16 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		return getRaw(state, worldIn, pos).isPathfindable(worldIn, pos, type);
 	}
 
-	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
+	public BlockState setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
 		BlockEntity tile = world.getBlockEntity(pos);
 		if (tile instanceof SnowBlockEntity) {
 			if (state.isAir()) {
-				world.setBlock(pos, getSnowState(snow, world, pos), 3);
+				return getSnowState(snow, world, pos);
 			} else {
 				((SnowBlockEntity) tile).setContainedState(state);
 			}
 		}
+		return snow;
 	}
 
 	@Override

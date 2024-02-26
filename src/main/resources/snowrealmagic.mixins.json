@@ -1,40 +1,41 @@
 {
-  "required": true,
-  "package": "snownee.snow.mixin",
-  "plugin": "snownee.snow.mixin.MixinPlugin",
-  "compatibilityLevel": "JAVA_16",
-  "refmap": "snowrealmagic.refmap.json",
-  "mixins": [
-    "AbstractMegaTreeGrowerMixin",
-    "BlockAccess",
-    "BlockItemMixin",
-    "BlockMixin",
-    "DoublePlantBlockMixin",
-    "FenceGateBlockAccess",
-    "GameRuleCommandMixin",
-    "GameRulesMixin",
-    "IceBlockAccess",
-    "IntegerValueAccess",
-    "LootContextAccess",
-    "LootParamsAccess",
-    "ServerLevelMixin",
-    "SnowAndFreezeFeatureMixin",
-    "SnowLayerBlockMixin",
-    "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin",
-    "sereneseasons.RandomUpdateHandlerMixin"
-  ],
-  "client": [
-    "client.BlockRenderDispatcherMixin",
-    "client.CameraMixin",
-    "client.ModelBakerImplMixin",
-    "client.SnowLayerBlockClientMixin",
-    "sodium.BlockRendererAccess",
-    "sodium.BlockRendererMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1,
-    "maxShiftBy": 2
-  },
-  "minVersion": "0.8"
+	"required": true,
+	"package": "snownee.snow.mixin",
+	"plugin": "snownee.snow.mixin.MixinPlugin",
+	"compatibilityLevel": "JAVA_16",
+	"refmap": "snowrealmagic.refmap.json",
+	"mixins": [
+		"AbstractMegaTreeGrowerMixin",
+		"BlockAccess",
+		"BlockItemMixin",
+		"BlockMixin",
+		"DoublePlantBlockMixin",
+		"FenceGateBlockAccess",
+		"GameRuleCommandMixin",
+		"GameRulesMixin",
+		"IceBlockAccess",
+		"IntegerValueAccess",
+		"LevelChunkMixin",
+		"LootContextAccess",
+		"LootParamsAccess",
+		"ServerLevelMixin",
+		"SnowAndFreezeFeatureMixin",
+		"SnowLayerBlockMixin",
+		"SnowyDirtBlockMixin",
+		"SpreadableSnowyDirtBlockMixin",
+		"sereneseasons.RandomUpdateHandlerMixin"
+	],
+	"client": [
+		"client.BlockRenderDispatcherMixin",
+		"client.CameraMixin",
+		"client.ModelBakerImplMixin",
+		"client.SnowLayerBlockClientMixin",
+		"sodium.BlockRendererAccess",
+		"sodium.BlockRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1,
+		"maxShiftBy": 2
+	},
+	"minVersion": "0.8"
 }

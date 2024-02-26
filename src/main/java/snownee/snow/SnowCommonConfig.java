@@ -49,6 +49,10 @@ public final class SnowCommonConfig {
 	@Path("debug.weatherTickSlowness")
 	@Range(min = 1)
 	public static int weatherTickSlowness = 16;
+	@Path("debug.preventWorldgenLogSpam")
+	public static boolean preventWorldgenLogSpam = true;
+	@Path("debug.skipSnowLoggingMushroom")
+	public static boolean skipSnowLoggingMushroom = true;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !retainOriginalBlocks;
