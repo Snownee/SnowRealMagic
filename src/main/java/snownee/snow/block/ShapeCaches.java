@@ -24,7 +24,12 @@ public class ShapeCaches {
 	public static final Cache<Key, VoxelShape> COLLIDER = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 	public static final Cache<Key, VoxelShape> OUTLINE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
-	public static VoxelShape get(Cache<Key, VoxelShape> cache, BlockState state, BlockGetter level, BlockPos pos, Callable<? extends VoxelShape> loader) {
+	public static VoxelShape get(
+			Cache<Key, VoxelShape> cache,
+			BlockState state,
+			BlockGetter level,
+			BlockPos pos,
+			Callable<? extends VoxelShape> loader) {
 		try {
 			SnowVariant snowVariant = (SnowVariant) state.getBlock();
 			int layers = snowVariant.layers(state, level, pos);
@@ -36,7 +41,7 @@ public class ShapeCaches {
 					return loader.call();
 				}
 				key = new Key(raw, layers);
-			}else {
+			} else {
 				key = new Key(state, layers);
 			}
 			return cache.get(key, loader);

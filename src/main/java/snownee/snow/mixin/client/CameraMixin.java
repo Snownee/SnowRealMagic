@@ -42,7 +42,12 @@ public abstract class CameraMixin {
 		}
 		Camera.NearPlane camera$nearplane = getNearPlane();
 		Vec3 forward = new Vec3(forwards).scale(0.05F);
-		for (Vec3 vec3 : Arrays.asList(forward, camera$nearplane.getTopLeft(), camera$nearplane.getTopRight(), camera$nearplane.getBottomLeft(), camera$nearplane.getBottomRight())) {
+		for (Vec3 vec3 : Arrays.asList(
+				forward,
+				camera$nearplane.getTopLeft(),
+				camera$nearplane.getTopRight(),
+				camera$nearplane.getBottomLeft(),
+				camera$nearplane.getBottomRight())) {
 			Vec3 vec31 = position.add(vec3);
 			BlockPos blockpos = BlockPos.containing(vec31);
 			BlockState blockstate = level.getBlockState(blockpos);

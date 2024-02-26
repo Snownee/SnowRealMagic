@@ -38,8 +38,9 @@ public class CommonProxy {
 
 	public CommonProxy() {
 		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
-			if (SnowCommonConfig.debugSpawningCommand)
+			if (SnowCommonConfig.debugSpawningCommand) {
 				DebugMobSpawningCommand.register(event.getDispatcher());
+			}
 		});
 		MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.RightClickBlock event) -> {
 			InteractionResult result = GameEvents.onItemUse(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
@@ -51,7 +52,10 @@ public class CommonProxy {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener((GatherDataEvent event) -> {
 			DataGenerator generator = event.getGenerator();
-			SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
+			SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(
+					generator.getPackOutput(),
+					event.getLookupProvider(),
+					event.getExistingFileHelper());
 			generator.addProvider(event.includeServer(), blockTagsProvider);
 		});
 		sereneseasons = Platform.isModLoaded("sereneseasons");
@@ -59,8 +63,9 @@ public class CommonProxy {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
 
-		if (Platform.isPhysicalClient())
+		if (Platform.isPhysicalClient()) {
 			ClientProxy.init();
+		}
 	}
 
 	public static boolean isHot(FluidState fluidState, Level level, BlockPos pos) {
@@ -101,17 +106,25 @@ public class CommonProxy {
 	}
 
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
-		if (SnowCommonConfig.snowNeverMelt)
+		if (SnowCommonConfig.snowNeverMelt) {
 			return false;
-		if (sereneseasons)
+		}
+		if (sereneseasons) {
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(level, pos, layers))
+		}
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(
+				level,
+				pos,
+				layers)) {
 			return true;
+		}
 		if (layers <= 1) {
-			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
+			if (SnowCommonConfig.snowAccumulationMaxLayers < 9) {
 				return false;
-			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock))
+			}
+			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock)) {
 				return false;
+			}
 		}
 		return SnowCommonConfig.snowNaturalMelt && skyLightEnoughToMelt(level, pos, layers);
 	}

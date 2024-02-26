@@ -45,7 +45,16 @@ public abstract class BlockRendererMixin {
 		if (options == null) {
 			options = SnowClient.fallbackOptions;
 		}
-		SnowClient.renderHook(ctx.world(), ctx.pos(), ctx.state(), camo, options, ctx.renderLayer(), () -> random, true, new RubidiumRenderAPI((BlockRendererAccess) this, ctx, buffers));
+		SnowClient.renderHook(
+				ctx.world(),
+				ctx.pos(),
+				ctx.state(),
+				camo,
+				options,
+				ctx.renderLayer(),
+				() -> random,
+				true,
+				new RubidiumRenderAPI((BlockRendererAccess) this, ctx, buffers));
 		ci.cancel();
 	}
 }

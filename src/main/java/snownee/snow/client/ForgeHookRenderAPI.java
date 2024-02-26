@@ -34,7 +34,15 @@ public class ForgeHookRenderAPI implements RenderAPI {
 	}
 
 	@Override
-	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
+	public boolean translateYAndRender(
+			BlockAndTintGetter world,
+			BlockState state,
+			BlockPos pos,
+			@Nullable RenderType layer,
+			Supplier<RandomSource> randomSupplier,
+			boolean cullSides,
+			BakedModel model,
+			double yOffset) {
 		RandomSource random = randomSupplier.get();
 		if (layer != null && !model.getRenderTypes(state, random, modelData).contains(layer)) {
 			return false;
@@ -47,7 +55,19 @@ public class ForgeHookRenderAPI implements RenderAPI {
 		}
 		ModelData data = model.getModelData(world, pos, state, modelData);
 		data = wrapModelData(world, state, pos, data);
-		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(world, model, state, pos, matrixStack, vertexBuilder, cullSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY, data, layer);
+		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(
+				world,
+				model,
+				state,
+				pos,
+				matrixStack,
+				vertexBuilder,
+				cullSides,
+				random,
+				state.getSeed(pos),
+				OverlayTexture.NO_OVERLAY,
+				data,
+				layer);
 		matrixStack.popPose();
 		return true;
 	}

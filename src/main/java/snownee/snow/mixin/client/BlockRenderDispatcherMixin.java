@@ -28,11 +28,24 @@ import snownee.snow.util.ClientProxy;
 public abstract class BlockRenderDispatcherMixin {
 
 	@Inject(
-			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V", at = @At(
-				"HEAD"
-			), remap = false, cancellable = true
+			method = "renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V",
+			at = @At(
+					"HEAD"
+			),
+			remap = false,
+			cancellable = true
 	)
-	private void srm_renderBatched(BlockState blockStateIn, BlockPos posIn, BlockAndTintGetter lightReaderIn, PoseStack matrixStackIn, VertexConsumer vertexBuilderIn, boolean checkSides, RandomSource random, ModelData modelData, @Nullable RenderType layer, CallbackInfo ci) {
+	private void srm_renderBatched(
+			BlockState blockStateIn,
+			BlockPos posIn,
+			BlockAndTintGetter lightReaderIn,
+			PoseStack matrixStackIn,
+			VertexConsumer vertexBuilderIn,
+			boolean checkSides,
+			RandomSource random,
+			ModelData modelData,
+			@Nullable RenderType layer,
+			CallbackInfo ci) {
 		if (!ClientProxy.shouldRedirect(blockStateIn)) {
 			return;
 		}
@@ -44,7 +57,16 @@ public abstract class BlockRenderDispatcherMixin {
 		if (options == null) {
 			options = SnowClient.fallbackOptions;
 		}
-		SnowClient.renderHook(lightReaderIn, posIn, blockStateIn, camo, options, layer, () -> random, checkSides, new ForgeHookRenderAPI(modelData, matrixStackIn, vertexBuilderIn));
+		SnowClient.renderHook(
+				lightReaderIn,
+				posIn,
+				blockStateIn,
+				camo,
+				options,
+				layer,
+				() -> random,
+				checkSides,
+				new ForgeHookRenderAPI(modelData, matrixStackIn, vertexBuilderIn));
 		ci.cancel();
 	}
 }

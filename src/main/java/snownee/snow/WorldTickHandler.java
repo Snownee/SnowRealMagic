@@ -28,7 +28,9 @@ public class WorldTickHandler {
 		MutableBlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(x, 0, y, 15)).mutable();
 
 		if (!level.isAreaLoaded(pos, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+		{
 			return;
+		}
 
 		pos.move(Direction.DOWN);
 		Holder<Biome> biomeHolder = level.getBiome(pos);

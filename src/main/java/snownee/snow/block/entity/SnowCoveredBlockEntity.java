@@ -73,8 +73,9 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	@Override
 	public void onLoad() {
-		if (!level.isClientSide && getBlockState().getBlock() instanceof WatcherSnowVariant)
+		if (!level.isClientSide && getBlockState().getBlock() instanceof WatcherSnowVariant) {
 			updateOptions(level, worldPosition);
+		}
 		super.onLoad();
 	}
 

@@ -1,13 +1,13 @@
 {
-  "modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
-  "entity.snowrealmagic.snow": "Bloc qui tombe",
-  "block.snowrealmagic.slab": "Dalle Enneigée",
-  "block.snowrealmagic.stairs": "Escalier Enneigé",
-  "block.snowrealmagic.wall": "Mur Enneigé",
-  "block.snowrealmagic.fence": "Barrière Enneigée",
-  "block.snowrealmagic.fence_gate": "Portillon Enneigé",
-  "gamerule.snowrealmagic:blizzardStrength": "Force du blizzard",
-  "gamerule.snowrealmagic:blizzardStrength.description": "Des blocs de neige tomberont du ciel. 1~8 pour définir le nombre maximum de couches. Ajouté par Snow! Real Magic!",
-  "gamerule.snowrealmagic:blizzardFrequency": "Fréquence du blizzard",
-  "gamerule.snowrealmagic:blizzardFrequency.description": "La possibilité de faire du blizzard. N/10000 par tick par chunk. Ajouté par Snow! Real Magic!"
+	"modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
+	"entity.snowrealmagic.snow": "Bloc qui tombe",
+	"block.snowrealmagic.slab": "Dalle Enneigée",
+	"block.snowrealmagic.stairs": "Escalier Enneigé",
+	"block.snowrealmagic.wall": "Mur Enneigé",
+	"block.snowrealmagic.fence": "Barrière Enneigée",
+	"block.snowrealmagic.fence_gate": "Portillon Enneigé",
+	"gamerule.snowrealmagic:blizzardStrength": "Force du blizzard",
+	"gamerule.snowrealmagic:blizzardStrength.description": "Des blocs de neige tomberont du ciel. 1~8 pour définir le nombre maximum de couches. Ajouté par Snow! Real Magic!",
+	"gamerule.snowrealmagic:blizzardFrequency": "Fréquence du blizzard",
+	"gamerule.snowrealmagic:blizzardFrequency.description": "La possibilité de faire du blizzard. N/10000 par tick par chunk. Ajouté par Snow! Real Magic!"
 }

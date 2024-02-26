@@ -41,7 +41,15 @@ public class RubidiumRenderAPI implements RenderAPI {
 	}
 
 	@Override
-	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
+	public boolean translateYAndRender(
+			BlockAndTintGetter world,
+			BlockState state,
+			BlockPos pos,
+			@Nullable RenderType layer,
+			Supplier<RandomSource> randomSupplier,
+			boolean cullSides,
+			BakedModel model,
+			double yOffset) {
 		RandomSource random = randomSupplier.get();
 		ModelData modelData = model.getModelData(world, pos, state, ctx.modelData());
 		modelData = ForgeHookRenderAPI.wrapModelData(world, state, pos, modelData);
@@ -81,7 +89,14 @@ public class RubidiumRenderAPI implements RenderAPI {
 			rendered = true;
 		}
 
-		ctx.update(pos, BlockPos.containing(origin.x(), origin.y(), origin.z()), oldState, oldModel, ctx.seed(), modelData, ctx.renderLayer());
+		ctx.update(
+				pos,
+				BlockPos.containing(origin.x(), origin.y(), origin.z()),
+				oldState,
+				oldModel,
+				ctx.seed(),
+				modelData,
+				ctx.renderLayer());
 		return rendered;
 	}
 

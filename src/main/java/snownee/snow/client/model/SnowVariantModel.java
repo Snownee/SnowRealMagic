@@ -24,7 +24,12 @@ public class SnowVariantModel extends BakedModelWrapper<BakedModel> {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
+	public List<BakedQuad> getQuads(
+			BlockState state,
+			Direction side,
+			RandomSource rand,
+			ModelData extraData,
+			@Nullable RenderType renderType) {
 		BakedModel model;
 		if (extraData == USE_SNOW_VARIANT) {
 			model = variantModel;

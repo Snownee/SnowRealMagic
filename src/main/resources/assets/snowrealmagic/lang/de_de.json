@@ -1,9 +1,9 @@
 {
-  "modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
-  "entity.snowrealmagic.snow": "Fallender Block",
-  "block.snowrealmagic.slab": "Schneebedeckte Stufe",
-  "block.snowrealmagic.stairs": "Schneebedeckte Treppe",
-  "block.snowrealmagic.wall": "Schneebedeckte Mauer",
-  "block.snowrealmagic.fence": "Schneebedeckter Zaun",
-  "block.snowrealmagic.fence_gate": "Schneebedecktes Zauntor"
+	"modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
+	"entity.snowrealmagic.snow": "Fallender Block",
+	"block.snowrealmagic.slab": "Schneebedeckte Stufe",
+	"block.snowrealmagic.stairs": "Schneebedeckte Treppe",
+	"block.snowrealmagic.wall": "Schneebedeckte Mauer",
+	"block.snowrealmagic.fence": "Schneebedeckter Zaun",
+	"block.snowrealmagic.fence_gate": "Schneebedecktes Zauntor"
 }

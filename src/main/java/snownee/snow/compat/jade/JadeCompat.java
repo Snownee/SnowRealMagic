@@ -1,6 +1,12 @@
 package snownee.snow.compat.jade;
 
-import static snownee.snow.CoreModule.*;
+import static snownee.snow.CoreModule.FENCE;
+import static snownee.snow.CoreModule.FENCE2;
+import static snownee.snow.CoreModule.FENCE_GATE;
+import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.STAIRS;
+import static snownee.snow.CoreModule.TILE_BLOCK;
+import static snownee.snow.CoreModule.WALL;
 
 import java.util.List;
 

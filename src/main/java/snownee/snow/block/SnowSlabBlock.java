@@ -51,7 +51,8 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			snowTile.refresh();
 			return InteractionResult.SUCCESS;
 		}
-		if (hit.getDirection() == Direction.UP && snowTile.getContainedState().getBlock().asItem() == stack.getItem() && stack.getItem() instanceof BlockItem && stack.is(ItemTags.SLABS)) {
+		if (hit.getDirection() == Direction.UP && snowTile.getContainedState().getBlock().asItem() == stack.getItem() &&
+				stack.getItem() instanceof BlockItem && stack.is(ItemTags.SLABS)) {
 			Block block = ((BlockItem) stack.getItem()).getBlock();
 			if (block instanceof SlabBlock) {
 				BlockState state2 = block.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);
@@ -65,7 +66,13 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 					}
 				}
 				SoundType soundtype = state2.getSoundType(worldIn, pos, player);
-				worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+				worldIn.playSound(
+						player,
+						pos,
+						soundtype.getPlaceSound(),
+						SoundSource.BLOCKS,
+						(soundtype.getVolume() + 1.0F) / 2.0F,
+						soundtype.getPitch() * 0.8F);
 				return InteractionResult.SUCCESS;
 			}
 		}
@@ -78,7 +85,11 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+	public VoxelShape getCollisionShape(
+			BlockState blockState,
+			BlockGetter blockGetter,
+			BlockPos blockPos,
+			CollisionContext collisionContext) {
 		return BOTTOM_SHAPE;
 	}
 

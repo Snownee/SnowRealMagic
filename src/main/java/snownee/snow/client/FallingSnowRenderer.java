@@ -21,7 +21,13 @@ public class FallingSnowRenderer extends EntityRenderer<FallingSnowEntity> {
 	}
 
 	@Override
-	public void render(FallingSnowEntity entity, float p_225623_2_, float p_225623_3_, PoseStack poseStack, MultiBufferSource bufferSource, int p_225623_6_) {
+	public void render(
+			FallingSnowEntity entity,
+			float p_225623_2_,
+			float p_225623_3_,
+			PoseStack poseStack,
+			MultiBufferSource bufferSource,
+			int p_225623_6_) {
 		BlockState blockstate = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, entity.getLayers());
 		if (blockstate.getRenderShape() != RenderShape.MODEL) {
 			return;

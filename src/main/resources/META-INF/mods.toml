@@ -1,28 +1,28 @@
-modLoader="javafml"
-loaderVersion="[46,)"
-license="MIT"
+modLoader = "javafml"
+loaderVersion = "[46,)"
+license = "MIT"
 
 [[mods]]
-modId="snowrealmagic"
-version="${file.jarVersion}"
-displayName="Snow! Real Magic!"
-authors="Snownee, minzhi, WZD"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
-description="Tweaks vanilla snow layer"
+modId = "snowrealmagic"
+version = "${file.jarVersion}"
+displayName = "Snow! Real Magic!"
+authors = "Snownee, minzhi, WZD"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
+description = "Tweaks vanilla snow layer"
 
 [[dependencies.snowrealmagic]]
-    modId="kiwi"
-    mandatory=true
-    versionRange="[11, 12)"
-    ordering="NONE"
-    side="BOTH"
+modId = "kiwi"
+mandatory = true
+versionRange = "[11, 12)"
+ordering = "NONE"
+side = "BOTH"
 
 [[dependencies.snowrealmagic]]
-    modId="rubidium"
-    mandatory=false
-    versionRange="[0.7.1,)"
-    ordering="NONE"
-    side="BOTH"
+modId = "rubidium"
+mandatory = false
+versionRange = "[0.7.1,)"
+ordering = "NONE"
+side = "BOTH"
 
 [modproperties.snowrealmagic]
-    catalogueItemIcon="minecraft:snow_block" #Support for Catalogue mod
+catalogueItemIcon = "minecraft:snow_block" #Support for Catalogue mod

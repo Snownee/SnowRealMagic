@@ -26,7 +26,10 @@ public class SSnowLandEffectPacket extends PacketHandler {
 	public static SSnowLandEffectPacket I;
 
 	@Override
-	public CompletableFuture<FriendlyByteBuf> receive(Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor, FriendlyByteBuf buf, ServerPlayer sender) {
+	public CompletableFuture<FriendlyByteBuf> receive(
+			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
+			FriendlyByteBuf buf,
+			ServerPlayer sender) {
 		BlockPos pos = buf.readBlockPos();
 		byte originLayers = buf.readByte();
 		byte layers = buf.readByte();
@@ -38,9 +41,22 @@ public class SSnowLandEffectPacket extends PacketHandler {
 				double d0 = RANDOM.nextGaussian() * 0.1D;
 				double d1 = RANDOM.nextGaussian() * 0.02D;
 				double d2 = RANDOM.nextGaussian() * 0.1D;
-				level.addParticle(ParticleTypes.SNOWFLAKE, pos.getX() + RANDOM.nextFloat(), pos.getY() + offsetY, pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
+				level.addParticle(
+						ParticleTypes.SNOWFLAKE,
+						pos.getX() + RANDOM.nextFloat(),
+						pos.getY() + offsetY,
+						pos.getZ() + RANDOM.nextFloat(),
+						d0,
+						d1,
+						d2);
 			}
-			level.playLocalSound(pos, SoundType.SNOW.getPlaceSound(), SoundSource.BLOCKS, (SoundType.SNOW.getVolume() + 1) / 2F, SoundType.SNOW.getPitch() * 0.8F, false);
+			level.playLocalSound(
+					pos,
+					SoundType.SNOW.getPlaceSound(),
+					SoundSource.BLOCKS,
+					(SoundType.SNOW.getVolume() + 1) / 2F,
+					SoundType.SNOW.getPitch() * 0.8F,
+					false);
 		});
 	}
 

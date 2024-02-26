@@ -29,9 +29,21 @@ public class ModelBakerImplMixin {
 	@Inject(
 			at = @At(
 					"TAIL"
-			), method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;", locals = LocalCapture.CAPTURE_FAILEXCEPTION, remap = false, cancellable = true
+			),
+			method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;",
+			locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+			remap = false,
+			cancellable = true
 	)
-	private void srm_bake(ResourceLocation resourceLocation, ModelState modelState, Function<Material, TextureAtlasSprite> sprites, CallbackInfoReturnable<BakedModel> ci, ModelBakery.BakedCacheKey key, BakedModel bakedmodel, UnbakedModel unbakedmodel, BakedModel blockModel) {
+	private void srm_bake(
+			ResourceLocation resourceLocation,
+			ModelState modelState,
+			Function<Material, TextureAtlasSprite> sprites,
+			CallbackInfoReturnable<BakedModel> ci,
+			ModelBakery.BakedCacheKey key,
+			BakedModel bakedmodel,
+			UnbakedModel unbakedmodel,
+			BakedModel blockModel) {
 		ModelBaker modelBaker = (ModelBaker) this;
 		BakedModel model = ClientProxy.onBakeModel(resourceLocation, modelState, sprites, modelBaker, ci.getReturnValue());
 		if (model != null) {

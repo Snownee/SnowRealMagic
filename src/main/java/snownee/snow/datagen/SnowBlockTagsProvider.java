@@ -1,10 +1,10 @@
 package snownee.snow.datagen;
 
-import static snownee.snow.CoreModule.SNOWY_SETTING;
 import static snownee.snow.CoreModule.FENCE;
 import static snownee.snow.CoreModule.FENCE2;
 import static snownee.snow.CoreModule.FENCE_GATE;
 import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.SNOWY_SETTING;
 import static snownee.snow.CoreModule.STAIRS;
 import static snownee.snow.CoreModule.TILE_BLOCK;
 import static snownee.snow.CoreModule.WALL;
@@ -26,7 +26,10 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 
 	private final TagsProviderHelper<Block> helper;
 
-	public SnowBlockTagsProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+	public SnowBlockTagsProvider(
+			PackOutput packOutput,
+			CompletableFuture<HolderLookup.Provider> lookupProvider,
+			ExistingFileHelper existingFileHelper) {
 		super(packOutput, lookupProvider, SnowRealMagic.MODID, existingFileHelper);
 		helper = new TagsProviderHelper<>(this);
 	}

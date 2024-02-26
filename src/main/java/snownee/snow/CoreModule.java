@@ -60,36 +60,66 @@ public class CoreModule extends AbstractModule {
 	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW).randomTicks().dynamicShape()));
+	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
+			.randomTicks()
+			.dynamicShape()));
 
 	@NoItem
-	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW).randomTicks().dynamicShape()));
+	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
+			.randomTicks()
+			.dynamicShape()));
 
 	@NoItem
-	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW).randomTicks()));
+	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
+			.randomTicks()));
 
 	@NoItem
 	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW).randomTicks()));
 
 	@NoItem
-	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW).randomTicks().dynamicShape()));
+	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW)
+			.randomTicks()
+			.dynamicShape()));
 
 	@NoItem
-	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW).randomTicks().dynamicShape()));
+	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW)
+			.randomTicks()
+			.dynamicShape()));
 
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);
 
-	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(SnowCoveredBlockEntity::new, null, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
+	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
+			SnowCoveredBlockEntity::new,
+			null,
+			FENCE,
+			FENCE2,
+			STAIRS,
+			SLAB,
+			FENCE_GATE,
+			WALL);
 
 	@Name("snow")
-	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> EntityType.Builder.<FallingSnowEntity>of(FallingSnowEntity::new, MobCategory.MISC).setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world)).sized(0.98F, 0.001F).clientTrackingRange(10).updateInterval(20).build(SnowRealMagic.MODID + ".snow"));
+	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> EntityType.Builder.<FallingSnowEntity>of(
+					FallingSnowEntity::new,
+					MobCategory.MISC)
+			.setCustomClientFactory((spawnEntity, world) -> new FallingSnowEntity(world))
+			.sized(0.98F, 0.001F)
+			.clientTrackingRange(10)
+			.updateInterval(20)
+			.build(SnowRealMagic.MODID + ".snow"));
 
 	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register(SnowRealMagic.MODID + ":blizzardStrength", GameRules.Category.MISC, IntegerValueAccess.callCreate(0));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register(
+			SnowRealMagic.MODID + ":blizzardStrength",
+			GameRules.Category.MISC,
+			IntegerValueAccess.callCreate(0));
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRules.register(SnowRealMagic.MODID + ":blizzardFrequency", GameRules.Category.MISC, IntegerValueAccess.callCreate(10000));
+	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRules.register(
+			SnowRealMagic.MODID + ":blizzardFrequency",
+			GameRules.Category.MISC,
+			IntegerValueAccess.callCreate(10000));
 
 	public CoreModule() {
 		decorators.remove(ForgeRegistries.BLOCKS);
@@ -101,7 +131,7 @@ public class CoreModule extends AbstractModule {
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				final var below = blockPos.below();
 				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
-					   blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
+						blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
 			};
 			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);

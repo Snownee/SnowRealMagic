@@ -32,7 +32,15 @@ public interface BlockRendererAccess {
 	LightMode callGetLightingMode(BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos, RenderType layer);
 
 	@Invoker
-	void callRenderQuadList(BlockRenderContext ctx, Material material, LightPipeline lighter, ColorProvider<BlockState> colorizer, Vec3 offset, ChunkModelBuilder builder, List<BakedQuad> quads, Direction cullFace);
+	void callRenderQuadList(
+			BlockRenderContext ctx,
+			Material material,
+			LightPipeline lighter,
+			ColorProvider<BlockState> colorizer,
+			Vec3 offset,
+			ChunkModelBuilder builder,
+			List<BakedQuad> quads,
+			Direction cullFace);
 
 	@Accessor
 	LightPipelineProvider getLighters();

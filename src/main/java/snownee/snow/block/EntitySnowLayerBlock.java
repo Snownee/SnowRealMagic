@@ -98,7 +98,13 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updateShape(
+			BlockState stateIn,
+			Direction facing,
+			BlockState facingState,
+			LevelAccessor worldIn,
+			BlockPos currentPos,
+			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 		if (state.is(this)) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
@@ -166,7 +172,8 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 				BlockState stateIn = getRaw(state, worldIn, pos);
 				if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
 					entityIn.makeStuckInBlock(state, new Vec3(0.8F, 0.75D, 0.8F));
-					if (!worldIn.isClientSide && stateIn.getValue(SweetBerryBushBlock.AGE) > 0 && (entityIn.xOld != entityIn.getX() || entityIn.zOld != entityIn.getZ())) {
+					if (!worldIn.isClientSide && stateIn.getValue(SweetBerryBushBlock.AGE) > 0 &&
+							(entityIn.xOld != entityIn.getX() || entityIn.zOld != entityIn.getZ())) {
 						double d0 = Math.abs(entityIn.getX() - entityIn.xOld);
 						double d1 = Math.abs(entityIn.getZ() - entityIn.zOld);
 						if (d0 >= 0.003F || d1 >= 0.003F) {

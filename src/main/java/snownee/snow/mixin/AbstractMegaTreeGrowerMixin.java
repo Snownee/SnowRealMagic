@@ -27,7 +27,13 @@ import snownee.snow.block.SnowVariant;
 public class AbstractMegaTreeGrowerMixin {
 
 	@Inject(method = "isTwoByTwoSapling", at = @At("HEAD"), cancellable = true)
-	private static void srm_isTwoByTwoSapling(BlockState state, BlockGetter level, BlockPos origin, int xOffset, int yOffset, CallbackInfoReturnable<Boolean> ci) {
+	private static void srm_isTwoByTwoSapling(
+			BlockState state,
+			BlockGetter level,
+			BlockPos origin,
+			int xOffset,
+			int yOffset,
+			CallbackInfoReturnable<Boolean> ci) {
 		Block block = state.getBlock();
 		BlockPos.MutableBlockPos pos = origin.mutable();
 		if (srm_test(level, pos.setWithOffset(origin, xOffset, 0, yOffset), block)
@@ -48,8 +54,26 @@ public class AbstractMegaTreeGrowerMixin {
 		return state.getBlock() instanceof SnowVariant snow && snow.getRaw(state, level, pos).is(block);
 	}
 
-	@Inject(method = "placeMega", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-	private void srm_placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos origin, BlockState state, RandomSource random, int offsetX, int offsetY, CallbackInfoReturnable<Boolean> ci, ResourceKey<ConfiguredFeature<?, ?>> resourcekey, Holder<ConfiguredFeature<?, ?>> holder, SaplingGrowTreeEvent event, ConfiguredFeature<?, ?> configuredfeature) {
+	@Inject(
+			method = "placeMega",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"),
+			locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+			cancellable = true)
+	private void srm_placeMega(
+			ServerLevel level,
+			ChunkGenerator chunkGenerator,
+			BlockPos origin,
+			BlockState state,
+			RandomSource random,
+			int offsetX,
+			int offsetY,
+			CallbackInfoReturnable<Boolean> ci,
+			ResourceKey<ConfiguredFeature<?, ?>> resourcekey,
+			Holder<ConfiguredFeature<?, ?>> holder,
+			SaplingGrowTreeEvent event,
+			ConfiguredFeature<?, ?> configuredfeature) {
 		BlockPos[] positions = new BlockPos[4];
 		positions[0] = origin.offset(offsetX, 0, offsetY);
 		positions[1] = origin.offset(offsetX + 1, 0, offsetY);

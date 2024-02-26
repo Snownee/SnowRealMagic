@@ -102,14 +102,31 @@ public class ClientProxy {
 		return Minecraft.getInstance().getModelManager().getModel(location);
 	}
 
-	public static void renderFallingBlock(Entity entity, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
+	public static void renderFallingBlock(
+			Entity entity,
+			BlockState state,
+			BlockPos pos,
+			PoseStack poseStack,
+			MultiBufferSource bufferSource) {
 		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		poseStack.translate(-0.5D, 0.0D, -0.5D);
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		BakedModel model = dispatcher.getBlockModel(state);
 		RandomSource random = RandomSource.create(42);
 		for (RenderType type : model.getRenderTypes(state, random, ModelData.EMPTY)) {
-			dispatcher.getModelRenderer().tesselateBlock(entity.level(), model, state, blockpos, poseStack, bufferSource.getBuffer(type), false, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY, ModelData.EMPTY, type);
+			dispatcher.getModelRenderer().tesselateBlock(
+					entity.level(),
+					model,
+					state,
+					blockpos,
+					poseStack,
+					bufferSource.getBuffer(type),
+					false,
+					random,
+					state.getSeed(pos),
+					OverlayTexture.NO_OVERLAY,
+					ModelData.EMPTY,
+					type);
 		}
 	}
 
@@ -126,7 +143,12 @@ public class ClientProxy {
 		return true;
 	}
 
-	public static BakedModel onBakeModel(ResourceLocation resourceLocation, ModelState modelState, Function<Material, TextureAtlasSprite> sprites, ModelBaker modelBaker, BakedModel original) {
+	public static BakedModel onBakeModel(
+			ResourceLocation resourceLocation,
+			ModelState modelState,
+			Function<Material, TextureAtlasSprite> sprites,
+			ModelBaker modelBaker,
+			BakedModel original) {
 		if (modelState.getClass() != Variant.class) {
 			return null;
 		}

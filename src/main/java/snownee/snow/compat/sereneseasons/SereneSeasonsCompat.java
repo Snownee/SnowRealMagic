@@ -44,7 +44,8 @@ public class SereneSeasonsCompat {
 	}
 
 	public static boolean isSeasonal(ResourceKey<Level> dimension, Holder<Biome> biome) {
-		return !biome.is(ModTags.Biomes.BLACKLISTED_BIOMES) && !biome.is(ModTags.Biomes.TROPICAL_BIOMES) && ServerConfig.isDimensionWhitelisted(dimension);
+		return !biome.is(ModTags.Biomes.BLACKLISTED_BIOMES) && !biome.is(ModTags.Biomes.TROPICAL_BIOMES) &&
+				ServerConfig.isDimensionWhitelisted(dimension);
 	}
 
 	public static void weatherTick(ServerLevel level, Runnable action) {

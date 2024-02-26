@@ -2,10 +2,9 @@ package snownee.snow;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nonnull;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
 

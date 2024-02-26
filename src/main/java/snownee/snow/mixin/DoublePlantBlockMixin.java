@@ -38,7 +38,10 @@ public class DoublePlantBlockMixin {
 			BlockState blockstate = world.getBlockState(blockpos);
 			if (blockstate.getBlock() instanceof EntitySnowLayerBlock) {
 				world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-				world.setBlock(blockpos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)), 35);
+				world.setBlock(
+						blockpos,
+						Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)),
+						35);
 				world.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, blockpos, Block.getId(state));
 			}
 		}
@@ -50,19 +53,29 @@ public class DoublePlantBlockMixin {
 	}
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
-	private void srm_updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> cir) {
+	private void srm_updateShape(
+			BlockState stateIn,
+			Direction facing,
+			BlockState facingState,
+			LevelAccessor worldIn,
+			BlockPos currentPos,
+			BlockPos facingPos,
+			CallbackInfoReturnable<BlockState> cir) {
 		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
-		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN && facingState.getBlock() instanceof EntitySnowLayerBlock) {
+		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN &&
+				facingState.getBlock() instanceof EntitySnowLayerBlock) {
 			cir.setReturnValue(stateIn);
 		}
-		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP && facingState.getBlock() instanceof EntitySnowLayerBlock) {
+		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP &&
+				facingState.getBlock() instanceof EntitySnowLayerBlock) {
 			cir.setReturnValue(stateIn);
 		}
 	}
 
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	public void srm_canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-		if (state.getValue(HALF) == DoubleBlockHalf.UPPER && worldIn.getBlockState(pos.below()).getBlock() instanceof EntitySnowLayerBlock) {
+		if (state.getValue(HALF) == DoubleBlockHalf.UPPER &&
+				worldIn.getBlockState(pos.below()).getBlock() instanceof EntitySnowLayerBlock) {
 			cir.setReturnValue(true);
 		}
 	}

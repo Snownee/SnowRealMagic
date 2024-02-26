@@ -36,7 +36,8 @@ public abstract class BlockItemMixin {
 			BlockState state = level.getBlockState(pos);
 			BlockPlaceContext blockContext = new BlockPlaceContext(context);
 			if (Hooks.canContainState(state)) {
-				if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide && (player == null || !player.isCreative())) {
+				if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide &&
+						(player == null || !player.isCreative())) {
 					context.getItemInHand().shrink(1);
 				}
 				ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
@@ -51,7 +52,8 @@ public abstract class BlockItemMixin {
 					canPlace = true;
 				}
 				if (canPlace) {
-					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide && (player == null || !player.isCreative())) {
+					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide &&
+							(player == null || !player.isCreative())) {
 						context.getItemInHand().shrink(1);
 					}
 					ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
@@ -63,10 +65,17 @@ public abstract class BlockItemMixin {
 
 	@Inject(
 			at = @At(
-				"HEAD"
-			), method = "updateCustomBlockEntityTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+					"HEAD"
+			),
+			method = "updateCustomBlockEntityTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z"
 	)
-	private void srm_updateCustomBlockEntityTag(BlockPos pos, Level worldIn, Player p_40599_, ItemStack stack, BlockState p_40601_, CallbackInfoReturnable<Boolean> ci) {
+	private void srm_updateCustomBlockEntityTag(
+			BlockPos pos,
+			Level worldIn,
+			Player p_40599_,
+			ItemStack stack,
+			BlockState p_40601_,
+			CallbackInfoReturnable<Boolean> ci) {
 		if ((Object) this != Items.SNOW) {
 			return;
 		}

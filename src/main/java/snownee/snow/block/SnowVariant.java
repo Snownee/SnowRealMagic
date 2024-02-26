@@ -55,7 +55,13 @@ public interface SnowVariant extends IForgeBlock {
 	}
 
 	@Override
-	default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+	default BlockState getAppearance(
+			BlockState state,
+			BlockAndTintGetter level,
+			BlockPos pos,
+			Direction side,
+			@Nullable BlockState queryState,
+			@Nullable BlockPos queryPos) {
 		if (layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
 			return getSnowState(state, level, pos);
 		}

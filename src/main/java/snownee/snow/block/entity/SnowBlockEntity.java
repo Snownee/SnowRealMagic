@@ -114,8 +114,9 @@ public class SnowBlockEntity extends ModBlockEntity {
 		} else {
 			data.put("State", NbtUtils.writeBlockState(getContainedState()));
 		}
-		if (options.renderOverlay)
+		if (options.renderOverlay) {
 			data.putBoolean("RO", options.renderOverlay);
+		}
 	}
 
 	@Override
