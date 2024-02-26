@@ -31,5 +31,8 @@
   "snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "Snow will accumulate only when it's thundering",
   "snowrealmagic.config.accumulation.maxLayers.desc": "The max layers of snow that can be accumulated. 9 is unlimited",
   "snowrealmagic.config.accumulation.naturalMelting.desc": "Snow melts with time if its layer is more than 1",
-  "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes\nAlways true if some seasons mod is installed"
+  "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes\nAlways true if some seasons mod is installed",
+  "snowrealmagic.config.debug.weatherTickSlowness.desc": "Speed of the rain and snow ticking. 16 is default",
+  "snowrealmagic.config.debug.preventWorldgenLogSpam.desc": "Prevents the harmless log spam from snow-covered blocks worldgen",
+  "snowrealmagic.config.debug.skipSnowLoggingMushroom.desc": "Skip snow logging mushroom blocks during worldgen because it will cause mistakes due to not dark enough"
 }
