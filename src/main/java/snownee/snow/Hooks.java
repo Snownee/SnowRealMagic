@@ -350,23 +350,8 @@ public final class Hooks {
 			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
 		}
 		boolean melt = meltByTemperature || meltByBrightness;
-		if (!melt) {
-			if (!CommonProxy.snowAccumulationNow(level)) {
-				return;
-			}
-			if (SnowCommonConfig.accumulationWinterOnly && !CommonProxy.isWinter(level, pos, biome)) {
-				return;
-			}
-		}
-		if (!meltByBrightness) {
-			BlockPos height = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
-			if (state.hasProperty(SnowLayerBlock.LAYERS)) {
-				if (height.getY() > pos.getY()) {
-					return;
-				}
-			} else if (height.getY() > pos.getY() + 1) {
-				return;
-			}
+		if (!melt && SnowCommonConfig.accumulationWinterOnly && !CommonProxy.isWinter(level, pos, biome)) {
+			return;
 		}
 
 		boolean accumulate = false;

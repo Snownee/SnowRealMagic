@@ -12,6 +12,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.material.FluidState;
@@ -104,7 +105,7 @@ public class CommonProxy {
 			return false;
 		if (sereneseasons)
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && level.canSeeSky(layers == 8 ? pos.above() : pos))
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(level, pos, layers))
 			return true;
 		if (layers <= 1) {
 			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
@@ -112,7 +113,7 @@ public class CommonProxy {
 			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock))
 				return false;
 		}
-		return SnowCommonConfig.snowNaturalMelt;
+		return SnowCommonConfig.snowNaturalMelt && skyLightEnoughToMelt(level, pos, layers);
 	}
 
 	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
@@ -123,6 +124,10 @@ public class CommonProxy {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean skyLightEnoughToMelt(Level level, BlockPos pos, int layers) {
+		return level.getBrightness(LightLayer.SKY, layers == 8 ? pos.above() : pos) > 2;
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
