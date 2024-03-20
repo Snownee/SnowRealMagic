@@ -1,9 +1,9 @@
 {
-  "modmenu.nameTranslation.snowrealmagic": "Snijeg! Prava magija!",
-  "entity.snowrealmagic.snow": "Padajući blok",
-  "block.snowrealmagic.slab": "Snijegom pokrivena ploča",
-  "block.snowrealmagic.stairs": "Snijegom pokrivene stube",
-  "block.snowrealmagic.wall": "Snijegom pokriven zid",
-  "block.snowrealmagic.fence": "Snijegom pokrivena ograda",
-  "block.snowrealmagic.fence_gate": "Snijegom pokriven vrata za ogradu"
+	"modmenu.nameTranslation.snowrealmagic": "Snijeg! Prava magija!",
+	"entity.snowrealmagic.snow": "Padajući blok",
+	"block.snowrealmagic.slab": "Snijegom pokrivena ploča",
+	"block.snowrealmagic.stairs": "Snijegom pokrivene stube",
+	"block.snowrealmagic.wall": "Snijegom pokriven zid",
+	"block.snowrealmagic.fence": "Snijegom pokrivena ograda",
+	"block.snowrealmagic.fence_gate": "Snijegom pokriven vrata za ogradu"
 }

@@ -11,7 +11,8 @@ import snownee.snow.client.model.ModelDefinition;
 public class SnowVariantMetadataSectionSerializer implements MetadataSectionSerializer<ModelDefinition> {
 
 	public static final SnowVariantMetadataSectionSerializer SERIALIZER = new SnowVariantMetadataSectionSerializer();
-	private static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
+	private static final Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+			.create();
 
 	@Override
 	public String getMetadataSectionName() {

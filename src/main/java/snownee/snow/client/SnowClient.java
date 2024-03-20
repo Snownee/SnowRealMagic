@@ -39,7 +39,16 @@ public final class SnowClient {
 	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
 	public static final Set<Block> overrideBlocks = Sets.newHashSet();
 
-	public static boolean renderHook(BlockAndTintGetter world, BlockPos pos, BlockState state, BlockState camo, Options options, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, RenderAPI api) {
+	public static boolean renderHook(
+			BlockAndTintGetter world,
+			BlockPos pos,
+			BlockState state,
+			BlockState camo,
+			Options options,
+			@Nullable RenderType layer,
+			Supplier<RandomSource> randomSupplier,
+			boolean cullSides,
+			RenderAPI api) {
 		if (layer == null || layer == RenderType.solid()) {
 			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
 				//FIXME find out if still necessary
@@ -72,7 +81,8 @@ public final class SnowClient {
 			double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
 			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
-		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) && (!useVariant || CoreModule.TILE_BLOCK.is(state))) {
+		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) &&
+				(!useVariant || CoreModule.TILE_BLOCK.is(state))) {
 			BlockPos pos2 = pos;
 			double yOffset;
 			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {

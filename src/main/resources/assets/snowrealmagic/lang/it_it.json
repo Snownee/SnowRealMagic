@@ -1,11 +1,11 @@
 {
-  "modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
-  "entity.snowrealmagic.snow": "Blocco di caduta",
-  "block.snowrealmagic.slab": "Lastra coperta di neve",
-  "block.snowrealmagic.stairs": "Scalini coperti di neve",
-  "block.snowrealmagic.wall": "Muretto coperto di neve",
-  "block.snowrealmagic.fence": "Staccionata coperta di neve",
-  "block.snowrealmagic.fence_gate": "Cancelletto coperto di neve",
-  "gamerule.snowrealmagic:blizzardStrength": "Forza della bufera di neve",
-  "gamerule.snowrealmagic:blizzardStrength.description": "Dei blocchi di neve cadranno dal cielo. Aggiunto da Snow! Real Magic!"
+	"modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
+	"entity.snowrealmagic.snow": "Blocco di caduta",
+	"block.snowrealmagic.slab": "Lastra coperta di neve",
+	"block.snowrealmagic.stairs": "Scalini coperti di neve",
+	"block.snowrealmagic.wall": "Muretto coperto di neve",
+	"block.snowrealmagic.fence": "Staccionata coperta di neve",
+	"block.snowrealmagic.fence_gate": "Cancelletto coperto di neve",
+	"gamerule.snowrealmagic:blizzardStrength": "Forza della bufera di neve",
+	"gamerule.snowrealmagic:blizzardStrength.description": "Dei blocchi di neve cadranno dal cielo. Aggiunto da Snow! Real Magic!"
 }

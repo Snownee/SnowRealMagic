@@ -30,7 +30,15 @@ public class FabricRendererRenderAPI implements RenderAPI {
 	}
 
 	@Override
-	public boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset) {
+	public boolean translateYAndRender(
+			BlockAndTintGetter world,
+			BlockState state,
+			BlockPos pos,
+			@Nullable RenderType layer,
+			Supplier<RandomSource> randomSupplier,
+			boolean cullSides,
+			BakedModel model,
+			double yOffset) {
 		Vec3 offset = yOffset == 0 ? state.getOffset(world, pos) : state.getOffset(world, pos).add(0, yOffset, 0);
 		BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 		context.pushTransform(quad -> {

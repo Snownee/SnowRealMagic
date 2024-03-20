@@ -1,61 +1,61 @@
 {
-  "multipart": [
-    {
-      "when": {
-        "up": "true",
-        "west": "none|low",
-        "east": "none|low",
-        "south": "none|low",
-        "north": "none|low"
-      },
-      "apply": {
-        "model": "snowrealmagic:block/wall_post_overlay"
-      }
-    },
-    {
-      "when": {
-        "north": "low"
-      },
-      "apply": {
-        "model": "snowrealmagic:block/wall_side",
-        "uvlock": true
-      }
-    },
-    {
-      "when": {
-        "east": "low"
-      },
-      "apply": {
-        "model": "snowrealmagic:block/wall_side",
-        "y": 90,
-        "uvlock": true
-      }
-    },
-    {
-      "when": {
-        "south": "low"
-      },
-      "apply": {
-        "model": "snowrealmagic:block/wall_side",
-        "y": 180,
-        "uvlock": true
-      }
-    },
-    {
-      "when": {
-        "west": "low"
-      },
-      "apply": {
-        "model": "snowrealmagic:block/wall_side",
-        "y": 270,
-        "uvlock": true
-      }
-    },
-    {
-      "__comment": "make it render anyway",
-      "apply": {
-        "model": "minecraft:block/air"
-      }
-    }
-  ]
+	"multipart": [
+		{
+			"when": {
+				"up": "true",
+				"west": "none|low",
+				"east": "none|low",
+				"south": "none|low",
+				"north": "none|low"
+			},
+			"apply": {
+				"model": "snowrealmagic:block/wall_post_overlay"
+			}
+		},
+		{
+			"when": {
+				"north": "low"
+			},
+			"apply": {
+				"model": "snowrealmagic:block/wall_side",
+				"uvlock": true
+			}
+		},
+		{
+			"when": {
+				"east": "low"
+			},
+			"apply": {
+				"model": "snowrealmagic:block/wall_side",
+				"y": 90,
+				"uvlock": true
+			}
+		},
+		{
+			"when": {
+				"south": "low"
+			},
+			"apply": {
+				"model": "snowrealmagic:block/wall_side",
+				"y": 180,
+				"uvlock": true
+			}
+		},
+		{
+			"when": {
+				"west": "low"
+			},
+			"apply": {
+				"model": "snowrealmagic:block/wall_side",
+				"y": 270,
+				"uvlock": true
+			}
+		},
+		{
+			"__comment": "make it render anyway",
+			"apply": {
+				"model": "minecraft:block/air"
+			}
+		}
+	]
 }

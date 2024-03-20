@@ -23,7 +23,8 @@ public class ServerLevelMixin {
 			from = @At(
 					value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/SkeletonHorse;setTrap(Z)V"
 			), to = @At(
-			value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/biome/Biome;shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"
 	)
 	), method = "tickChunk", locals = LocalCapture.CAPTURE_FAILEXCEPTION
 	)

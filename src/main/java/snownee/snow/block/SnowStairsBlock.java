@@ -23,7 +23,11 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+	public VoxelShape getCollisionShape(
+			BlockState blockState,
+			BlockGetter blockGetter,
+			BlockPos blockPos,
+			CollisionContext collisionContext) {
 		return super.getShape(blockState, blockGetter, blockPos, collisionContext);
 	}
 

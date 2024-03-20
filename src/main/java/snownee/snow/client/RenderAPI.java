@@ -13,6 +13,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface RenderAPI {
 
-	boolean translateYAndRender(BlockAndTintGetter world, BlockState state, BlockPos pos, @Nullable RenderType layer, Supplier<RandomSource> randomSupplier, boolean cullSides, BakedModel model, double yOffset);
+	boolean translateYAndRender(
+			BlockAndTintGetter world,
+			BlockState state,
+			BlockPos pos,
+			@Nullable RenderType layer,
+			Supplier<RandomSource> randomSupplier,
+			boolean cullSides,
+			BakedModel model,
+			double yOffset);
 
 }

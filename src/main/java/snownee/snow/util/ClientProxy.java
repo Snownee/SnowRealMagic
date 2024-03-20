@@ -52,8 +52,8 @@ import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
-import snownee.snow.client.model.SnowVariantModel;
 import snownee.snow.client.model.SnowCoveredModel;
+import snownee.snow.client.model.SnowVariantModel;
 import snownee.snow.client.model.WrapperUnbakedModel;
 
 public class ClientProxy implements ClientModInitializer {
@@ -73,12 +73,27 @@ public class ClientProxy implements ClientModInitializer {
 		}
 	}
 
-	public static void renderFallingBlock(Entity entity, BlockState state, BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
+	public static void renderFallingBlock(
+			Entity entity,
+			BlockState state,
+			BlockPos pos,
+			PoseStack poseStack,
+			MultiBufferSource bufferSource) {
 		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		poseStack.translate(-0.5D, 0.0D, -0.5D);
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
-		dispatcher.getModelRenderer().tesselateBlock(entity.level(), getBlockModel(state), state, blockpos, poseStack, bufferSource.getBuffer(type), false, RandomSource.create(42), state.getSeed(pos), OverlayTexture.NO_OVERLAY);
+		dispatcher.getModelRenderer().tesselateBlock(
+				entity.level(),
+				getBlockModel(state),
+				state,
+				blockpos,
+				poseStack,
+				bufferSource.getBuffer(type),
+				false,
+				RandomSource.create(42),
+				state.getSeed(pos),
+				OverlayTexture.NO_OVERLAY);
 	}
 
 	@Override

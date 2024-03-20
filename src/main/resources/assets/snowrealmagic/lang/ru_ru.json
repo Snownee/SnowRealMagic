@@ -12,7 +12,7 @@
 	"gamerule.snowrealmagic:blizzardFrequency": "Шуточная опция: частота метели",
 	"gamerule.snowrealmagic:blizzardFrequency.description": "Частота метели. Значение N/10000 в тик за чанк. Добавлено модом «Снежная магия».",
 	"commands.gamerule.snowrealmagic.hint": "«Снежная магия» установлен, это игровое правило игнорируется. Вместо этого используйте конфигурацию.",
-  "snowrealmagic.config.particleThroughLeaves.desc": "Образует частицы снежинок под заснежными блоками листвы.",
+	"snowrealmagic.config.particleThroughLeaves.desc": "Образует частицы снежинок под заснежными блоками листвы.",
 	"snowrealmagic.config.snowVariants.desc": "Некоторая заснеженная листва будет отображаться по-другому.",
 	"snowrealmagic.config.snowGravity.desc": "Снег будет падать вниз, как песок.",
 	"snowrealmagic.config.snowMakingIce.desc": "Снег превращает воду в лёд при падении.",

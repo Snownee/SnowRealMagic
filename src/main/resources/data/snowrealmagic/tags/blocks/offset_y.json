@@ -1,39 +1,144 @@
 {
-  "values": [
-    {"id":"projectvibrantjourneys:twigs","required":false},
-    {"id":"projectvibrantjourneys:mossy_rocks","required":false},
-    {"id":"projectvibrantjourneys:sandstone_rocks","required":false},
-    {"id":"projectvibrantjourneys:fallen_leaves","required":false},
-    {"id":"projectvibrantjourneys:rocks","required":false},
-    {"id":"projectvibrantjourneys:seashells","required":false},
-    {"id":"projectvibrantjourneys:pinecones","required":false},
-    {"id":"projectvibrantjourneys:charred_bones","required":false},
-    {"id":"projectvibrantjourneys:bones","required":false},
-    {"id":"projectvibrantjourneys:ice_chunks","required":false},
-    {"id":"projectvibrantjourneys:red_sandstone_rocks","required":false},
-    {"id":"natprog:stone_pebble","required":false},
-    {"id":"natprog:andesite_pebble","required":false},
-    {"id":"natprog:diorite_pebble","required":false},
-    {"id":"natprog:granite_pebble","required":false},
-    {"id":"natprog:sandstone_pebble","required":false},
-    {"id":"natprog:red_sandstone_pebble","required":false},
-    {"id":"natprog:tuff_pebble","required":false},
-    {"id":"natprog:deepslate_pebble","required":false},
-    {"id":"natprog:dripstone_block_pebble","required":false},
-    {"id":"natprog:netherrack_pebble","required":false},
-    {"id":"natprog:end_stone_pebble","required":false},
-    {"id":"natprog:quark_limestone_pebble","required":false},
-    {"id":"natprog:quark_jasper_pebble","required":false},
-    {"id":"natprog:quark_shale_pebble","required":false},
-    {"id":"natprog:quark_myalite_pebble","required":false},
-    {"id":"natprog:create_asurine_pebble","required":false},
-    {"id":"natprog:create_crimsite_pebble","required":false},
-    {"id":"natprog:create_limestone_pebble","required":false},
-    {"id":"natprog:create_ochrum_pebble","required":false},
-    {"id":"natprog:create_scorchia_pebble","required":false},
-    {"id":"natprog:create_scoria_pebble","required":false},
-    {"id":"natprog:create_veridium_pebble","required":false},
-    {"id":"twigs:twig","required":false},
-    {"id":"twigs:pebble","required":false}
-  ]
+	"values": [
+		{
+			"id": "projectvibrantjourneys:twigs",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:mossy_rocks",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:sandstone_rocks",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:fallen_leaves",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:rocks",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:seashells",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:pinecones",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:charred_bones",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:bones",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:ice_chunks",
+			"required": false
+		},
+		{
+			"id": "projectvibrantjourneys:red_sandstone_rocks",
+			"required": false
+		},
+		{
+			"id": "natprog:stone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:andesite_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:diorite_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:granite_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:sandstone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:red_sandstone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:tuff_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:deepslate_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:dripstone_block_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:netherrack_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:end_stone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:quark_limestone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:quark_jasper_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:quark_shale_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:quark_myalite_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_asurine_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_crimsite_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_limestone_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_ochrum_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_scorchia_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_scoria_pebble",
+			"required": false
+		},
+		{
+			"id": "natprog:create_veridium_pebble",
+			"required": false
+		},
+		{
+			"id": "twigs:twig",
+			"required": false
+		},
+		{
+			"id": "twigs:pebble",
+			"required": false
+		}
+	]
 }

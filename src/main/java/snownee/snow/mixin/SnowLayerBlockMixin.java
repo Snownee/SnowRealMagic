@@ -47,7 +47,21 @@ import snownee.snow.util.CommonProxy;
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
 	@Unique
-	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{Shapes.empty(), Block.box(0, 0, 0, 16, 1, 16), Block.box(0, 0, 0, 16, 2, 16), Block.box(0, 0, 0, 16, 3, 16), Block.box(0, 0, 0, 16, 4, 16), Block.box(0, 0, 0, 16, 5, 16), Block.box(0, 0, 0, 16, 6, 16), Block.box(0, 0, 0, 16, 7, 16)};
+	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{
+			Shapes.empty(),
+			Block.box(0, 0, 0, 16, 1, 16),
+			Block.box(
+					0,
+					0,
+					0,
+					16,
+					2,
+					16),
+			Block.box(0, 0, 0, 16, 3, 16),
+			Block.box(0, 0, 0, 16, 4, 16),
+			Block.box(0, 0, 0, 16, 5, 16),
+			Block.box(0, 0, 0, 16, 6, 16),
+			Block.box(0, 0, 0, 16, 7, 16)};
 	@Final
 	@Shadow
 	protected static VoxelShape[] SHAPE_BY_LAYER;
@@ -57,7 +71,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-	private void getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> ci) {
+	private void getCollisionShape(
+			BlockState state,
+			BlockGetter worldIn,
+			BlockPos pos,
+			CollisionContext context,
+			CallbackInfoReturnable<VoxelShape> ci) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
 			ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
@@ -85,7 +104,14 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
-	private void updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos, CallbackInfoReturnable<BlockState> ci) {
+	private void updateShape(
+			BlockState stateIn,
+			Direction facing,
+			BlockState facingState,
+			LevelAccessor worldIn,
+			BlockPos currentPos,
+			BlockPos facingPos,
+			CallbackInfoReturnable<BlockState> ci) {
 		if (SnowCommonConfig.snowGravity) {
 			worldIn.scheduleTick(currentPos, this, tickRate());
 			ci.setReturnValue(stateIn);
@@ -117,7 +143,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
 			if (!worldIn.isClientSide) {
 				worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
-				FallingSnowEntity entity = new FallingSnowEntity(worldIn, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, state.getValue(SnowLayerBlock.LAYERS));
+				FallingSnowEntity entity = new FallingSnowEntity(
+						worldIn,
+						pos.getX() + 0.5D,
+						pos.getY() - 0.5D,
+						pos.getZ() + 0.5D,
+						state.getValue(SnowLayerBlock.LAYERS));
 				worldIn.addFreshEntity(entity);
 			}
 			return true;
@@ -215,8 +246,9 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public void stepOn(Level worldIn, BlockPos pos, BlockState state, Entity entityIn) {
-		if (!SnowCommonConfig.thinnerBoundingBox || !state.is(this))
+		if (!SnowCommonConfig.thinnerBoundingBox || !state.is(this)) {
 			return;
+		}
 		int layers = state.getValue(SnowLayerBlock.LAYERS) - 2;
 		if (layers > 0) {
 			double d0 = Math.abs(entityIn.getDeltaMovement().y);

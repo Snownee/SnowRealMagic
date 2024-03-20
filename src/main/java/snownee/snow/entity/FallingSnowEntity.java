@@ -39,8 +39,12 @@ import snownee.snow.util.CommonProxy;
 
 // FallingBlockEntity
 public class FallingSnowEntity extends Entity {
-	protected static final EntityDataAccessor<BlockPos> START_POS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.BLOCK_POS);
-	private static final EntityDataAccessor<Integer> LAYERS = SynchedEntityData.defineId(FallingSnowEntity.class, EntityDataSerializers.INT);
+	protected static final EntityDataAccessor<BlockPos> START_POS = SynchedEntityData.defineId(
+			FallingSnowEntity.class,
+			EntityDataSerializers.BLOCK_POS);
+	private static final EntityDataAccessor<Integer> LAYERS = SynchedEntityData.defineId(
+			FallingSnowEntity.class,
+			EntityDataSerializers.INT);
 	public int fallTime;
 	private BlockPos prevPos;
 	private int layers;
@@ -124,11 +128,19 @@ public class FallingSnowEntity extends Entity {
 						BlockPos posDown = pos.below();
 						BlockState stateDown = level.getBlockState(posDown);
 						Block block = stateDown.getBlock();
-						if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock || block instanceof StairBlock && stateDown.getValue(StairBlock.HALF) == Half.BOTTOM) {
+						if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock ||
+								block instanceof StairBlock && stateDown.getValue(StairBlock.HALF) == Half.BOTTOM) {
 							pos = posDown;
 						}
 					}
-					Hooks.placeLayersOn(level, pos, layers, true, new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP), true, true);
+					Hooks.placeLayersOn(
+							level,
+							pos,
+							layers,
+							true,
+							new DirectionalPlaceContext(level, pos, Direction.DOWN, ItemStack.EMPTY, Direction.UP),
+							true,
+							true);
 					discard();
 					return;
 				}

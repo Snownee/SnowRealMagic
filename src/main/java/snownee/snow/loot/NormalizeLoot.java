@@ -62,7 +62,13 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 
 	public static class Serializer extends LootPoolSingletonContainer.Serializer<NormalizeLoot> {
 		@Override
-		protected NormalizeLoot deserialize(JsonObject json, JsonDeserializationContext context, int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) {
+		protected NormalizeLoot deserialize(
+				JsonObject json,
+				JsonDeserializationContext context,
+				int weightIn,
+				int qualityIn,
+				LootItemCondition[] conditionsIn,
+				LootItemFunction[] functionsIn) {
 			return new NormalizeLoot(weightIn, qualityIn, conditionsIn, functionsIn);
 		}
 	}

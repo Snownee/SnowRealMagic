@@ -39,7 +39,12 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	}
 
 	@Override
-	default ItemStack getPickedStack(BlockState state, BlockGetter world, BlockPos pos, @Nullable Player player, @Nullable HitResult result) {
+	default ItemStack getPickedStack(
+			BlockState state,
+			BlockGetter world,
+			BlockPos pos,
+			@Nullable Player player,
+			@Nullable HitResult result) {
 		BlockState raw = getRaw(state, world, pos);
 		if (raw.getBlock() instanceof BlockPickInteractionAware) {
 			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, world, pos, player, result));
@@ -56,7 +61,13 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	//	}
 
 	@Override
-	default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos sourcePos) {
+	default BlockState getAppearance(
+			BlockState state,
+			BlockAndTintGetter level,
+			BlockPos pos,
+			Direction side,
+			@Nullable BlockState queryState,
+			@Nullable BlockPos sourcePos) {
 		if (layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
 			return getSnowState(state, level, pos);
 		}

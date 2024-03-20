@@ -1,5 +1,7 @@
 {
-    "variants": {
-        "":  { "model": "snowrealmagic:block/slab" }
-    }
+	"variants": {
+		"": {
+			"model": "snowrealmagic:block/slab"
+		}
+	}
 }

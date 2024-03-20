@@ -21,10 +21,16 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 	}
 
 	@Override
-	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(
+			BlockAndTintGetter blockView,
+			BlockState state,
+			BlockPos pos,
+			Supplier<RandomSource> randomSupplier,
+			RenderContext context) {
 		Object data = blockView.getBlockEntityRenderData(pos);
-		if (!(data instanceof RenderData renderData))
+		if (!(data instanceof RenderData renderData)) {
 			return;
+		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(context, state, wrapped);
 		SnowClient.renderHook(blockView, pos, state, renderData.state(), renderData.options(), null, randomSupplier, true, api);
 	}

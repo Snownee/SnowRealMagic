@@ -25,7 +25,10 @@ public class SLavaSmokeEffectPacket extends PacketHandler {
 	public static SLavaSmokeEffectPacket I;
 
 	@Override
-	public CompletableFuture<FriendlyByteBuf> receive(Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor, FriendlyByteBuf buf, ServerPlayer sender) {
+	public CompletableFuture<FriendlyByteBuf> receive(
+			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
+			FriendlyByteBuf buf,
+			ServerPlayer sender) {
 		BlockPos pos = buf.readBlockPos();
 		return executor.apply(() -> {
 			ClientLevel level = Minecraft.getInstance().level;
@@ -33,7 +36,14 @@ public class SLavaSmokeEffectPacket extends PacketHandler {
 				double d0 = RANDOM.nextGaussian() * 0.02D;
 				double d1 = RANDOM.nextGaussian() * 0.02D;
 				double d2 = RANDOM.nextGaussian() * 0.02D;
-				level.addParticle(ParticleTypes.SMOKE, pos.getX() + RANDOM.nextFloat(), pos.getY(), pos.getZ() + RANDOM.nextFloat(), d0, d1, d2);
+				level.addParticle(
+						ParticleTypes.SMOKE,
+						pos.getX() + RANDOM.nextFloat(),
+						pos.getY(),
+						pos.getZ() + RANDOM.nextFloat(),
+						d0,
+						d1,
+						d2);
 			}
 			level.playLocalSound(pos, SoundEvents.LAVA_AMBIENT, SoundSource.AMBIENT, 0.8F, 0.8F, false);
 		});

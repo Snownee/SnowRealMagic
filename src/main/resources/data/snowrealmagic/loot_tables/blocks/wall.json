@@ -1,13 +1,13 @@
 {
-  "type": "minecraft:block",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "snowrealmagic:normalize"
-        }
-      ]
-    }
-  ]
+	"type": "minecraft:block",
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "snowrealmagic:normalize"
+				}
+			]
+		}
+	]
 }

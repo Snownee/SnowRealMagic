@@ -16,14 +16,20 @@ import net.minecraft.world.level.GameRules;
 public class GameRuleCommandMixin {
 
 	@Inject(method = "setRule", at = @At("RETURN"))
-	private static <T extends GameRules.Value<T>> void srm_setRule(CommandContext<CommandSourceStack> context, GameRules.Key<T> key, CallbackInfoReturnable<Integer> ci) {
+	private static <T extends GameRules.Value<T>> void srm_setRule(
+			CommandContext<CommandSourceStack> context,
+			GameRules.Key<T> key,
+			CallbackInfoReturnable<Integer> ci) {
 		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) {
 			context.getSource().sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}
 	}
 
 	@Inject(method = "queryRule", at = @At("RETURN"))
-	private static <T extends GameRules.Value<T>> void srm_queryRule(CommandSourceStack context, GameRules.Key<T> key, CallbackInfoReturnable<Integer> ci) {
+	private static <T extends GameRules.Value<T>> void srm_queryRule(
+			CommandSourceStack context,
+			GameRules.Key<T> key,
+			CallbackInfoReturnable<Integer> ci) {
 		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) {
 			context.sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}

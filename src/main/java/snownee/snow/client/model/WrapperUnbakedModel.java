@@ -36,7 +36,11 @@ public class WrapperUnbakedModel implements UnbakedModel {
 
 	@Nullable
 	@Override
-	public BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation) {
+	public BakedModel bake(
+			ModelBaker modelBaker,
+			Function<Material, TextureAtlasSprite> function,
+			ModelState modelState,
+			ResourceLocation resourceLocation) {
 		BakedModel baked = wrapped.bake(modelBaker, function, modelState, resourceLocation);
 		return baked == null ? null : transformer.apply(baked);
 	}

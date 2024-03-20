@@ -1,45 +1,47 @@
 {
-  "schemaVersion": 1,
-  "id": "snowrealmagic",
-  "version": "${version}",
-
-  "name": "Snow! Real Magic!",
-  "description": "Tweaks vanilla snow layer",
-  "authors": ["Snownee"],
-  "contributors": ["minzhi","MikhailTapio"],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic",
-    "sources": "https://github.com/Snownee/SnowRealMagic",
-    "issues": "https://github.com/Snownee/SnowRealMagic/issues"
-  },
-
-  "license": "MIT",
-
-  "entrypoints": {
-    "main": [
-      "snownee.snow.util.CommonProxy"
-    ],
-    "client": [
-      "snownee.snow.util.ClientProxy"
-    ],
-    "jade": [
-      "snownee.snow.compat.jade.JadeCompat"
-    ]
-  },
-  "mixins": [ "snowrealmagic.mixins.json" ],
-  "accessWidener" : "snowrealmagic.accesswidener",
-
-  "depends": {
-    "fabric-api": ">=0.91",
-    "minecraft": ">=1.20",
-    "kiwi": ">=11.3"
-  },
-
-  "custom": {
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/KzGQW7a"
-      }
-    }
-  }
+	"schemaVersion": 1,
+	"id": "snowrealmagic",
+	"version": "${version}",
+	"name": "Snow! Real Magic!",
+	"description": "Tweaks vanilla snow layer",
+	"authors": [
+		"Snownee"
+	],
+	"contributors": [
+		"minzhi",
+		"MikhailTapio"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic",
+		"sources": "https://github.com/Snownee/SnowRealMagic",
+		"issues": "https://github.com/Snownee/SnowRealMagic/issues"
+	},
+	"license": "MIT",
+	"entrypoints": {
+		"main": [
+			"snownee.snow.util.CommonProxy"
+		],
+		"client": [
+			"snownee.snow.util.ClientProxy"
+		],
+		"jade": [
+			"snownee.snow.compat.jade.JadeCompat"
+		]
+	},
+	"mixins": [
+		"snowrealmagic.mixins.json"
+	],
+	"accessWidener": "snowrealmagic.accesswidener",
+	"depends": {
+		"fabric-api": ">=0.91",
+		"minecraft": ">=1.20",
+		"kiwi": ">=11.3"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/KzGQW7a"
+			}
+		}
+	}
 }

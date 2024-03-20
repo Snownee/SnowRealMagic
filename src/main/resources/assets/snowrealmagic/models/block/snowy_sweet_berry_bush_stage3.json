@@ -1,6 +1,6 @@
 {
-  "parent": "block/cross",
-  "textures": {
-    "cross": "snowrealmagic:block/snowy_sweet_berry_bush_stage3"
-  }
+	"parent": "block/cross",
+	"textures": {
+		"cross": "snowrealmagic:block/snowy_sweet_berry_bush_stage3"
+	}
 }

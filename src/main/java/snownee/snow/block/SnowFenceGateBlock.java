@@ -77,7 +77,13 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 	}
 
 	@Override
-	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+	public InteractionResult use(
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			InteractionHand interactionHand,
+			BlockHitResult blockHitResult) {
 		adjustSounds(blockState, level, blockPos);
 		return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
@@ -98,7 +104,13 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction direction, BlockState thatState, LevelAccessor level, BlockPos pos, BlockPos thatPos) {
+	public BlockState updateShape(
+			BlockState state,
+			Direction direction,
+			BlockState thatState,
+			LevelAccessor level,
+			BlockPos pos,
+			BlockPos thatPos) {
 		adjustSounds(state, level, pos);
 		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
 		if (!Hooks.canSnowSurvive(state, level, pos)) {

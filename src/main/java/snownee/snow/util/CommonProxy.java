@@ -64,15 +64,22 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
-		if (SnowCommonConfig.snowNeverMelt)
+		if (SnowCommonConfig.snowNeverMelt) {
 			return false;
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(level, pos, layers))
+		}
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(
+				level,
+				pos,
+				layers)) {
 			return true;
+		}
 		if (layers <= 1) {
-			if (SnowCommonConfig.snowAccumulationMaxLayers < 9)
+			if (SnowCommonConfig.snowAccumulationMaxLayers < 9) {
 				return false;
-			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock))
+			}
+			if (!(level.getBlockState(pos.below()).getBlock() instanceof SnowLayerBlock)) {
 				return false;
+			}
 		}
 		return SnowCommonConfig.snowNaturalMelt && skyLightEnoughToMelt(level, pos, layers);
 	}
@@ -96,8 +103,9 @@ public class CommonProxy implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			if (SnowCommonConfig.debugSpawningCommand)
+			if (SnowCommonConfig.debugSpawningCommand) {
 				DebugMobSpawningCommand.register(dispatcher);
+			}
 		});
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);

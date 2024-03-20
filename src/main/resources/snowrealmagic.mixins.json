@@ -1,36 +1,36 @@
 {
-  "required": true,
-  "package": "snownee.snow.mixin",
-  "plugin": "snownee.snow.mixin.MixinPlugin",
-  "compatibilityLevel": "JAVA_16",
-  "refmap": "snowrealmagic.refmap.json",
-  "mixins": [
-    "AbstractMegaTreeGrowerMixin",
-    "BlockAccess",
-    "BlockItemMixin",
-    "BlockMixin",
-    "DoublePlantBlockMixin",
-    "FenceGateBlockAccess",
-    "GameRuleCommandMixin",
-    "GameRulesMixin",
-    "IceBlockAccess",
-    "LootContextAccess",
-    "LootParamsAccess",
-    "ServerLevelMixin",
-    "SnowAndFreezeFeatureMixin",
-    "SnowLayerBlockMixin",
-    "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin",
-    "fabric.SnowBlockEntityMixin"
-  ],
-  "client": [
-    "client.CameraMixin",
-    "client.ClientPacketListenerMixin",
-    "client.SnowLayerBlockClientMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1,
-    "maxShiftBy": 2
-  },
-  "minVersion": "0.8"
+	"required": true,
+	"package": "snownee.snow.mixin",
+	"plugin": "snownee.snow.mixin.MixinPlugin",
+	"compatibilityLevel": "JAVA_16",
+	"refmap": "snowrealmagic.refmap.json",
+	"mixins": [
+		"AbstractMegaTreeGrowerMixin",
+		"BlockAccess",
+		"BlockItemMixin",
+		"BlockMixin",
+		"DoublePlantBlockMixin",
+		"FenceGateBlockAccess",
+		"GameRuleCommandMixin",
+		"GameRulesMixin",
+		"IceBlockAccess",
+		"LootContextAccess",
+		"LootParamsAccess",
+		"ServerLevelMixin",
+		"SnowAndFreezeFeatureMixin",
+		"SnowLayerBlockMixin",
+		"SnowyDirtBlockMixin",
+		"SpreadableSnowyDirtBlockMixin",
+		"fabric.SnowBlockEntityMixin"
+	],
+	"client": [
+		"client.CameraMixin",
+		"client.ClientPacketListenerMixin",
+		"client.SnowLayerBlockClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1,
+		"maxShiftBy": 2
+	},
+	"minVersion": "0.8"
 }

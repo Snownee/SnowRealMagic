@@ -24,7 +24,12 @@ public class SnowVariantModel extends ForwardingBakedModel {
 	}
 
 	@Override
-	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(
+			BlockAndTintGetter blockView,
+			BlockState state,
+			BlockPos pos,
+			Supplier<RandomSource> randomSupplier,
+			RenderContext context) {
 		BakedModel model = null;
 		if (SnowClientConfig.snowVariants && pos != null) {
 			if (blockView.getBlockEntityRenderData(pos) instanceof RenderData) {
