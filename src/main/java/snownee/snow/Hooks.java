@@ -453,7 +453,7 @@ public final class Hooks {
 	}
 
 	public static boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-		if (!context.getItemInHand().is(Items.SNOW) || !context.replacingClickedOnBlock()) {
+		if (!context.getItemInHand().is(Items.SNOW)) {
 			return false;
 		}
 		int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
