@@ -1,6 +1,7 @@
 package snownee.snow.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -40,8 +41,12 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new SnowCoveredBlockEntity(p_153215_, p_153216_);
+	default BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
+		return new SnowCoveredBlockEntity(pos, blockState);
 	}
 
+	@Override
+	default boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+		return getRaw(state, level, pos).canHarvestBlock(level, pos, player);
+	}
 }

@@ -40,7 +40,6 @@ import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockAccess;
-import snownee.snow.mixin.IntegerValueAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
@@ -114,12 +113,12 @@ public class CoreModule extends AbstractModule {
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRules.register(
 			SnowRealMagic.MODID + ":blizzardStrength",
 			GameRules.Category.MISC,
-			IntegerValueAccess.callCreate(0));
+			IntegerValue.create(0));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRules.register(
 			SnowRealMagic.MODID + ":blizzardFrequency",
 			GameRules.Category.MISC,
-			IntegerValueAccess.callCreate(10000));
+			IntegerValue.create(10000));
 
 	public CoreModule() {
 		decorators.remove(ForgeRegistries.BLOCKS);

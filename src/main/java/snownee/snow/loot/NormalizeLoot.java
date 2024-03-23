@@ -20,8 +20,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.mixin.LootContextAccess;
-import snownee.snow.mixin.LootParamsAccess;
 
 public class NormalizeLoot extends LootPoolSingletonContainer {
 
@@ -43,7 +41,7 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 				if (resourcelocation != BuiltInLootTables.EMPTY) {
 					LootParams.Builder builder = new LootParams.Builder(context.getLevel());
 					builder.withParameter(LootContextParams.BLOCK_STATE, state);
-					((LootParamsAccess) ((LootContextAccess) context).getParams()).getParams().forEach((p, v) -> {
+					context.params.params.forEach((p, v) -> {
 						if (p != LootContextParams.BLOCK_STATE && p != LootContextParams.BLOCK_ENTITY) {
 							builder.withOptionalParameter((LootContextParam<Object>) p, v);
 						}

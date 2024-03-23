@@ -12,9 +12,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -27,7 +25,7 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.mixin.FenceGateBlockAccess;
 
-public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, WatcherSnowVariant {
+public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVariant, WaterLoggableSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
 		super(properties, WoodType.OAK);
@@ -60,11 +58,6 @@ public class SnowFenceGateBlock extends FenceGateBlock implements EntityBlock, W
 			VoxelShape shape = super.getShape(state, worldIn, pos, context);
 			return Shapes.or(shape, getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
 		});
-	}
-
-	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return new SnowCoveredBlockEntity(pos, state);
 	}
 
 	@Override
