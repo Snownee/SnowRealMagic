@@ -1,2 +1,7 @@
 accessWidener   v1  named
 accessible class net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl
+
+accessible method net/minecraft/world/level/GameRules$IntegerValue create (I)Lnet/minecraft/world/level/GameRules$Type;
+
+accessible field net/minecraft/world/level/storage/loot/LootContext params Lnet/minecraft/world/level/storage/loot/LootParams;
+accessible field net/minecraft/world/level/storage/loot/LootParams params Ljava/util/Map;

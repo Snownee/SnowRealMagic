@@ -40,8 +40,8 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new SnowCoveredBlockEntity(p_153215_, p_153216_);
+	default BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
+		return new SnowCoveredBlockEntity(pos, blockState);
 	}
 
 }

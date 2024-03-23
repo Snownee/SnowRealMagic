@@ -65,6 +65,8 @@ dependencies {
 
     modRuntimeOnly "curse.maven:minihud-244260:4593082"
     modRuntimeOnly "curse.maven:malilib-303119:4780782"
+
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.3.2"))
 }
 
 loom {

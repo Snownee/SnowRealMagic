@@ -1,6 +1,5 @@
 package snownee.snow;
 
-import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -113,12 +112,12 @@ public class CoreModule extends AbstractModule {
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
 			SnowRealMagic.MODID + ":blizzardStrength",
 			GameRules.Category.MISC,
-			GameRuleFactory.createIntRule(0));
+			IntegerValue.create(0));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register(
 			SnowRealMagic.MODID + ":blizzardFrequency",
 			GameRules.Category.MISC,
-			GameRuleFactory.createIntRule(10000));
+			IntegerValue.create(10000));
 
 	public CoreModule() {
 		decorators.remove(BuiltInRegistries.BLOCK);
