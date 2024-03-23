@@ -1,4 +1,4 @@
-package snownee.snow.mixin;
+package snownee.snow.mixin.fabric;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

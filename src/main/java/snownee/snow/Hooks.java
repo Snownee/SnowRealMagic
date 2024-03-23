@@ -48,8 +48,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.lighting.LightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
@@ -83,48 +81,21 @@ public final class Hooks {
 		}
 	}
 
-	public static boolean placeFeature(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-		WorldGenLevel worldgenlevel = ctx.level();
-		BlockPos blockpos = ctx.origin();
-		MutableBlockPos pos = new MutableBlockPos();
-		MutableBlockPos belowPos = new MutableBlockPos();
-
-		for (int i = 0; i < 16; ++i) {
-			for (int j = 0; j < 16; ++j) {
-				int k = blockpos.getX() + i;
-				int l = blockpos.getZ() + j;
-				int i1 = worldgenlevel.getHeight(Heightmap.Types.MOTION_BLOCKING, k, l);
-				pos.set(k, i1, l);
-				belowPos.set(pos).move(Direction.DOWN, 1);
-				Biome biome = worldgenlevel.getBiome(pos).value();
-				if (biome.shouldFreeze(worldgenlevel, belowPos, false)) {
-					worldgenlevel.setBlock(belowPos, Blocks.ICE.defaultBlockState(), 2);
-				}
-
-				if (biome.shouldSnow(worldgenlevel, pos)) {
-					worldgenlevel.setBlock(pos, Blocks.SNOW.defaultBlockState(), 2);
-					BlockState blockstate = worldgenlevel.getBlockState(belowPos);
-					if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
-						worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
-					}
-				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally &&
-						SnowCommonConfig.canPlaceSnowInBlock()) {
-					if (biome.warmEnoughToRain(pos) || worldgenlevel.getBrightness(LightLayer.BLOCK, pos) >= 10 ||
-							!Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
-						continue;
-					}
-					BlockState blockstate = worldgenlevel.getBlockState(pos);
-					if (convert(worldgenlevel, pos, blockstate, 1, 2, true)) {
-						blockstate = worldgenlevel.getBlockState(belowPos);
-						if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
-							worldgenlevel.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
-						}
-					}
+	public static void placeFeatureExtra(Biome biome, WorldGenLevel level, BlockPos pos, BlockPos belowPos) {
+		if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally &&
+				SnowCommonConfig.canPlaceSnowInBlock()) {
+			if (biome.warmEnoughToRain(pos) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 ||
+					!Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
+				return;
+			}
+			BlockState blockstate = level.getBlockState(pos);
+			if (convert(level, pos, blockstate, 1, 2, true)) {
+				blockstate = level.getBlockState(belowPos);
+				if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
+					level.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
 				}
 			}
 		}
-
-		return true;
 	}
 
 	public static boolean canSnowSurvive(BlockState state, BlockGetter level, BlockPos pos) {

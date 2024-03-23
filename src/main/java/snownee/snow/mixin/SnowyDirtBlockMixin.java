@@ -2,9 +2,12 @@ package snownee.snow.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
@@ -12,9 +15,11 @@ import snownee.snow.CoreModule;
 @Mixin(SnowyDirtBlock.class)
 public class SnowyDirtBlockMixin {
 
-	@Inject(at = @At("HEAD"), method = "isSnowySetting", cancellable = true)
-	private static void srm_getStateForPlacementProxy(BlockState state, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(state.is(CoreModule.SNOWY_SETTING));
+	@WrapOperation(
+			method = "isSnowySetting",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z"))
+	private static boolean srm_getStateForPlacementProxy(BlockState instance, TagKey<Block> tagKey, Operation<Boolean> original) {
+		return original.call(instance, CoreModule.SNOWY_SETTING);
 	}
 
 }

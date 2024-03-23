@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
@@ -17,7 +20,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,45 +30,41 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 
 @Mixin(BlockItem.class)
-public abstract class BlockItemMixin {
+public abstract class BlockItemMixin extends Item {
 
-	@Inject(at = @At("HEAD"), method = "useOn", cancellable = true)
-	private void srm_useOn(UseOnContext context, CallbackInfoReturnable<InteractionResult> ci) {
-		if ((Object) this != Items.SNOW) {
-			return;
+	public BlockItemMixin(Properties properties) {
+		super(properties);
+	}
+
+	@WrapOperation(
+			method = "useOn", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/item/BlockItem;place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;"))
+	private InteractionResult srm_useOn(BlockItem instance, BlockPlaceContext placeContext, Operation<InteractionResult> original) {
+		InteractionResult result = original.call(instance, placeContext);
+		if (result.consumesAction() || this != Items.SNOW || !SnowCommonConfig.canPlaceSnowInBlock()) {
+			return result;
 		}
-		Level level = context.getLevel();
-		BlockPos pos = context.getClickedPos();
-		Player player = context.getPlayer();
-		if (SnowCommonConfig.canPlaceSnowInBlock() && level.getFluidState(pos).isEmpty()) {
-			BlockState state = level.getBlockState(pos);
-			BlockPlaceContext blockContext = new BlockPlaceContext(context);
-			if (Hooks.canContainState(state)) {
-				if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide &&
-						(player == null || !player.isCreative())) {
-					context.getItemInHand().shrink(1);
-				}
-				ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
-				return;
-			}
-			if (!state.canBeReplaced(blockContext)) {
-				pos = pos.relative(context.getClickedFace());
-				state = level.getBlockState(pos);
-				blockContext = BlockPlaceContext.at(blockContext, pos, context.getClickedFace());
-				boolean canPlace = Hooks.canContainState(state);
-				if (state.getBlock() instanceof SnowVariant && blockContext.replacingClickedOnBlock()) {
-					canPlace = true;
-				}
-				if (canPlace) {
-					if (Hooks.placeLayersOn(level, pos, 1, false, blockContext, true, true) && !level.isClientSide &&
-							(player == null || !player.isCreative())) {
-						context.getItemInHand().shrink(1);
-					}
-					ci.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
-					return;
-				}
-			}
+		Level level = placeContext.getLevel();
+		BlockPos relativePos = placeContext.getClickedPos();
+		Player player = placeContext.getPlayer();
+		BlockState state = level.getBlockState(relativePos);
+		boolean canPlace = false;
+		if (Hooks.canContainState(state)) {
+			canPlace = true;
+		} else if (state.getBlock() instanceof SnowVariant snowVariant) {
+			int layers = snowVariant.layers(state, level, relativePos);
+			int maxLayers = snowVariant.maxLayers(state, level, relativePos);
+			canPlace = layers < maxLayers;
 		}
+		if (canPlace) {
+			if (Hooks.placeLayersOn(level, relativePos, 1, false, placeContext, true, true) && !level.isClientSide &&
+					(player == null || !player.getAbilities().instabuild)) {
+				placeContext.getItemInHand().shrink(1);
+			}
+			return InteractionResult.sidedSuccess(level.isClientSide);
+		}
+		return result;
 	}
 
 	@Inject(
@@ -82,7 +80,7 @@ public abstract class BlockItemMixin {
 			ItemStack stack,
 			BlockState p_40601_,
 			CallbackInfoReturnable<Boolean> ci) {
-		if ((Object) this != Items.SNOW) {
+		if (this != Items.SNOW) {
 			return;
 		}
 		BlockEntity tile = worldIn.getBlockEntity(pos);
@@ -98,7 +96,7 @@ public abstract class BlockItemMixin {
 
 	@Inject(at = @At("HEAD"), method = "registerBlocks")
 	private void srm_registerBlocks(Map<Block, Item> blockToItemMap, Item itemIn, CallbackInfo ci) {
-		if ((Object) this != Items.SNOW) {
+		if (this != Items.SNOW) {
 			return;
 		}
 		blockToItemMap.put(CoreModule.TILE_BLOCK.get(), Items.SNOW);

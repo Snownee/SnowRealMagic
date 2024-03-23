@@ -99,7 +99,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
 		if (SnowCommonConfig.snowGravity) {
-			worldIn.scheduleTick(pos, this, tickRate());
+			worldIn.scheduleTick(pos, this, getDelayAfterPlace());
 		}
 	}
 
@@ -113,7 +113,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> ci) {
 		if (SnowCommonConfig.snowGravity) {
-			worldIn.scheduleTick(currentPos, this, tickRate());
+			worldIn.scheduleTick(currentPos, this, getDelayAfterPlace());
 			ci.setReturnValue(stateIn);
 		}
 	}
@@ -123,13 +123,24 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		ci.setReturnValue(Hooks.canSnowSurvive(state, worldIn, pos));
 	}
 
-	protected int tickRate() {
+	@Unique
+	protected int getDelayAfterPlace() {
 		return 2;
 	}
 
 	@Override
 	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		checkFallable(worldIn, pos, state);
+		BlockPos posDown = pos.below();
+		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
+			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			FallingSnowEntity entity = new FallingSnowEntity(
+					worldIn,
+					pos.getX() + 0.5D,
+					pos.getY() - 0.5D,
+					pos.getZ() + 0.5D,
+					state.getValue(SnowLayerBlock.LAYERS));
+			worldIn.addFreshEntity(entity);
+		}
 	}
 
 	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
@@ -138,35 +149,17 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		ci.cancel();
 	}
 
-	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
-		BlockPos posDown = pos.below();
-		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
-			if (!worldIn.isClientSide) {
-				worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
-				FallingSnowEntity entity = new FallingSnowEntity(
-						worldIn,
-						pos.getX() + 0.5D,
-						pos.getY() - 0.5D,
-						pos.getZ() + 0.5D,
-						state.getValue(SnowLayerBlock.LAYERS));
-				worldIn.addFreshEntity(entity);
-			}
-			return true;
-		}
-		return false;
-	}
-
 	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
-	private boolean canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
+	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
-			if (useContext.replacingClickedOnBlock() && state.is(Blocks.SNOW)) {
-				return useContext.getClickedFace() == Direction.UP;
+			if (useContext.replacingClickedOnBlock()) {
+				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
 			} else {
-				return true;
+				ci.setReturnValue(true);
 			}
 		}
-		return layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8);
+		ci.setReturnValue(layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8));
 	}
 
 	@Override
@@ -189,8 +182,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 					worldIn.setBlock(pos, Hooks.copyProperties(state, CoreModule.TILE_BLOCK.defaultBlockState()), 16 | 32);
 				}
 				BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-				if (blockEntity instanceof SnowBlockEntity) {
-					SnowBlockEntity snowTile = (SnowBlockEntity) blockEntity;
+				if (blockEntity instanceof SnowBlockEntity snowTile) {
 					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getContainedState().isAir()) {
 						worldIn.setBlock(pos, Hooks.copyProperties(state, Blocks.SNOW.defaultBlockState()), 16 | 32);
 					} else {
@@ -206,7 +198,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		if (getRaw(state, worldIn, pos).isAir()) {
 			BlockPlaceContext context = new BlockPlaceContext(player, handIn, player.getItemInHand(handIn), hit);
 			Block block = Block.byItem(context.getItemInHand().getItem());
-			if (block != null && block != Blocks.AIR && context.replacingClickedOnBlock()) {
+			if (block != Blocks.AIR && context.replacingClickedOnBlock()) {
 				BlockState state2 = block.getStateForPlacement(context);
 				if (state2 != null && Hooks.canContainState(state2) && state2.canSurvive(worldIn, pos)) {
 					if (!worldIn.isClientSide) {

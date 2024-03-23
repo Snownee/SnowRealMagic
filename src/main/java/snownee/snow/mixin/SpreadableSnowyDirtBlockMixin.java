@@ -47,7 +47,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 	}
 
 	@Shadow
-	public static boolean canBeGrass(BlockState p_220256_0_, LevelReader p_220256_1_, BlockPos p_220256_2_) {
+	private static boolean canBeGrass(BlockState p_220256_0_, LevelReader p_220256_1_, BlockPos p_220256_2_) {
 		throw new IllegalStateException();
 	}
 
@@ -61,7 +61,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 	}
 
 	@Shadow
-	public static boolean canPropagate(BlockState p_56828_, LevelReader p_56829_, BlockPos p_56830_) {
+	private static boolean canPropagate(BlockState p_56828_, LevelReader p_56829_, BlockPos p_56830_) {
 		throw new IllegalStateException();
 	}
 }

@@ -17,7 +17,7 @@
 		"GameRulesMixin",
 		"IceBlockAccess",
 		"ServerLevelMixin",
-		"ServerPlayerGameModeMixin",
+		"fabric.ServerPlayerGameModeMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
 		"SnowyDirtBlockMixin",
