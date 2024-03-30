@@ -130,11 +130,11 @@ public class CommonProxy {
 	}
 
 	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
-		if (sereneseasons) {
-			return false; // handled by serene seasons instead
-		}
 		if (SnowCommonConfig.snowAndIceMeltInWarmBiomes) {
 			return true;
+		}
+		if (sereneseasons) {
+			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
 		}
 		return false;
 	}

@@ -17,11 +17,7 @@ import snownee.snow.SnowCommonConfig;
 public class SereneSeasonsCompat {
 
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome) {
-		if (biome.is(ModTags.Biomes.BLACKLISTED_BIOMES)) {
-			return false;
-		}
-		// SeasonsConfig.generateSnowAndIce is no longer respected since V10
-		if (!ServerConfig.isDimensionWhitelisted(level.dimension())) {
+		if (!snowAndIceMeltInWarmBiomes(level.dimension(), biome)) {
 			return false;
 		}
 		Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
@@ -31,6 +27,19 @@ public class SereneSeasonsCompat {
 		}
 		float meltChance = meltInfo.getMeltChance() * meltInfo.getRolls() * 0.01f;
 		return meltChance > 0 && level.random.nextFloat() < meltChance && !coldEnoughToSnow(level, pos, biome);
+	}
+
+	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
+		if (!SeasonsConfig.generateSnowAndIce.get()) {
+			return false;
+		}
+		if (biome.is(ModTags.Biomes.BLACKLISTED_BIOMES)) {
+			return false;
+		}
+		if (!ServerConfig.isDimensionWhitelisted(dimension)) {
+			return false;
+		}
+		return true;
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
