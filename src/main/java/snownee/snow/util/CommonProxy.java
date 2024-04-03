@@ -40,7 +40,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static void weatherTick(ServerLevel level, Runnable action) {
-		if (level.random.nextFloat() < SnowCommonConfig.weatherTickSlowness) {
+		if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
 			action.run();
 		}
 	}
