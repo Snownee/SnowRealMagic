@@ -82,7 +82,7 @@ public class CommonProxy {
 			return;
 		}
 
-		if (level.random.nextFloat() < SnowCommonConfig.weatherTickSlowness) {
+		if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
 			action.run();
 		}
 	}

@@ -68,7 +68,7 @@ public class SereneSeasonsCompat {
 		Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
 		// we assume that winter is always snowy
 		if (subSeason.getSeason() == Season.WINTER) {
-			if (level.random.nextFloat() < SnowCommonConfig.weatherTickSlowness) {
+			if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
 				action.run();
 			}
 			return;
