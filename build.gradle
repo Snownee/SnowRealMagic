@@ -1,11 +1,11 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.6.+'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.minecraft_version + "-fabric-" + project.mod_version
@@ -88,7 +88,7 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
 
     // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-    it.options.release = 17
+    it.options.release = 21
 }
 
 java {
@@ -135,7 +135,7 @@ unifiedPublishing {
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.20.5", "1.20.6"]
         gameLoaders = ["fabric", "quilt"]
 
         mainPublication tasks.remapJar // Declares the publicated jar
