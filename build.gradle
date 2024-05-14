@@ -55,16 +55,12 @@ dependencies {
     //modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
-    //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
-    //modImplementation "curse.maven:kiwi-549404:3998272"
-    //annotationProcessor "curse.maven:kiwi-549404:3998272"
-    modImplementation "maven.modrinth:kiwi:kyG6D8vz"
+    modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
-    //modImplementation "curse.maven:jade-324717:4096403"
-    modImplementation "maven.modrinth:jade:kd04zQ7y"
+    modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
-    modRuntimeOnly "curse.maven:minihud-244260:4593082"
-    modRuntimeOnly "curse.maven:malilib-303119:4780782"
+    modRuntimeOnly "curse.maven:minihud-244260:5096818"
+    modRuntimeOnly "curse.maven:malilib-303119:5096807"
 
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.3.2"))
 }
