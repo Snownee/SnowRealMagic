@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -39,17 +40,17 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	}
 
 	@Override
-	default ItemStack getPickedStack(
-			BlockState state,
-			BlockGetter world,
-			BlockPos pos,
+	default ItemStack getCloneItemStack(
+			LevelReader level,
+			BlockPos blockPos,
+			BlockState blockState,
 			@Nullable Player player,
-			@Nullable HitResult result) {
-		BlockState raw = getRaw(state, world, pos);
+			@Nullable HitResult hit) {
+		BlockState raw = getRaw(blockState, level, blockPos);
 		if (raw.getBlock() instanceof BlockPickInteractionAware) {
-			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, world, pos, player, result));
+			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, level, blockPos, player, hit));
 		}
-		return raw.getBlock().getCloneItemStack(world, pos, raw);
+		return raw.getBlock().getCloneItemStack(level, blockPos, raw);
 	}
 
 	//	@Override

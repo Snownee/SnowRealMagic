@@ -14,10 +14,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
@@ -73,7 +73,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
 	private void getCollisionShape(
 			BlockState state,
-			BlockGetter worldIn,
+			BlockGetter level,
 			BlockPos pos,
 			CollisionContext context,
 			CallbackInfoReturnable<VoxelShape> ci) {
@@ -97,9 +97,9 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
 		if (SnowCommonConfig.snowGravity) {
-			worldIn.scheduleTick(pos, this, getDelayAfterPlace());
+			level.scheduleTick(pos, this, getDelayAfterPlace());
 		}
 	}
 
@@ -108,19 +108,19 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			BlockState stateIn,
 			Direction facing,
 			BlockState facingState,
-			LevelAccessor worldIn,
+			LevelAccessor level,
 			BlockPos currentPos,
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> ci) {
 		if (SnowCommonConfig.snowGravity) {
-			worldIn.scheduleTick(currentPos, this, getDelayAfterPlace());
+			level.scheduleTick(currentPos, this, getDelayAfterPlace());
 			ci.setReturnValue(stateIn);
 		}
 	}
 
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
-	private void canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(Hooks.canSnowSurvive(state, worldIn, pos));
+	private void canSurvive(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+		ci.setReturnValue(Hooks.canSnowSurvive(state, level, pos));
 	}
 
 	@Unique
@@ -129,23 +129,23 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		BlockPos posDown = pos.below();
-		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
-			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+		if (Hooks.canFallThrough(level.getBlockState(posDown), level, posDown)) {
+			level.setBlockAndUpdate(pos, getRaw(state, level, pos));
 			FallingSnowEntity entity = new FallingSnowEntity(
-					worldIn,
+					level,
 					pos.getX() + 0.5D,
 					pos.getY() - 0.5D,
 					pos.getZ() + 0.5D,
 					state.getValue(SnowLayerBlock.LAYERS));
-			worldIn.addFreshEntity(entity);
+			level.addFreshEntity(entity);
 		}
 	}
 
 	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-	private void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
-		Hooks.randomTick(state, worldIn, pos, random);
+	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+		Hooks.randomTick(state, level, pos, random);
 		ci.cancel();
 	}
 
@@ -173,47 +173,55 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		if (player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
-			BlockState stateDown = worldIn.getBlockState(pos.below());
-			if (!(stateDown.getBlock() instanceof SnowLayerBlock) && !stateDown.hasProperty(BlockStateProperties.SNOWY)) {
-				if (state.is(Blocks.SNOW)) {
-					worldIn.setBlock(pos, Hooks.copyProperties(state, CoreModule.TILE_BLOCK.defaultBlockState()), 16 | 32);
-				}
-				BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-				if (blockEntity instanceof SnowBlockEntity snowTile) {
-					if (CoreModule.TILE_BLOCK.is(state) && snowTile.getContainedState().isAir()) {
-						worldIn.setBlock(pos, Hooks.copyProperties(state, Blocks.SNOW.defaultBlockState()), 16 | 32);
-					} else {
-						snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
-						if (worldIn.isClientSide) {
-							worldIn.sendBlockUpdated(pos, state, state, 11);
-						}
+	protected ItemInteractionResult useItemOn(
+			ItemStack itemStack,
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			InteractionHand interactionHand,
+			BlockHitResult blockHitResult) {
+		var stateBelow = level.getBlockState(blockPos.below());
+		if (!(stateBelow.getBlock() instanceof SnowLayerBlock) && !stateBelow.hasProperty(BlockStateProperties.SNOWY)) {
+			if (blockState.is(Blocks.SNOW)) {
+				level.setBlock(blockPos, Hooks.copyProperties(blockState, CoreModule.TILE_BLOCK.defaultBlockState()), 16 | 32);
+			}
+			var blockEntity = level.getBlockEntity(blockPos);
+			if (blockEntity instanceof SnowBlockEntity snowTile) {
+				if (CoreModule.TILE_BLOCK.is(blockState) && snowTile.getContainedState().isAir()) {
+					level.setBlock(blockPos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
+				} else {
+					snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
+					if (level.isClientSide) {
+						level.sendBlockUpdated(blockPos, blockState, blockState, 11);
 					}
 				}
-				return InteractionResult.SUCCESS;
 			}
+			return ItemInteractionResult.SUCCESS;
 		}
-		if (getRaw(state, worldIn, pos).isAir()) {
-			BlockPlaceContext context = new BlockPlaceContext(player, handIn, player.getItemInHand(handIn), hit);
+		if (getRaw(blockState, level, blockPos).isAir()) {
+			BlockPlaceContext context = new BlockPlaceContext(
+					player,
+					interactionHand,
+					player.getItemInHand(interactionHand),
+					blockHitResult);
 			Block block = Block.byItem(context.getItemInHand().getItem());
 			if (block != Blocks.AIR && context.replacingClickedOnBlock()) {
 				BlockState state2 = block.getStateForPlacement(context);
-				if (state2 != null && Hooks.canContainState(state2) && state2.canSurvive(worldIn, pos)) {
-					if (!worldIn.isClientSide) {
-						worldIn.setBlock(pos, state2, 16 | 32);
-						block.setPlacedBy(worldIn, pos, state, player, context.getItemInHand());
-						int i = state.getValue(SnowLayerBlock.LAYERS);
-						if (Hooks.placeLayersOn(worldIn, pos, i, false, context, true, true) && !player.isCreative()) {
+				if (state2 != null && Hooks.canContainState(state2) && state2.canSurvive(level, blockPos)) {
+					if (!level.isClientSide) {
+						level.setBlock(blockPos, state2, 16 | 32);
+						block.setPlacedBy(level, blockPos, blockState, player, context.getItemInHand());
+						int i = blockState.getValue(SnowLayerBlock.LAYERS);
+						if (Hooks.placeLayersOn(level, blockPos, i, false, context, true, true) && !player.isCreative()) {
 							context.getItemInHand().shrink(1);
 						}
 					}
-					return InteractionResult.SUCCESS;
+					return ItemInteractionResult.SUCCESS;
 				}
 			}
 		}
-		return super.use(state, worldIn, pos, player, handIn, hit);
+		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
 
 	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
@@ -222,22 +230,22 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
+	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
-			BlockState stateBelow = worldIn.getBlockState(pos.below());
+			BlockState stateBelow = level.getBlockState(pos.below());
 			if (stateBelow.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(stateBelow)) {
-				entityIn.causeFallDamage(fallDistance, 0.2F, worldIn.damageSources().fall());
+				entityIn.causeFallDamage(fallDistance, 0.2F, level.damageSources().fall());
 				return;
 			}
-			state = worldIn.getBlockState(pos);
-			entityIn.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, worldIn.damageSources().fall());
+			state = level.getBlockState(pos);
+			entityIn.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, level.damageSources().fall());
 			return;
 		}
-		super.fallOn(worldIn, state, pos, entityIn, fallDistance);
+		super.fallOn(level, state, pos, entityIn, fallDistance);
 	}
 
 	@Override
-	public void stepOn(Level worldIn, BlockPos pos, BlockState state, Entity entityIn) {
+	public void stepOn(Level level, BlockPos pos, BlockState state, Entity entityIn) {
 		if (!SnowCommonConfig.thinnerBoundingBox || !state.is(this)) {
 			return;
 		}
