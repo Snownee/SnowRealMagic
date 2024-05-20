@@ -54,7 +54,7 @@ public class FallingSnowEntity extends Entity {
 		super(CoreModule.ENTITY.get(), worldIn);
 		prevPos = BlockPos.ZERO;
 		layers = 1;
-		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+		size = EntityDimensions.fixed(0.98f, 0.1225f * layers);
 	}
 
 	public FallingSnowEntity(EntityType<FallingSnowEntity> type, Level worldIn) {
@@ -71,7 +71,7 @@ public class FallingSnowEntity extends Entity {
 		zo = z;
 		setLayers(this.layers = layers);
 		setStartPos(prevPos = blockPosition());
-		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+		size = EntityDimensions.fixed(0.98f, 0.1225f * layers);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class FallingSnowEntity extends Entity {
 						return;
 					}
 					if (CommonProxy.isHot(state.getFluidState(), level, pos)) {
-						SLavaSmokeEffectPacket.send((ServerLevel) level, pos.above());
+						new SLavaSmokeEffectPacket(pos.above()).sendToAround((ServerLevel) level);
 						discard();
 						return;
 					}
@@ -188,9 +188,9 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		entityData.define(START_POS, BlockPos.ZERO);
-		entityData.define(LAYERS, 1);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(START_POS, BlockPos.ZERO);
+		builder.define(LAYERS, 1);
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class FallingSnowEntity extends Entity {
 		fallTime = compound.getInt("Time");
 		if (compound.contains("Layers", Tag.TAG_INT)) {
 			layers = Mth.clamp(compound.getInt("Layers"), 1, 8);
-			size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+			size = EntityDimensions.fixed(0.98f, 0.1225f * layers);
 			setLayers(layers);
 		}
 	}

@@ -3,6 +3,7 @@ package snownee.snow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -34,7 +35,7 @@ public final class GameEvents {
 		} else if (player.hasCorrectToolForDrops(Blocks.SNOW.defaultBlockState())) {
 			if (playerCollectSnowball(level, pos, state, snowVariant) && !player.isCreative()) {
 				Block.popResource(level, pos, new ItemStack(Items.SNOWBALL));
-				held.hurtAndBreak(1, player, stack -> stack.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+				held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 			}
 			return InteractionResult.sidedSuccess(level.isClientSide);
 		} else if (player.isSecondaryUseActive() && SnowCommonConfig.sneakSnowball) {

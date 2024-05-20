@@ -22,13 +22,12 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.mixin.FenceGateBlockAccess;
 
 public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVariant, WaterLoggableSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
-		super(properties, WoodType.OAK);
+		super(WoodType.OAK, properties);
 	}
 
 	@Override
