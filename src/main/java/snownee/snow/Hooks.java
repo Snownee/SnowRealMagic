@@ -492,4 +492,17 @@ public final class Hooks {
 		}
 		return Blocks.SNOW.defaultBlockState();
 	}
+
+	public static boolean canPlaceAt(Level level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		if (canContainState(state)) {
+			Block block = state.getBlock();
+			if (block instanceof StairBlock || block instanceof SlabBlock || block instanceof FenceBlock ||
+					block instanceof FenceGateBlock || block instanceof WallBlock) {
+				return true;
+			}
+			return canSnowSurvive(state, level, pos);
+		}
+		return false;
+	}
 }
