@@ -20,7 +20,7 @@ import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
-import snownee.kiwi.KiwiModule.RenderLayer.Layer;
+import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.KiwiEntityTypeBuilder;
 import snownee.snow.block.BaseSnowLayerBlock;
@@ -44,44 +44,46 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
 
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.MODID, "entity_inside");
+
 	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
 
 	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
 
 	@NoItem
 	@Name("snow")
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<BaseSnowLayerBlock> TILE_BLOCK = go(() -> new BaseSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
 			.randomTicks()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW).randomTicks()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
@@ -107,7 +109,7 @@ public class CoreModule extends AbstractModule {
 			.trackedUpdateRate(20)
 			.build());
 
-	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
+	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
 			SnowRealMagic.MODID + ":blizzardStrength",

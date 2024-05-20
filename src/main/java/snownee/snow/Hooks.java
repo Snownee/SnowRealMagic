@@ -7,13 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -53,6 +52,7 @@ import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.mixin.BlockBehaviourAccess;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
@@ -165,32 +165,38 @@ public final class Hooks {
 
 		BlockPos posDown = pos.below();
 		BlockState stateDown = level.getBlockState(posDown);
-		if (block instanceof StairBlock && !CoreModule.STAIRS.is(state)) {
-			BlockState newState = CoreModule.STAIRS.defaultBlockState();
-			newState = copyProperties(state, newState);
-			level.setBlock(pos, newState, flags);
-		} else if (block instanceof SlabBlock && !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM) {
-			// can't copy properties as this doesn't extend vanilla slabs
-			level.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
-		} else if (block instanceof FenceBlock && block.getClass() != SnowFenceBlock.class) {
-			KiwiGO<Block> newBlock =
-					state.is(BlockTags.WOODEN_FENCES) || state.getSoundType() == SoundType.WOOD ? CoreModule.FENCE : CoreModule.FENCE2;
-			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-		} else if (block instanceof FenceGateBlock && !CoreModule.FENCE_GATE.is(state)) {
-			BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-		} else if (block instanceof WallBlock && !CoreModule.WALL.is(state)) {
-			BlockState newState = CoreModule.WALL.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-		} else {
-			return false;
+		switch (block) {
+			case StairBlock ignored when !CoreModule.STAIRS.is(state) -> {
+				BlockState newState = CoreModule.STAIRS.defaultBlockState();
+				newState = copyProperties(state, newState);
+				level.setBlock(pos, newState, flags);
+			}
+			case SlabBlock ignored when !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM ->
+				// can't copy properties as this doesn't extend vanilla slabs
+					level.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
+			case FenceBlock ignored when block.getClass() != SnowFenceBlock.class -> {
+				KiwiGO<Block> newBlock =
+						state.is(BlockTags.WOODEN_FENCES) || state.getSoundType() == SoundType.WOOD ? CoreModule.FENCE : CoreModule.FENCE2;
+				BlockState newState = newBlock.defaultBlockState();
+				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
+				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
+				level.setBlock(pos, newState, flags);
+			}
+			case FenceGateBlock ignored when !CoreModule.FENCE_GATE.is(state) -> {
+				BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
+				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
+				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
+				level.setBlock(pos, newState, flags);
+			}
+			case WallBlock ignored when !CoreModule.WALL.is(state) -> {
+				BlockState newState = CoreModule.WALL.defaultBlockState();
+				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
+				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
+				level.setBlock(pos, newState, flags);
+			}
+			default -> {
+				return false;
+			}
 		}
 
 		BlockEntity tile = level.getBlockEntity(pos);
@@ -260,7 +266,7 @@ public final class Hooks {
 			//todo: check if it's available
 			SSnowLandEffectPacket.send(level, pos, originLayers, layers);
 		} else if (playSound) {
-			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
+			SoundType soundtype = ((BlockBehaviourAccess) Blocks.SNOW).getSoundType(Blocks.SNOW.defaultBlockState());
 			level.playSound(
 					null,
 					pos,
@@ -473,8 +479,9 @@ public final class Hooks {
 			return state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1));
 		}
 		ItemStack stack = context.getItemInHand();
-		CompoundTag tag = BlockItem.getBlockEntityData(stack);
-		if (tag != null && "snowrealmagic:snow".equals(tag.getString("id"))) {
+		var blockEntityData = stack.getComponentsPatch().get(DataComponents.BLOCK_ENTITY_DATA);
+		if (blockEntityData != null && blockEntityData.isPresent()
+				&& "snowrealmagic:snow".equals(blockEntityData.get().getUnsafe().getString("id"))) {
 			return CoreModule.TILE_BLOCK.defaultBlockState();
 		}
 		if (SnowCommonConfig.fancySnowOnUpperSlab) {

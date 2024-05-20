@@ -6,14 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,20 +26,19 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
-import net.minecraft.world.level.block.WitherRoseBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.mixin.BlockBehaviourAccess;
 
 public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public BaseSnowLayerBlock(Block.Properties properties) {
@@ -145,29 +140,13 @@ public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, B
 
 	@Override
 	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
-		if (entityIn instanceof LivingEntity) {
-			if (!worldIn.isClientSide && worldIn.getDifficulty() != Difficulty.PEACEFUL) {
-				if (getRaw(state, worldIn, pos).getBlock() instanceof WitherRoseBlock) {
-					LivingEntity livingentity = (LivingEntity) entityIn;
-					if (!livingentity.isInvulnerableTo(worldIn.damageSources().wither())) {
-						livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40));
-					}
-				}
-			} else if (entityIn.getType() != EntityType.FOX && entityIn.getType() != EntityType.BEE) {
-				BlockState stateIn = getRaw(state, worldIn, pos);
-				if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
-					entityIn.makeStuckInBlock(state, new Vec3(0.8F, 0.75D, 0.8F));
-					if (!worldIn.isClientSide && stateIn.getValue(SweetBerryBushBlock.AGE) > 0 &&
-							(entityIn.xOld != entityIn.getX() || entityIn.zOld != entityIn.getZ())) {
-						double d0 = Math.abs(entityIn.getX() - entityIn.xOld);
-						double d1 = Math.abs(entityIn.getZ() - entityIn.zOld);
-						if (d0 >= 0.003F || d1 >= 0.003F) {
-							entityIn.hurt(worldIn.damageSources().sweetBerryBush(), 1.0F);
-						}
-					}
-				}
-			}
+		var blockState = getRaw(state, worldIn, pos);
+		var block = blockState.getBlock();
+
+		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
+			((BlockBehaviourAccess) block).entityInside(blockState, worldIn, pos, entityIn);
 		}
+
 	}
 
 	@Override

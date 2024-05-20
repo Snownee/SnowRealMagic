@@ -1,5 +1,7 @@
 package snownee.snow.mixin;
 
+import net.minecraft.world.level.block.SoundType;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
@@ -13,4 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public interface BlockBehaviourAccess {
 	@Invoker("entityInside")
 	void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity);
+
+	@Invoker("getSoundType")
+	SoundType getSoundType(BlockState blockState);
 }
