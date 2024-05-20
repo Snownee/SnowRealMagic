@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import snownee.snow.block.EntitySnowLayerBlock;
+import snownee.snow.block.BaseSnowLayerBlock;
 
 @Mixin(DoublePlantBlock.class)
 public class DoublePlantBlockMixin {
@@ -36,7 +36,7 @@ public class DoublePlantBlockMixin {
 		if (doubleblockhalf == DoubleBlockHalf.UPPER) {
 			BlockPos blockpos = pos.below();
 			BlockState blockstate = world.getBlockState(blockpos);
-			if (blockstate.getBlock() instanceof EntitySnowLayerBlock) {
+			if (blockstate.getBlock() instanceof BaseSnowLayerBlock) {
 				world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
 				world.setBlock(
 						blockpos,
@@ -63,11 +63,11 @@ public class DoublePlantBlockMixin {
 			CallbackInfoReturnable<BlockState> cir) {
 		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
 		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN &&
-				facingState.getBlock() instanceof EntitySnowLayerBlock) {
+				facingState.getBlock() instanceof BaseSnowLayerBlock) {
 			cir.setReturnValue(stateIn);
 		}
 		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP &&
-				facingState.getBlock() instanceof EntitySnowLayerBlock) {
+				facingState.getBlock() instanceof BaseSnowLayerBlock) {
 			cir.setReturnValue(stateIn);
 		}
 	}
@@ -75,7 +75,7 @@ public class DoublePlantBlockMixin {
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	public void srm_canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if (state.getValue(HALF) == DoubleBlockHalf.UPPER &&
-				worldIn.getBlockState(pos.below()).getBlock() instanceof EntitySnowLayerBlock) {
+				worldIn.getBlockState(pos.below()).getBlock() instanceof BaseSnowLayerBlock) {
 			cir.setReturnValue(true);
 		}
 	}

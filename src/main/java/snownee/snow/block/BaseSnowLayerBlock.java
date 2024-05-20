@@ -9,6 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -44,8 +45,8 @@ import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
-	public EntitySnowLayerBlock(Block.Properties properties) {
+public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
+	public BaseSnowLayerBlock(Block.Properties properties) {
 		super(properties);
 	}
 
@@ -105,7 +106,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof EntitySnowLayerBlock) {
+		if (state.getBlock() instanceof BaseSnowLayerBlock) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
@@ -116,8 +117,9 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
-		return getRaw(state, worldIn, pos).isPathfindable(worldIn, pos, type);
+	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
+		// We don't know the shape of the original block. Just blocking the AI here.
+		return false;
 	}
 
 	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
@@ -190,18 +192,47 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
+	protected InteractionResult useWithoutItem(
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			BlockHitResult blockHitResult) {
+		InteractionResult result = getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
 		if (result.consumesAction()) {
-			BlockState stateNow = worldIn.getBlockState(pos);
+			BlockState stateNow = level.getBlockState(blockPos);
 			if (!stateNow.is(this)) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
 			}
 			return result;
 		}
-		return super.use(state, worldIn, pos, player, handIn, hit);
+		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(
+			ItemStack itemStack,
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			InteractionHand interactionHand,
+			BlockHitResult blockHitResult) {
+		ItemInteractionResult result = getRaw(blockState, level, blockPos).useItemOn(
+				itemStack,
+				level,
+				player,
+				interactionHand,
+				blockHitResult);
+		if (result.consumesAction()) {
+			BlockState stateNow = level.getBlockState(blockPos);
+			if (!stateNow.is(this)) {
+				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+			}
+			return result;
+		}
+		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
 
 	@Override
@@ -217,15 +248,15 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 				int layers = state.getValue(LAYERS);
 				worldIn.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
 			}
-		} catch (Throwable e) {
+		} catch (Throwable ignored) {
 		}
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(LevelReader worldIn, BlockPos pos, BlockState state, boolean isClient) {
-		BlockState contained = getRaw(state, worldIn, pos);
+	public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+		BlockState contained = getRaw(blockState, levelReader, blockPos);
 		Block block = contained.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(worldIn, pos, contained, isClient);
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(levelReader, blockPos, contained);
 	}
 
 	@Override

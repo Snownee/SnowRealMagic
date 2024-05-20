@@ -23,7 +23,7 @@ import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.KiwiModule.RenderLayer.Layer;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.KiwiEntityTypeBuilder;
-import snownee.snow.block.EntitySnowLayerBlock;
+import snownee.snow.block.BaseSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
@@ -51,7 +51,7 @@ public class CoreModule extends AbstractModule {
 	@NoItem
 	@Name("snow")
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<BaseSnowLayerBlock> TILE_BLOCK = go(() -> new BaseSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
