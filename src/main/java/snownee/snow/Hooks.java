@@ -20,7 +20,6 @@ import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -47,7 +46,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.lighting.LightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
@@ -58,27 +56,6 @@ import snownee.snow.util.CommonProxy;
 
 public final class Hooks {
 	private Hooks() {
-	}
-
-	public static boolean canGrassSurvive(BlockState blockState, LevelReader level, BlockPos blockPos) {
-		BlockPos blockPos2 = blockPos.above();
-		BlockState blockState2 = level.getBlockState(blockPos2);
-		if (blockState2.is(CoreModule.SNOWY_SETTING)) {
-			if (blockState2.getBlock() instanceof SnowVariant snowVariant) {
-				return SnowCommonConfig.sustainGrassIfLayerMoreThanOne || snowVariant.layers(blockState2, level, blockPos2) <= 1;
-			}
-			return true;
-		} else {
-			int i = LightEngine.getLightBlockInto(
-					level,
-					blockState,
-					blockPos,
-					blockState2,
-					blockPos2,
-					Direction.UP,
-					blockState2.getLightBlock(level, blockPos2));
-			return i < level.getMaxLightLevel();
-		}
 	}
 
 	public static void placeFeatureExtra(Biome biome, WorldGenLevel level, BlockPos pos, BlockPos belowPos) {
