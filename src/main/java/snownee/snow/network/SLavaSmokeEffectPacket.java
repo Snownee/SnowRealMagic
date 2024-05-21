@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import snownee.kiwi.network.KPacketSender;
 import snownee.kiwi.network.KiwiPacket;
-import snownee.kiwi.network.KiwiPacket.Direction;
 import snownee.kiwi.network.PayloadContext;
 import snownee.kiwi.network.PlayPacketHandler;
 import snownee.snow.SnowRealMagic;

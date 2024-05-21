@@ -5,8 +5,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
