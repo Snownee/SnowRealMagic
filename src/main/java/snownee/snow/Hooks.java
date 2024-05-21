@@ -50,7 +50,6 @@ import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.mixin.BlockBehaviourAccess;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
@@ -236,7 +235,7 @@ public final class Hooks {
 			//todo: check if it's available
 			new SSnowLandEffectPacket(pos, (byte) originLayers, (byte) layers).sendToAround((ServerLevel) level);
 		} else if (playSound) {
-			SoundType soundtype = ((BlockBehaviourAccess) Blocks.SNOW).getSoundType(Blocks.SNOW.defaultBlockState());
+			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
 			level.playSound(
 					null,
 					pos,

@@ -1,13 +1,8 @@
 {
 	"values": [
 		"#snowrealmagic:offset_y",
-		"minecraft:grass",
 		{
 			"id": "#c:grass",
-			"required": false
-		},
-		{
-			"id": "#c:grass_like",
 			"required": false
 		},
 		{

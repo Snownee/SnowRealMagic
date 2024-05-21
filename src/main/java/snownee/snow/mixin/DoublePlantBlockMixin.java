@@ -37,26 +37,28 @@ public class DoublePlantBlockMixin {
 	@Inject(
 			method = "preventDropFromBottomPart",
 			at = @At(
-					value = "INVOKE",
-					shift = At.Shift.BY,
-					by = 3,
-					target = "Lnet/minecraft/world/level/Level;levelEvent(Lnet/minecraft/world/entity/player/Player;ILnet/minecraft/core/BlockPos;I)V"))
+					value = "TAIL"))
 	private static void srm_preventDropFromBottomPart(
 			Level level,
 			BlockPos pos,
 			BlockState state,
 			Player player,
 			CallbackInfo ci,
-			@Local(ordinal = 1) BlockPos belowPos) {
-		var belowState = level.getBlockState(belowPos);
-		if (belowState.getBlock() instanceof BaseSnowLayerBlock) {
-			level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
-			level.setBlock(
-					belowPos,
-					Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, belowState.getValue(SnowLayerBlock.LAYERS)),
-					35);
-			level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, belowPos, Block.getId(state));
+			@Local DoubleBlockHalf doubleBlockHalf) {
+		if (doubleBlockHalf != DoubleBlockHalf.UPPER) {
+			return;
 		}
+		var belowPos = pos.below();
+		var belowState = level.getBlockState(belowPos);
+		if (!(belowState.getBlock() instanceof BaseSnowLayerBlock)) {
+			return;
+		}
+		level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
+		level.setBlock(
+				belowPos,
+				Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, belowState.getValue(SnowLayerBlock.LAYERS)),
+				35);
+		level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, belowPos, Block.getId(state));
 	}
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)

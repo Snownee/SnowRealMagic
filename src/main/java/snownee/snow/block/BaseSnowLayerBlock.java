@@ -38,7 +38,6 @@ import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
-import snownee.snow.mixin.BlockBehaviourAccess;
 
 public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public BaseSnowLayerBlock(Block.Properties properties) {
@@ -144,9 +143,8 @@ public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, B
 		var block = blockState.getBlock();
 
 		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
-			((BlockBehaviourAccess) block).entityInside(blockState, worldIn, pos, entityIn);
+			block.entityInside(blockState, worldIn, pos, entityIn);
 		}
-
 	}
 
 	@Override
