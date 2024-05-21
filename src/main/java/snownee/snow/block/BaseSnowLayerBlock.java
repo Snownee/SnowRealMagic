@@ -1,5 +1,6 @@
 package snownee.snow.block;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -257,8 +258,12 @@ public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, B
 	}
 
 	@Override
-	public Item asItem() {
+	public @NotNull Item asItem() {
 		return Items.SNOW;
 	}
 
+	@Override
+	public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+		return SnowVariant.super.getCloneItemStack(levelReader, blockPos, blockState, null, null);
+	}
 }

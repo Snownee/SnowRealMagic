@@ -37,5 +37,4 @@ public class JadeCompat implements IWailaPlugin {
 				WALL))
 			registration.usePickedResult(block.get());
 	}
-
 }
