@@ -34,7 +34,7 @@ public class ShapeCaches {
 			SnowVariant snowVariant = (SnowVariant) state.getBlock();
 			int layers = snowVariant.layers(state, level, pos);
 			Key key;
-			if (CoreModule.TILE_BLOCK.is(state)) { // block like flowers has offset so we can't cache it
+			if (state.is(CoreModule.SNOW)) { // block like flowers has offset so we can't cache it
 				BlockState raw = snowVariant.getRaw(state, level, pos);
 				Class<?> clazz = raw.getBlock().getClass();
 				if (!(clazz == TallGrassBlock.class || clazz == TallFlowerBlock.class)) {

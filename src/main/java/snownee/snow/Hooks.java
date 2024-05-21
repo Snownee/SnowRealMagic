@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -126,7 +127,27 @@ public final class Hooks {
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock ||
 				block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock ||
 				block instanceof SweetBerryBushBlock) {
-			level.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
+			var shape = state.getCollisionShape(level, pos);
+
+			BlockState result;
+
+			if (state.is(CoreModule.PLANTS)) {
+				if (state.hasProperty(DoublePlantBlock.HALF)) {
+					if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+						result = CoreModule.SNOW_DOUBLEPLANT_LOWER_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+					} else {
+						result = CoreModule.SNOW_DOUBLEPLANT_UPPER_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+					}
+				} else {
+					result = CoreModule.SNOW_PLANT_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+				}
+			} else if (shape.isEmpty()) {
+				result = CoreModule.SNOW_NO_COLLISION_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+			} else {
+				result = CoreModule.SNOW_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+			}
+
+			level.setBlock(pos, result, flags);
 			if (level.getBlockEntity(pos) instanceof SnowBlockEntity snowBlockEntity) {
 				snowBlockEntity.setContainedState(state);
 			}
@@ -258,11 +279,11 @@ public final class Hooks {
 	public static void placeNormalSnow(LevelAccessor level, BlockPos pos, int layers, int flags) {
 		BlockState stateBelow = level.getBlockState(pos.below());
 		Block block = SnowCommonConfig.fancySnowOnUpperSlab && stateBelow.getBlock() instanceof SlabBlock ?
-				CoreModule.TILE_BLOCK.get() :
+				CoreModule.SNOW_BLOCK.get() :
 				Blocks.SNOW;
 		stateBelow = block.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Mth.clamp(layers, 1, 8));
 		level.setBlock(pos, stateBelow, flags);
-		if (CoreModule.TILE_BLOCK.is(block)) {
+		if (stateBelow.is(CoreModule.SNOW)) {
 			setPlacedBy(level, pos, stateBelow);
 		}
 	}
@@ -448,12 +469,12 @@ public final class Hooks {
 		var blockEntityData = stack.getComponentsPatch().get(DataComponents.BLOCK_ENTITY_DATA);
 		if (blockEntityData != null && blockEntityData.isPresent()
 				&& "snowrealmagic:snow".equals(blockEntityData.get().getUnsafe().getString("id"))) {
-			return CoreModule.TILE_BLOCK.defaultBlockState();
+			return CoreModule.SNOW_BLOCK.defaultBlockState();
 		}
 		if (SnowCommonConfig.fancySnowOnUpperSlab) {
 			BlockState stateBelow = context.getLevel().getBlockState(context.getClickedPos().below());
 			if (stateBelow.getBlock() instanceof SlabBlock) {
-				return CoreModule.TILE_BLOCK.defaultBlockState();
+				return CoreModule.SNOW_BLOCK.defaultBlockState();
 			}
 		}
 		return Blocks.SNOW.defaultBlockState();

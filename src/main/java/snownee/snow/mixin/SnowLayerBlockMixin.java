@@ -184,11 +184,11 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		var stateBelow = level.getBlockState(blockPos.below());
 		if (!(stateBelow.getBlock() instanceof SnowLayerBlock) && !stateBelow.hasProperty(BlockStateProperties.SNOWY)) {
 			if (blockState.is(Blocks.SNOW)) {
-				level.setBlock(blockPos, Hooks.copyProperties(blockState, CoreModule.TILE_BLOCK.defaultBlockState()), 16 | 32);
+				level.setBlock(blockPos, Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()), 16 | 32);
 			}
 			var blockEntity = level.getBlockEntity(blockPos);
 			if (blockEntity instanceof SnowBlockEntity snowTile) {
-				if (CoreModule.TILE_BLOCK.is(blockState) && snowTile.getContainedState().isAir()) {
+				if (blockState.is(CoreModule.SNOW) && snowTile.getContainedState().isAir()) {
 					level.setBlock(blockPos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
 				} else {
 					snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
@@ -233,7 +233,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState stateBelow = level.getBlockState(pos.below());
-			if (stateBelow.is(Blocks.SNOW) || CoreModule.TILE_BLOCK.is(stateBelow)) {
+			if (stateBelow.is(CoreModule.SNOW)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, level.damageSources().fall());
 				return;
 			}

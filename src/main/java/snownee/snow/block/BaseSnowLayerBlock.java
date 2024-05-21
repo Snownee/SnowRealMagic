@@ -40,7 +40,7 @@ import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
 public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
-	public BaseSnowLayerBlock(Block.Properties properties) {
+	public BaseSnowLayerBlock(Properties properties) {
 		super(properties);
 	}
 
@@ -112,8 +112,10 @@ public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, B
 
 	@Override
 	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
-		// We don't know the shape of the original block. Just blocking the AI here.
-		return false;
+		return switch (pathComputationType) {
+			case LAND -> true;
+			case WATER, AIR -> false;
+		};
 	}
 
 	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
