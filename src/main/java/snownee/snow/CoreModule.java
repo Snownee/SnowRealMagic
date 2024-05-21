@@ -43,7 +43,7 @@ import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
-	public static final TagKey<Block> SNOW = blockTag(SnowRealMagic.MODID, "snowed");
+	public static final TagKey<Block> SNOW = blockTag(SnowRealMagic.MODID, "snow");
 
 	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
 
