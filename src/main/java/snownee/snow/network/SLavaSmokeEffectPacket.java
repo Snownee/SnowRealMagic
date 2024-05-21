@@ -19,7 +19,7 @@ import snownee.kiwi.network.PayloadContext;
 import snownee.kiwi.network.PlayPacketHandler;
 import snownee.snow.SnowRealMagic;
 
-@KiwiPacket(dir = Direction.TO_CLIENT)
+@KiwiPacket
 public record SLavaSmokeEffectPacket(BlockPos pos) implements CustomPacketPayload {
 	public static final Type<SLavaSmokeEffectPacket> TYPE = new CustomPacketPayload.Type<>(SnowRealMagic.id("lava_smoke"));
 

@@ -232,7 +232,6 @@ public final class Hooks {
 		return newState;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean placeLayersOn(
 			Level level,
 			BlockPos pos,
@@ -264,7 +263,7 @@ public final class Hooks {
 		Block.pushEntitiesUp(state, newState, level, pos);
 		if (fallingEffect) {
 			//todo: check if it's available
-			SSnowLandEffectPacket.send(level, pos, originLayers, layers);
+			new SSnowLandEffectPacket(pos, (byte) originLayers, (byte) layers).sendToAround((ServerLevel) level);
 		} else if (playSound) {
 			SoundType soundtype = ((BlockBehaviourAccess) Blocks.SNOW).getSoundType(Blocks.SNOW.defaultBlockState());
 			level.playSound(
@@ -310,10 +309,7 @@ public final class Hooks {
 				return true;
 			}
 		}
-		if (FallingBlock.isFree(state) && state.getCollisionShape(level, pos).isEmpty()) {
-			return true;
-		}
-		return false;
+		return FallingBlock.isFree(state) && state.getCollisionShape(level, pos).isEmpty();
 	}
 
 	public static void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
