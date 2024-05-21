@@ -100,22 +100,16 @@ public final class Hooks {
 				block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof FenceBlock) {
-			return hasAllProperties(state, CoreModule.FENCE.defaultBlockState());
-		}
-		if (block instanceof FenceGateBlock) {
-			return hasAllProperties(state, CoreModule.FENCE_GATE.defaultBlockState());
-		}
-		if (block instanceof WallBlock) {
-			return hasAllProperties(state, CoreModule.WALL.defaultBlockState());
-		}
-		if (block instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM) {
-			return true;
-		}
-		if (block instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.BOTTOM) {
-			return hasAllProperties(state, CoreModule.STAIRS.defaultBlockState());
-		}
-		return false;
+		return switch (block) {
+			case FenceBlock ignored -> hasAllProperties(state, CoreModule.FENCE.defaultBlockState());
+			case FenceGateBlock ignored -> hasAllProperties(state, CoreModule.FENCE_GATE.defaultBlockState());
+			case WallBlock ignored -> hasAllProperties(state, CoreModule.WALL.defaultBlockState());
+			case SlabBlock ignored when state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM -> true;
+			case StairBlock ignored when state.getValue(StairBlock.HALF) == Half.BOTTOM -> hasAllProperties(
+					state,
+					CoreModule.STAIRS.defaultBlockState());
+			default -> false;
+		};
 	}
 
 	public static boolean convert(LevelAccessor level, BlockPos pos, BlockState state, int layers, int flags, boolean canConvert) {
