@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.Util;
+import snownee.kiwi.util.KUtil;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 
@@ -26,7 +26,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 		boolean changed = false;
 		if (!network && data.contains("Items")) {
 			String idStr = data.getCompound("Items").getString("0");
-			ResourceLocation id = Util.RL(idStr);
+			ResourceLocation id = KUtil.RL(idStr);
 			if (id != null) {
 				Item item = BuiltInRegistries.ITEM.get(id);
 				if (item instanceof BlockItem) {
@@ -35,7 +35,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 				}
 			}
 		} else if (data.contains("Block")) {
-			ResourceLocation id = Util.RL(data.getString("Block"));
+			ResourceLocation id = KUtil.RL(data.getString("Block"));
 			Block block = BuiltInRegistries.BLOCK.get(id);
 			if (block != null && block != Blocks.AIR) {
 				changed |= setContainedState(Hooks.copyProperties(getBlockState(), block.defaultBlockState()), network);

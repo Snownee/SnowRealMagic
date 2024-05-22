@@ -1,58 +1,70 @@
 package snownee.snow.network;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import snownee.kiwi.network.KPacketTarget;
+import snownee.kiwi.network.KPacketSender;
 import snownee.kiwi.network.KiwiPacket;
-import snownee.kiwi.network.KiwiPacket.Direction;
-import snownee.kiwi.network.PacketHandler;
+import snownee.kiwi.network.PayloadContext;
+import snownee.kiwi.network.PlayPacketHandler;
+import snownee.snow.SnowRealMagic;
 
-@KiwiPacket(value = "lava_smoke", dir = Direction.PLAY_TO_CLIENT)
-public class SLavaSmokeEffectPacket extends PacketHandler {
+@KiwiPacket
+public record SLavaSmokeEffectPacket(BlockPos pos) implements CustomPacketPayload {
+	public static final Type<SLavaSmokeEffectPacket> TYPE = new CustomPacketPayload.Type<>(SnowRealMagic.id("lava_smoke"));
 
 	private static final RandomSource RANDOM = RandomSource.create();
-	public static SLavaSmokeEffectPacket I;
+
+	public void sendToAround(ServerLevel level) {
+		KPacketSender.sendToAround(this, level, pos, 16);
+	}
+
 
 	@Override
-	public CompletableFuture<FriendlyByteBuf> receive(
-			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
-			FriendlyByteBuf buf,
-			ServerPlayer sender) {
-		BlockPos pos = buf.readBlockPos();
-		return executor.apply(() -> {
-			ClientLevel level = Minecraft.getInstance().level;
-			for (int i = 0; i < 10; ++i) {
-				double d0 = RANDOM.nextGaussian() * 0.02D;
-				double d1 = RANDOM.nextGaussian() * 0.02D;
-				double d2 = RANDOM.nextGaussian() * 0.02D;
-				level.addParticle(
-						ParticleTypes.SMOKE,
-						pos.getX() + RANDOM.nextFloat(),
-						pos.getY(),
-						pos.getZ() + RANDOM.nextFloat(),
-						d0,
-						d1,
-						d2);
-			}
-			level.playLocalSound(pos, SoundEvents.LAVA_AMBIENT, SoundSource.AMBIENT, 0.8F, 0.8F, false);
-		});
+	public @NotNull Type<SLavaSmokeEffectPacket> type() {
+		return TYPE;
 	}
 
-	public static void send(ServerLevel serverLevel, BlockPos pos) {
-		I.send(KPacketTarget.around(serverLevel, pos, 16), buf -> {
-			buf.writeBlockPos(pos);
-		});
-	}
+	public static class Handler implements PlayPacketHandler<SLavaSmokeEffectPacket> {
+		public static final StreamCodec<RegistryFriendlyByteBuf, SLavaSmokeEffectPacket> STREAM_CODEC = StreamCodec.composite(
+				BlockPos.STREAM_CODEC,
+				SLavaSmokeEffectPacket::pos,
+				SLavaSmokeEffectPacket::new
+		);
 
+		@Override
+		public void handle(SLavaSmokeEffectPacket packet, PayloadContext payloadContext) {
+			payloadContext.execute(() -> {
+				var level = Minecraft.getInstance().level;
+				for (var i = 0; i < 10; ++i) {
+					var d0 = RANDOM.nextGaussian() * 0.02D;
+					var d1 = RANDOM.nextGaussian() * 0.02D;
+					var d2 = RANDOM.nextGaussian() * 0.02D;
+					level.addParticle(
+							ParticleTypes.SMOKE,
+							packet.pos.getX() + RANDOM.nextFloat(),
+							packet.pos.getY(),
+							packet.pos.getZ() + RANDOM.nextFloat(),
+							d0,
+							d1,
+							d2);
+				}
+				level.playLocalSound(packet.pos, SoundEvents.LAVA_AMBIENT, SoundSource.AMBIENT, 0.8F, 0.8F, false);
+			});
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, SLavaSmokeEffectPacket> streamCodec() {
+			return STREAM_CODEC;
+		}
+	}
 }

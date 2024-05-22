@@ -34,7 +34,7 @@ public class SnowVariantModel extends ForwardingBakedModel {
 		if (SnowClientConfig.snowVariants && pos != null) {
 			if (blockView.getBlockEntityRenderData(pos) instanceof RenderData) {
 				model = variantModel;
-			} else if (state.hasProperty(DoublePlantBlock.HALF) && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
+			} else if (state.hasProperty(DoublePlantBlock.HALF) && blockView.getBlockState(pos.below()).is(CoreModule.SNOW)) {
 				model = variantModel;
 			}
 		}

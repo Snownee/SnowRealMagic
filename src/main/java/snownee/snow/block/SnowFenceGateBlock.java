@@ -6,7 +6,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -22,13 +24,12 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
-import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.mixin.FenceGateBlockAccess;
 
 public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVariant, WaterLoggableSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
-		super(properties, WoodType.OAK);
+		super(WoodType.OAK, properties);
 	}
 
 	@Override
@@ -70,7 +71,8 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	}
 
 	@Override
-	public InteractionResult use(
+	protected ItemInteractionResult useItemOn(
+			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
 			BlockPos blockPos,
@@ -78,7 +80,18 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
 		adjustSounds(blockState, level, blockPos);
-		return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
+		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			BlockHitResult blockHitResult) {
+		adjustSounds(blockState, level, blockPos);
+		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
 
 	private void adjustSounds(BlockState blockState, LevelAccessor level, BlockPos blockPos) {

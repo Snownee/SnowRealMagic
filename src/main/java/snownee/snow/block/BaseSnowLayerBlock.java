@@ -1,18 +1,16 @@
 package snownee.snow.block;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -29,23 +27,21 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
-import net.minecraft.world.level.block.WitherRoseBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
-	public EntitySnowLayerBlock(Block.Properties properties) {
+public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
+	public BaseSnowLayerBlock(Properties properties) {
 		super(properties);
 	}
 
@@ -105,7 +101,7 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof EntitySnowLayerBlock) {
+		if (state.getBlock() instanceof BaseSnowLayerBlock) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
@@ -116,8 +112,11 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
-		return getRaw(state, worldIn, pos).isPathfindable(worldIn, pos, type);
+	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
+		return switch (pathComputationType) {
+			case LAND -> true;
+			case WATER, AIR -> false;
+		};
 	}
 
 	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
@@ -143,28 +142,11 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 
 	@Override
 	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
-		if (entityIn instanceof LivingEntity) {
-			if (!worldIn.isClientSide && worldIn.getDifficulty() != Difficulty.PEACEFUL) {
-				if (getRaw(state, worldIn, pos).getBlock() instanceof WitherRoseBlock) {
-					LivingEntity livingentity = (LivingEntity) entityIn;
-					if (!livingentity.isInvulnerableTo(worldIn.damageSources().wither())) {
-						livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40));
-					}
-				}
-			} else if (entityIn.getType() != EntityType.FOX && entityIn.getType() != EntityType.BEE) {
-				BlockState stateIn = getRaw(state, worldIn, pos);
-				if (stateIn.getBlock() instanceof SweetBerryBushBlock) {
-					entityIn.makeStuckInBlock(state, new Vec3(0.8F, 0.75D, 0.8F));
-					if (!worldIn.isClientSide && stateIn.getValue(SweetBerryBushBlock.AGE) > 0 &&
-							(entityIn.xOld != entityIn.getX() || entityIn.zOld != entityIn.getZ())) {
-						double d0 = Math.abs(entityIn.getX() - entityIn.xOld);
-						double d1 = Math.abs(entityIn.getZ() - entityIn.zOld);
-						if (d0 >= 0.003F || d1 >= 0.003F) {
-							entityIn.hurt(worldIn.damageSources().sweetBerryBush(), 1.0F);
-						}
-					}
-				}
-			}
+		var blockState = getRaw(state, worldIn, pos);
+		var block = blockState.getBlock();
+
+		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
+			block.entityInside(blockState, worldIn, pos, entityIn);
 		}
 	}
 
@@ -190,18 +172,47 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
+	protected InteractionResult useWithoutItem(
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			BlockHitResult blockHitResult) {
+		InteractionResult result = getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
 		if (result.consumesAction()) {
-			BlockState stateNow = worldIn.getBlockState(pos);
+			BlockState stateNow = level.getBlockState(blockPos);
 			if (!stateNow.is(this)) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
 			}
 			return result;
 		}
-		return super.use(state, worldIn, pos, player, handIn, hit);
+		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(
+			ItemStack itemStack,
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			InteractionHand interactionHand,
+			BlockHitResult blockHitResult) {
+		ItemInteractionResult result = getRaw(blockState, level, blockPos).useItemOn(
+				itemStack,
+				level,
+				player,
+				interactionHand,
+				blockHitResult);
+		if (result.consumesAction()) {
+			BlockState stateNow = level.getBlockState(blockPos);
+			if (!stateNow.is(this)) {
+				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+			}
+			return result;
+		}
+		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
 
 	@Override
@@ -217,15 +228,15 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 				int layers = state.getValue(LAYERS);
 				worldIn.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
 			}
-		} catch (Throwable e) {
+		} catch (Throwable ignored) {
 		}
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(LevelReader worldIn, BlockPos pos, BlockState state, boolean isClient) {
-		BlockState contained = getRaw(state, worldIn, pos);
+	public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+		BlockState contained = getRaw(blockState, levelReader, blockPos);
 		Block block = contained.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(worldIn, pos, contained, isClient);
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(levelReader, blockPos, contained);
 	}
 
 	@Override
@@ -247,8 +258,12 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	}
 
 	@Override
-	public Item asItem() {
+	public @NotNull Item asItem() {
 		return Items.SNOW;
 	}
 
+	@Override
+	public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+		return SnowVariant.super.getCloneItemStack(levelReader, blockPos, blockState, null, null);
+	}
 }

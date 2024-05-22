@@ -5,6 +5,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
@@ -20,10 +22,11 @@ import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
-import snownee.kiwi.KiwiModule.RenderLayer.Layer;
+import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.KiwiEntityTypeBuilder;
-import snownee.snow.block.EntitySnowLayerBlock;
+import snownee.snow.block.BaseSnowLayerBlock;
+import snownee.snow.block.NoCollisionSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
@@ -37,12 +40,17 @@ import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
+	public static final TagKey<Block> SNOW = blockTag(SnowRealMagic.MODID, "snow");
 
 	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
 
 	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
 
+	public static final TagKey<Block> PLANTS = blockTag(SnowRealMagic.MODID, "plants");
+
 	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
+
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.MODID, "entity_inside");
 
 	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
 
@@ -50,44 +58,64 @@ public class CoreModule extends AbstractModule {
 
 	@NoItem
 	@Name("snow")
-	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_BLOCK = go(() -> new BaseSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@Name("snow_no_collision")
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_NO_COLLISION_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+
+	@NoItem
+	@Name("snow_plant")
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+
+	@NoItem
+	@Name("snow_doubleplant_lower")
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+
+	@NoItem
+	@Name("snow_doubleplant_upper")
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+
+	@NoItem
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
 			.randomTicks()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW).randomTicks()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@NoItem
-	@RenderLayer(Layer.CUTOUT)
+	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW)
 			.randomTicks()
 			.dynamicShape()));
 
 	@Name("snow")
-	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);
+	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SNOW_BLOCK);
 
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,
@@ -107,7 +135,7 @@ public class CoreModule extends AbstractModule {
 			.trackedUpdateRate(20)
 			.build());
 
-	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(new NormalizeLoot.Serializer()));
+	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
 			SnowRealMagic.MODID + ":blizzardStrength",
@@ -126,13 +154,14 @@ public class CoreModule extends AbstractModule {
 	@Override
 	protected void init(InitEvent event) {
 		event.enqueueWork(() -> {
+			Item.BY_BLOCK.put(CoreModule.SNOW_BLOCK.get(), Items.SNOW);
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				final var below = blockPos.below();
 				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
 						blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
 			};
 			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
-			((BlockAccess) TILE_BLOCK.get()).getProperties().isValidSpawn(predicate);
+			((BlockAccess) SNOW_BLOCK.get()).getProperties().isValidSpawn(predicate);
 		});
 	}
 

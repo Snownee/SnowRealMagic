@@ -4,8 +4,12 @@ import static snownee.snow.CoreModule.FENCE;
 import static snownee.snow.CoreModule.FENCE2;
 import static snownee.snow.CoreModule.FENCE_GATE;
 import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.SNOW_BLOCK;
+import static snownee.snow.CoreModule.SNOW_DOUBLEPLANT_LOWER_BLOCK;
+import static snownee.snow.CoreModule.SNOW_DOUBLEPLANT_UPPER_BLOCK;
+import static snownee.snow.CoreModule.SNOW_NO_COLLISION_BLOCK;
+import static snownee.snow.CoreModule.SNOW_PLANT_BLOCK;
 import static snownee.snow.CoreModule.STAIRS;
-import static snownee.snow.CoreModule.TILE_BLOCK;
 import static snownee.snow.CoreModule.WALL;
 
 import java.io.IOException;
@@ -45,7 +49,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.KiwiGO;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.CoreModule;
 import snownee.snow.client.FallingSnowRenderer;
@@ -128,10 +131,21 @@ public class ClientProxy implements ClientModInitializer {
 			});
 			ctx.addModels(extraModels);
 
-			List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
+			var allBlocks = List.of(
+					SNOW_BLOCK,
+					SNOW_NO_COLLISION_BLOCK,
+					SNOW_PLANT_BLOCK,
+					SNOW_DOUBLEPLANT_LOWER_BLOCK,
+					SNOW_DOUBLEPLANT_UPPER_BLOCK,
+					FENCE,
+					FENCE2,
+					STAIRS,
+					SLAB,
+					FENCE_GATE,
+					WALL);
 			Set<ResourceLocation> snowCoveredModelIds = Sets.newHashSet();
 			Map<UnbakedModel, UnbakedModel> transform = Maps.newHashMap();
-			for (KiwiGO<? extends Block> block : allBlocks) {
+			for (var block : allBlocks) {
 				for (BlockState state : block.get().getStateDefinition().getPossibleStates()) {
 					ResourceLocation modelId = BlockModelShaper.stateToModelLocation(BuiltInRegistries.BLOCK.getKey(block.get()), state);
 					snowCoveredModelIds.add(modelId);

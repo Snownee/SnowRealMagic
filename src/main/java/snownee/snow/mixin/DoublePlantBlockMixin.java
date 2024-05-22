@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +24,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import snownee.snow.block.EntitySnowLayerBlock;
+import snownee.snow.block.BaseSnowLayerBlock;
 
 @Mixin(DoublePlantBlock.class)
 public class DoublePlantBlockMixin {
@@ -30,26 +32,33 @@ public class DoublePlantBlockMixin {
 	@Final
 	public static EnumProperty<DoubleBlockHalf> HALF;
 
-	@Inject(method = "preventCreativeDropFromBottomPart", at = @At("TAIL"))
-	private static void srm_preventCreativeDropFromBottomPart(Level world, BlockPos pos, BlockState state, Player player, CallbackInfo ci) {
-		DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
-		if (doubleblockhalf == DoubleBlockHalf.UPPER) {
-			BlockPos blockpos = pos.below();
-			BlockState blockstate = world.getBlockState(blockpos);
-			if (blockstate.getBlock() instanceof EntitySnowLayerBlock) {
-				world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-				world.setBlock(
-						blockpos,
-						Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blockstate.getValue(SnowLayerBlock.LAYERS)),
-						35);
-				world.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, blockpos, Block.getId(state));
-			}
-		}
-	}
 
-	@Inject(method = "playerWillDestroy", at = @At("TAIL"))
-	private void srm_playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player, CallbackInfo ci) {
-		srm_preventCreativeDropFromBottomPart(worldIn, pos, state, player, ci);
+	// TODO 确认逻辑
+	@Inject(
+			method = "preventDropFromBottomPart",
+			at = @At(
+					value = "TAIL"))
+	private static void srm_preventDropFromBottomPart(
+			Level level,
+			BlockPos pos,
+			BlockState state,
+			Player player,
+			CallbackInfo ci,
+			@Local DoubleBlockHalf doubleBlockHalf) {
+		if (doubleBlockHalf != DoubleBlockHalf.UPPER) {
+			return;
+		}
+		var belowPos = pos.below();
+		var belowState = level.getBlockState(belowPos);
+		if (!(belowState.getBlock() instanceof BaseSnowLayerBlock)) {
+			return;
+		}
+		level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
+		level.setBlock(
+				belowPos,
+				Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, belowState.getValue(SnowLayerBlock.LAYERS)),
+				35);
+		level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, belowPos, Block.getId(state));
 	}
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
@@ -61,21 +70,19 @@ public class DoublePlantBlockMixin {
 			BlockPos currentPos,
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> cir) {
-		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
-		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN &&
-				facingState.getBlock() instanceof EntitySnowLayerBlock) {
-			cir.setReturnValue(stateIn);
-		}
-		if (facing.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP &&
-				facingState.getBlock() instanceof EntitySnowLayerBlock) {
-			cir.setReturnValue(stateIn);
+		var doubleblockhalf = stateIn.getValue(HALF);
+		if (facing.getAxis() == Direction.Axis.Y && facingState.getBlock() instanceof BaseSnowLayerBlock) {
+			if ((doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN) ||
+					(doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP)) {
+				cir.setReturnValue(stateIn);
+			}
 		}
 	}
 
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	public void srm_canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if (state.getValue(HALF) == DoubleBlockHalf.UPPER &&
-				worldIn.getBlockState(pos.below()).getBlock() instanceof EntitySnowLayerBlock) {
+				worldIn.getBlockState(pos.below()).getBlock() instanceof BaseSnowLayerBlock) {
 			cir.setReturnValue(true);
 		}
 	}

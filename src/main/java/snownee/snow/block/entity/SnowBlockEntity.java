@@ -1,6 +1,9 @@
 package snownee.snow.block.entity;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -10,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.block.entity.ModBlockEntity;
-import snownee.kiwi.util.Util;
+import snownee.kiwi.util.KUtil;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
@@ -70,12 +73,6 @@ public class SnowBlockEntity extends ModBlockEntity {
 	}
 
 	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
-		loadState(compound, false);
-	}
-
-	@Override
 	protected void readPacketData(CompoundTag data) {
 		loadState(data, true);
 	}
@@ -89,9 +86,9 @@ public class SnowBlockEntity extends ModBlockEntity {
 			}
 		}
 		if (data.contains("Block")) {
-			ResourceLocation id = Util.RL(data.getString("Block"));
+			ResourceLocation id = KUtil.RL(data.getString("Block"));
 			Block block = BuiltInRegistries.BLOCK.get(id);
-			if (block != null && block != Blocks.AIR) {
+			if (block != Blocks.AIR) {
 				changed |= setContainedState(block.defaultBlockState(), network);
 			}
 		} else {
@@ -114,15 +111,20 @@ public class SnowBlockEntity extends ModBlockEntity {
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
-		saveState(compound, false);
+	protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+		super.loadAdditional(compoundTag, provider);
+		loadState(compoundTag, false);
 	}
 
 	@Override
-	protected CompoundTag writePacketData(CompoundTag data) {
-		saveState(data, true);
-		return data;
+	protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+		super.saveAdditional(compoundTag, provider);
+		saveState(compoundTag, false);
 	}
 
+	@Override
+	protected @NotNull CompoundTag writePacketData(CompoundTag compoundTag, HolderLookup.Provider provider) {
+		saveState(compoundTag, true);
+		return compoundTag;
+	}
 }
