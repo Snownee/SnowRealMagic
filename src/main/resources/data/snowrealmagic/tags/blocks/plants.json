@@ -16,10 +16,6 @@
 			"id": "#c:mushrooms",
 			"required": false
 		},
-		{
-			"id": "#c:saplings",
-			"required": false
-		},
 		"#saplings",
 		{
 			"id": "#c:bushes",

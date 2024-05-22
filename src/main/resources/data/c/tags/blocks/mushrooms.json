@@ -1,6 +1,7 @@
 {
 	"replace": false,
 	"values": [
-		"mushroom"
+		"brown_mushroom",
+		"red_mushroom"
 	]
 }

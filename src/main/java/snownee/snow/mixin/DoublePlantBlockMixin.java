@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import snownee.snow.block.BaseSnowLayerBlock;
+import snownee.snow.block.SRMSnowLayerBlock;
 
 @Mixin(DoublePlantBlock.class)
 public class DoublePlantBlockMixin {
@@ -50,7 +50,7 @@ public class DoublePlantBlockMixin {
 		}
 		var belowPos = pos.below();
 		var belowState = level.getBlockState(belowPos);
-		if (!(belowState.getBlock() instanceof BaseSnowLayerBlock)) {
+		if (!(belowState.getBlock() instanceof SRMSnowLayerBlock)) {
 			return;
 		}
 		level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
@@ -71,7 +71,7 @@ public class DoublePlantBlockMixin {
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> cir) {
 		var doubleblockhalf = stateIn.getValue(HALF);
-		if (facing.getAxis() == Direction.Axis.Y && facingState.getBlock() instanceof BaseSnowLayerBlock) {
+		if (facing.getAxis() == Direction.Axis.Y && facingState.getBlock() instanceof SRMSnowLayerBlock) {
 			if ((doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN) ||
 					(doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP)) {
 				cir.setReturnValue(stateIn);
@@ -82,7 +82,7 @@ public class DoublePlantBlockMixin {
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	public void srm_canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		if (state.getValue(HALF) == DoubleBlockHalf.UPPER &&
-				worldIn.getBlockState(pos.below()).getBlock() instanceof BaseSnowLayerBlock) {
+				worldIn.getBlockState(pos.below()).getBlock() instanceof SRMSnowLayerBlock) {
 			cir.setReturnValue(true);
 		}
 	}

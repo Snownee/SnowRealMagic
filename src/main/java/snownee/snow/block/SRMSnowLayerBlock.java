@@ -40,8 +40,8 @@ import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
-	public BaseSnowLayerBlock(Properties properties) {
+public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
+	public SRMSnowLayerBlock(Properties properties) {
 		super(properties);
 	}
 
@@ -101,7 +101,7 @@ public class BaseSnowLayerBlock extends SnowLayerBlock implements EntityBlock, B
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof BaseSnowLayerBlock) {
+		if (state.getBlock() instanceof SRMSnowLayerBlock) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {

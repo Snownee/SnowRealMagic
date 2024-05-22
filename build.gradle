@@ -8,8 +8,9 @@ sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
-version = project.minecraft_version + "-fabric-" + project.mod_version
+version = project.minecraft_version + "-Fabric-" + project.mod_version
 group = project.maven_group
+var realVersion = project.mod_version + "+fabric"
 
 repositories {
     maven { url = "https://maven.parchmentmc.org" }
@@ -73,10 +74,10 @@ loom {
 }
 
 processResources {
-    inputs.property "version", project.mod_version
+    inputs.property "version", realVersion
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.mod_version
+        expand "version": realVersion
     }
 }
 
@@ -132,7 +133,7 @@ publishing {
 unifiedPublishing {
     project {
         displayName = "[Fabric $project.supported_version] $project.mod_version"
-        version = project.mod_version // Optional, Inferred from project by default
+        version = realVersion // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
         gameVersions = ["1.20.5", "1.20.6"]

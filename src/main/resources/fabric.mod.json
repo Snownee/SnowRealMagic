@@ -24,6 +24,9 @@
 		"client": [
 			"snownee.snow.util.ClientProxy"
 		],
+		"fabric-datagen": [
+			"snownee.snow.datagen.SRMDataGen"
+		],
 		"jade": [
 			"snownee.snow.compat.jade.JadeCompat"
 		]

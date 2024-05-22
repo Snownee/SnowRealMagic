@@ -4,7 +4,7 @@ package snownee.snow.block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 
-public class NoCollisionSnowLayerBlock extends BaseSnowLayerBlock {
+public class NoCollisionSnowLayerBlock extends SRMSnowLayerBlock {
 	public NoCollisionSnowLayerBlock(Properties properties) {
 		super(properties);
 	}
