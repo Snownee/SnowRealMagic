@@ -26,10 +26,7 @@ import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.KiwiEntityTypeBuilder;
 import snownee.snow.block.BaseSnowLayerBlock;
-import snownee.snow.block.DoublePlantDownSnowLayerBlock;
-import snownee.snow.block.DoublePlantUpSnowLayerBlock;
 import snownee.snow.block.NoCollisionSnowLayerBlock;
-import snownee.snow.block.PlantSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
@@ -72,17 +69,17 @@ public class CoreModule extends AbstractModule {
 	@NoItem
 	@Name("snow_plant")
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<BaseSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new PlantSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_doubleplant_lower")
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new DoublePlantDownSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_doubleplant_upper")
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new DoublePlantUpSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<BaseSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
