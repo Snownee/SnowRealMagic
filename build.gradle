@@ -67,7 +67,9 @@ dependencies {
 }
 
 fabricApi {
-    configureDataGeneration()
+    configureDataGeneration {
+        modId.set(project.mod_id)
+    }
 }
 
 loom {
@@ -107,7 +109,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude '**/*.bat'
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+        rename { "${it}_${project.archivesBaseName}" }
     }
 }
 

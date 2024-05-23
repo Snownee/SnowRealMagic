@@ -63,11 +63,11 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 		getOrCreateTagBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
 		getOrCreateTagBuilder(BlockTags.WALLS).add(WALL.get());
 
-		getOrCreateTagBuilder(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
-		getOrCreateTagBuilder(SNOWY_SETTING).addTag(BlockTags.SNOW);
+		getOrCreateTagBuilder(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).forceAddTag(BlockTags.LEAVES);
+		getOrCreateTagBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
 		getOrCreateTagBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
 
-		getOrCreateTagBuilder(CoreModule.NOT_CONTAINABLES).addTag(BlockTags.LEAVES);
-		getOrCreateTagBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).addTag(BlockTags.SLABS);
+		getOrCreateTagBuilder(CoreModule.NOT_CONTAINABLES).forceAddTag(BlockTags.LEAVES);
+		getOrCreateTagBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
 	}
 }
