@@ -5,10 +5,12 @@ import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import snownee.snow.CoreModule;
+import snownee.kiwi.util.GameObjectLookup;
+import snownee.snow.SnowRealMagic;
 import snownee.snow.loot.NormalizeLoot;
 
 public class SRMLootTableProvider extends FabricBlockLootTableProvider {
@@ -21,10 +23,7 @@ public class SRMLootTableProvider extends FabricBlockLootTableProvider {
 	@Override
 	public void generate() {
 		var normalizePool = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(NormalizeLoot.builder());
-		add(CoreModule.SNOW_EXTRA_COLLISION_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOWY_PLANT.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOWY_DOUBLE_PLANT_LOWER.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOWY_DOUBLE_PLANT_UPPER.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOW_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
+		LootTable.Builder table = LootTable.lootTable().withPool(normalizePool);
+		GameObjectLookup.all(Registries.BLOCK, SnowRealMagic.ID).forEach(block -> add(block, table));
 	}
 }

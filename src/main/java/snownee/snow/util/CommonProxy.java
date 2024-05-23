@@ -26,7 +26,7 @@ import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 
-@Mod(SnowRealMagic.MODID)
+@Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
 	public static boolean terraforged;
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");

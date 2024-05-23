@@ -34,7 +34,7 @@ public final class SnowClient {
 	public static BakedModel cachedSnowModel;
 	public static BakedModel cachedOverlayModel;
 
-	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
+	public static final ResourceLocation OVERLAY_MODEL = SnowRealMagic.id("block/overlay");
 
 	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
 	public static final Set<Block> overrideBlocks = Sets.newHashSet();

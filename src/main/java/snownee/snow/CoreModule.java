@@ -41,21 +41,21 @@ import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
-	public static final TagKey<Block> SNOW_TAG = blockTag(SnowRealMagic.MODID, "snow");
+	public static final TagKey<Block> SNOW_TAG = blockTag(SnowRealMagic.ID, "snow");
 
-	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
+	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.ID, "snowy_setting");
 
-	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.MODID, "containables");
+	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.ID, "containables");
 
-	public static final TagKey<Block> PLANTS = blockTag(SnowRealMagic.MODID, "plants");
+	public static final TagKey<Block> PLANTS = blockTag(SnowRealMagic.ID, "plants");
 
-	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.MODID, "not_containables");
+	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.ID, "not_containables");
 
-	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.MODID, "entity_inside");
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.ID, "entity_inside");
 
-	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.MODID, "offset_y");
+	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.ID, "offset_y");
 
-	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
+	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.ID, "cannot_accumulate_on");
 
 	@NoItem
 	@Name("snow_extra_collision")
@@ -131,12 +131,12 @@ public class CoreModule extends AbstractModule {
 	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
-			SnowRealMagic.MODID + ":blizzardStrength",
+			SnowRealMagic.ID + ":blizzardStrength",
 			GameRules.Category.MISC,
 			IntegerValue.create(0));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register(
-			SnowRealMagic.MODID + ":blizzardFrequency",
+			SnowRealMagic.ID + ":blizzardFrequency",
 			GameRules.Category.MISC,
 			IntegerValue.create(10000));
 
