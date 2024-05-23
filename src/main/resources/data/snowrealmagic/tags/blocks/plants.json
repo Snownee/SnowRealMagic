@@ -21,6 +21,7 @@
 			"id": "#c:bushes",
 			"required": false
 		},
+		"sweet_berry_bush",
 		"dead_bush",
 		{
 			"id": "#regions_unexplored:shrubs",

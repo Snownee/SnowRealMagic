@@ -1,9 +1,9 @@
 {
   "values": [
+    "snowrealmagic:snow_extra_collision",
+    "snowrealmagic:snowy_double_plant_lower",
+    "snowrealmagic:snowy_double_plant_upper",
     "snowrealmagic:snow",
-    "snowrealmagic:snow_doubleplant_lower",
-    "snowrealmagic:snow_doubleplant_upper",
-    "snowrealmagic:snow_no_collision",
-    "snowrealmagic:snow_plant"
+    "snowrealmagic:snowy_plant"
   ]
 }

@@ -21,10 +21,10 @@ public class SRMLootTableProvider extends FabricBlockLootTableProvider {
 	@Override
 	public void generate() {
 		var normalizePool = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(NormalizeLoot.builder());
+		add(CoreModule.SNOW_EXTRA_COLLISION_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
+		add(CoreModule.SNOWY_PLANT.get(), LootTable.lootTable().withPool(normalizePool));
+		add(CoreModule.SNOWY_DOUBLE_PLANT_LOWER.get(), LootTable.lootTable().withPool(normalizePool));
+		add(CoreModule.SNOWY_DOUBLE_PLANT_UPPER.get(), LootTable.lootTable().withPool(normalizePool));
 		add(CoreModule.SNOW_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOW_PLANT_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOW_DOUBLEPLANT_LOWER_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOW_DOUBLEPLANT_UPPER_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
-		add(CoreModule.SNOW_NO_COLLISION_BLOCK.get(), LootTable.lootTable().withPool(normalizePool));
 	}
 }

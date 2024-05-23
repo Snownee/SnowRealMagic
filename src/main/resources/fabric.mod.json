@@ -9,7 +9,8 @@
 	],
 	"contributors": [
 		"minzhi",
-		"MikhailTapio"
+		"MikhailTapio",
+		"SettingDust"
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic",
@@ -38,8 +39,8 @@
 	"depends": {
 		"fabric-api": ">=0.91",
 		"fabricloader": ">=0.15",
-		"minecraft": ">=1.20",
-		"kiwi": ">=11.3"
+		"minecraft": ">=1.20.5",
+		"kiwi": ">=14.1.2"
 	},
 	"custom": {
 		"modmenu": {

@@ -34,7 +34,7 @@ public class ShapeCaches {
 			SnowVariant snowVariant = (SnowVariant) state.getBlock();
 			int layers = snowVariant.srm$layers(state, level, pos);
 			Key key;
-			if (state.is(CoreModule.SNOW)) { // block like flowers has offset, so we can't cache it
+			if (state.is(CoreModule.SNOW_TAG)) { // block like flowers has offset, so we can't cache it
 				BlockState raw = snowVariant.srm$getRaw(state, level, pos);
 				Class<?> clazz = raw.getBlock().getClass();
 				if (!(clazz == TallGrassBlock.class || clazz == TallFlowerBlock.class)) {

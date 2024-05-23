@@ -204,7 +204,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState stateBelow = level.getBlockState(pos.below());
-			if (stateBelow.is(CoreModule.SNOW)) {
+			if (stateBelow.is(CoreModule.SNOW_TAG)) {
 				entityIn.causeFallDamage(fallDistance, 0.2F, level.damageSources().fall());
 				return;
 			}

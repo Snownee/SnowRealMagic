@@ -138,17 +138,17 @@ public final class Hooks {
 			if (state.is(CoreModule.PLANTS)) {
 				if (state.hasProperty(DoublePlantBlock.HALF)) {
 					if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
-						result = CoreModule.SNOW_DOUBLEPLANT_LOWER_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+						result = CoreModule.SNOWY_DOUBLE_PLANT_LOWER.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 					} else {
-						result = CoreModule.SNOW_DOUBLEPLANT_UPPER_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+						result = CoreModule.SNOWY_DOUBLE_PLANT_UPPER.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 					}
 				} else {
-					result = CoreModule.SNOW_PLANT_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+					result = CoreModule.SNOWY_PLANT.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 				}
 			} else if (shape.isEmpty()) {
-				result = CoreModule.SNOW_NO_COLLISION_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
-			} else {
 				result = CoreModule.SNOW_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+			} else {
+				result = CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 			}
 
 			level.setBlock(pos, result, flags);
@@ -283,11 +283,11 @@ public final class Hooks {
 	public static void placeNormalSnow(LevelAccessor level, BlockPos pos, int layers, int flags) {
 		BlockState stateBelow = level.getBlockState(pos.below());
 		Block block = SnowCommonConfig.fancySnowOnUpperSlab && stateBelow.getBlock() instanceof SlabBlock ?
-				CoreModule.SNOW_BLOCK.get() :
+				CoreModule.SNOW_EXTRA_COLLISION_BLOCK.get() :
 				Blocks.SNOW;
 		stateBelow = block.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Mth.clamp(layers, 1, 8));
 		level.setBlock(pos, stateBelow, flags);
-		if (stateBelow.is(CoreModule.SNOW)) {
+		if (stateBelow.is(CoreModule.SNOW_TAG)) {
 			setPlacedBy(level, pos, stateBelow);
 		}
 	}
@@ -473,12 +473,12 @@ public final class Hooks {
 		var blockEntityData = stack.getComponentsPatch().get(DataComponents.BLOCK_ENTITY_DATA);
 		if (blockEntityData != null && blockEntityData.isPresent()
 				&& "snowrealmagic:snow".equals(blockEntityData.get().getUnsafe().getString("id"))) {
-			return CoreModule.SNOW_BLOCK.defaultBlockState();
+			return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
 		}
 		if (SnowCommonConfig.fancySnowOnUpperSlab) {
 			BlockState stateBelow = context.getLevel().getBlockState(context.getClickedPos().below());
 			if (stateBelow.getBlock() instanceof SlabBlock) {
-				return CoreModule.SNOW_BLOCK.defaultBlockState();
+				return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
 			}
 		}
 		return Blocks.SNOW.defaultBlockState();
@@ -506,13 +506,13 @@ public final class Hooks {
 			return false;
 		}
 		if (blockState.is(Blocks.SNOW)) {
-			level.setBlock(pos, Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()), 16 | 32);
+			level.setBlock(pos, Hooks.copyProperties(blockState, CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState()), 16 | 32);
 		}
 		var blockEntity = level.getBlockEntity(pos);
 		if (!(blockEntity instanceof SnowBlockEntity snowTile)) {
 			return false;
 		}
-		if (blockState.is(CoreModule.SNOW) && snowTile.getContainedState().isAir()) {
+		if (blockState.is(CoreModule.SNOW_TAG) && snowTile.getContainedState().isAir()) {
 			level.setBlock(pos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
 		} else {
 			snowTile.options.renderOverlay = !snowTile.options.renderOverlay;

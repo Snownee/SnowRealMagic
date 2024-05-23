@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "snowrealmagic:normalize"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

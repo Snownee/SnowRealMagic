@@ -13,7 +13,7 @@ public interface WatcherSnowVariant extends SnowVariant {
 		return 0.125;
 	}
 
-	default boolean updateOptions(BlockState state, BlockGetter level, BlockPos pos, Options options) {
+	default boolean srm$updateOptions(BlockState state, BlockGetter level, BlockPos pos, Options options) {
 		boolean ro = level.getBlockState(pos.above()).isAir();
 		return options.update(ro);
 	}

@@ -247,9 +247,4 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	public @NotNull Item asItem() {
 		return Items.SNOW;
 	}
-
-	@Override
-	public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
-		return SnowVariant.super.getCloneItemStack(levelReader, blockPos, blockState, null, null);
-	}
 }

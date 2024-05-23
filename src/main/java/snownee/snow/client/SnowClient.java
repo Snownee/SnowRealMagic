@@ -52,7 +52,7 @@ public final class SnowClient {
 		if (layer == null || layer == RenderType.solid()) {
 			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
 				//FIXME find out if still necessary
-				watcher.updateOptions(state, world, pos, options);
+				watcher.srm$updateOptions(state, world, pos, options);
 			}
 		}
 		boolean rendered = false;
@@ -82,10 +82,10 @@ public final class SnowClient {
 			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) &&
-				(!useVariant || state.is(CoreModule.SNOW))) {
+				(!useVariant || state.is(CoreModule.SNOW_TAG))) {
 			BlockPos pos2 = pos;
 			double yOffset;
-			if (state.is(CoreModule.SNOW) || CoreModule.SLAB.is(state)) {
+			if (state.is(CoreModule.SNOW_TAG) || CoreModule.SLAB.is(state)) {
 				if (cachedOverlayModel == null) {
 					cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 				}

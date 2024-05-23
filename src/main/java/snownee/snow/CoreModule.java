@@ -1,7 +1,8 @@
 package snownee.snow;
 
+import java.util.stream.Stream;
+
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -40,7 +41,7 @@ import snownee.snow.mixin.BlockAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
-	public static final TagKey<Block> SNOW = blockTag(SnowRealMagic.MODID, "snow");
+	public static final TagKey<Block> SNOW_TAG = blockTag(SnowRealMagic.MODID, "snow");
 
 	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.MODID, "snowy_setting");
 
@@ -57,24 +58,21 @@ public class CoreModule extends AbstractModule {
 	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
 
 	@NoItem
+	@Name("snow_extra_collision")
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = go(() -> new ExtraCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+
+	@NoItem
 	@Name("snow")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = go(() -> new ExtraCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	@Name("snow_no_collision")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_NO_COLLISION_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	@Name("snow_plant")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
-	@Name("snow_doubleplant_lower")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
-
-	@NoItem
-	@Name("snow_doubleplant_upper")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
@@ -110,7 +108,7 @@ public class CoreModule extends AbstractModule {
 			.dynamicShape()));
 
 	@Name("snow")
-	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SNOW_BLOCK);
+	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SNOW_EXTRA_COLLISION_BLOCK);
 
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,
@@ -142,21 +140,24 @@ public class CoreModule extends AbstractModule {
 			GameRules.Category.MISC,
 			IntegerValue.create(10000));
 
-	public CoreModule() {
-		decorators.remove(BuiltInRegistries.BLOCK);
-	}
-
 	@Override
 	protected void init(InitEvent event) {
 		event.enqueueWork(() -> {
-			Item.BY_BLOCK.put(CoreModule.SNOW_BLOCK.get(), Items.SNOW);
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				final var below = blockPos.below();
 				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
 						blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
 			};
+			Stream.of(
+					SNOW_EXTRA_COLLISION_BLOCK,
+					SNOWY_DOUBLE_PLANT_LOWER,
+					SNOWY_DOUBLE_PLANT_UPPER,
+					SNOW_BLOCK,
+					SNOWY_PLANT).map(KiwiGO::get).forEach(block -> {
+				Item.BY_BLOCK.put(block, Items.SNOW);
+				((BlockAccess) block).getProperties().isValidSpawn(predicate);
+			});
 			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
-			((BlockAccess) SNOW_BLOCK.get()).getProperties().isValidSpawn(predicate);
 		});
 	}
 
