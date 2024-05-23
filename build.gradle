@@ -105,9 +105,17 @@ java {
     // withSourcesJar()
 }
 
-jar {
+tasks.withType(Jar).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    exclude '**/*.bat'
+    it.exclude([
+            "/assets/${project.mod_id}/lang/en_us.existing.json",
+            "/.cache",
+            "**/*.bat",
+            "**/*.archive"
+    ])
+}
+
+jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
