@@ -9,6 +9,7 @@ public class SRMDataGen implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(SRMBlockTagsProvider::new);
+		pack.addProvider(SRMLootTableProvider::new);
 		pack.addProvider(KiwiLanguageProvider::new);
 	}
 }
