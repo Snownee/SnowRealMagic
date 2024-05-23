@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.CoreModule;
-import snownee.snow.block.NoCollisionSnowLayerBlock;
+import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 
 public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 	public SRMBlockTagsProvider(
@@ -42,7 +42,7 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 				SNOW_NO_COLLISION_BLOCK,
 				SNOW_PLANT_BLOCK).map(KiwiGO::get).toList()) {
 			getOrCreateTagBuilder(CoreModule.SNOW).add(block);
-			if (block instanceof NoCollisionSnowLayerBlock) {
+			if (!(block instanceof ExtraCollisionSnowLayerBlock)) {
 				getOrCreateTagBuilder(BlockTags.GOATS_SPAWNABLE_ON).add(block);
 				getOrCreateTagBuilder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
 				getOrCreateTagBuilder(BlockTags.RABBITS_SPAWNABLE_ON).add(block);

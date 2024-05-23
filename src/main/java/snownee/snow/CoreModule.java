@@ -25,8 +25,8 @@ import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.kiwi.util.KiwiEntityTypeBuilder;
+import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 import snownee.snow.block.SRMSnowLayerBlock;
-import snownee.snow.block.NoCollisionSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
@@ -58,28 +58,23 @@ public class CoreModule extends AbstractModule {
 
 	@NoItem
 	@Name("snow")
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = go(() -> new ExtraCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_no_collision")
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_NO_COLLISION_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_NO_COLLISION_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_plant")
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_PLANT_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_doubleplant_lower")
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_LOWER_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@Name("snow_doubleplant_upper")
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new NoCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_DOUBLEPLANT_UPPER_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)

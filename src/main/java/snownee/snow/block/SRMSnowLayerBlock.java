@@ -30,16 +30,18 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.kiwi.KiwiModule;
+import snownee.kiwi.RenderLayerEnum;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 
+@KiwiModule.RenderLayer(RenderLayerEnum.CUTOUT)
 public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public SRMSnowLayerBlock(Properties properties) {
 		super(properties);
@@ -48,14 +50,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new SnowBlockEntity(pos, state);
-	}
-
-	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
 	}
 
 	@Override
@@ -109,14 +103,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			}
 		}
 		return state;
-	}
-
-	@Override
-	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
-		return switch (pathComputationType) {
-			case LAND -> true;
-			case WATER, AIR -> false;
-		};
 	}
 
 	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
