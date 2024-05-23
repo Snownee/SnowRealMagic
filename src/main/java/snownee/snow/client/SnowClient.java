@@ -68,7 +68,7 @@ public final class SnowClient {
 			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		SnowVariant snowVariant = (SnowVariant) state.getBlock();
-		BlockState snow = snowVariant.getSnowState(state, world, pos);
+		BlockState snow = snowVariant.srm$getSnowState(state, world, pos);
 		if (!snow.isAir() && (layer == null || layer == RenderType.solid())) {
 			if (snow == Blocks.SNOW.defaultBlockState()) {
 				if (cachedSnowModel == null) {
@@ -97,10 +97,10 @@ public final class SnowClient {
 					pos2 = pos.below();
 				}
 			} else {
-				yOffset = (float) snowVariant.getYOffset();
+				yOffset = (float) snowVariant.srm$getYOffset();
 				model = ClientProxy.getBlockModel(state);
 			}
-			if (snowVariant.layers(state, world, pos) == 8) {
+			if (snowVariant.srm$layers(state, world, pos) == 8) {
 				yOffset -= 0.002;
 			}
 			rendered |= api.translateYAndRender(world, state, pos2, layer, randomSupplier, cullSides, model, yOffset);

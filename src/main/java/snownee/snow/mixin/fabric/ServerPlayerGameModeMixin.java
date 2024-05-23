@@ -26,7 +26,7 @@ public class ServerPlayerGameModeMixin {
 			Operation<Boolean> original,
 			@Local(argsOnly = true) BlockPos pos) {
 		if (blockState.getBlock() instanceof WaterLoggableSnowVariant snowVariant) {
-			blockState = snowVariant.getRaw(blockState, player.level(), pos);
+			blockState = snowVariant.srm$getRaw(blockState, player.level(), pos);
 		}
 		return original.call(player, blockState);
 	}

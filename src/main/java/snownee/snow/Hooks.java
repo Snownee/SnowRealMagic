@@ -300,7 +300,7 @@ public final class Hooks {
 
 	public static boolean canFallThrough(BlockState state, Level level, BlockPos pos) {
 		if (state.getBlock() instanceof SnowVariant snow) {
-			if (snow.maxLayers(state, level, pos) == 8 && snow.layers(state, level, pos) < 8) {
+			if (snow.srm$maxLayers(state, level, pos) == 8 && snow.srm$layers(state, level, pos) < 8) {
 				return true;
 			}
 		}
@@ -320,14 +320,14 @@ public final class Hooks {
 		}
 		Holder<Biome> biome = level.getBiome(pos);
 		SnowVariant snow = (SnowVariant) state.getBlock();
-		int layers = snow.layers(state, level, pos);
+		int layers = snow.srm$layers(state, level, pos);
 		boolean meltByTemperature = false;
 		boolean meltByBrightness = false;
 		if (!SnowCommonConfig.snowNeverMelt) {
 			if (layers == 8) {
 				BlockPos above = pos.above();
 				BlockState upState = level.getBlockState(above);
-				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
+				if (upState.getBlock() instanceof SnowVariant s && s.srm$layers(upState, level, above) > 0) {
 					return;
 				}
 				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
@@ -373,7 +373,7 @@ public final class Hooks {
 			BiPredicate<LevelAccessor, BlockPos> filter,
 			boolean accumulate) {
 		SnowVariant centerSnowVariant = (SnowVariant) centerState.getBlock();
-		int i = centerSnowVariant.layers(centerState, level, pos);
+		int i = centerSnowVariant.srm$layers(centerState, level, pos);
 		MutableBlockPos pos2 = pos.mutable();
 		for (int j = 0; j < 8; j++) {
 			int k = j / 2;
@@ -398,9 +398,9 @@ public final class Hooks {
 			}
 			int l;
 			if (state.getBlock() instanceof SnowVariant snowVariant) {
-				l = snowVariant.layers(state, level, pos2);
+				l = snowVariant.srm$layers(state, level, pos2);
 				if (accumulate) {
-					if (l >= snowVariant.maxLayers(state, level, pos2)) {
+					if (l >= snowVariant.srm$maxLayers(state, level, pos2)) {
 						continue;
 					}
 					if (level.getBlockState(pos2.move(Direction.DOWN)).is(CoreModule.CANNOT_ACCUMULATE_ON)) {
@@ -423,7 +423,7 @@ public final class Hooks {
 							SnowCommonConfig.placeSnowOnBlockNaturally);
 				} else {
 					SnowVariant snowVariant = (SnowVariant) state.getBlock();
-					level.setBlockAndUpdate(pos2, snowVariant.decreaseLayer(state, level, pos2, false));
+					level.setBlockAndUpdate(pos2, snowVariant.srm$decreaseLayer(state, level, pos2, false));
 				}
 				return;
 			}
@@ -438,7 +438,7 @@ public final class Hooks {
 					false,
 					SnowCommonConfig.placeSnowOnBlockNaturally);
 		} else {
-			level.setBlockAndUpdate(pos, centerSnowVariant.decreaseLayer(centerState, level, pos, false));
+			level.setBlockAndUpdate(pos, centerSnowVariant.srm$decreaseLayer(centerState, level, pos, false));
 		}
 	}
 
@@ -532,7 +532,7 @@ public final class Hooks {
 			InteractionHand interactionHand, BlockHitResult hitResult,
 			SnowVariant snowVariant) {
 		Block block = Block.byItem(itemStack.getItem());
-		if (block == Blocks.AIR || !snowVariant.getRaw(blockState, level, pos).isAir()) {
+		if (block == Blocks.AIR || !snowVariant.srm$getRaw(blockState, level, pos).isAir()) {
 			return false;
 		}
 		BlockPlaceContext context = new BlockPlaceContext(player, interactionHand, itemStack, hitResult);

@@ -31,7 +31,7 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 
 	@Override
 	default boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-		BlockState raw = getRaw(state, worldIn, pos);
+		BlockState raw = srm$getRaw(state, worldIn, pos);
 		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.is(Fluids.WATER)) {
 			if (!worldIn.isClientSide()) {
 				worldIn.setBlock(pos, raw.setValue(BlockStateProperties.WATERLOGGED, true), 3);

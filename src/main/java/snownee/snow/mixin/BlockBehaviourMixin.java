@@ -22,7 +22,7 @@ public class BlockBehaviourMixin {
 			BlockPos pos,
 			CallbackInfoReturnable<Float> cir) {
 		if (blockState.getBlock() instanceof WaterLoggableSnowVariant snowVariant) {
-			cir.setReturnValue(snowVariant.getRaw(blockState, level, pos).getDestroyProgress(player, level, pos));
+			cir.setReturnValue(snowVariant.srm$getRaw(blockState, level, pos).getDestroyProgress(player, level, pos));
 		}
 	}
 }

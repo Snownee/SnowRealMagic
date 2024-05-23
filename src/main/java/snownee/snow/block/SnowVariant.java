@@ -24,18 +24,18 @@ import snownee.snow.block.entity.SnowBlockEntity;
 public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	IntegerProperty OPTIONAL_LAYERS = IntegerProperty.create("layers", 0, 8);
 
-	default BlockState getRaw(BlockState state, BlockGetter level, BlockPos pos) {
+	default BlockState srm$getRaw(BlockState state, BlockGetter level, BlockPos pos) {
 		if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 			return be.getContainedState();
 		}
 		return Blocks.AIR.defaultBlockState();
 	}
 
-	default BlockState decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
-		return getRaw(state, level, pos);
+	default BlockState srm$decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
+		return srm$getRaw(state, level, pos);
 	}
 
-	default double getYOffset() {
+	default double srm$getYOffset() {
 		return 0;
 	}
 
@@ -46,7 +46,7 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 			BlockState blockState,
 			@Nullable Player player,
 			@Nullable HitResult hit) {
-		BlockState raw = getRaw(blockState, level, blockPos);
+		BlockState raw = srm$getRaw(blockState, level, blockPos);
 		if (raw.getBlock() instanceof BlockPickInteractionAware) {
 			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, level, blockPos, player, hit));
 		}
@@ -69,22 +69,22 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 			Direction side,
 			@Nullable BlockState queryState,
 			@Nullable BlockPos sourcePos) {
-		if (layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
-			return getSnowState(state, level, pos);
+		if (srm$layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
+			return srm$getSnowState(state, level, pos);
 		}
-		return getRaw(state, level, pos);
+		return srm$getRaw(state, level, pos);
 	}
 
-	default int layers(BlockState state, BlockGetter level, BlockPos pos) {
+	default int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
 		return 0;
 	}
 
-	default int maxLayers(BlockState state, Level level, BlockPos pos2) {
+	default int srm$maxLayers(BlockState state, Level level, BlockPos pos2) {
 		return 0;
 	}
 
-	default BlockState getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
-		int layers = layers(state, level, pos);
+	default BlockState srm$getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
+		int layers = srm$layers(state, level, pos);
 		return layers == 0 ? Blocks.AIR.defaultBlockState() : Blocks.SNOW.defaultBlockState().setValue(BlockStateProperties.LAYERS, layers);
 	}
 

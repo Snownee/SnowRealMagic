@@ -27,7 +27,7 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getCollisionShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
 		});
 	}
 
@@ -36,7 +36,7 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getVisualShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getVisualShape(worldIn, pos, context));
 		});
 	}
 
@@ -44,14 +44,14 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
 		});
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 			return;
 		}
 		Hooks.randomTick(state, worldIn, pos, random);

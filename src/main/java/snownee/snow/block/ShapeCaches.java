@@ -32,10 +32,10 @@ public class ShapeCaches {
 			Callable<? extends VoxelShape> loader) {
 		try {
 			SnowVariant snowVariant = (SnowVariant) state.getBlock();
-			int layers = snowVariant.layers(state, level, pos);
+			int layers = snowVariant.srm$layers(state, level, pos);
 			Key key;
 			if (state.is(CoreModule.SNOW)) { // block like flowers has offset, so we can't cache it
-				BlockState raw = snowVariant.getRaw(state, level, pos);
+				BlockState raw = snowVariant.srm$getRaw(state, level, pos);
 				Class<?> clazz = raw.getBlock().getClass();
 				if (!(clazz == TallGrassBlock.class || clazz == TallFlowerBlock.class)) {
 					return loader.call();

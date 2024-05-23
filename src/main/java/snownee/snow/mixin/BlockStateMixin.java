@@ -21,7 +21,7 @@ public abstract class BlockStateMixin {
 	private void srm_getDestroySpeed(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir) {
 		BlockState blockState = asState();
 		if (blockState.getBlock() instanceof WaterLoggableSnowVariant snowVariant) {
-			cir.setReturnValue(snowVariant.getRaw(blockState, level, pos).getDestroySpeed(level, pos));
+			cir.setReturnValue(snowVariant.srm$getRaw(blockState, level, pos).getDestroySpeed(level, pos));
 		}
 	}
 }

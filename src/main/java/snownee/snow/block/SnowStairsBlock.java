@@ -50,7 +50,7 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (SnowCommonConfig.retainOriginalBlocks || CommonProxy.shouldMelt(worldIn, pos)) {
-			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 		}
 	}
 
@@ -65,7 +65,7 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	//	}
 
 	@Override
-	public double getYOffset() {
+	public double srm$getYOffset() {
 		return 0.125;
 	}
 

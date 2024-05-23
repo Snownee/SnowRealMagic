@@ -49,7 +49,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 		if (aboveBlock.is(CoreModule.SNOWY_SETTING)) {
 			if (aboveBlock.getBlock() instanceof SnowVariant snowVariant) {
 				cir.setReturnValue(
-						SnowCommonConfig.sustainGrassIfLayerMoreThanOne || snowVariant.layers(aboveBlock, levelReader, abovePos) <= 1);
+						SnowCommonConfig.sustainGrassIfLayerMoreThanOne || snowVariant.srm$layers(aboveBlock, levelReader, abovePos) <= 1);
 			}
 			cir.setReturnValue(true);
 		}

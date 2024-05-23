@@ -9,7 +9,7 @@ import snownee.snow.block.entity.SnowBlockEntity.Options;
 public interface WatcherSnowVariant extends SnowVariant {
 
 	@Override
-	default double getYOffset() {
+	default double srm$getYOffset() {
 		return 0.125;
 	}
 
@@ -19,23 +19,23 @@ public interface WatcherSnowVariant extends SnowVariant {
 	}
 
 	@Override
-	default int layers(BlockState state, BlockGetter level, BlockPos pos) {
+	default int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
 		return state.getValue(OPTIONAL_LAYERS);
 	}
 
 	@Override
-	default int maxLayers(BlockState state, Level level, BlockPos pos2) {
+	default int srm$maxLayers(BlockState state, Level level, BlockPos pos2) {
 		return 8;
 	}
 
 	@Override
-	default BlockState decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
+	default BlockState srm$decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
 		int layers = state.getValue(OPTIONAL_LAYERS) - 1;
 		int minLayers = byPlayer ? 0 : 1;
 		if (layers >= minLayers) {
 			return state.setValue(OPTIONAL_LAYERS, layers);
 		} else {
-			return getRaw(state, level, pos);
+			return srm$getRaw(state, level, pos);
 		}
 	}
 }

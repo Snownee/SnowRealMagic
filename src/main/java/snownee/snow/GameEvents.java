@@ -59,9 +59,9 @@ public final class GameEvents {
 		if (level.isClientSide) {
 			return false;
 		}
-		BlockState newState = snowVariant.decreaseLayer(state, level, pos, true);
+		BlockState newState = snowVariant.srm$decreaseLayer(state, level, pos, true);
 		level.setBlockAndUpdate(pos, newState);
-		int layers = snowVariant.layers(state, level, pos);
+		int layers = snowVariant.srm$layers(state, level, pos);
 		BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Math.max(layers, 1));
 		level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(snowState));
 		return layers > 0 || !state.hasProperty(SnowVariant.OPTIONAL_LAYERS);

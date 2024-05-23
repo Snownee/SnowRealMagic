@@ -36,7 +36,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
 		});
 	}
 
@@ -44,7 +44,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
 		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
 		});
 	}
 
@@ -57,14 +57,14 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
+			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
 		});
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 			return;
 		}
 		Hooks.randomTick(state, worldIn, pos, random);
@@ -95,7 +95,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 	}
 
 	private void adjustSounds(BlockState blockState, LevelAccessor level, BlockPos blockPos) {
-		BlockState raw = getRaw(blockState, level, blockPos);
+		BlockState raw = srm$getRaw(blockState, level, blockPos);
 		if (raw.getBlock() instanceof FenceGateBlock) {
 			FenceGateBlockAccess rawFenceGate = (FenceGateBlockAccess) raw.getBlock();
 			FenceGateBlockAccess fenceGate = (FenceGateBlockAccess) blockState.getBlock();

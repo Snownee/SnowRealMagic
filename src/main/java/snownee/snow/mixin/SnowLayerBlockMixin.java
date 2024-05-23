@@ -125,7 +125,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		BlockPos posDown = pos.below();
 		if (Hooks.canFallThrough(level.getBlockState(posDown), level, posDown)) {
-			level.setBlockAndUpdate(pos, getRaw(state, level, pos));
+			level.setBlockAndUpdate(pos, srm$getRaw(state, level, pos));
 			FallingSnowEntity entity = new FallingSnowEntity(
 					level,
 					pos.getX() + 0.5D,
@@ -156,12 +156,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public BlockState decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
+	public BlockState srm$decreaseLayer(BlockState state, Level level, BlockPos pos, boolean byPlayer) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS) - 1;
 		if (layers > 0) {
 			return state.setValue(SnowLayerBlock.LAYERS, layers);
 		} else {
-			return getRaw(state, level, pos);
+			return srm$getRaw(state, level, pos);
 		}
 	}
 
@@ -237,12 +237,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	//	}
 
 	@Override
-	public int layers(BlockState state, BlockGetter level, BlockPos pos) {
+	public int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
 		return state.getValue(BlockStateProperties.LAYERS);
 	}
 
 	@Override
-	public int maxLayers(BlockState state, Level level, BlockPos pos2) {
+	public int srm$maxLayers(BlockState state, Level level, BlockPos pos2) {
 		return 8;
 	}
 

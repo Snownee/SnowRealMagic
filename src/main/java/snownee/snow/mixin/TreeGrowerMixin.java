@@ -40,7 +40,7 @@ public class TreeGrowerMixin {
 		var blockState = original.call(level, blockPos);
 
 		if (blockState.getBlock() instanceof SnowVariant snow) {
-			return snow.getRaw(blockState, level, blockPos);
+			return snow.srm$getRaw(blockState, level, blockPos);
 		}
 
 		return blockState;
@@ -78,7 +78,7 @@ public class TreeGrowerMixin {
 			@Share("layers") LocalRef<IntList> layers) {
 		var blockState = serverLevel.getBlockState(blockPos);
 		if (blockState.getBlock() instanceof SnowVariant snow) {
-			layers.get().add(snow.layers(blockState, serverLevel, blockPos));
+			layers.get().add(snow.srm$layers(blockState, serverLevel, blockPos));
 		} else {
 			layers.get().add(0);
 		}
