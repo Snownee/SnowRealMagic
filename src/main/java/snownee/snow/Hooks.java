@@ -13,6 +13,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -42,11 +44,13 @@ import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
@@ -491,5 +495,62 @@ public final class Hooks {
 			return canSnowSurvive(state, level, pos);
 		}
 		return false;
+	}
+
+	public static boolean useSnowWithEmptyHand(BlockState blockState, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) {
+			return false;
+		}
+		var stateBelow = level.getBlockState(pos.below());
+		if (stateBelow.getBlock() instanceof SnowLayerBlock || stateBelow.hasProperty(BlockStateProperties.SNOWY)) {
+			return false;
+		}
+		if (blockState.is(Blocks.SNOW)) {
+			level.setBlock(pos, Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()), 16 | 32);
+		}
+		var blockEntity = level.getBlockEntity(pos);
+		if (!(blockEntity instanceof SnowBlockEntity snowTile)) {
+			return false;
+		}
+		if (blockState.is(CoreModule.SNOW) && snowTile.getContainedState().isAir()) {
+			level.setBlock(pos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
+		} else {
+			snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
+			if (level.isClientSide) {
+				level.sendBlockUpdated(pos, blockState, blockState, 11);
+			}
+		}
+		return true;
+	}
+
+	public static boolean useSnowWithItem(
+			ItemStack itemStack,
+			BlockState blockState,
+			Level level,
+			BlockPos pos,
+			Player player,
+			InteractionHand interactionHand, BlockHitResult hitResult,
+			SnowVariant snowVariant) {
+		Block block = Block.byItem(itemStack.getItem());
+		if (block == Blocks.AIR || !snowVariant.getRaw(blockState, level, pos).isAir()) {
+			return false;
+		}
+		BlockPlaceContext context = new BlockPlaceContext(player, interactionHand, itemStack, hitResult);
+		if (!context.replacingClickedOnBlock()) {
+			return false;
+		}
+		BlockState state2 = block.getStateForPlacement(context);
+		if (state2 == null || !Hooks.canContainState(state2) || !state2.canSurvive(level, pos)) {
+			return false;
+		}
+		if (!level.isClientSide) {
+			level.setBlock(pos, state2, 16 | 32);
+			block.setPlacedBy(level, pos, blockState, player, context.getItemInHand());
+			int i = blockState.getValue(SnowLayerBlock.LAYERS);
+			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true) && !player.isCreative()) {
+				context.getItemInHand().shrink(1);
+			}
+		}
+		return true;
 	}
 }

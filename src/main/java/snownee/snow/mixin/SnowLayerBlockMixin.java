@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -39,7 +39,6 @@ import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.util.CommonProxy;
 
@@ -50,18 +49,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{
 			Shapes.empty(),
 			Block.box(0, 0, 0, 16, 1, 16),
-			Block.box(
-					0,
-					0,
-					0,
-					16,
-					2,
-					16),
+			Block.box(0, 0, 0, 16, 2, 16),
 			Block.box(0, 0, 0, 16, 3, 16),
 			Block.box(0, 0, 0, 16, 4, 16),
 			Block.box(0, 0, 0, 16, 5, 16),
 			Block.box(0, 0, 0, 16, 6, 16),
-			Block.box(0, 0, 0, 16, 7, 16)};
+			Block.box(0, 0, 0, 16, 8, 16)};
 	@Final
 	@Shadow
 	protected static VoxelShape[] SHAPE_BY_LAYER;
@@ -172,6 +165,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 	}
 
+	// Right click with block item to place it inside snow layer
 	@Override
 	protected ItemInteractionResult useItemOn(
 			ItemStack itemStack,
@@ -181,47 +175,24 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			Player player,
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
-		var stateBelow = level.getBlockState(blockPos.below());
-		if (!(stateBelow.getBlock() instanceof SnowLayerBlock) && !stateBelow.hasProperty(BlockStateProperties.SNOWY)) {
-			if (blockState.is(Blocks.SNOW)) {
-				level.setBlock(blockPos, Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()), 16 | 32);
-			}
-			var blockEntity = level.getBlockEntity(blockPos);
-			if (blockEntity instanceof SnowBlockEntity snowTile) {
-				if (blockState.is(CoreModule.SNOW) && snowTile.getContainedState().isAir()) {
-					level.setBlock(blockPos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
-				} else {
-					snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
-					if (level.isClientSide) {
-						level.sendBlockUpdated(blockPos, blockState, blockState, 11);
-					}
-				}
-			}
-			return ItemInteractionResult.SUCCESS;
-		}
-		if (getRaw(blockState, level, blockPos).isAir()) {
-			BlockPlaceContext context = new BlockPlaceContext(
-					player,
-					interactionHand,
-					player.getItemInHand(interactionHand),
-					blockHitResult);
-			Block block = Block.byItem(context.getItemInHand().getItem());
-			if (block != Blocks.AIR && context.replacingClickedOnBlock()) {
-				BlockState state2 = block.getStateForPlacement(context);
-				if (state2 != null && Hooks.canContainState(state2) && state2.canSurvive(level, blockPos)) {
-					if (!level.isClientSide) {
-						level.setBlock(blockPos, state2, 16 | 32);
-						block.setPlacedBy(level, blockPos, blockState, player, context.getItemInHand());
-						int i = blockState.getValue(SnowLayerBlock.LAYERS);
-						if (Hooks.placeLayersOn(level, blockPos, i, false, context, true, true) && !player.isCreative()) {
-							context.getItemInHand().shrink(1);
-						}
-					}
-					return ItemInteractionResult.SUCCESS;
-				}
-			}
+		if (Hooks.useSnowWithItem(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult, this)) {
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+	}
+
+	// Right click with empty hand to toggle snow overlay on the block below
+	@Override
+	protected InteractionResult useWithoutItem(
+			BlockState blockState,
+			Level level,
+			BlockPos blockPos,
+			Player player,
+			BlockHitResult blockHitResult) {
+		if (Hooks.useSnowWithEmptyHand(blockState, level, blockPos, player, blockHitResult)) {
+			return InteractionResult.sidedSuccess(level.isClientSide);
+		}
+		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
 
 	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
