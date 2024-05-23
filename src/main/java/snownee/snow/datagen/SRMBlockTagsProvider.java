@@ -51,9 +51,9 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 			}
 		}
 
-		tag(BlockTags.SNOW).addTag(CoreModule.SNOW);
-		tag(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW);
-		tag(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW);
+		getOrCreateTagBuilder(BlockTags.SNOW).addTag(CoreModule.SNOW);
+		getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW);
+		getOrCreateTagBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW);
 
 		getOrCreateTagBuilder(BlockTags.STAIRS).add(STAIRS.get());
 		getOrCreateTagBuilder(BlockTags.SLABS).add(SLAB.get());
@@ -63,11 +63,11 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 		getOrCreateTagBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
 		getOrCreateTagBuilder(BlockTags.WALLS).add(WALL.get());
 
-		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
-		tag(SNOWY_SETTING).addTag(BlockTags.SNOW);
+		getOrCreateTagBuilder(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).addTag(BlockTags.LEAVES);
+		getOrCreateTagBuilder(SNOWY_SETTING).addTag(BlockTags.SNOW);
 		getOrCreateTagBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
 
-		tag(CoreModule.NOT_CONTAINABLES).addTag(BlockTags.LEAVES);
+		getOrCreateTagBuilder(CoreModule.NOT_CONTAINABLES).addTag(BlockTags.LEAVES);
 		getOrCreateTagBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).addTag(BlockTags.SLABS);
 	}
 }
