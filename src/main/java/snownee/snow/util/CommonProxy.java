@@ -6,15 +6,11 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -33,10 +29,6 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean isHot(FluidState fluidState, Level level, BlockPos pos) {
 		return fluidState.getType().getPickupSound().orElse(null) == SoundEvents.BUCKET_FILL_LAVA || fluidState.is(FluidTags.LAVA);
-	}
-
-	public static Packet<ClientGamePacketListener> getAddEntityPacket(Entity entity) {
-		return new ClientboundAddEntityPacket(entity);
 	}
 
 	public static void weatherTick(ServerLevel level, Runnable action) {

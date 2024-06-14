@@ -39,9 +39,8 @@ public class WrapperUnbakedModel implements UnbakedModel {
 	public BakedModel bake(
 			ModelBaker modelBaker,
 			Function<Material, TextureAtlasSprite> function,
-			ModelState modelState,
-			ResourceLocation resourceLocation) {
-		BakedModel baked = wrapped.bake(modelBaker, function, modelState, resourceLocation);
+			ModelState modelState) {
+		BakedModel baked = wrapped.bake(modelBaker, function, modelState);
 		return baked == null ? null : transformer.apply(baked);
 	}
 }

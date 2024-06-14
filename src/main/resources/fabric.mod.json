@@ -37,15 +37,16 @@
 	],
 	"accessWidener": "snowrealmagic.accesswidener",
 	"depends": {
-		"fabric-api": ">=0.91",
+		"fabric-api": ">=0.100",
 		"fabricloader": ">=0.15",
-		"minecraft": ">=1.20.5",
-		"kiwi": ">=14.1.2"
+		"minecraft": ">=1.21",
+		"kiwi": ">=15"
 	},
 	"custom": {
 		"modmenu": {
 			"links": {
-				"modmenu.discord": "https://discord.gg/KzGQW7a"
+				"modmenu.discord": "https://discord.gg/KzGQW7a",
+				"modmenu.donate": "https://ko-fi.com/snownee"
 			}
 		}
 	}

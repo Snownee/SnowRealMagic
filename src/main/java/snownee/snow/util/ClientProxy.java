@@ -4,11 +4,11 @@ import static snownee.snow.CoreModule.FENCE;
 import static snownee.snow.CoreModule.FENCE2;
 import static snownee.snow.CoreModule.FENCE_GATE;
 import static snownee.snow.CoreModule.SLAB;
-import static snownee.snow.CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
 import static snownee.snow.CoreModule.SNOWY_DOUBLE_PLANT_LOWER;
 import static snownee.snow.CoreModule.SNOWY_DOUBLE_PLANT_UPPER;
-import static snownee.snow.CoreModule.SNOW_BLOCK;
 import static snownee.snow.CoreModule.SNOWY_PLANT;
+import static snownee.snow.CoreModule.SNOW_BLOCK;
+import static snownee.snow.CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
 import static snownee.snow.CoreModule.STAIRS;
 import static snownee.snow.CoreModule.WALL;
 
@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
@@ -142,17 +143,19 @@ public class ClientProxy implements ClientModInitializer {
 					SLAB,
 					FENCE_GATE,
 					WALL);
-			Set<ResourceLocation> snowCoveredModelIds = Sets.newHashSet();
+			Set<ModelResourceLocation> snowCoveredModelIds = Sets.newHashSet();
 			Map<UnbakedModel, UnbakedModel> transform = Maps.newHashMap();
 			for (var block : allBlocks) {
 				for (BlockState state : block.get().getStateDefinition().getPossibleStates()) {
-					ResourceLocation modelId = BlockModelShaper.stateToModelLocation(BuiltInRegistries.BLOCK.getKey(block.get()), state);
+					ModelResourceLocation modelId = BlockModelShaper.stateToModelLocation(
+							BuiltInRegistries.BLOCK.getKey(block.get()),
+							state);
 					snowCoveredModelIds.add(modelId);
 				}
 			}
 
 			ctx.modifyModelOnLoad().register(ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-				if (snowCoveredModelIds.contains(context.id())) {
+				if (snowCoveredModelIds.contains(context.topLevelId())) {
 					return transform.computeIfAbsent(model, $ -> new WrapperUnbakedModel($, SnowCoveredModel::new));
 				}
 				return model;
@@ -163,7 +166,7 @@ public class ClientProxy implements ClientModInitializer {
 				if (model == null || modelState.getClass() != Variant.class) {
 					return model;
 				}
-				ModelDefinition def = SnowClient.snowVariantMapping.get(context.id());
+				ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
 				if (def == null) {
 					return model;
 				}
