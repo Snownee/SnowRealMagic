@@ -58,8 +58,10 @@ public class TreeGrowerMixin {
 			final BlockState blockState,
 			final RandomSource randomSource,
 			final CallbackInfoReturnable<Boolean> cir,
-			@Share("layers") LocalRef<IntList> layers) {
+			@Share("layers") LocalRef<IntList> layers,
+			@Share("index") LocalIntRef index) {
 		layers.set(new IntArrayList(4));
+		index.set(0);
 	}
 
 	@ModifyExpressionValue(
@@ -93,7 +95,10 @@ public class TreeGrowerMixin {
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
-							target = "Lnet/minecraft/world/level/levelgen/feature/ConfiguredFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z")))
+							target = "Lnet/minecraft/world/level/levelgen/feature/ConfiguredFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"),
+					to = @At(
+							value = "INVOKE",
+							target = "Lnet/minecraft/world/level/block/grower/TreeGrower;getConfiguredFeature(Lnet/minecraft/util/RandomSource;Z)Lnet/minecraft/resources/ResourceKey;")))
 	private boolean srm_recoverLayers(
 			final ServerLevel serverLevel,
 			final BlockPos blockPos,
