@@ -31,11 +31,13 @@ import snownee.snow.util.ClientProxy;
 public final class SnowClient {
 
 	public static final Options fallbackOptions = new Options();
-	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
-	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
-	public static final Set<Block> overrideBlocks = Sets.newHashSet();
 	public static BakedModel cachedSnowModel;
 	public static BakedModel cachedOverlayModel;
+
+	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
+
+	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
+	public static final Set<Block> overrideBlocks = Sets.newHashSet();
 
 	public static boolean renderHook(
 			BlockAndTintGetter world,
@@ -80,10 +82,10 @@ public final class SnowClient {
 			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) &&
-				(!useVariant || CoreModule.TILE_BLOCK.is(state))) {
+				(!useVariant || state.is(CoreModule.SNOWY_SETTING))) {
 			BlockPos pos2 = pos;
 			double yOffset;
-			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {
+			if (state.is(CoreModule.SNOWY_SETTING) || CoreModule.SLAB.is(state)) {
 				if (cachedOverlayModel == null) {
 					cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 				}

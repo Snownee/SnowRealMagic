@@ -25,12 +25,9 @@
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
-		"client.BlockRenderDispatcherMixin",
 		"client.CameraMixin",
 		"client.ModelBakerImplMixin",
-		"client.SnowLayerBlockClientMixin",
-		"sodium.BlockRendererAccess",
-		"sodium.BlockRendererMixin"
+		"client.SnowLayerBlockClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

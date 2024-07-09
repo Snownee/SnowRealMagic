@@ -1,6 +1,12 @@
 package snownee.snow.client.model;
 
 import java.util.List;
+import java.util.function.Supplier;
+
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
+
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,33 +24,41 @@ import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
 import snownee.snow.CoreModule;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowClientConfig;
 
-public class SnowVariantModel extends BakedModelWrapper<BakedModel> {
+public class SnowVariantModel extends ForwardingBakedModel {
 
 	public static final ModelData USE_SNOW_VARIANT = ModelData.builder().build();
 	private final BakedModel variantModel;
 
 	public SnowVariantModel(BakedModel model, BakedModel variantModel) {
-		super(model);
+		wrapped = model;
 		this.variantModel = variantModel;
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(
+	public void emitBlockQuads(
+			BlockAndTintGetter blockView,
 			BlockState state,
-			Direction side,
-			RandomSource rand,
-			ModelData extraData,
-			@Nullable RenderType renderType) {
-		BakedModel model;
-		if (extraData == USE_SNOW_VARIANT) {
-			model = variantModel;
-		} else {
-			model = originalModel;
+			BlockPos pos,
+			Supplier<RandomSource> randomSupplier,
+			RenderContext context) {
+		BakedModel model = null;
+		if (SnowClientConfig.snowVariants && pos != null) {
+			if (context.getModelData() == USE_SNOW_VARIANT || context.getModelData().has(SnowBlockEntity.OPTIONS) || state.hasProperty(DoublePlantBlock.HALF) && CoreModule.TILE_BLOCK.is(blockView.getBlockState(pos.below()))) {
+				model = variantModel;
+			}
 		}
+		if (model == null) {
+			model = wrapped;
+		}
+		((FabricBakedModel) model).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+	}
 
-		return model.getQuads(state, side, rand, extraData, renderType);
+	@Override
+	public boolean isVanillaAdapter() {
+		return false;
 	}
 
 	@Override
