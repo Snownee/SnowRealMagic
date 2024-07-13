@@ -1,7 +1,15 @@
 package snownee.snow.util;
 
+import static snownee.snow.CoreModule.FENCE;
+import static snownee.snow.CoreModule.FENCE2;
+import static snownee.snow.CoreModule.FENCE_GATE;
+import static snownee.snow.CoreModule.SLAB;
+import static snownee.snow.CoreModule.STAIRS;
+import static snownee.snow.CoreModule.TILE_BLOCK;
+import static snownee.snow.CoreModule.WALL;
+
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,7 +36,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -37,9 +44,9 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import snownee.kiwi.KiwiGO;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
-import snownee.snow.block.SnowVariant;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
@@ -95,10 +102,9 @@ public class ClientProxy {
 				SnowClient.overrideBlocks.add(block);
 			}
 		}
-		for (Block block : ForgeRegistries.BLOCKS.getValues()) {
-			if (!(block instanceof SnowVariant)) {
-				continue;
-			}
+		List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
+		for (KiwiGO<? extends Block> kiwiGO : allBlocks) {
+			Block block = kiwiGO.get();
 			for (BlockState state : block.getStateDefinition().getPossibleStates()) {
 				ModelResourceLocation modelId = BlockModelShaper.stateToModelLocation(
 						ForgeRegistries.BLOCKS.getKey(block),

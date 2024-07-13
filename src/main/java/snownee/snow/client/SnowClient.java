@@ -82,10 +82,10 @@ public final class SnowClient {
 			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
 		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) &&
-				(!useVariant || state.is(CoreModule.SNOWY_SETTING))) {
+				(!useVariant || CoreModule.TILE_BLOCK.is(state))) {
 			BlockPos pos2 = pos;
 			double yOffset;
-			if (state.is(CoreModule.SNOWY_SETTING) || CoreModule.SLAB.is(state)) {
+			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {
 				if (cachedOverlayModel == null) {
 					cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 				}

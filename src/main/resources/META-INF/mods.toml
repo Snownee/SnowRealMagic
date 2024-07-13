@@ -17,12 +17,5 @@ versionRange = "[11, 12)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.snowrealmagic]]
-modId = "rubidium"
-mandatory = false
-versionRange = "[0.7.1,)"
-ordering = "NONE"
-side = "BOTH"
-
 [modproperties.snowrealmagic]
 catalogueItemIcon = "minecraft:snow_block" #Support for Catalogue mod
