@@ -200,7 +200,11 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		if (!stateNow.is(this)) {
 			return;
 		}
-		stateIn.randomTick(worldIn, pos, random);
+		try {
+			stateIn.randomTick(worldIn, pos, random);
+		} catch (Throwable e) {
+			return;
+		}
 		BlockState stateNow2 = worldIn.getBlockState(pos);
 		if (!stateNow2.is(this)) {
 			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18, true);

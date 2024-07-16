@@ -57,7 +57,6 @@ public class SnowBlockTagsProvider extends KiwiBlockTagsProvider {
 		tag(SNOWY_SETTING).addTag(BlockTags.SNOW);
 		helper.add(SNOWY_SETTING, FENCE, FENCE2, FENCE_GATE, WALL);
 
-		tag(CoreModule.NOT_CONTAINABLES).addTags(BlockTags.LEAVES);
 		tag(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).addTag(BlockTags.SLABS);
 	}
 

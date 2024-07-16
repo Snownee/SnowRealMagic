@@ -1,0 +1,9 @@
+{
+	"values": [
+		"#minecraft:leaves",
+		{
+			"id": "mynethersdelight:powdery_chubby_sapling",
+			"required": false
+		}
+	]
+}
