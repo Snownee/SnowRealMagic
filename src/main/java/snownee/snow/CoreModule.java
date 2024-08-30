@@ -108,7 +108,7 @@ public class CoreModule extends AbstractModule {
 			.dynamicShape()));
 
 	@Name("snow")
-	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SNOW_EXTRA_COLLISION_BLOCK);
+	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SRMSnowLayerBlock.class);
 
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,

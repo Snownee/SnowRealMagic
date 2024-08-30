@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6.+'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -58,8 +58,8 @@ dependencies {
 //    modRuntimeOnly "curse.maven:minihud-244260:5096818"
 //    modRuntimeOnly "curse.maven:malilib-303119:5096807"
 
-    modImplementation "maven.modrinth:serene-seasons:kCqKV59a"
-    modImplementation "maven.modrinth:glitchcore:VKGMDlck"
+    modImplementation "maven.modrinth:serene-seasons:qsbPIZeU"
+    modImplementation "maven.modrinth:glitchcore:lbSHOhee"
     implementation("com.electronwill.night-config:toml:${nightconfig_version}")
     implementation("com.electronwill.night-config:core:${nightconfig_version}")
     implementation("net.jodah:typetools:0.6.3")
@@ -151,7 +151,7 @@ unifiedPublishing {
         version = realVersion // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = [project.minecraft_version]
+        gameVersions = ["1.20", project.minecraft_version]
         gameLoaders = ["fabric", "quilt"]
 
         mainPublication tasks.remapJar // Declares the publicated jar
