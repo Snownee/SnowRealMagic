@@ -223,13 +223,11 @@ jar {
                 "MixinConfigs": "${mod_id}.mixins.json"
         ])
     }
-    exclude '**/*.bat'
-	exclude '**/acacia_planks.png'
-    exclude '**/snow.png'
 }
 
 tasks.jarJar {
     archiveClassifier = ""
+    exclude '/data/sereneseasons'
 }
 
 // Example configuration to allow publishing using the maven-publish plugin

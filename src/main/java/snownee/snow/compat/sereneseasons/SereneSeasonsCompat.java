@@ -25,8 +25,7 @@ public class SereneSeasonsCompat {
 		if (meltInfo == null) {
 			return false;
 		}
-		float meltChance = meltInfo.getMeltChance() * meltInfo.getRolls() * 0.01f;
-		return meltChance > 0 && level.random.nextFloat() < meltChance && !coldEnoughToSnow(level, pos, biome);
+		return meltInfo.getMeltChance() > 0 && meltInfo.getRolls() > 0 && !coldEnoughToSnow(level, pos, biome);
 	}
 
 	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
