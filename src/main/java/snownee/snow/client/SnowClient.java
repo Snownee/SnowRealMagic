@@ -31,11 +31,13 @@ import snownee.snow.util.ClientProxy;
 public final class SnowClient {
 
 	public static final Options fallbackOptions = new Options();
-	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
-	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
-	public static final Set<Block> overrideBlocks = Sets.newHashSet();
 	public static BakedModel cachedSnowModel;
 	public static BakedModel cachedOverlayModel;
+
+	public static final ResourceLocation OVERLAY_MODEL = new ResourceLocation(SnowRealMagic.MODID, "block/overlay");
+
+	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
+	public static final Set<Block> overrideBlocks = Sets.newHashSet();
 
 	public static boolean renderHook(
 			BlockAndTintGetter world,
