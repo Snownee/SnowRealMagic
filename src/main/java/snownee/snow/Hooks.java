@@ -553,4 +553,8 @@ public final class Hooks {
 		}
 		return true;
 	}
+
+	public static boolean isFallable(BlockState blockState) {
+		return SnowCommonConfig.snowGravity && (blockState.is(Blocks.SNOW) || blockState.is(CoreModule.SNOW_TAG));
+	}
 }
