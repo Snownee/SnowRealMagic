@@ -143,7 +143,11 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			worldIn.setBlockAndUpdate(pos, stateIn);
 			return;
 		}
-		super.randomTick(state, worldIn, pos, random);
+		try {
+			super.randomTick(state, worldIn, pos, random);
+		} catch (Throwable e) {
+			return;
+		}
 		if (stateIn.getBlock() instanceof TallGrassBlock || stateIn.getBlock() instanceof DoublePlantBlock) {
 			return;
 		}

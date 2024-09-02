@@ -1,4 +1,4 @@
-// 1.21	2024-06-15T01:25:30.8906257	Snow! Real Magic!/Tags for minecraft:block
+// 1.21.1	2024-09-03T00:46:14.8896049	Snow! Real Magic!/Tags for minecraft:block
 094397c0f6fe1e697d0ffa90cf5a98038f3b173d data\minecraft\tags\block\rabbits_spawnable_on.json
 094397c0f6fe1e697d0ffa90cf5a98038f3b173d data\minecraft\tags\block\foxes_spawnable_on.json
 3003df870d529e581408fbaf8e898d3f7b84c4f8 data\snowrealmagic\tags\block\cannot_accumulate_on.json
@@ -18,6 +18,5 @@ a4e8097fff07f9a74259d6b5dd583f3437ff28a2 data\minecraft\tags\block\snow_layer_ca
 094397c0f6fe1e697d0ffa90cf5a98038f3b173d data\minecraft\tags\block\wolves_spawnable_on.json
 094397c0f6fe1e697d0ffa90cf5a98038f3b173d data\minecraft\tags\block\goats_spawnable_on.json
 f3d2f8378cfc98550418907eff13f4edc6a62d81 data\snowrealmagic\tags\block\snow.json
-a4e8097fff07f9a74259d6b5dd583f3437ff28a2 data\snowrealmagic\tags\block\not_containables.json
 60678fcbe700a6c24cfd1f32b32977bfac70430a data\minecraft\tags\block\walls.json
 cb61bbc0985991ef45bfdf4f52a26f9024941ea1 data\minecraft\tags\block\mineable\shovel.json
