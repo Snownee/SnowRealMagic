@@ -110,7 +110,7 @@ public final class Hooks {
 					}
 				} else if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally &&
 						SnowCommonConfig.canPlaceSnowInBlock()) {
-					if (!CommonProxy.coldEnoughToSnow(worldgenlevel.getLevel(), pos, biomeHolder)) {
+					if (biome.warmEnoughToRain(pos)) {
 						continue;
 					}
 					if (!Blocks.SNOW.defaultBlockState().canSurvive(worldgenlevel, pos)) {
