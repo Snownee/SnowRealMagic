@@ -5,7 +5,6 @@
   "block.snowrealmagic.stairs": "Snow-Covered Stairs",
   "block.snowrealmagic.wall": "Snow-Covered Wall",
   "commands.gamerule.snowrealmagic.hint": "Snow! Real Magic! is installed, this game rule is ignored. Use configuration instead.",
-  "entity.snowrealmagic.snow": "Falling Block",
   "gamerule.snowrealmagic:blizzardFrequency": "Joke feature: Blizzard frequency",
   "gamerule.snowrealmagic:blizzardFrequency.description": "The possibility to do blizzard. N/10000 per tick per chunk. Added by Snow! Real Magic!",
   "gamerule.snowrealmagic:blizzardStrength": "Joke feature: Blizzard strength",
