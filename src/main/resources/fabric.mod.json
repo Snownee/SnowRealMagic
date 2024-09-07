@@ -39,8 +39,8 @@
 	"depends": {
 		"fabric-api": ">=0.100",
 		"fabricloader": ">=0.15",
-		"minecraft": ">=1.21",
-		"kiwi": ">=15"
+		"minecraft": ">=1.21 <1.21.2-",
+		"kiwi": ">=15.1.1"
 	},
 	"custom": {
 		"modmenu": {

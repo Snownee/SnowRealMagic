@@ -25,7 +25,7 @@ public record SLavaSmokeEffectPacket(BlockPos pos) implements CustomPacketPayloa
 	private static final RandomSource RANDOM = RandomSource.create();
 
 	public void sendToAround(ServerLevel level) {
-		KPacketSender.sendToAround(this, level, pos, 16);
+		KPacketSender.sendToAround(this, level, null, pos, 16);
 	}
 
 

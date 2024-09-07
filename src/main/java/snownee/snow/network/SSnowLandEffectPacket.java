@@ -25,7 +25,7 @@ public record SSnowLandEffectPacket(BlockPos pos, byte originLayers, byte layers
 	private static final RandomSource RANDOM = RandomSource.create();
 
 	public void sendToAround(ServerLevel level) {
-		KPacketSender.sendToAround(this, level, pos, 16);
+		KPacketSender.sendToAround(this, level, null, pos, 16);
 	}
 
 	@Override
