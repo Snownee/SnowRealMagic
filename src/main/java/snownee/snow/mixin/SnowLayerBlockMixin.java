@@ -125,31 +125,23 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		checkFallable(worldIn, pos, state);
+		BlockPos posDown = pos.below();
+		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
+			worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
+			FallingSnowEntity entity = new FallingSnowEntity(
+					worldIn,
+					pos.getX() + 0.5D,
+					pos.getY(),
+					pos.getZ() + 0.5D,
+					state.getValue(SnowLayerBlock.LAYERS));
+			worldIn.addFreshEntity(entity);
+		}
 	}
 
 	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
 	private void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		Hooks.randomTick(state, worldIn, pos, random);
 		ci.cancel();
-	}
-
-	protected boolean checkFallable(Level worldIn, BlockPos pos, BlockState state) {
-		BlockPos posDown = pos.below();
-		if (Hooks.canFallThrough(worldIn.getBlockState(posDown), worldIn, posDown)) {
-			if (!worldIn.isClientSide) {
-				worldIn.setBlockAndUpdate(pos, getRaw(state, worldIn, pos));
-				FallingSnowEntity entity = new FallingSnowEntity(
-						worldIn,
-						pos.getX() + 0.5D,
-						pos.getY() - 0.5D,
-						pos.getZ() + 0.5D,
-						state.getValue(SnowLayerBlock.LAYERS));
-				worldIn.addFreshEntity(entity);
-			}
-			return true;
-		}
-		return false;
 	}
 
 	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)

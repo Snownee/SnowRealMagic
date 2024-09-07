@@ -16,6 +16,7 @@
 		"GameRuleCommandMixin",
 		"GameRulesMixin",
 		"IceBlockAccess",
+		"IceBlockMixin",
 		"LevelChunkMixin",
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
