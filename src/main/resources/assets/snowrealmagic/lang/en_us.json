@@ -1,7 +1,6 @@
 {
 	"modmenu.nameTranslation.snowrealmagic": "Snow! Real Magic!",
 	"modmenu.descriptionTranslation.snowrealmagic": "Tweaks vanilla snow layer",
-	"entity.snowrealmagic.snow": "Falling Block",
 	"block.snowrealmagic.slab": "Snow-Covered Slab",
 	"block.snowrealmagic.stairs": "Snow-Covered Stairs",
 	"block.snowrealmagic.wall": "Snow-Covered Wall",
