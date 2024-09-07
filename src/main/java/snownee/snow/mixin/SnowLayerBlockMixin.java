@@ -98,7 +98,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (SnowCommonConfig.snowGravity) {
+		if (Hooks.isFallable(state)) {
 			worldIn.scheduleTick(pos, this, getDelayAfterPlace());
 		}
 	}
@@ -112,7 +112,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			BlockPos currentPos,
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> ci) {
-		if (SnowCommonConfig.snowGravity) {
+		if (Hooks.isFallable(stateIn)) {
 			worldIn.scheduleTick(currentPos, this, getDelayAfterPlace());
 			ci.setReturnValue(stateIn);
 		}

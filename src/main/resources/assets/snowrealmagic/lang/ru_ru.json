@@ -1,7 +1,6 @@
 {
 	"modmenu.nameTranslation.snowrealmagic": "Снежная магия",
 	"modmenu.descriptionTranslation.snowrealmagic": "Подправляет поведение ванильного снега",
-	"entity.snowrealmagic.snow": "Падающий блок",
 	"block.snowrealmagic.slab": "Заснеженная плита",
 	"block.snowrealmagic.stairs": "Заснеженные ступени",
 	"block.snowrealmagic.wall": "Заснеженная ограда",
