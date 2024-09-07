@@ -1,11 +1,13 @@
 package snownee.snow.entity;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,7 +19,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Level;
@@ -48,36 +49,28 @@ public class FallingSnowEntity extends Entity {
 	public int fallTime;
 	private BlockPos prevPos;
 	private int layers;
-	private EntityDimensions size;
 
 	public FallingSnowEntity(Level worldIn) {
-		super(CoreModule.ENTITY.get(), worldIn);
-		prevPos = BlockPos.ZERO;
-		layers = 1;
-		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+		this(CoreModule.ENTITY.get(), worldIn);
 	}
 
-	public FallingSnowEntity(EntityType<FallingSnowEntity> type, Level worldIn) {
-		this(worldIn);
+	public FallingSnowEntity(EntityType<? extends FallingSnowEntity> type, Level worldIn) {
+		super(type, worldIn);
+		blocksBuilding = true;
+		prevPos = BlockPos.ZERO;
+		layers = 1;
 	}
 
 	public FallingSnowEntity(Level worldIn, double x, double y, double z, int layers) {
-		super(CoreModule.ENTITY.get(), worldIn);
-		blocksBuilding = true;
-		setPos(x, y + (1.0F - getBbHeight()) / 2.0F, z);
+		this(worldIn);
+		this.dimensions = EntityDimensions.fixed(0.98f, 0.1225f * layers);
+		setPos(x, y, z);
 		setDeltaMovement(Vec3.ZERO);
 		xo = x;
 		yo = y;
 		zo = z;
 		setLayers(this.layers = layers);
 		setStartPos(prevPos = blockPosition());
-		size = new EntityDimensions(0.98f, 0.1225f * layers, true);
-	}
-
-	@Override
-	@NotNull
-	public EntityDimensions getDimensions(@NotNull Pose poseIn) {
-		return size;
 	}
 
 	@Override
@@ -198,7 +191,7 @@ public class FallingSnowEntity extends Entity {
 		fallTime = compound.getInt("Time");
 		if (compound.contains("Layers", Tag.TAG_INT)) {
 			layers = Mth.clamp(compound.getInt("Layers"), 1, 8);
-			size = new EntityDimensions(0.98f, 0.1225f * layers, true);
+			this.dimensions = new EntityDimensions(0.98f, 0.1225f * layers, true);
 			setLayers(layers);
 		}
 	}
@@ -215,4 +208,14 @@ public class FallingSnowEntity extends Entity {
 		return CommonProxy.getAddEntityPacket(this);
 	}
 
+	@Override
+	public Component getTypeName() {
+		return Component.translatable("entity.minecraft.falling_block_type", Blocks.SNOW.getName());
+	}
+
+	@Nullable
+	@Override
+	public ItemStack getPickResult() {
+		return new ItemStack(Blocks.SNOW);
+	}
 }

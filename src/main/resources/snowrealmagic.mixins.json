@@ -16,12 +16,13 @@
 		"GameRuleCommandMixin",
 		"GameRulesMixin",
 		"IceBlockAccess",
+		"IceBlockMixin",
 		"ServerLevelMixin",
-		"fabric.ServerPlayerGameModeMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
+		"fabric.ServerPlayerGameModeMixin",
 		"fabric.SnowBlockEntityMixin"
 	],
 	"client": [

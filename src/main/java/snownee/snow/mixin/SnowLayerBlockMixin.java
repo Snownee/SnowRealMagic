@@ -136,7 +136,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			FallingSnowEntity entity = new FallingSnowEntity(
 					worldIn,
 					pos.getX() + 0.5D,
-					pos.getY() - 0.5D,
+					pos.getY(),
 					pos.getZ() + 0.5D,
 					state.getValue(SnowLayerBlock.LAYERS));
 			worldIn.addFreshEntity(entity);
