@@ -52,6 +52,7 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.KiwiGO;
+import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
@@ -131,26 +132,22 @@ public final class Hooks {
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock ||
 				block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock ||
 				block instanceof SweetBerryBushBlock) {
-			var shape = state.getCollisionShape(level, pos);
-
-			BlockState result;
-
-			if (state.is(CoreModule.PLANTS)) {
-				if (state.hasProperty(DoublePlantBlock.HALF)) {
-					if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
-						result = CoreModule.SNOWY_DOUBLE_PLANT_LOWER.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
-					} else {
-						result = CoreModule.SNOWY_DOUBLE_PLANT_UPPER.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
-					}
+			KiwiGO<SRMSnowLayerBlock> resultBlock;
+			if (block instanceof DoublePlantBlock) {
+				if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+					resultBlock = CoreModule.SNOWY_DOUBLE_PLANT_LOWER;
 				} else {
-					result = CoreModule.SNOWY_PLANT.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+					resultBlock = CoreModule.SNOWY_DOUBLE_PLANT_UPPER;
 				}
-			} else if (shape.isEmpty()) {
-				result = CoreModule.SNOW_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+			} else if (state.is(CoreModule.PLANTS)) {
+				resultBlock = CoreModule.SNOWY_PLANT;
+			} else if (state.getCollisionShape(level, pos).isEmpty()) {
+				resultBlock = CoreModule.SNOW_BLOCK;
 			} else {
-				result = CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+				resultBlock = CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
 			}
 
+			BlockState result = resultBlock.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 			level.setBlock(pos, result, flags);
 			if (level.getBlockEntity(pos) instanceof SnowBlockEntity snowBlockEntity) {
 				snowBlockEntity.setContainedState(state);
