@@ -9,7 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
 import sereneseasons.config.SeasonsConfig;
-import sereneseasons.config.ServerConfig;
+import sereneseasons.init.ModConfig;
 import sereneseasons.init.ModTags;
 import sereneseasons.season.SeasonHooks;
 import snownee.snow.SnowCommonConfig;
@@ -21,28 +21,28 @@ public class SereneSeasonsCompat {
 			return false;
 		}
 		Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
-		ServerConfig.MeltChanceInfo meltInfo = ServerConfig.getMeltInfo(subSeason);
+		SeasonsConfig.SeasonProperties meltInfo = ModConfig.seasons.getSeasonProperties(subSeason);
 		if (meltInfo == null) {
 			return false;
 		}
-		return meltInfo.getMeltChance() > 0 && meltInfo.getRolls() > 0 && !coldEnoughToSnow(level, pos, biome);
+		return meltInfo.meltChance() > 0 && meltInfo.meltRolls() > 0 && !coldEnoughToSnow(level, pos, biome);
 	}
 
 	public static boolean snowAndIceMeltInWarmBiomes(ResourceKey<Level> dimension, Holder<Biome> biome) {
-		if (!SeasonsConfig.generateSnowAndIce.get()) {
+		if (!ModConfig.seasons.generateSnowAndIce) {
 			return false;
 		}
 		if (biome.is(ModTags.Biomes.BLACKLISTED_BIOMES)) {
 			return false;
 		}
-		if (!ServerConfig.isDimensionWhitelisted(dimension)) {
+		if (!ModConfig.seasons.isDimensionWhitelisted(dimension)) {
 			return false;
 		}
 		return true;
 	}
 
 	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
-		if (SeasonsConfig.generateSnowAndIce.get()) {
+		if (ModConfig.seasons.generateSnowAndIce) {
 			return SeasonHooks.getBiomeTemperature(level, biome, pos) < 0.15F;
 		}
 		return biome.value().coldEnoughToSnow(pos);
@@ -57,11 +57,11 @@ public class SereneSeasonsCompat {
 
 	public static boolean isSeasonal(ResourceKey<Level> dimension, Holder<Biome> biome) {
 		return !biome.is(ModTags.Biomes.BLACKLISTED_BIOMES) && !biome.is(ModTags.Biomes.TROPICAL_BIOMES) &&
-				ServerConfig.isDimensionWhitelisted(dimension);
+				ModConfig.seasons.isDimensionWhitelisted(dimension);
 	}
 
 	public static void weatherTick(ServerLevel level, Runnable action) {
-		if (!ServerConfig.isDimensionWhitelisted(level.dimension())) {
+		if (!ModConfig.seasons.isDimensionWhitelisted(level.dimension())) {
 			return;
 		}
 		Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
@@ -72,16 +72,16 @@ public class SereneSeasonsCompat {
 			}
 			return;
 		}
-		ServerConfig.MeltChanceInfo meltInfo = ServerConfig.getMeltInfo(subSeason);
+		SeasonsConfig.SeasonProperties meltInfo = ModConfig.seasons.getSeasonProperties(subSeason);
 		if (meltInfo == null) {
 			action.run();
 			return;
 		}
-		int meltRolls = meltInfo.getRolls();
+		int meltRolls = meltInfo.meltRolls();
 		if (meltRolls == 0) {
 			return;
 		}
-		float meltChance = meltInfo.getMeltChance() * 0.01f;
+		float meltChance = meltInfo.meltChance() * 0.01f;
 		if (meltChance == 0) {
 			return;
 		}

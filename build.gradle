@@ -184,11 +184,14 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
     
     //implementation fg.deobf("curse.maven:jei-238222:3944627")
-    implementation fg.deobf("curse.maven:jade-324717:4961520")
-    implementation fg.deobf("curse.maven:kiwi-303657:4688568")
-    annotationProcessor "curse.maven:kiwi-303657:4688568"
-    
-    implementation fg.deobf("curse.maven:serene-seasons-291874:4761603")
+    // 11.12.1
+    implementation fg.deobf("curse.maven:jade-324717:5776962")
+    implementation fg.deobf("curse.maven:kiwi-303657:5603816")
+    annotationProcessor "curse.maven:kiwi-303657:5603816"
+
+    // 9.1.0.0
+    implementation fg.deobf("curse.maven:serene-seasons-291874:5790653")
+    implementation fg.deobf("curse.maven:glitchcore-955399:5787839")
     implementation fg.deobf("curse.maven:cloth-config-348521:4633444")
     implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-api-base:0.4.31+ef105b4977"))
     jarJar("dev.su5ed.sinytra.fabric-api:fabric-api-base:[0.4.30,0.4.32)")

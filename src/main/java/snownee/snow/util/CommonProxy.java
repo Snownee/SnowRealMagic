@@ -2,7 +2,6 @@ package snownee.snow.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceKey;
@@ -17,19 +16,15 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkHooks;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
-import snownee.snow.datagen.SnowBlockTagsProvider;
 
 @Mod(SnowRealMagic.MODID)
 public class CommonProxy {
@@ -48,15 +43,6 @@ public class CommonProxy {
 				event.setCanceled(true);
 				event.setCancellationResult(result);
 			}
-		});
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener((GatherDataEvent event) -> {
-			DataGenerator generator = event.getGenerator();
-			SnowBlockTagsProvider blockTagsProvider = new SnowBlockTagsProvider(
-					generator.getPackOutput(),
-					event.getLookupProvider(),
-					event.getExistingFileHelper());
-			generator.addProvider(event.includeServer(), blockTagsProvider);
 		});
 		sereneseasons = Platform.isModLoaded("sereneseasons");
 		if (sereneseasons) {

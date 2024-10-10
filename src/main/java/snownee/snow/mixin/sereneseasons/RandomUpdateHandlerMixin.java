@@ -6,29 +6,27 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import glitchcore.event.TickEvent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
-import net.minecraftforge.fml.LogicalSide;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
-import sereneseasons.handler.season.RandomUpdateHandler;
+import sereneseasons.season.RandomUpdateHandler;
 
 @Mixin(value = RandomUpdateHandler.class, remap = false)
 public abstract class RandomUpdateHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onWorldTick", cancellable = true)
-	private static void srm_onWorldTick(LevelTickEvent event, CallbackInfo ci) {
-		if (event.phase == TickEvent.Phase.END && event.side == LogicalSide.SERVER) {
-			Season.SubSeason subSeason = SeasonHelper.getSeasonState(event.level).getSubSeason();
-			Season season = subSeason.getSeason();
-			adjustWeatherFrequency(event.level, season);
+	private static void srm_onWorldTick(TickEvent.Level event, CallbackInfo ci) {
+		Level level = event.getLevel();
+		if (event.getPhase() == TickEvent.Phase.END && !level.isClientSide()) {
+			Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
+			adjustWeatherFrequency(level, subSeason);
 		}
 		ci.cancel();
 	}
 
 	@Shadow
-	private static void adjustWeatherFrequency(Level world, Season season) {
+	private static void adjustWeatherFrequency(Level world, Season.SubSeason subSeason) {
 		throw new AssertionError();
 	}
 
