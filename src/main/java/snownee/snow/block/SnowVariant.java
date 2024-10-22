@@ -8,6 +8,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -48,7 +49,11 @@ public interface SnowVariant extends IKiwiBlock {
 
 	@Override
 	default ItemStack getCloneItemStack(BlockState state, HitResult result, LevelReader level, BlockPos pos, Player player) {
-		return srm$getRaw(state, level, pos).getCloneItemStack(result, level, pos, player);
+		BlockState raw = srm$getRaw(state, level, pos);
+		if (raw.isAir()) {
+			return Items.SNOW.getDefaultInstance();
+		}
+		return raw.getCloneItemStack(result, level, pos, player);
 	}
 
 	@Override
