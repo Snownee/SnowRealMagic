@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -39,6 +40,10 @@ public class FabricRendererRenderAPI implements RenderAPI {
 			boolean cullSides,
 			BakedModel model,
 			double yOffset) {
+		RandomSource random = randomSupplier.get();
+		if (layer != null && !model.getRenderTypes(state, random, context.getModelData()).contains(layer)) {
+			return false;
+		}
 		Vec3 offset = yOffset == 0 ? state.getOffset(world, pos) : state.getOffset(world, pos).add(0, yOffset, 0);
 		BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 		context.pushTransform(quad -> {
@@ -61,7 +66,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (state == selfState && model != SnowClient.cachedOverlayModel) {
 			model = unwrapped;
 		}
-		model.emitBlockQuads(world, state, pos, randomSupplier, context);
+		((FabricBakedModel) model).emitBlockQuads(world, state, pos, randomSupplier, context);
 		context.popTransform();
 		return true;
 	}

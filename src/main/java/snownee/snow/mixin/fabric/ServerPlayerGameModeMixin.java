@@ -1,3 +1,4 @@
+/*
 package snownee.snow.mixin.fabric;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,3 +32,4 @@ public class ServerPlayerGameModeMixin {
 		return original.call(player, blockState);
 	}
 }
+*/

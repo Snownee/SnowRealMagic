@@ -37,7 +37,7 @@ import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
-import snownee.snow.mixin.BlockAccess;
+import snownee.snow.mixin.BlockBehaviourAccess;
 
 @KiwiModule
 public class CoreModule extends AbstractModule {
@@ -155,9 +155,9 @@ public class CoreModule extends AbstractModule {
 					SNOW_BLOCK,
 					SNOWY_PLANT).map(KiwiGO::get).forEach(block -> {
 				Item.BY_BLOCK.put(block, Items.SNOW);
-				((BlockAccess) block).getProperties().isValidSpawn(predicate);
+				((BlockBehaviourAccess) block).getProperties().isValidSpawn(predicate);
 			});
-			((BlockAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
+			((BlockBehaviourAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 		});
 	}
 

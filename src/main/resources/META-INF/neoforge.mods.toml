@@ -1,0 +1,22 @@
+modLoader = "javafml"
+loaderVersion = "*"
+license = "MIT"
+
+[[mods]]
+modId = "snowrealmagic"
+version = "${file.jarVersion}"
+displayName = "Snow! Real Magic!"
+authors = "Snownee, minzhi, WZD"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
+description = "Tweaks vanilla snow layer"
+
+[[dependencies.snowrealmagic]]
+modId = "kiwi"
+type = "required"
+versionRange = "[15.2.2, )"
+
+[[mixins]]
+config = "snowrealmagic.mixins.json"
+
+[modproperties.snowrealmagic]
+catalogueItemIcon = "minecraft:snow_block" #Support for Catalogue mod

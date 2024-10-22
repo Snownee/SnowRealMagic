@@ -1,3 +1,4 @@
+/*
 package snownee.snow.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -12,4 +13,4 @@ public class SRMDataGen implements DataGeneratorEntrypoint {
 		pack.addProvider(SRMLootTableProvider::new);
 		pack.addProvider(KiwiLanguageProvider::new);
 	}
-}
+}*/

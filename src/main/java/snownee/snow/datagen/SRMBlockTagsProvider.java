@@ -1,3 +1,4 @@
+/*
 package snownee.snow.datagen;
 
 import static snownee.snow.CoreModule.FENCE;
@@ -78,3 +79,4 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 		getOrCreateTagBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
 	}
 }
+*/

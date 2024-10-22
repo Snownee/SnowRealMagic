@@ -1,9 +1,5 @@
 package snownee.snow.util;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -11,12 +7,17 @@ import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.material.FluidState;
-import snownee.kiwi.Mod;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
@@ -24,10 +25,31 @@ import snownee.snow.SnowRealMagic;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
-public class CommonProxy implements ModInitializer {
+public class CommonProxy {
 	public static boolean terraforged;
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
+
+	public CommonProxy(IEventBus eventBus) {
+		NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
+			if (SnowCommonConfig.debugSpawningCommand) {
+				DebugMobSpawningCommand.register(event.getDispatcher());
+			}
+		});
+		NeoForge.EVENT_BUS.addListener(PlayerInteractEvent.RightClickBlock.class, event -> {
+			InteractionResult result = GameEvents.onItemUse(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+			if (result.consumesAction()) {
+				event.setCanceled(true);
+				event.setCancellationResult(result);
+			}
+		});
+		if (sereneSeasons) {
+			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
+		}
+		if (Platform.isPhysicalClient()) {
+			ClientProxy.onInitializeClient(eventBus);
+		}
+	}
 
 	public static boolean isHot(FluidState fluidState, Level level, BlockPos pos) {
 		return fluidState.getType().getPickupSound().orElse(null) == SoundEvents.BUCKET_FILL_LAVA || fluidState.is(FluidTags.LAVA);
@@ -111,19 +133,5 @@ public class CommonProxy implements ModInitializer {
 			return SereneSeasonsCompat.isWinter(level, pos, biome);
 		}
 		return false;
-	}
-
-	@Override
-	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			if (SnowCommonConfig.debugSpawningCommand) {
-				DebugMobSpawningCommand.register(dispatcher);
-			}
-		});
-		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
-		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
-		if (sereneSeasons) {
-			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
-		}
 	}
 }

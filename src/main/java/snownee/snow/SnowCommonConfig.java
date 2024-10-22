@@ -41,7 +41,7 @@ public final class SnowCommonConfig {
 	@Path("accumulation.snowAndIceMeltInWarmBiomes")
 	public static boolean snowAndIceMeltInWarmBiomes = false;
 	@Path("accumulation.naturalMelting")
-	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
+	public static boolean snowNaturalMelt = true;
 
 	@Skip // Unavailable on Fabric
 	@Path("integration.accumulationWinterOnly")

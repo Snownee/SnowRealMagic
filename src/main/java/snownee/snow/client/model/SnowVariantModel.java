@@ -2,6 +2,8 @@ package snownee.snow.client.model;
 
 import java.util.function.Supplier;
 
+import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.resources.model.BakedModel;
@@ -32,7 +34,7 @@ public class SnowVariantModel extends ForwardingBakedModel {
 			RenderContext context) {
 		BakedModel model = null;
 		if (SnowClientConfig.snowVariants && pos != null) {
-			if (blockView.getBlockEntityRenderData(pos) instanceof RenderData) {
+			if (((FabricBlockView) blockView).getBlockEntityRenderData(pos) instanceof RenderData) {
 				model = variantModel;
 			} else if (state.hasProperty(DoublePlantBlock.HALF) &&
 					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(blockView.getBlockState(pos.below()))) {
@@ -42,7 +44,7 @@ public class SnowVariantModel extends ForwardingBakedModel {
 		if (model == null) {
 			model = wrapped;
 		}
-		model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+		((FabricBakedModel) model).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 	}
 
 	@Override

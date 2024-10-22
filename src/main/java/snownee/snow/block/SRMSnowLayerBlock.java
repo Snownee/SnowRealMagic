@@ -36,11 +36,14 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.RenderLayerEnum;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.mixin.BlockBehaviourAccess;
 
+@NotNullByDefault
 @KiwiModule.RenderLayer(RenderLayerEnum.CUTOUT)
 public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public SRMSnowLayerBlock(Properties properties) {
@@ -132,7 +135,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		var block = blockState.getBlock();
 
 		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
-			block.entityInside(blockState, worldIn, pos, entityIn);
+			((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
 		}
 	}
 

@@ -1,17 +1,5 @@
 package snownee.snow.util;
 
-import static snownee.snow.CoreModule.FENCE;
-import static snownee.snow.CoreModule.FENCE2;
-import static snownee.snow.CoreModule.FENCE_GATE;
-import static snownee.snow.CoreModule.SLAB;
-import static snownee.snow.CoreModule.SNOWY_DOUBLE_PLANT_LOWER;
-import static snownee.snow.CoreModule.SNOWY_DOUBLE_PLANT_UPPER;
-import static snownee.snow.CoreModule.SNOWY_PLANT;
-import static snownee.snow.CoreModule.SNOW_BLOCK;
-import static snownee.snow.CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
-import static snownee.snow.CoreModule.STAIRS;
-import static snownee.snow.CoreModule.WALL;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +10,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -42,6 +29,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -50,8 +38,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import snownee.kiwi.KiwiModules;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.CoreModule;
+import snownee.snow.SnowRealMagic;
 import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
@@ -60,14 +54,14 @@ import snownee.snow.client.model.SnowCoveredModel;
 import snownee.snow.client.model.SnowVariantModel;
 import snownee.snow.client.model.WrapperUnbakedModel;
 
-public class ClientProxy implements ClientModInitializer {
+public class ClientProxy {
 
 	public static BakedModel getBlockModel(BlockState state) {
 		return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
 	}
 
 	public static BakedModel getBlockModel(ResourceLocation location) {
-		return Minecraft.getInstance().getModelManager().getModel(location);
+		return ((FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(location);
 	}
 
 	public static void onPlayerJoin() {
@@ -100,9 +94,10 @@ public class ClientProxy implements ClientModInitializer {
 				OverlayTexture.NO_OVERLAY);
 	}
 
-	@Override
-	public void onInitializeClient() {
-		EntityRendererRegistry.register(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
+	public static void onInitializeClient(IEventBus eventBus) {
+		eventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
+			event.registerEntityRenderer(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
+		});
 
 		ModelLoadingPlugin.register(ctx -> {
 			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
@@ -132,24 +127,11 @@ public class ClientProxy implements ClientModInitializer {
 			});
 			ctx.addModels(extraModels);
 
-			var allBlocks = List.of(
-					SNOW_EXTRA_COLLISION_BLOCK,
-					SNOW_BLOCK,
-					SNOWY_PLANT, SNOWY_DOUBLE_PLANT_LOWER,
-					SNOWY_DOUBLE_PLANT_UPPER,
-					FENCE,
-					FENCE2,
-					STAIRS,
-					SLAB,
-					FENCE_GATE,
-					WALL);
 			Set<ModelResourceLocation> snowCoveredModelIds = Sets.newHashSet();
 			Map<UnbakedModel, UnbakedModel> transform = Maps.newHashMap();
-			for (var block : allBlocks) {
-				for (BlockState state : block.get().getStateDefinition().getPossibleStates()) {
-					ModelResourceLocation modelId = BlockModelShaper.stateToModelLocation(
-							BuiltInRegistries.BLOCK.getKey(block.get()),
-							state);
+			for (var block : allSnowBlocks()) {
+				for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+					ModelResourceLocation modelId = BlockModelShaper.stateToModelLocation(BuiltInRegistries.BLOCK.getKey(block), state);
 					snowCoveredModelIds.add(modelId);
 				}
 			}
@@ -182,5 +164,18 @@ public class ClientProxy implements ClientModInitializer {
 			SnowClient.cachedOverlayModel = null;
 			SnowClient.cachedSnowModel = null;
 		});
+
+		eventBus.addListener(FMLCommonSetupEvent.class, event -> {
+			event.enqueueWork(() -> {
+				for (Block block : allSnowBlocks()) {
+					//noinspection deprecation
+					ItemBlockRenderTypes.setRenderLayer(block, ChunkRenderTypeSet.all());
+				}
+			});
+		});
+	}
+
+	public static List<Block> allSnowBlocks() {
+		return KiwiModules.get(SnowRealMagic.id("core")).getRegistries(Registries.BLOCK);
 	}
 }

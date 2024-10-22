@@ -56,6 +56,7 @@ import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.mixin.BlockBehaviourAccess;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
@@ -257,7 +258,7 @@ public final class Hooks {
 			//todo: check if it's available
 			new SSnowLandEffectPacket(pos, (byte) originLayers, (byte) layers).sendToAround((ServerLevel) level);
 		} else if (playSound) {
-			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
+			SoundType soundtype = ((BlockBehaviourAccess) Blocks.SNOW).callGetSoundType(Blocks.SNOW.defaultBlockState());
 			level.playSound(
 					null,
 					pos,
@@ -541,7 +542,7 @@ public final class Hooks {
 			return false;
 		}
 		if (!level.isClientSide) {
-			level.setBlock(pos, state2, 16 | 32);
+			level.setBlock(pos, state2, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
 			block.setPlacedBy(level, pos, blockState, player, context.getItemInHand());
 			int i = blockState.getValue(SnowLayerBlock.LAYERS);
 			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true) && !player.isCreative()) {

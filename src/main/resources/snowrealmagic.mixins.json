@@ -6,6 +6,7 @@
 	"refmap": "snowrealmagic.refmap.json",
 	"mixins": [
 		"BlockAccess",
+		"BlockBehaviourAccess",
 		"BlockBehaviourMixin",
 		"BlockItemMixin",
 		"BlockMixin",
@@ -22,7 +23,6 @@
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
-		"fabric.ServerPlayerGameModeMixin",
 		"fabric.SnowBlockEntityMixin"
 	],
 	"client": [
