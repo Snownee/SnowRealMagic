@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -32,11 +31,7 @@ public class DoublePlantBlockMixin {
 	@Final
 	public static EnumProperty<DoubleBlockHalf> HALF;
 
-	// TODO 确认逻辑
-	@Inject(
-			method = "preventDropFromBottomPart",
-			at = @At(
-					value = "TAIL"))
+	@Inject(method = "preventDropFromBottomPart", at = @At(value = "TAIL"))
 	private static void srm_preventDropFromBottomPart(
 			Level level,
 			BlockPos pos,
@@ -53,10 +48,7 @@ public class DoublePlantBlockMixin {
 			return;
 		}
 		level.setBlock(belowPos, Blocks.AIR.defaultBlockState(), 35);
-		level.setBlock(
-				belowPos,
-				Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, belowState.getValue(SnowLayerBlock.LAYERS)),
-				35);
+		level.setBlock(belowPos, CoreModule.SNOWY_DOUBLE_PLANT_LOWER.get().srm$getSnowState(belowState, level, belowPos), 35);
 		level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, belowPos, Block.getId(state));
 	}
 
@@ -65,22 +57,23 @@ public class DoublePlantBlockMixin {
 			BlockState stateIn,
 			Direction facing,
 			BlockState facingState,
-			LevelAccessor worldIn,
+			LevelAccessor level,
 			BlockPos currentPos,
 			BlockPos facingPos,
 			CallbackInfoReturnable<BlockState> cir) {
-		var doubleblockhalf = stateIn.getValue(HALF);
-		if (facing.getAxis() == Direction.Axis.Y && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(facingState)) {
-			if ((doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN) ||
-					(doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP)) {
-				cir.setReturnValue(stateIn);
-			}
+		// at this time, the raw facingState may not be set yet
+		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
+		if (doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(facingState)) {
+			cir.setReturnValue(stateIn);
+		}
+		if (doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP && CoreModule.SNOWY_DOUBLE_PLANT_UPPER.is(facingState)) {
+			cir.setReturnValue(stateIn);
 		}
 	}
 
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
-	public void srm_canSurvive(BlockState state, LevelReader worldIn, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-		if (state.getValue(HALF) == DoubleBlockHalf.UPPER && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(worldIn.getBlockState(pos.below()))) {
+	public void srm_canSurvive(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+		if (state.getValue(HALF) == DoubleBlockHalf.UPPER && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(level.getBlockState(pos.below()))) {
 			cir.setReturnValue(true);
 		}
 	}
