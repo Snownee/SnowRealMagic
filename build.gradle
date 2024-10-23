@@ -129,7 +129,7 @@ dependencies {
     implementation "maven.modrinth:serene-seasons:b2S4BcbP"
 
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:0.104.0+2.0.15+1.21.1"
-    jarJar "org.sinytra:forgified-fabric-loader:2.5.33+0.16.0+1.21.1"
+    jarJar "org.sinytra:forgified-fabric-loader:2.5.29+0.16.0+1.21"
     jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19"
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a3919"
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a3919"
