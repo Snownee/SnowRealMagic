@@ -5,7 +5,6 @@ import snownee.kiwi.config.ConfigUI;
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Path;
 import snownee.kiwi.config.KiwiConfig.Range;
-import snownee.kiwi.loader.Platform;
 
 @KiwiConfig
 public final class SnowCommonConfig {
@@ -41,7 +40,7 @@ public final class SnowCommonConfig {
 	@Path("accumulation.snowAndIceMeltInWarmBiomes")
 	public static boolean snowAndIceMeltInWarmBiomes = false;
 	@Path("accumulation.naturalMelting")
-	public static boolean snowNaturalMelt = !Platform.isModLoaded("terraforged");
+	public static boolean snowNaturalMelt = true;
 
 	@Skip // Unavailable on Fabric
 	@Path("integration.accumulationWinterOnly")

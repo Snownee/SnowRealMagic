@@ -6,6 +6,7 @@
 	"refmap": "snowrealmagic.refmap.json",
 	"mixins": [
 		"BlockAccess",
+		"BlockBehaviourAccess",
 		"BlockBehaviourMixin",
 		"BlockItemMixin",
 		"BlockMixin",

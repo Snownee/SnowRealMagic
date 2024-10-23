@@ -6,7 +6,4 @@ accessible method net/minecraft/world/level/GameRules$IntegerValue create (I)Lne
 accessible field net/minecraft/world/level/storage/loot/LootContext params Lnet/minecraft/world/level/storage/loot/LootParams;
 accessible field net/minecraft/world/level/storage/loot/LootParams params Ljava/util/Map;
 
-transitive-accessible method net/minecraft/world/level/block/state/BlockBehaviour entityInside (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)V
-transitive-accessible method net/minecraft/world/level/block/state/BlockBehaviour getSoundType (Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/SoundType;
-
 accessible field net/minecraft/world/entity/Entity dimensions Lnet/minecraft/world/entity/EntityDimensions;

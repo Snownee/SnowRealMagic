@@ -2,6 +2,7 @@ package snownee.snow.client.model;
 
 import java.util.function.Supplier;
 
+import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -27,7 +28,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 			BlockPos pos,
 			Supplier<RandomSource> randomSupplier,
 			RenderContext context) {
-		Object data = blockView.getBlockEntityRenderData(pos);
+		Object data = ((FabricBlockView) blockView).getBlockEntityRenderData(pos);
 		if (!(data instanceof RenderData renderData)) {
 			return;
 		}

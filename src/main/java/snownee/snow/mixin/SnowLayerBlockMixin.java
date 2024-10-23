@@ -35,6 +35,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
@@ -42,6 +43,7 @@ import snownee.snow.block.SnowVariant;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.util.CommonProxy;
 
+@NotNullByDefault
 @Mixin(value = SnowLayerBlock.class, priority = 500)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos

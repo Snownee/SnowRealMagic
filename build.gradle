@@ -69,7 +69,8 @@ dependencies {
 
 fabricApi {
     configureDataGeneration {
-        modId.set(project.mod_id)
+        modId = project.mod_id
+        outputDirectory = file("src/generated/resources")
     }
 }
 

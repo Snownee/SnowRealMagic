@@ -56,6 +56,7 @@ import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.mixin.BlockBehaviourAccess;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
@@ -257,7 +258,7 @@ public final class Hooks {
 			//todo: check if it's available
 			new SSnowLandEffectPacket(pos, (byte) originLayers, (byte) layers).sendToAround((ServerLevel) level);
 		} else if (playSound) {
-			SoundType soundtype = Blocks.SNOW.getSoundType(Blocks.SNOW.defaultBlockState());
+			SoundType soundtype = ((BlockBehaviourAccess) Blocks.SNOW).callGetSoundType(Blocks.SNOW.defaultBlockState());
 			level.playSound(
 					null,
 					pos,
@@ -503,18 +504,24 @@ public final class Hooks {
 			return false;
 		}
 		if (blockState.is(Blocks.SNOW)) {
-			level.setBlock(pos, Hooks.copyProperties(blockState, CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState()), 16 | 32);
+			level.setBlock(
+					pos,
+					Hooks.copyProperties(blockState, CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState()),
+					Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
 		}
 		var blockEntity = level.getBlockEntity(pos);
 		if (!(blockEntity instanceof SnowBlockEntity snowTile)) {
 			return false;
 		}
 		if (blockState.is(CoreModule.SNOW_TAG) && snowTile.getContainedState().isAir()) {
-			level.setBlock(pos, Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()), 16 | 32);
+			level.setBlock(
+					pos,
+					Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()),
+					Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
 		} else {
 			snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
 			if (level.isClientSide) {
-				level.sendBlockUpdated(pos, blockState, blockState, 11);
+				level.sendBlockUpdated(pos, blockState, blockState, Block.UPDATE_ALL_IMMEDIATE);
 			}
 		}
 		return true;
