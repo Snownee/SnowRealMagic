@@ -42,8 +42,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import snownee.kiwi.KiwiModules;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.client.FallingSnowRenderer;
@@ -176,6 +176,6 @@ public class ClientProxy {
 	}
 
 	public static List<Block> allSnowBlocks() {
-		return KiwiModules.get(SnowRealMagic.id("core")).getRegistries(Registries.BLOCK);
+		return GameObjectLookup.all(Registries.BLOCK, SnowRealMagic.ID).toList();
 	}
 }
