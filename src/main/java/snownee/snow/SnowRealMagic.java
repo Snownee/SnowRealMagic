@@ -44,7 +44,7 @@ public class SnowRealMagic {
 
 	public SnowRealMagic() {
 		MinecraftForge.TERRAIN_GEN_BUS.register(SnowGenerator.class);
-		if (FMLCommonHandler.instance().getSide().isClient() && Loader.isModLoaded("fbp")) {
+		if (FMLCommonHandler.instance().getSide().isClient() && Loader.isModLoaded("fbp") && !Loader.instance().getIndexedModList().get("fbp").getName().contains("Fancier")) {
 			MinecraftForge.EVENT_BUS.register(new FBPHack());
 		}
 	}
