@@ -64,13 +64,6 @@ public class ClientProxy {
 		return ((FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(location);
 	}
 
-	public static void onPlayerJoin() {
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player != null && Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
-			player.sendSystemMessage(Component.literal("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."));
-		}
-	}
-
 	public static void renderFallingBlock(
 			Entity entity,
 			BlockState state,
@@ -95,9 +88,10 @@ public class ClientProxy {
 	}
 
 	public static void onInitializeClient(IEventBus eventBus) {
-		eventBus.addListener(EntityRenderersEvent.RegisterRenderers.class, event -> {
-			event.registerEntityRenderer(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
-		});
+		eventBus.addListener(
+				EntityRenderersEvent.RegisterRenderers.class, event -> {
+					event.registerEntityRenderer(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
+				});
 
 		ModelLoadingPlugin.register(ctx -> {
 			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
@@ -136,43 +130,50 @@ public class ClientProxy {
 				}
 			}
 
-			ctx.modifyModelOnLoad().register(ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-				if (snowCoveredModelIds.contains(context.topLevelId())) {
-					return transform.computeIfAbsent(model, $ -> new WrapperUnbakedModel($, SnowCoveredModel::new));
-				}
-				return model;
-			});
+			ctx.modifyModelOnLoad().register(
+					ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
+						if (snowCoveredModelIds.contains(context.topLevelId())) {
+							return transform.computeIfAbsent(model, $ -> new WrapperUnbakedModel($, SnowCoveredModel::new));
+						}
+						return model;
+					});
 
-			ctx.modifyModelAfterBake().register(ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-				ModelState modelState = context.settings();
-				if (model == null || modelState.getClass() != Variant.class) {
-					return model;
-				}
-				ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
-				if (def == null) {
-					return model;
-				}
-				Variant variantState = (Variant) modelState;
-				variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
-				BakedModel variantModel = context.baker().bake(def.model, variantState);
-				if (variantModel == null) {
-					return model;
-				}
-				return new SnowVariantModel(model, variantModel);
-			});
+			ctx.modifyModelAfterBake().register(
+					ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
+						ModelState modelState = context.settings();
+						if (model == null || modelState.getClass() != Variant.class) {
+							return model;
+						}
+						ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
+						if (def == null) {
+							return model;
+						}
+						Variant variantState = (Variant) modelState;
+						variantState = new Variant(
+								def.model,
+								variantState.getRotation(),
+								variantState.isUvLocked(),
+								variantState.getWeight());
+						BakedModel variantModel = context.baker().bake(def.model, variantState);
+						if (variantModel == null) {
+							return model;
+						}
+						return new SnowVariantModel(model, variantModel);
+					});
 
 			SnowClient.cachedOverlayModel = null;
 			SnowClient.cachedSnowModel = null;
 		});
 
-		eventBus.addListener(FMLCommonSetupEvent.class, event -> {
-			event.enqueueWork(() -> {
-				for (Block block : allSnowBlocks()) {
-					//noinspection deprecation
-					ItemBlockRenderTypes.setRenderLayer(block, ChunkRenderTypeSet.all());
-				}
-			});
-		});
+		eventBus.addListener(
+				FMLCommonSetupEvent.class, event -> {
+					event.enqueueWork(() -> {
+						for (Block block : allSnowBlocks()) {
+							//noinspection deprecation
+							ItemBlockRenderTypes.setRenderLayer(block, ChunkRenderTypeSet.all());
+						}
+					});
+				});
 	}
 
 	public static List<Block> allSnowBlocks() {
