@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -31,7 +30,6 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
@@ -39,7 +37,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
@@ -59,13 +56,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	public static BakedModel getBlockModel(ResourceLocation location) {
 		return Minecraft.getInstance().getModelManager().getModel(location);
-	}
-
-	public static void onPlayerJoin() {
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player != null && Platform.isModLoaded("sodium") && !Platform.isModLoaded("indium")) {
-			player.sendSystemMessage(Component.literal("Please install §lIndium§r mod to make Snow! Real Magic! work with Sodium."));
-		}
 	}
 
 	public static void renderFallingBlock(
@@ -132,30 +122,36 @@ public class ClientProxy implements ClientModInitializer {
 				}
 			}
 
-			ctx.modifyModelOnLoad().register(ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-				if (snowCoveredModelIds.contains(context.topLevelId())) {
-					return transform.computeIfAbsent(model, $ -> new WrapperUnbakedModel($, SnowCoveredModel::new));
-				}
-				return model;
-			});
+			ctx.modifyModelOnLoad().register(
+					ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
+						if (snowCoveredModelIds.contains(context.topLevelId())) {
+							return transform.computeIfAbsent(model, $ -> new WrapperUnbakedModel($, SnowCoveredModel::new));
+						}
+						return model;
+					});
 
-			ctx.modifyModelAfterBake().register(ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-				ModelState modelState = context.settings();
-				if (model == null || modelState.getClass() != Variant.class) {
-					return model;
-				}
-				ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
-				if (def == null) {
-					return model;
-				}
-				Variant variantState = (Variant) modelState;
-				variantState = new Variant(def.model, variantState.getRotation(), variantState.isUvLocked(), variantState.getWeight());
-				BakedModel variantModel = context.baker().bake(def.model, variantState);
-				if (variantModel == null) {
-					return model;
-				}
-				return new SnowVariantModel(model, variantModel);
-			});
+			ctx.modifyModelAfterBake().register(
+					ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
+						ModelState modelState = context.settings();
+						if (model == null || modelState.getClass() != Variant.class) {
+							return model;
+						}
+						ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
+						if (def == null) {
+							return model;
+						}
+						Variant variantState = (Variant) modelState;
+						variantState = new Variant(
+								def.model,
+								variantState.getRotation(),
+								variantState.isUvLocked(),
+								variantState.getWeight());
+						BakedModel variantModel = context.baker().bake(def.model, variantState);
+						if (variantModel == null) {
+							return model;
+						}
+						return new SnowVariantModel(model, variantModel);
+					});
 
 			SnowClient.cachedOverlayModel = null;
 			SnowClient.cachedSnowModel = null;
