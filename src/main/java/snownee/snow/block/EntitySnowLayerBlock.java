@@ -57,26 +57,29 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
+					return Shapes.or(shape, getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
+					return Shapes.or(shape, getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context);
+					return Shapes.or(shape, getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
@@ -214,13 +217,16 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 	@SuppressWarnings("deprecation")
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
-		if (result.consumesAction()) {
-			BlockState stateNow = worldIn.getBlockState(pos);
-			if (!stateNow.is(this)) {
-				Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+		try {
+			InteractionResult result = getRaw(state, worldIn, pos).use(worldIn, player, handIn, hit);
+			if (result.consumesAction()) {
+				BlockState stateNow = worldIn.getBlockState(pos);
+				if (!stateNow.is(this)) {
+					Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 18, true);
+				}
+				return result;
 			}
-			return result;
+		} catch (Throwable ignored) {
 		}
 		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
@@ -234,11 +240,12 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockState contained = getRaw(state, worldIn, pos);
 			if (!contained.isAir() && contained.getDestroySpeed(worldIn, pos) == 0) {
 				worldIn.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(contained));
-				Block.dropResources(contained, worldIn, pos, null, player, ItemStack.EMPTY);
+				Block.dropResources(contained, worldIn, pos, null, player, player.getMainHandItem());
 				int layers = state.getValue(LAYERS);
 				worldIn.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
+				player.getMainHandItem().mineBlock(worldIn, contained, pos, player);
 			}
-		} catch (Throwable e) {
+		} catch (Throwable ignored) {
 		}
 	}
 
