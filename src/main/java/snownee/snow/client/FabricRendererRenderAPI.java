@@ -1,20 +1,10 @@
 package snownee.snow.client;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.client.model.data.ModelData;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -40,6 +30,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		this.unwrapped = unwrapped;
 	}
 
+	@Override
 	public boolean translateYAndRender(
 			BlockAndTintGetter world,
 			BlockState state,

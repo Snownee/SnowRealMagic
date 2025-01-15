@@ -23,6 +23,7 @@ public class ShapeCaches {
 	public static final Cache<Key, VoxelShape> VISUAL = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 	public static final Cache<Key, VoxelShape> COLLIDER = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 	public static final Cache<Key, VoxelShape> OUTLINE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+	public static final Cache<Key, VoxelShape> OCCLUSION = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
 	public static VoxelShape get(
 			Cache<Key, VoxelShape> cache,
