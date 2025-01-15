@@ -41,7 +41,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+		return ShapeCaches.get(ShapeCaches.OCCLUSION, state, worldIn, pos, () -> {
 			VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
 			return Shapes.or(shape, getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
 		});
