@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Adding mod support / integration
+    url: https://discord.gg/KzGQW7a
+    about: Community Support on Discord
+  - name: Porting to other mod loaders or versions
+    url: https://discord.gg/KzGQW7a
+    about: Community Support on Discord
