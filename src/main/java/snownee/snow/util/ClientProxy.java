@@ -4,13 +4,9 @@ import static snownee.snow.CoreModule.FENCE;
 import static snownee.snow.CoreModule.FENCE2;
 import static snownee.snow.CoreModule.FENCE_GATE;
 import static snownee.snow.CoreModule.SLAB;
-import static snownee.snow.CoreModule.SOUL_TORCH;
-import static snownee.snow.CoreModule.SOUL_WALL_TORCH;
 import static snownee.snow.CoreModule.STAIRS;
 import static snownee.snow.CoreModule.TILE_BLOCK;
-import static snownee.snow.CoreModule.TORCH;
 import static snownee.snow.CoreModule.WALL;
-import static snownee.snow.CoreModule.WALL_TORCH;
 
 import java.io.IOException;
 import java.util.List;
@@ -106,7 +102,7 @@ public class ClientProxy {
 				SnowClient.overrideBlocks.add(block);
 			}
 		}
-		List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL, TORCH, SOUL_TORCH, WALL_TORCH, SOUL_WALL_TORCH);
+		List<KiwiGO<? extends Block>> allBlocks = List.of(TILE_BLOCK, FENCE, FENCE2, STAIRS, SLAB, FENCE_GATE, WALL);
 		for (KiwiGO<? extends Block> kiwiGO : allBlocks) {
 			Block block = kiwiGO.get();
 			for (BlockState state : block.getStateDefinition().getPossibleStates()) {

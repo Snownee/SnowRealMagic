@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.MushroomBlock;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -42,9 +41,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
-import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
@@ -56,9 +53,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.lighting.LightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
-import snownee.snow.block.torch.SnowTorchBlock;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.block.torch.SnowWallTorchBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
@@ -170,9 +165,6 @@ public final class Hooks {
 				block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof TorchBlock) {
-			return true;
-		}
 		if (block instanceof FenceBlock) {
 			return hasAllProperties(state, CoreModule.FENCE.defaultBlockState());
 		}
@@ -206,13 +198,10 @@ public final class Hooks {
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock ||
 				block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock ||
 				block instanceof SweetBerryBushBlock) {
-
 			level.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
-
 			if (level.getBlockEntity(pos) instanceof SnowBlockEntity snowBlockEntity) {
 				snowBlockEntity.setContainedState(state);
 			}
-
 			return true;
 		}
 
@@ -242,37 +231,7 @@ public final class Hooks {
 			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
 			level.setBlock(pos, newState, flags);
-		} else if (block instanceof WallTorchBlock && block.getClass() != SnowWallTorchBlock.class) {
-			KiwiGO<Block> newBlock;
-			final Block stateBlock = state.getBlock();
-			if (stateBlock instanceof final WallTorchBlock torchBlock) {
-				newBlock = torchBlock.equals(Blocks.SOUL_WALL_TORCH) ? CoreModule.SOUL_WALL_TORCH : CoreModule.WALL_TORCH;
-			}
-			else {
-				return false;
-			}
-
-			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-			
-		} else if (block instanceof TorchBlock && block.getClass() != SnowTorchBlock.class) {
-			KiwiGO<Block> newBlock;
-			final Block stateBlock = state.getBlock();
-			if (stateBlock instanceof final TorchBlock torchBlock) {
-				newBlock = torchBlock.equals(Blocks.SOUL_TORCH) ? CoreModule.SOUL_TORCH : CoreModule.TORCH;
-			}
-			else {
-				return false;
-			}
-
-			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-		}
-		else {
+		} else {
 			return false;
 		}
 
@@ -404,34 +363,24 @@ public final class Hooks {
 		if (chance != 1 && random.nextFloat() > chance) {
 			return;
 		}
-
 		Holder<Biome> biome = level.getBiome(pos);
 		SnowVariant snow = (SnowVariant) state.getBlock();
 		int layers = snow.layers(state, level, pos);
 		boolean meltByTemperature = false;
 		boolean meltByBrightness = false;
-
-		// If snow can spawn on all light levels, and the snow can melt, only check if it should melt based on the temperature.
-		if (SnowCommonConfig.snowSpawnsInAllLightLevels && !SnowCommonConfig.snowNeverMelt) {
+		if (!SnowCommonConfig.snowNeverMelt) {
+			if (layers == 8) {
+				BlockPos above = pos.above();
+				BlockState upState = level.getBlockState(above);
+				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
+					return;
+				}
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
+			} else {
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
+			}
 			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
 		}
-		else {
-			// If snow should melt, get if it can melt based on the temperature OR the light level.
-			if (!SnowCommonConfig.snowNeverMelt) {
-				if (layers == 8) {
-					BlockPos above = pos.above();
-					BlockState upState = level.getBlockState(above);
-					if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
-						return;
-					}
-					meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
-				} else {
-					meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
-				}
-				meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
-			}
-		}
-
 		boolean melt = meltByTemperature || meltByBrightness;
 		if (!melt && SnowCommonConfig.accumulationWinterOnly && !CommonProxy.isWinter(level, pos, biome)) {
 			return;
@@ -453,8 +402,8 @@ public final class Hooks {
 						state,
 						(w, p) -> (
 								SnowCommonConfig.snowAccumulationMaxLayers > 8 ||
-								!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
-								(SnowCommonConfig.snowSpawnsInAllLightLevels || w.getBrightness(LightLayer.BLOCK, p) <= 10),
+										!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
+								w.getBrightness(LightLayer.BLOCK, p) <= 10,
 						true);
 			}
 		} else if (melt) {
