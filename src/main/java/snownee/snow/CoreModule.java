@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -35,9 +34,7 @@ import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
 import snownee.snow.block.SnowStairsBlock;
-import snownee.snow.block.torch.SnowTorchBlock;
 import snownee.snow.block.SnowWallBlock;
-import snownee.snow.block.torch.SnowWallTorchBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.entity.FallingSnowEntity;
@@ -60,26 +57,6 @@ public class CoreModule extends AbstractModule {
 	@NoItem
 	@Name("snow")
 	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
-
-	@NoItem
-	public static final KiwiGO<Block> TORCH = go(() -> new SnowTorchBlock(blockProp(Blocks.TORCH).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape(), ParticleTypes.FLAME));
-
-	@NoItem
-	public static final KiwiGO<Block> WALL_TORCH = go(() -> new SnowWallTorchBlock(blockProp(Blocks.WALL_TORCH).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape(), ParticleTypes.FLAME));
-
-	@NoItem
-	public static final KiwiGO<Block> SOUL_TORCH = go(() -> new SnowTorchBlock(blockProp(Blocks.SOUL_TORCH).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape(), ParticleTypes.SOUL_FIRE_FLAME));
-
-	@NoItem
-	public static final KiwiGO<Block> SOUL_WALL_TORCH = go(() -> new SnowWallTorchBlock(blockProp(Blocks.SOUL_WALL_TORCH).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape(), ParticleTypes.SOUL_FIRE_FLAME));
 
 	@NoItem
 	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
@@ -119,11 +96,7 @@ public class CoreModule extends AbstractModule {
 			STAIRS,
 			SLAB,
 			FENCE_GATE,
-			WALL,
-			TORCH,
-			SOUL_TORCH,
-			WALL_TORCH,
-			SOUL_WALL_TORCH);
+			WALL);
 
 	@Name("snow")
 	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> EntityType.Builder.<FallingSnowEntity>of(
@@ -168,7 +141,7 @@ public class CoreModule extends AbstractModule {
 	@OnlyIn(Dist.CLIENT)
 	protected void clientInit(ClientInitEvent event) {
 		Predicate<RenderType> blockRenderTypes = EnumUtil.BLOCK_RENDER_TYPES::contains;
-		for (Supplier<? extends Block> block : List.of(TILE_BLOCK, FENCE, FENCE2, FENCE_GATE, SLAB, STAIRS, WALL, TORCH, SOUL_TORCH, WALL_TORCH, SOUL_WALL_TORCH))
+		for (Supplier<? extends Block> block : List.of(TILE_BLOCK, FENCE, FENCE2, FENCE_GATE, SLAB, STAIRS, WALL))
 			ItemBlockRenderTypes.setRenderLayer(block.get(), blockRenderTypes);
 	}
 

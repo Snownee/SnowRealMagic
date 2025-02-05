@@ -56,9 +56,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.lighting.LightEngine;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.block.SnowFenceBlock;
-import snownee.snow.block.torch.SnowTorchBlock;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.block.torch.SnowWallTorchBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
@@ -170,9 +168,6 @@ public final class Hooks {
 				block instanceof SweetBerryBushBlock) {
 			return true;
 		}
-		if (block instanceof TorchBlock) {
-			return true;
-		}
 		if (block instanceof FenceBlock) {
 			return hasAllProperties(state, CoreModule.FENCE.defaultBlockState());
 		}
@@ -206,13 +201,10 @@ public final class Hooks {
 		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock ||
 				block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock ||
 				block instanceof SweetBerryBushBlock) {
-
 			level.setBlock(pos, CoreModule.TILE_BLOCK.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers), flags);
-
 			if (level.getBlockEntity(pos) instanceof SnowBlockEntity snowBlockEntity) {
 				snowBlockEntity.setContainedState(state);
 			}
-
 			return true;
 		}
 
@@ -242,37 +234,7 @@ public final class Hooks {
 			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
 			level.setBlock(pos, newState, flags);
-		} else if (block instanceof WallTorchBlock && block.getClass() != SnowWallTorchBlock.class) {
-			KiwiGO<Block> newBlock;
-			final Block stateBlock = state.getBlock();
-			if (stateBlock instanceof final WallTorchBlock torchBlock) {
-				newBlock = torchBlock.equals(Blocks.SOUL_WALL_TORCH) ? CoreModule.SOUL_WALL_TORCH : CoreModule.WALL_TORCH;
-			}
-			else {
-				return false;
-			}
-
-			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-			
-		} else if (block instanceof TorchBlock && block.getClass() != SnowTorchBlock.class) {
-			KiwiGO<Block> newBlock;
-			final Block stateBlock = state.getBlock();
-			if (stateBlock instanceof final TorchBlock torchBlock) {
-				newBlock = torchBlock.equals(Blocks.SOUL_TORCH) ? CoreModule.SOUL_TORCH : CoreModule.TORCH;
-			}
-			else {
-				return false;
-			}
-
-			BlockState newState = newBlock.defaultBlockState();
-			newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-			level.setBlock(pos, newState, flags);
-		}
-		else {
+		} else {
 			return false;
 		}
 
@@ -404,7 +366,6 @@ public final class Hooks {
 		if (chance != 1 && random.nextFloat() > chance) {
 			return;
 		}
-
 		Holder<Biome> biome = level.getBiome(pos);
 		SnowVariant snow = (SnowVariant) state.getBlock();
 		int layers = snow.layers(state, level, pos);
