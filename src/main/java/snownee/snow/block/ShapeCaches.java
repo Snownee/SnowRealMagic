@@ -11,9 +11,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.TallFlowerBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
-import snownee.snow.SnowRealMagic;
 
 public class ShapeCaches {
 
@@ -23,6 +23,7 @@ public class ShapeCaches {
 	public static final Cache<Key, VoxelShape> VISUAL = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 	public static final Cache<Key, VoxelShape> COLLIDER = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 	public static final Cache<Key, VoxelShape> OUTLINE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+	public static final Cache<Key, VoxelShape> OCCLUSION = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
 	public static VoxelShape get(
 			Cache<Key, VoxelShape> cache,
@@ -46,8 +47,7 @@ public class ShapeCaches {
 			}
 			return cache.get(key, loader);
 		} catch (Exception e) {
-			SnowRealMagic.LOGGER.error("", e);
-			throw new RuntimeException(e);
+			return Shapes.empty();
 		}
 	}
 

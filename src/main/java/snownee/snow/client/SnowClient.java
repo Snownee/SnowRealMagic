@@ -57,6 +57,7 @@ public final class SnowClient {
 		}
 		boolean rendered = false;
 		boolean useVariant = false;
+		boolean isTileBlock = CoreModule.TILE_BLOCK.is(state);
 		boolean full = state.hasProperty(SnowLayerBlock.LAYERS) && state.getValue(SnowLayerBlock.LAYERS) == 8;
 		BakedModel model;
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
@@ -65,7 +66,7 @@ public final class SnowClient {
 				useVariant = true;
 			}
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
-			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, cullSides, model, yOffset);
+			rendered |= api.translateYAndRender(world, camo, pos, layer, randomSupplier, !isTileBlock && cullSides, model, yOffset);
 		}
 		SnowVariant snowVariant = (SnowVariant) state.getBlock();
 		BlockState snow = snowVariant.getSnowState(state, world, pos);
@@ -81,11 +82,10 @@ public final class SnowClient {
 			double yOffset = CoreModule.SLAB.is(state) ? 0.5 : 0;
 			rendered |= api.translateYAndRender(world, snow, pos, layer, randomSupplier, cullSides, model, yOffset);
 		}
-		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) &&
-				(!useVariant || CoreModule.TILE_BLOCK.is(state))) {
+		if (options.renderOverlay && (layer == null || layer == RenderType.cutoutMipped()) && (!useVariant || isTileBlock)) {
 			BlockPos pos2 = pos;
 			double yOffset;
-			if (CoreModule.TILE_BLOCK.is(state) || CoreModule.SLAB.is(state)) {
+			if (isTileBlock || CoreModule.SLAB.is(state)) {
 				if (cachedOverlayModel == null) {
 					cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 				}
