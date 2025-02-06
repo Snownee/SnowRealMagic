@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.MushroomBlock;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -41,7 +42,9 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
+import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
@@ -368,19 +371,28 @@ public final class Hooks {
 		int layers = snow.layers(state, level, pos);
 		boolean meltByTemperature = false;
 		boolean meltByBrightness = false;
-		if (!SnowCommonConfig.snowNeverMelt) {
-			if (layers == 8) {
-				BlockPos above = pos.above();
-				BlockState upState = level.getBlockState(above);
-				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
-					return;
-				}
-				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
-			} else {
-				meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
-			}
+
+		// If snow can spawn on all light levels, and the snow can melt, only check if it should melt based on the temperature.
+		if (SnowCommonConfig.snowSpawnsInAllLightLevels && !SnowCommonConfig.snowNeverMelt) {
 			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
 		}
+		else {
+			// If snow should melt, get if it can melt based on the temperature OR the light level.
+			if (!SnowCommonConfig.snowNeverMelt) {
+				if (layers == 8) {
+					BlockPos above = pos.above();
+					BlockState upState = level.getBlockState(above);
+					if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
+						return;
+					}
+					meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
+				} else {
+					meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
+				}
+				meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
+			}
+		}
+
 		boolean melt = meltByTemperature || meltByBrightness;
 		if (!melt && SnowCommonConfig.accumulationWinterOnly && !CommonProxy.isWinter(level, pos, biome)) {
 			return;
@@ -402,8 +414,8 @@ public final class Hooks {
 						state,
 						(w, p) -> (
 								SnowCommonConfig.snowAccumulationMaxLayers > 8 ||
-										!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
-								w.getBrightness(LightLayer.BLOCK, p) <= 10,
+								!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
+								(SnowCommonConfig.snowSpawnsInAllLightLevels || w.getBrightness(LightLayer.BLOCK, p) <= 10),
 						true);
 			}
 		} else if (melt) {
