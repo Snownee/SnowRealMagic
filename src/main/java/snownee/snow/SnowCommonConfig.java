@@ -15,6 +15,7 @@ public final class SnowCommonConfig {
 	public static boolean snowAlwaysReplaceable = true;
 	public static boolean thinnerBoundingBox = true;
 	public static boolean snowNeverMelt = false;
+	public static boolean snowSpawnsInAllLightLevels = false;
 	public static boolean snowReduceFallDamage = true;
 	public static boolean sustainGrassIfLayerMoreThanOne = true;
 	public static boolean sneakSnowball = true;
