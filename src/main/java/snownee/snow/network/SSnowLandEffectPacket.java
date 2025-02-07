@@ -64,11 +64,12 @@ public class SSnowLandEffectPacket extends PacketHandler {
 		if (!(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
-		I.send(KPacketTarget.around(serverLevel, pos, 16), buf -> {
-			buf.writeBlockPos(pos);
-			buf.writeByte(originLayers);
-			buf.writeByte(layers);
-		});
+		I.send(
+				KPacketTarget.around(serverLevel, pos, 16), buf -> {
+					buf.writeBlockPos(pos);
+					buf.writeByte(originLayers);
+					buf.writeByte(layers);
+				});
 	}
 
 }

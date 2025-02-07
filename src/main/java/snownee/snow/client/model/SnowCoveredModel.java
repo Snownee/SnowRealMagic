@@ -30,10 +30,21 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 			Supplier<RandomSource> randomSupplier,
 			RenderContext context) {
 		ModelData data = context.getModelData();
-		if (data == null) return;
+		if (data == null) {
+			return;
+		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(context, state, wrapped);
-		SnowClient.renderHook(blockView, pos, state, data.has(SnowBlockEntity.BLOCKSTATE) ? data.get(SnowBlockEntity.BLOCKSTATE) :
-				Blocks.AIR.defaultBlockState(), data.has(SnowBlockEntity.OPTIONS) ? data.get(SnowBlockEntity.OPTIONS) : SnowClient.fallbackOptions, context.getRenderLayer(), randomSupplier, true, api);
+		SnowClient.renderHook(
+				blockView,
+				pos,
+				state,
+				data.has(SnowBlockEntity.BLOCKSTATE) ? data.get(SnowBlockEntity.BLOCKSTATE) :
+						Blocks.AIR.defaultBlockState(),
+				data.has(SnowBlockEntity.OPTIONS) ? data.get(SnowBlockEntity.OPTIONS) : SnowClient.fallbackOptions,
+				context.getRenderLayer(),
+				randomSupplier,
+				true,
+				api);
 	}
 
 	@Override

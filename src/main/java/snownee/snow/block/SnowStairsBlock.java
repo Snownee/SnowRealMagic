@@ -34,10 +34,11 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
-			return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
+					return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
+				});
 	}
 
 	@Override

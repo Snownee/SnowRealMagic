@@ -31,7 +31,7 @@ public class ModelBakerImplMixin {
 					"TAIL"
 			),
 			method = "bake(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;",
-			locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+			locals = LocalCapture.CAPTURE_FAILHARD,
 			remap = false,
 			cancellable = true
 	)

@@ -50,9 +50,10 @@ public class SLavaSmokeEffectPacket extends PacketHandler {
 	}
 
 	public static void send(ServerLevel serverLevel, BlockPos pos) {
-		I.send(KPacketTarget.around(serverLevel, pos, 16), buf -> {
-			buf.writeBlockPos(pos);
-		});
+		I.send(
+				KPacketTarget.around(serverLevel, pos, 16), buf -> {
+					buf.writeBlockPos(pos);
+				});
 	}
 
 }
