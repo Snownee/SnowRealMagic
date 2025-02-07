@@ -369,24 +369,19 @@ public final class Hooks {
 		boolean meltByTemperature = false;
 		boolean meltByBrightness = false;
 
-		// If snow can spawn on all light levels, and the snow can melt, only check if it should melt based on the temperature.
-		if (SnowCommonConfig.snowSpawnsInAllLightLevels && !SnowCommonConfig.snowNeverMelt) {
-			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
-		} else {
-			// If snow should melt, get if it can melt based on the temperature OR the light level.
-			if (!SnowCommonConfig.snowNeverMelt) {
-				if (layers == 8) {
-					BlockPos above = pos.above();
-					BlockState upState = level.getBlockState(above);
-					if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
-						return;
-					}
-					meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) > 10;
-				} else {
-					meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > 11;
+		// If snow should melt, get if it can melt based on the temperature OR the light level.
+		if (!SnowCommonConfig.snowNeverMelt) {
+			if (layers == 8) {
+				BlockPos above = pos.above();
+				BlockState upState = level.getBlockState(above);
+				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
+					return;
 				}
-				meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) >= SnowCommonConfig.snowPersistMaxLightLevel;
+			} else {
+				meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowPersistMaxLightLevel;
 			}
+			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
 		}
 
 		boolean melt = meltByTemperature || meltByBrightness;
@@ -411,7 +406,7 @@ public final class Hooks {
 						(w, p) -> (
 								SnowCommonConfig.snowAccumulationMaxLayers > 8 ||
 										!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
-								(SnowCommonConfig.snowSpawnsInAllLightLevels || w.getBrightness(LightLayer.BLOCK, p) <= 10),
+								w.getBrightness(LightLayer.BLOCK, p) <= SnowCommonConfig.snowSpawnMaxLightLevel,
 						true);
 			}
 		} else if (melt) {
