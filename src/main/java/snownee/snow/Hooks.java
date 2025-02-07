@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.MushroomBlock;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -42,9 +41,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
-import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
@@ -333,8 +330,7 @@ public final class Hooks {
 		// If snow can spawn on all light levels, and the snow can melt, only check if it should melt based on the temperature.
 		if (SnowCommonConfig.snowSpawnsInAllLightLevels && !SnowCommonConfig.snowNeverMelt) {
 			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
-		}
-		else {
+		} else {
 			// If snow should melt, get if it can melt based on the temperature OR the light level.
 			if (!SnowCommonConfig.snowNeverMelt) {
 				if (layers == 8) {
@@ -372,7 +368,7 @@ public final class Hooks {
 						state,
 						(w, p) -> (
 								SnowCommonConfig.snowAccumulationMaxLayers > 8 ||
-								!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
+										!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
 								(SnowCommonConfig.snowSpawnsInAllLightLevels || w.getBrightness(LightLayer.BLOCK, p) <= 10),
 						true);
 			}

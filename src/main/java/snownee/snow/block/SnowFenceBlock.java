@@ -26,26 +26,29 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
+					return Shapes.or(shape, getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
-		return ShapeCaches.get(ShapeCaches.OCCLUSION, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OCCLUSION, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
+					return Shapes.or(shape, getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context);
+					return Shapes.or(shape, getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
