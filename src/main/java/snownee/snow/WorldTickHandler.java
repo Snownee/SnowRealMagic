@@ -82,7 +82,7 @@ public class WorldTickHandler {
 		if (state.isAir() && !Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 			return;
 		}
-		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) >= 10) {
+		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > SnowCommonConfig.snowSpawnMaxLightLevel) {
 			return;
 		}
 		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
@@ -97,7 +97,8 @@ public class WorldTickHandler {
 			}
 			if (Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
 				pos.move(Direction.UP);
-				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >
+						SnowCommonConfig.snowSpawnMaxLightLevel) {
 					break;
 				}
 				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
