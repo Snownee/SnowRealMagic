@@ -9,6 +9,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -56,35 +57,38 @@ public class CoreModule extends AbstractModule {
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
 	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape()));
-
-	@NoItem
-	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape()));
-
-	@NoItem
-	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
+			.sound(SoundType.SNOW)
 			.randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
-	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW).randomTicks()));
+	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
+			.sound(SoundType.SNOW)
+			.randomTicks()));
+
+	@NoItem
+	@RenderLayer(Layer.CUTOUT)
+	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
+			.sound(SoundType.SNOW)
+			.randomTicks()));
+
+	@NoItem
+	@RenderLayer(Layer.CUTOUT)
+	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW)
+			.sound(SoundType.SNOW)
+			.randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
 	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape()));
+			.sound(SoundType.SNOW)
+			.randomTicks()));
 
 	@NoItem
 	@RenderLayer(Layer.CUTOUT)
 	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW)
-			.randomTicks()
-			.dynamicShape()));
+			.sound(SoundType.SNOW)
+			.randomTicks()));
 
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, TILE_BLOCK);

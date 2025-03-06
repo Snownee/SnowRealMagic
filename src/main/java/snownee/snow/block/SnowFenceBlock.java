@@ -14,10 +14,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 
+@NotNullByDefault
 public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
 
 	public SnowFenceBlock(Properties properties) {

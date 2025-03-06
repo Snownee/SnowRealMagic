@@ -61,10 +61,12 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.2-fabric:${project.kiwi_version}"
     //modImplementation "curse.maven:kiwi-549404:3998272"
     //annotationProcessor "curse.maven:kiwi-549404:3998272"
-    modImplementation "maven.modrinth:kiwi:kyG6D8vz"
+    // https://modrinth.com/mod/kiwi/versions?g=1.20.1&l=fabric
+    modImplementation "maven.modrinth:kiwi:11.8.28+fabric"
 
     //modImplementation "curse.maven:jade-324717:4096403"
-    modImplementation "maven.modrinth:jade:kd04zQ7y"
+    // https://modrinth.com/mod/jade/versions?g=1.20.1&l=fabric
+    modImplementation "maven.modrinth:jade:11.12.3+fabric"
 
     modRuntimeOnly "curse.maven:minihud-244260:4593082"
     modRuntimeOnly "curse.maven:malilib-303119:4780782"
