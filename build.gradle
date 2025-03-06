@@ -29,7 +29,8 @@ minecraft {
     // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: mappings_channel, version: minecraft_version
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // Currently, this location cannot be changed from the default.
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -157,6 +158,7 @@ repositories {
     maven {
         url = "https://www.cursemaven.com"
     }
+    maven { url = "https://api.modrinth.com/maven" }
     maven {
         url = uri("https://maven.su5ed.dev/releases")
     }
@@ -182,12 +184,16 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-    
+
     //implementation fg.deobf("curse.maven:jei-238222:3944627")
-    // 11.12.1
-    implementation fg.deobf("curse.maven:jade-324717:5776962")
-    implementation fg.deobf("curse.maven:kiwi-303657:5603816")
+
     annotationProcessor "curse.maven:kiwi-303657:5603816"
+    // https://modrinth.com/mod/kiwi/versions?g=1.20.1&l=forge
+    implementation fg.deobf("maven.modrinth:kiwi:11.8.30+forge")
+    annotationProcessor "maven.modrinth:kiwi:11.8.30+forge"
+
+    // https://modrinth.com/mod/jade/versions?g=1.20.1&l=forge
+    implementation fg.deobf("maven.modrinth:jade:11.12.3+forge")
 
     // 9.1.0.0
     implementation fg.deobf("curse.maven:serene-seasons-291874:5790653")
@@ -209,7 +215,7 @@ dependencies {
 }
 
 processResources {
-    from ('src/main/java') {
+    from('src/main/java') {
         include '**/*.json'
     }
 }
@@ -218,12 +224,12 @@ jar {
     archiveClassifier = "nodeps"
     manifest {
         attributes([
-                "Specification-Title": mod_id,
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": mod_version,
+                "Specification-Title"     : mod_id,
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : mod_version,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "${mod_id}.mixins.json"
+                "MixinConfigs"            : "${mod_id}.mixins.json"
         ])
     }
 }

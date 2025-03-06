@@ -13,9 +13,11 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.util.CommonProxy;
 
+@NotNullByDefault
 public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVariant {
 
 	@SuppressWarnings("deprecation")
