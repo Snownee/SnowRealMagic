@@ -28,10 +28,12 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.util.CommonProxy;
 
+@NotNullByDefault
 public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
