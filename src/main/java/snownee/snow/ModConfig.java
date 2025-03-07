@@ -101,7 +101,8 @@ public final class ModConfig {
 	/* off */
 	@Config.RequiresMcRestart
 	public static String[] snowLoggableBlocks = {
-			"/(biomesoplenty|xlfoodmod|weeeflowers):.*(flower|mushroom|grass|plant|bamboo|vanilla)/",
+			"/(xlfoodmod|weeeflowers):.*(flower|mushroom|grass|plant|bamboo|vanilla)/",
+			"/biomesoplenty:(flower|mushroom|plant)(_\\d)?/",
 			"defiledlands:scuronotte",
 			"defiledlands:blastem",
 			"/ferdinandsflowers:.+(flower|double|desert|ouch|fungus|dark)/",
