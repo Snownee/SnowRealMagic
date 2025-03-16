@@ -1,4 +1,3 @@
-/*
 package snownee.snow.datagen;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,4 +27,3 @@ public class SRMLootTableProvider extends FabricBlockLootTableProvider {
 		GameObjectLookup.all(Registries.BLOCK, SnowRealMagic.ID).forEach(block -> add(block, table));
 	}
 }
-*/

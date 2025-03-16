@@ -1,4 +1,3 @@
-/*
 package snownee.snow.datagen;
 
 import static snownee.snow.CoreModule.FENCE;
@@ -47,36 +46,35 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 				SNOWY_DOUBLE_PLANT_UPPER,
 				SNOW_BLOCK,
 				SNOWY_PLANT).map(KiwiGO::get).toList()) {
-			getOrCreateTagBuilder(CoreModule.SNOW_TAG).add(block);
+			tag(CoreModule.SNOW_TAG).add(block);
 			if (!(block instanceof ExtraCollisionSnowLayerBlock)) {
-				getOrCreateTagBuilder(BlockTags.GOATS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.RABBITS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.FOXES_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.WOLVES_SPAWNABLE_ON).add(block);
+				tag(BlockTags.GOATS_SPAWNABLE_ON).add(block);
+				tag(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
+				tag(BlockTags.RABBITS_SPAWNABLE_ON).add(block);
+				tag(BlockTags.FOXES_SPAWNABLE_ON).add(block);
+				tag(BlockTags.WOLVES_SPAWNABLE_ON).add(block);
 			}
 		}
 
-		getOrCreateTagBuilder(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
-		getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
-		getOrCreateTagBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
+		tag(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
+		tag(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
+		tag(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
 
-		getOrCreateTagBuilder(BlockTags.STAIRS).add(STAIRS.get());
-		getOrCreateTagBuilder(BlockTags.SLABS).add(SLAB.get());
-		getOrCreateTagBuilder(BlockTags.FENCE_GATES).add(FENCE_GATE.get());
-		getOrCreateTagBuilder(BlockTags.FENCES).add(FENCE2.get());
-		getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(FENCE2.get());
-		getOrCreateTagBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
-		getOrCreateTagBuilder(BlockTags.WALLS).add(WALL.get());
+		tag(BlockTags.STAIRS).add(STAIRS.get());
+		tag(BlockTags.SLABS).add(SLAB.get());
+		tag(BlockTags.FENCE_GATES).add(FENCE_GATE.get());
+		tag(BlockTags.FENCES).add(FENCE2.get());
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(FENCE2.get());
+		tag(BlockTags.WOODEN_FENCES).add(FENCE.get());
+		tag(BlockTags.WALLS).add(WALL.get());
 
-		getOrCreateTagBuilder(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).forceAddTag(BlockTags.LEAVES);
-		getOrCreateTagBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
-		getOrCreateTagBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
+		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).forceAddTag(BlockTags.LEAVES);
+		tag(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
+		tag(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
 
-		getOrCreateTagBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
+		tag(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
 
-		getOrCreateTagBuilder(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
-		getOrCreateTagBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
+		tag(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
+		tag(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
 	}
 }
-*/

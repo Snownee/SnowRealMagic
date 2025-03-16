@@ -7,8 +7,9 @@ import snownee.kiwi.config.KiwiConfig.ConfigType;
 @KiwiConfig(type = ConfigType.CLIENT)
 public final class SnowClientConfig {
 
+	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
 	public static boolean particleThroughLeaves = true;
-
+	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
 	public static boolean snowVariants = true;
 
 	@KiwiConfig.Listen("snowVariants")

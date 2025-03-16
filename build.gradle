@@ -189,6 +189,7 @@ idea {
 
 jar {
     exclude("/assets/${project.mod_id}/lang/en_us.existing.json")
+    exclude("/snownee/snow/datagen")
     manifest {
         attributes([
                 "Implementation-Title"    : project.name,
