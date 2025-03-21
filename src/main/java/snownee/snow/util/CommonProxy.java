@@ -1,5 +1,7 @@
 package snownee.snow.util;
 
+import java.util.function.BooleanSupplier;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -33,14 +35,11 @@ public class CommonProxy implements ModInitializer {
 		return fluidState.getType().getPickupSound().orElse(null) == SoundEvents.BUCKET_FILL_LAVA || fluidState.is(FluidTags.LAVA);
 	}
 
-	public static void weatherTick(ServerLevel level, Runnable action) {
+	public static boolean weatherTick(ServerLevel level, BooleanSupplier action) {
 		if (sereneSeasons) {
-			SereneSeasonsCompat.weatherTick(level, action);
-			return;
+			return SereneSeasonsCompat.weatherTick(level, action);
 		}
-		if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
-			action.run();
-		}
+		return action.getAsBoolean();
 	}
 
 	public static boolean snowAccumulationNow(Level level) {

@@ -343,7 +343,7 @@ public final class Hooks {
 		if (layers < SnowCommonConfig.snowAccumulationMaxLayers && !meltByBrightness && level.isRaining() && CommonProxy.coldEnoughToSnow(
 				level,
 				pos,
-				biome)) {
+				biome) && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() == pos.getY()) {
 			accumulate = CommonProxy.snowAccumulationNow(level);
 		}
 
@@ -366,66 +366,64 @@ public final class Hooks {
 
 	private static void accumulate(
 			ServerLevel level,
-			BlockPos pos,
+			BlockPos centerPos,
 			BlockState centerState,
 			BiPredicate<LevelAccessor, BlockPos> filter,
 			boolean accumulate) {
+		if (!SnowCommonConfig.smoothAccumulation) {
+			accumulateSingle(level, centerPos, centerState, accumulate);
+			return;
+		}
 		SnowVariant centerSnowVariant = (SnowVariant) centerState.getBlock();
-		int i = centerSnowVariant.srm$layers(centerState, level, pos);
-		MutableBlockPos pos2 = pos.mutable();
+		int i = centerSnowVariant.srm$layers(centerState, level, centerPos);
+		MutableBlockPos pos = centerPos.mutable();
 		for (int j = 0; j < 8; j++) {
 			int k = j / 2;
 			Direction direction = Direction.from2DDataValue(k);
-			pos2.setWithOffset(pos, direction);
+			pos.setWithOffset(centerPos, direction);
 			if (j % 2 == 1) {
-				pos2.move(direction);
+				pos.move(direction);
 			}
-			if (!level.isLoaded(pos2) || !filter.test(level, pos2)) {
+			if (!level.isLoaded(pos) || !filter.test(level, pos)) {
 				continue;
 			}
-			BlockState state = level.getBlockState(pos2);
-			BlockPos height = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos2);
-			if (height.getY() != pos2.getY()) {
-				if (height.getY() != pos2.getY() + 1 || !(state.getBlock() instanceof SnowVariant)) {
+			BlockState state = level.getBlockState(pos);
+			BlockPos height = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
+			if (height.getY() != pos.getY()) {
+				if (height.getY() != pos.getY() + 1 || !(state.getBlock() instanceof SnowVariant)) {
 					continue;
 				}
 			}
 
-			if (!canSnowSurvive(state, level, pos2)) {
+			if (!canSnowSurvive(state, level, pos)) {
 				continue;
 			}
 			int l;
 			if (state.getBlock() instanceof SnowVariant snowVariant) {
-				l = snowVariant.srm$layers(state, level, pos2);
+				l = snowVariant.srm$layers(state, level, pos);
 				if (accumulate) {
-					if (l >= snowVariant.srm$maxLayers(state, level, pos2)) {
+					if (l >= snowVariant.srm$maxLayers(state, level, pos)) {
 						continue;
 					}
-					if (level.getBlockState(pos2.move(Direction.DOWN)).is(CoreModule.CANNOT_ACCUMULATE_ON)) {
+					if (level.getBlockState(pos.move(Direction.DOWN)).is(CoreModule.CANNOT_ACCUMULATE_ON)) {
 						continue;
 					}
-					pos2.move(Direction.UP);
+					pos.move(Direction.UP);
 				}
+			} else if (accumulate && !SnowCommonConfig.placeSnowOnBlock && !state.isAir()) {
+				continue;
 			} else {
 				l = 0;
 			}
 			if (accumulate ? i > l : i < l) {
-				if (accumulate) {
-					placeLayersOn(
-							level,
-							pos2,
-							1,
-							false,
-							new DirectionalPlaceContext(level, pos2, Direction.UP, ItemStack.EMPTY, Direction.DOWN),
-							false,
-							SnowCommonConfig.placeSnowOnBlockNaturally);
-				} else {
-					SnowVariant snowVariant = (SnowVariant) state.getBlock();
-					level.setBlockAndUpdate(pos2, snowVariant.srm$decreaseLayer(state, level, pos2, false));
-				}
+				accumulateSingle(level, pos, state, accumulate);
 				return;
 			}
 		}
+		accumulateSingle(level, centerPos, centerState, accumulate);
+	}
+
+	private static void accumulateSingle(ServerLevel level, BlockPos pos, BlockState state, boolean accumulate) {
 		if (accumulate) {
 			placeLayersOn(
 					level,
@@ -436,15 +434,19 @@ public final class Hooks {
 					false,
 					SnowCommonConfig.placeSnowOnBlockNaturally);
 		} else {
-			level.setBlockAndUpdate(pos, centerSnowVariant.srm$decreaseLayer(centerState, level, pos, false));
+			SnowVariant snowVariant = (SnowVariant) state.getBlock();
+			level.setBlockAndUpdate(pos, snowVariant.srm$decreaseLayer(state, level, pos, false));
 		}
 	}
 
-	public static boolean isSnowySetting(BlockState state) {
-		if (state.is(CoreModule.SNOWY_SETTING)) {
-			return !state.hasProperty(SnowVariant.OPTIONAL_LAYERS) || state.getValue(SnowVariant.OPTIONAL_LAYERS) != 0;
+	public static boolean isSnowySetting(BlockState blockState) {
+		if (!blockState.is(CoreModule.SNOWY_SETTING)) {
+			return false;
 		}
-		return false;
+		if (blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			return blockState.getValue(SnowVariant.OPTIONAL_LAYERS) != 0;
+		}
+		return true;
 	}
 
 	public static boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
@@ -469,7 +471,7 @@ public final class Hooks {
 		}
 		ItemStack stack = context.getItemInHand();
 		var blockEntityData = stack.getComponentsPatch().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null && blockEntityData.isPresent()
+		if (blockEntityData != null && blockEntityData.isPresent() //FIXME
 				&& "snowrealmagic:snow".equals(blockEntityData.get().getUnsafe().getString("id"))) {
 			return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
 		}
