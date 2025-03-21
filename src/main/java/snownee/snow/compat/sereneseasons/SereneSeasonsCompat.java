@@ -1,5 +1,7 @@
 package snownee.snow.compat.sereneseasons;
 
+import java.util.function.BooleanSupplier;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -12,7 +14,6 @@ import sereneseasons.config.SeasonsConfig;
 import sereneseasons.init.ModConfig;
 import sereneseasons.init.ModTags;
 import sereneseasons.season.SeasonHooks;
-import snownee.snow.SnowCommonConfig;
 
 public class SereneSeasonsCompat {
 
@@ -60,35 +61,33 @@ public class SereneSeasonsCompat {
 				ModConfig.seasons.isDimensionWhitelisted(dimension);
 	}
 
-	public static void weatherTick(ServerLevel level, Runnable action) {
+	public static boolean weatherTick(ServerLevel level, BooleanSupplier action) {
 		if (!ModConfig.seasons.isDimensionWhitelisted(level.dimension())) {
-			return;
+			return false;
 		}
 		Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
 		// we assume that winter is always snowy
 		if (subSeason.getSeason() == Season.WINTER) {
-			if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
-				action.run();
-			}
-			return;
+			return action.getAsBoolean();
 		}
 		SeasonsConfig.SeasonProperties meltInfo = ModConfig.seasons.getSeasonProperties(subSeason);
 		if (meltInfo == null) {
-			action.run();
-			return;
+			return action.getAsBoolean();
 		}
 		int meltRolls = meltInfo.meltRolls();
 		if (meltRolls == 0) {
-			return;
+			return false;
 		}
 		float meltChance = meltInfo.meltChance() * 0.01f;
 		if (meltChance == 0) {
-			return;
+			return false;
 		}
+		boolean result = false;
 		for (int i = 0; i < meltRolls; i++) {
-			if (level.random.nextFloat() < meltChance) {
-				action.run();
+			if (level.random.nextFloat() < meltChance && action.getAsBoolean()) {
+				result = true;
 			}
 		}
+		return result;
 	}
 }

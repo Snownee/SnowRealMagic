@@ -3,9 +3,11 @@ package snownee.snow.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
@@ -13,23 +15,21 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadableSnowyDirtBlockMixin {
 
-	/**
-	 * Use {@link Redirect} for fail fast if there is conflicting
-	 */
-	@Redirect(
+	@WrapOperation(
 			method = "randomTick",
 			at = @At(
 					value = "INVOKE",
 					ordinal = 1,
 					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
-	private boolean srm_useSrmSnow(final BlockState instance, final Block block) {
-		return instance.is(CoreModule.SNOWY_SETTING);
+	private boolean srm_isSnowySetting(BlockState blockState, Block block, Operation<Boolean> original) {
+		return Hooks.isSnowySetting(blockState);
 	}
 
 	@Inject(
@@ -37,15 +37,14 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true)
 	private static void srm_checkSnowFirst(
 			final BlockState blockState,
 			final LevelReader levelReader,
 			final BlockPos blockPos,
 			final CallbackInfoReturnable<Boolean> cir,
-			BlockPos abovePos,
-			BlockState aboveBlock) {
+			@Local(ordinal = 1) BlockPos abovePos,
+			@Local(ordinal = 1) BlockState aboveBlock) {
 		if (aboveBlock.is(CoreModule.SNOWY_SETTING)) {
 			if (aboveBlock.getBlock() instanceof SnowVariant snowVariant) {
 				cir.setReturnValue(

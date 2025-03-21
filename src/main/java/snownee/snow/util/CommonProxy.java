@@ -1,5 +1,7 @@
 package snownee.snow.util;
 
+import java.util.function.BooleanSupplier;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -31,18 +33,24 @@ public class CommonProxy {
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
 
 	public CommonProxy(IEventBus eventBus) {
-		NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
-			if (SnowCommonConfig.debugSpawningCommand) {
-				DebugMobSpawningCommand.register(event.getDispatcher());
-			}
-		});
-		NeoForge.EVENT_BUS.addListener(PlayerInteractEvent.RightClickBlock.class, event -> {
-			InteractionResult result = GameEvents.onItemUse(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
-			if (result.consumesAction()) {
-				event.setCanceled(true);
-				event.setCancellationResult(result);
-			}
-		});
+		NeoForge.EVENT_BUS.addListener(
+				RegisterCommandsEvent.class, event -> {
+					if (SnowCommonConfig.debugSpawningCommand) {
+						DebugMobSpawningCommand.register(event.getDispatcher());
+					}
+				});
+		NeoForge.EVENT_BUS.addListener(
+				PlayerInteractEvent.RightClickBlock.class, event -> {
+					InteractionResult result = GameEvents.onItemUse(
+							event.getEntity(),
+							event.getLevel(),
+							event.getHand(),
+							event.getHitVec());
+					if (result.consumesAction()) {
+						event.setCanceled(true);
+						event.setCancellationResult(result);
+					}
+				});
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
@@ -55,14 +63,11 @@ public class CommonProxy {
 		return fluidState.getType().getPickupSound().orElse(null) == SoundEvents.BUCKET_FILL_LAVA || fluidState.is(FluidTags.LAVA);
 	}
 
-	public static void weatherTick(ServerLevel level, Runnable action) {
+	public static boolean weatherTick(ServerLevel level, BooleanSupplier action) {
 		if (sereneSeasons) {
-			SereneSeasonsCompat.weatherTick(level, action);
-			return;
+			return SereneSeasonsCompat.weatherTick(level, action);
 		}
-		if (level.random.nextInt(SnowCommonConfig.weatherTickSlowness) == 0) {
-			action.run();
-		}
+		return action.getAsBoolean();
 	}
 
 	public static boolean snowAccumulationNow(Level level) {

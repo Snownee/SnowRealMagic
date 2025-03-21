@@ -12,7 +12,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.entity.FallingSnowEntity;
@@ -22,18 +21,15 @@ import snownee.snow.util.CommonProxy;
 public class WorldTickHandler {
 
 	// See ServerLevel.tickChunk
-	public static void tick(ServerLevel level, LevelChunk chunk) {
-		int x = chunk.getPos().getMinBlockX();
-		int y = chunk.getPos().getMinBlockZ();
-		MutableBlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(x, 0, y, 15)).mutable();
-
-		pos.move(Direction.DOWN);
-		Holder<Biome> biomeHolder = level.getBiome(pos);
-		boolean coldEnoughToSnow = CommonProxy.coldEnoughToSnow(level, pos, biomeHolder);
+	public static boolean tick(ServerLevel level, BlockPos pos) {
+		MutableBlockPos mutable = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).mutable();
+		Holder<Biome> biomeHolder = level.getBiome(mutable);
+		boolean coldEnoughToSnow = CommonProxy.coldEnoughToSnow(level, mutable, biomeHolder);
 		if (coldEnoughToSnow) {
-			doSnow(level, pos);
+			return doSnow(level, mutable);
 		} else {
-			doMelt(level, pos);
+			doMelt(level, mutable);
+			return false;
 		}
 	}
 
@@ -55,35 +51,26 @@ public class WorldTickHandler {
 		}
 	}
 
-	private static void doSnow(ServerLevel level, MutableBlockPos pos) {
+	private static boolean doSnow(ServerLevel level, MutableBlockPos pos) {
 		if (!level.isRaining()) {
-			return;
+			return false;
 		}
 		int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
 		if (blizzard > 0) {
 			doBlizzard(level, pos, blizzard);
-			return;
+			return true;
+		}
+
+		if (SnowCommonConfig.snowAccumulationMaxLayers <= 0) {
+			return false;
 		}
 
 		BlockState state = level.getBlockState(pos);
-		if (SnowCommonConfig.snowAccumulationMaxLayers <= 0) {
-			return;
-		}
-		if (!Hooks.canContainState(state)) {
-			if (SnowCommonConfig.snowAccumulationMaxLayers < 9 && state.getBlock() instanceof SnowVariant) {
-				return;
-			}
-			state = level.getBlockState(pos.move(Direction.UP));
-			if (!state.isAir() && !Hooks.canContainState(state)) {
-				return;
-			}
-		}
-
-		if (state.isAir() && !Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
-			return;
+		if (!Hooks.canContainState(state) && !Hooks.canSnowSurvive(state, level, pos)) {
+			return false;
 		}
 		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > SnowCommonConfig.snowSpawnMaxLightLevel) {
-			return;
+			return false;
 		}
 		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
 
@@ -105,8 +92,8 @@ public class WorldTickHandler {
 				//FIXME I should make snow melts somehow
 			}
 		}
+		return true;
 	}
-
 
 	private static void doBlizzard(ServerLevel world, BlockPos pos, int blizzard) {
 		if (pos.getY() == world.getHeight()) {

@@ -56,22 +56,23 @@ public final class SnowCommonConfig {
 	@Range(min = 0, max = 9)
 	@ConfigUI.Slider
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
-	public static int snowAccumulationMaxLayers = 8;
+	public static int snowAccumulationMaxLayers = 6;
 	@Path("accumulation.snowAndIceMeltInWarmBiomes")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
 	public static boolean snowAndIceMeltInWarmBiomes = false;
 	@Path("accumulation.naturalMelting")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.MEDIUM)
 	public static boolean snowNaturalMelt = true;
+	@Path("accumulation.smoothAccumulation")
+	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
+	public static boolean smoothAccumulation = true;
 
 	@Path("integration.accumulationWinterOnly")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.NONE)
 	public static boolean accumulationWinterOnly = false;
+
 	@Path("debug.mobSpawningCommand")
 	public static boolean debugSpawningCommand = false;
-	@Path("debug.weatherTickSlowness")
-	@Range(min = 1)
-	public static int weatherTickSlowness = 16;
 
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !retainOriginalBlocks;

@@ -28,10 +28,11 @@
 	"snowrealmagic.config.snow-cover.replaceWorldgenFeature.desc": "Replace the vanilla world generation feature to also generate snow-covered blocks.",
 	"snowrealmagic.config.snow-cover.retainOriginalBlocks.desc": "If you want to uninstall this mod, you can restore snow-covered blocks to their original blocks via random ticking.",
 	"snowrealmagic.config.accumulation.accumulatesDuringSnowfall.desc": "Snow layer accumulates during snowfall.",
-	"snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "Snow layer accumulates during thundering.",
+	"snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "Snow layer accumulates during thundering. (There is no thundering in winter in Serene Seasons, so this option will be applicable to any raining weather.)",
 	"snowrealmagic.config.accumulation.maxLayers.desc": "Maximum layers of snow that can accumulate. 9 is unlimited.",
 	"snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes.",
 	"snowrealmagic.config.accumulation.naturalMelting.desc": "Snow melts with time if its layer is more than 1.",
+	"snowrealmagic.config.accumulation.smoothAccumulation.desc": "Snow layer will accumulate and melt more smoothly.",
 	"snowrealmagic.config.integration.accumulationWinterOnly.desc": "If you have mod that adds seasons, snow accumulation only happens in winter.",
 	"snowrealmagic.config.particleThroughLeaves.desc": "Generates snowflake particles under snow that is above leaves.",
 	"snowrealmagic.config.snowVariants.desc": "Some snow-covered foliage will be rendered differently."
