@@ -9,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,7 +73,7 @@ public class WorldTickHandler {
 		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > SnowCommonConfig.snowSpawnMaxLightLevel) {
 			return false;
 		}
-		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
+		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 
 		for (int i = 0; i < 5; i++) {
 			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
@@ -88,7 +89,7 @@ public class WorldTickHandler {
 						SnowCommonConfig.snowSpawnMaxLightLevel) {
 					break;
 				}
-				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, 3, SnowCommonConfig.placeSnowOnBlockNaturally);
+				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 				//FIXME I should make snow melts somehow
 			}
 		}

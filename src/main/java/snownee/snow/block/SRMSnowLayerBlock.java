@@ -57,18 +57,20 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
@@ -102,26 +104,25 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockState contained = srm$getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
-				setContainedState(worldIn, currentPos, containedNew, state);
+				if (containedNew.isAir()) {
+					return srm$getSnowState(stateIn, worldIn, currentPos);
+				} else {
+					setContainedState(worldIn, currentPos, containedNew);
+				}
 			}
 		}
 		return state;
 	}
 
-	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
-		BlockEntity tile = world.getBlockEntity(pos);
-		if (tile instanceof SnowBlockEntity) {
-			if (state.isAir()) {
-				world.setBlock(pos, srm$getSnowState(snow, world, pos), 3);
-			} else {
-				((SnowBlockEntity) tile).setContainedState(state);
-			}
+	public static void setContainedState(LevelAccessor world, BlockPos pos, BlockState state) {
+		if (world.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+			be.setContainedState(state);
 		}
 	}
 
 	@Override
-	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-		Hooks.setPlacedBy(level, pos, state);
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack itemStack) {
+		Hooks.processFancyOverlay(level, pos, itemStack);
 	}
 
 	@Override
@@ -161,7 +162,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		stateIn.randomTick(worldIn, pos, random);
 		BlockState stateNow2 = worldIn.getBlockState(pos);
 		if (!stateNow2.is(this)) {
-			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18, true);
+			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
 		}
 	}
 
@@ -176,7 +177,13 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (result.consumesAction()) {
 			BlockState stateNow = level.getBlockState(blockPos);
 			if (!stateNow.is(this)) {
-				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+				Hooks.convert(
+						level,
+						blockPos,
+						stateNow,
+						blockState.getValue(LAYERS),
+						Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+						true);
 			}
 			return result;
 		}
@@ -201,7 +208,13 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (result.consumesAction()) {
 			BlockState stateNow = level.getBlockState(blockPos);
 			if (!stateNow.is(this)) {
-				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+				Hooks.convert(
+						level,
+						blockPos,
+						stateNow,
+						blockState.getValue(LAYERS),
+						Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+						true);
 			}
 			return result;
 		}
@@ -246,7 +259,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (block instanceof BonemealableBlock) {
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
-			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
+			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), Block.UPDATE_ALL, true);
 		}
 	}
 

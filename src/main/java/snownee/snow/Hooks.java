@@ -3,11 +3,16 @@ package snownee.snow;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.serialization.MapDecoder;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -42,7 +47,6 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -61,6 +65,8 @@ import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
 public final class Hooks {
+	private static final MapDecoder<ResourceLocation> BLOCK_ENTITY_ID = ResourceLocation.CODEC.fieldOf("id");
+
 	private Hooks() {
 	}
 
@@ -72,7 +78,7 @@ public final class Hooks {
 				return;
 			}
 			BlockState blockstate = level.getBlockState(pos);
-			if (convert(level, pos, blockstate, 1, 2, true)) {
+			if (convert(level, pos, blockstate, 1, Block.UPDATE_CLIENTS, true)) {
 				blockstate = level.getBlockState(belowPos);
 				if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
 					level.setBlock(belowPos, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
@@ -118,85 +124,90 @@ public final class Hooks {
 		};
 	}
 
-	public static boolean convert(LevelAccessor level, BlockPos pos, BlockState state, int layers, int flags, boolean canConvert) {
-		if (state.isAir()) {
-			placeNormalSnow(level, pos, layers, flags);
-			return true;
-		}
-		if (!SnowCommonConfig.canPlaceSnowInBlock() || state.hasBlockEntity()) {
+	public static boolean convert(LevelAccessor level, BlockPos pos, BlockState blockState, int layers, int flags, boolean canConvert) {
+		BlockState newState = getSnowBlockFor(level, pos, blockState, layers, canConvert);
+		if (newState == null) {
 			return false;
+		}
+		level.setBlock(pos, newState, flags);
+		SRMSnowLayerBlock.setContainedState(level, pos, blockState);
+		processFancyOverlay(level, pos, ItemStack.EMPTY);
+		return true;
+	}
+
+	public static void processFancyOverlay(LevelAccessor level, BlockPos pos, ItemStack itemStack) {
+		if (itemStack.has(DataComponents.BLOCK_ENTITY_DATA) || !(level.getBlockEntity(pos) instanceof SnowBlockEntity be) ||
+				be.options.renderOverlay) {
+			return;
+		}
+		if (SnowCommonConfig.fancySnowOnUpperSlab && level.getBlockState(pos.below()).getBlock() instanceof SlabBlock) {
+			be.options.renderOverlay = true;
+			be.setChanged();
+		}
+	}
+
+	@Nullable
+	public static BlockState getSnowBlockFor(LevelAccessor level, BlockPos pos, BlockState blockState, int layers, boolean canConvert) {
+		if (blockState.isAir()) {
+			BlockPos posDown = pos.below();
+			BlockState stateDown = level.getBlockState(posDown);
+			Block block = SnowCommonConfig.fancySnowOnUpperSlab && stateDown.getBlock() instanceof SlabBlock ?
+					CoreModule.SNOW_BLOCK.get() :
+					Blocks.SNOW;
+			return block.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 		}
 		if (!canConvert) {
-			return false;
+			return null;
 		}
-		Block block = state.getBlock();
-		if (state.is(CoreModule.CONTAINABLES) || block instanceof TallGrassBlock || block instanceof DoublePlantBlock ||
-				block instanceof FlowerBlock || block instanceof SaplingBlock || block instanceof MushroomBlock ||
-				block instanceof SweetBerryBushBlock) {
-			KiwiGO<SRMSnowLayerBlock> resultBlock;
+		if (!SnowCommonConfig.canPlaceSnowInBlock() || blockState.hasBlockEntity()) {
+			return null;
+		}
+		Block block = blockState.getBlock();
+		if (block instanceof TallGrassBlock || block instanceof DoublePlantBlock || block instanceof FlowerBlock ||
+				block instanceof SaplingBlock ||
+				block instanceof MushroomBlock || block instanceof SweetBerryBushBlock) {
+			KiwiGO<SRMSnowLayerBlock> newBlock;
 			if (block instanceof DoublePlantBlock) {
-				if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
-					resultBlock = CoreModule.SNOWY_DOUBLE_PLANT_LOWER;
+				if (blockState.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+					newBlock = CoreModule.SNOWY_DOUBLE_PLANT_LOWER;
 				} else {
-					resultBlock = CoreModule.SNOWY_DOUBLE_PLANT_UPPER;
+					newBlock = CoreModule.SNOWY_DOUBLE_PLANT_UPPER;
 				}
-			} else if (state.is(CoreModule.PLANTS)) {
-				resultBlock = CoreModule.SNOWY_PLANT;
-			} else if (state.getCollisionShape(level, pos).isEmpty()) {
-				resultBlock = CoreModule.SNOW_BLOCK;
+			} else if (blockState.is(CoreModule.PLANTS)) {
+				newBlock = CoreModule.SNOWY_PLANT;
+			} else if (blockState.getCollisionShape(level, pos).isEmpty()) {
+				newBlock = CoreModule.SNOW_BLOCK;
 			} else {
-				resultBlock = CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
+				newBlock = CoreModule.SNOW_EXTRA_COLLISION_BLOCK;
 			}
 
-			BlockState result = resultBlock.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
-			level.setBlock(pos, result, flags);
-			if (level.getBlockEntity(pos) instanceof SnowBlockEntity snowBlockEntity) {
-				snowBlockEntity.setContainedState(state);
-			}
-			return true;
+			return newBlock.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 		}
 
 		BlockPos posDown = pos.below();
 		BlockState stateDown = level.getBlockState(posDown);
+		Block newBlock;
 		switch (block) {
-			case StairBlock ignored when !CoreModule.STAIRS.is(state) -> {
-				BlockState newState = CoreModule.STAIRS.defaultBlockState();
-				newState = copyProperties(state, newState);
-				level.setBlock(pos, newState, flags);
-			}
-			case SlabBlock ignored when !CoreModule.SLAB.is(state) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM ->
+			case StairBlock ignored when !CoreModule.STAIRS.is(blockState) -> newBlock = CoreModule.STAIRS.get();
+			case SlabBlock ignored when !CoreModule.SLAB.is(blockState) && blockState.getValue(SlabBlock.TYPE) == SlabType.BOTTOM -> {
 				// can't copy properties as this doesn't extend vanilla slabs
-					level.setBlock(pos, CoreModule.SLAB.defaultBlockState(), flags);
-			case FenceBlock ignored when block.getClass() != SnowFenceBlock.class -> {
-				KiwiGO<Block> newBlock =
-						state.is(BlockTags.WOODEN_FENCES) || state.getSoundType() == SoundType.WOOD ? CoreModule.FENCE : CoreModule.FENCE2;
-				BlockState newState = newBlock.defaultBlockState();
-				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-				level.setBlock(pos, newState, flags);
+				return CoreModule.SLAB.defaultBlockState();
 			}
-			case FenceGateBlock ignored when !CoreModule.FENCE_GATE.is(state) -> {
-				BlockState newState = CoreModule.FENCE_GATE.defaultBlockState();
-				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-				level.setBlock(pos, newState, flags);
-			}
-			case WallBlock ignored when !CoreModule.WALL.is(state) -> {
-				BlockState newState = CoreModule.WALL.defaultBlockState();
-				newState = copyProperties(state, newState).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-				newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-				level.setBlock(pos, newState, flags);
-			}
+			case FenceBlock ignored when block.getClass() != SnowFenceBlock.class ->
+					newBlock = blockState.is(BlockTags.WOODEN_FENCES) || blockState.getSoundType() == SoundType.WOOD ?
+							CoreModule.FENCE.get() :
+							CoreModule.FENCE2.get();
+			case FenceGateBlock ignored when !CoreModule.FENCE_GATE.is(blockState) -> newBlock = CoreModule.FENCE_GATE.get();
+			case WallBlock ignored when !CoreModule.WALL.is(blockState) -> newBlock = CoreModule.WALL.get();
 			default -> {
-				return false;
+				return null;
 			}
 		}
-
-		BlockEntity tile = level.getBlockEntity(pos);
-		if (tile instanceof SnowBlockEntity) {
-			((SnowBlockEntity) tile).setContainedState(state);
+		BlockState newState = copyProperties(blockState, newBlock.defaultBlockState()).setValue(SnowVariant.OPTIONAL_LAYERS, layers);
+		if (block instanceof FenceBlock || block instanceof FenceGateBlock) {
+			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
 		}
-		return true;
+		return newState;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,9 +257,9 @@ public final class Hooks {
 			}
 			level.setBlockAndUpdate(pos, state.setValue(SnowVariant.OPTIONAL_LAYERS, Mth.clamp(originLayers + layers, 1, 8)));
 		} else if (canConvert && canContainState(state) && state.canSurvive(level, pos)) {
-			convert(level, pos, state, Mth.clamp(layers, 1, 8), 3, canConvert);
+			convert(level, pos, state, layers, Block.UPDATE_ALL, true);
 		} else if (canSnowSurvive(state, level, pos) && state.canBeReplaced(useContext)) {
-			placeNormalSnow(level, pos, layers, 3);
+			convert(level, pos, state, layers, Block.UPDATE_ALL, false);
 		} else {
 			return false;
 		}
@@ -276,24 +287,6 @@ public final class Hooks {
 			}
 		}
 		return true;
-	}
-
-	public static void placeNormalSnow(LevelAccessor level, BlockPos pos, int layers, int flags) {
-		BlockState stateBelow = level.getBlockState(pos.below());
-		Block block = SnowCommonConfig.fancySnowOnUpperSlab && stateBelow.getBlock() instanceof SlabBlock ?
-				CoreModule.SNOW_EXTRA_COLLISION_BLOCK.get() :
-				Blocks.SNOW;
-		stateBelow = block.defaultBlockState().setValue(SnowLayerBlock.LAYERS, Mth.clamp(layers, 1, 8));
-		level.setBlock(pos, stateBelow, flags);
-		if (stateBelow.is(CoreModule.SNOW_TAG)) {
-			setPlacedBy(level, pos, stateBelow);
-		}
-	}
-
-	public static void setPlacedBy(LevelAccessor level, BlockPos pos, BlockState state) {
-		if (level.getBlockEntity(pos) instanceof SnowBlockEntity blockEntity && blockEntity.getContainedState().isAir()) {
-			blockEntity.options.update(true);
-		}
 	}
 
 	public static boolean canFallThrough(BlockState state, Level level, BlockPos pos) {
@@ -410,7 +403,7 @@ public final class Hooks {
 					}
 					pos.move(Direction.UP);
 				}
-			} else if (accumulate && !SnowCommonConfig.placeSnowOnBlock && !state.isAir()) {
+			} else if (accumulate && !SnowCommonConfig.canPlaceSnowInBlock() && !state.isAir()) {
 				continue;
 			} else {
 				l = 0;
@@ -460,28 +453,37 @@ public final class Hooks {
 		return i > 0 || canSnowSurvive(state, context.getLevel(), context.getClickedPos());
 	}
 
-	public static BlockState getStateForPlacement(BlockPlaceContext context) {
-		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
-		if (state.hasProperty(SnowLayerBlock.LAYERS)) {
-			int i = state.getValue(SnowLayerBlock.LAYERS);
-			return state.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1));
-		} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
-			int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
-			return state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1));
-		}
-		ItemStack stack = context.getItemInHand();
-		var blockEntityData = stack.getComponentsPatch().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null && blockEntityData.isPresent() //FIXME
-				&& "snowrealmagic:snow".equals(blockEntityData.get().getUnsafe().getString("id"))) {
-			return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
-		}
-		if (SnowCommonConfig.fancySnowOnUpperSlab) {
-			BlockState stateBelow = context.getLevel().getBlockState(context.getClickedPos().below());
-			if (stateBelow.getBlock() instanceof SlabBlock) {
-				return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
+	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context) {
+		Level level = context.getLevel();
+		BlockPos pos = context.getClickedPos();
+		if (block == Blocks.SNOW) {
+			BlockState state = level.getBlockState(pos);
+			if (state.hasProperty(SnowLayerBlock.LAYERS)) {
+				int i = state.getValue(SnowLayerBlock.LAYERS);
+				return state.setValue(SnowLayerBlock.LAYERS, Math.min(8, i + 1));
+			} else if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+				int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+				return state.setValue(SnowVariant.OPTIONAL_LAYERS, Math.min(8, i + 1));
+			}
+			if (SnowCommonConfig.fancySnowOnUpperSlab) {
+				BlockState stateBelow = level.getBlockState(pos.below());
+				if (stateBelow.getBlock() instanceof SlabBlock) {
+					return CoreModule.SNOW_BLOCK.defaultBlockState();
+				}
 			}
 		}
-		return Blocks.SNOW.defaultBlockState();
+		var blockEntityData = context.getItemInHand().get(DataComponents.BLOCK_ENTITY_DATA);
+		if (blockEntityData != null) {
+			ResourceLocation id = blockEntityData.read(BLOCK_ENTITY_ID).result().orElse(null);
+			if (CoreModule.TILE.key().equals(id) || CoreModule.TEXTURE_TILE.key().equals(id)) {
+				//noinspection deprecation
+				BlockState blockState = SnowBlockEntity.parseContainedState(blockEntityData.getUnsafe());
+				if (blockState.canSurvive(level, pos)) {
+					return getSnowBlockFor(level, pos, blockState, 1, true);
+				}
+			}
+		}
+		return null;
 	}
 
 	public static boolean canPlaceAt(Level level, BlockPos pos) {
@@ -508,7 +510,7 @@ public final class Hooks {
 		if (blockState.is(Blocks.SNOW)) {
 			level.setBlock(
 					pos,
-					Hooks.copyProperties(blockState, CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState()),
+					Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()),
 					Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
 		}
 		var blockEntity = level.getBlockEntity(pos);
@@ -550,11 +552,20 @@ public final class Hooks {
 			return false;
 		}
 		if (!level.isClientSide) {
-			level.setBlock(pos, state2, 16 | 32);
-			block.setPlacedBy(level, pos, blockState, player, context.getItemInHand());
 			int i = blockState.getValue(SnowLayerBlock.LAYERS);
-			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true) && !player.isCreative()) {
-				context.getItemInHand().shrink(1);
+			boolean hasOverlay = false;
+			if (i != 0 && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+				hasOverlay = be.options.renderOverlay;
+			}
+			level.setBlock(pos, state2, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
+			block.setPlacedBy(level, pos, state2, player, context.getItemInHand());
+			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true)) {
+				if (!player.isCreative()) {
+					context.getItemInHand().shrink(1);
+				}
+				if (hasOverlay && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+					be.options.renderOverlay = true;
+				}
 			}
 		}
 		return true;
