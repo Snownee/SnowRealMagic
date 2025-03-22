@@ -17,7 +17,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
-import snownee.snow.SnowCommonConfig;
 
 @NotNullByDefault
 public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
@@ -52,10 +51,6 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
-			return;
-		}
 		Hooks.randomTick(state, worldIn, pos, random);
 	}
 

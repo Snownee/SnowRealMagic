@@ -24,7 +24,6 @@
 	"snowrealmagic.config.snow-cover.placeSnowOnBlock.desc": "A neve pode ser colocada em alguns blocos para torná-los cobertos de neve",
 	"snowrealmagic.config.snow-cover.placeNaturally.desc": "A neve pode ser colocada em alguns blocos não apenas pelo jogador, mas também pela queda de neve e pela geração mundial",
 	"snowrealmagic.config.snow-cover.replaceWorldgenFeature.desc": "Os blocos gerados pelo worldgen serão substituídos por blocos cobertos de neve",
-	"snowrealmagic.config.snow-cover.retainOriginalBlocks.desc": "Se você deseja desinstalar este mod, provavelmente deseja fazer com que os blocos cobertos de neve voltem ao normal por meio de um tique aleatório",
 	"snowrealmagic.config.accumulation.accumulatesDuringSnowfall.desc": "A neve se acumulará quando estiver chovendo",
 	"snowrealmagic.config.accumulation.accumulatesDuringSnowstorm.desc": "A neve só se acumulará quando estiver trovejando",
 	"snowrealmagic.config.accumulation.maxLayers.desc": "As camadas máximas de neve que podem ser acumuladas. 9 é ilimitado",

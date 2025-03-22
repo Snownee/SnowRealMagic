@@ -14,7 +14,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.snow.SnowCommonConfig;
 import snownee.snow.util.CommonProxy;
 
 @NotNullByDefault
@@ -35,10 +34,11 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
-			return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
+					return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
+				});
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks || CommonProxy.shouldMelt(worldIn, pos)) {
+		if (CommonProxy.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 		}
 	}

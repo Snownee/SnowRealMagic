@@ -43,9 +43,9 @@ public final class SnowCommonConfig {
 	@Path("snow-cover.replaceWorldgenFeature")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
 	public static boolean replaceWorldFeature = true;
-	@Path("snow-cover.retainOriginalBlocks")
+	@Path("snow-cover.restoreOriginalBlocks")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.LOW)
-	public static boolean retainOriginalBlocks = false;
+	public static boolean restoreOriginalBlocks = false;
 	@Path("accumulation.accumulatesDuringSnowfall")
 	@KiwiConfig.PerformanceImpact(KiwiConfig.PerformanceType.MEDIUM)
 	public static boolean snowAccumulationDuringSnowfall = false;
@@ -75,7 +75,7 @@ public final class SnowCommonConfig {
 	public static boolean debugSpawningCommand = false;
 
 	public static boolean canPlaceSnowInBlock() {
-		return placeSnowOnBlock && !retainOriginalBlocks;
+		return placeSnowOnBlock && !restoreOriginalBlocks;
 	}
 
 }

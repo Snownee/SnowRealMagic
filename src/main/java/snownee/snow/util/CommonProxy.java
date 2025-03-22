@@ -14,21 +14,23 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.GameEvents;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy {
-	public static boolean terraforged;
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
 
@@ -49,6 +51,12 @@ public class CommonProxy {
 					if (result.consumesAction()) {
 						event.setCanceled(true);
 						event.setCancellationResult(result);
+					}
+				});
+		NeoForge.EVENT_BUS.addListener(
+				ChunkEvent.Load.class, event -> {
+					if (!event.isNewChunk() && event.getChunk() instanceof LevelChunk chunk) {
+						Hooks.restoreOriginalBlocks(chunk);
 					}
 				});
 		if (sereneSeasons) {

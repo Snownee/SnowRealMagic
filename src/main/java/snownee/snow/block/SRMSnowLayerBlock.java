@@ -39,7 +39,6 @@ import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
-import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
@@ -143,10 +142,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		BlockState stateIn = srm$getRaw(state, worldIn, pos);
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, stateIn);
-			return;
-		}
 		try {
 			super.randomTick(state, worldIn, pos, random);
 		} catch (Throwable e) {
