@@ -16,7 +16,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
-import snownee.snow.SnowCommonConfig;
 
 @NotNullByDefault
 public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
@@ -27,35 +26,34 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getCollisionShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+				});
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getVisualShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getVisualShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getVisualShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
-			return;
-		}
 		Hooks.randomTick(state, worldIn, pos, random);
 	}
 

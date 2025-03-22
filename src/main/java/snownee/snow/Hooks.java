@@ -1,10 +1,12 @@
 package snownee.snow;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.MapDecoder;
 
 import net.minecraft.core.BlockPos;
@@ -13,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -47,12 +50,14 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.KiwiGO;
@@ -303,9 +308,6 @@ public final class Hooks {
 	}
 
 	public static void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, float chance) {
-		if (CommonProxy.terraforged) {
-			return;
-		}
 		if (chance != 1 && random.nextFloat() > chance) {
 			return;
 		}
@@ -573,5 +575,47 @@ public final class Hooks {
 
 	public static boolean isFallable(BlockState blockState) {
 		return SnowCommonConfig.snowGravity && (blockState.is(Blocks.SNOW) || blockState.is(CoreModule.SNOW_TAG));
+	}
+
+	public static void restoreOriginalBlocks(LevelChunk chunk) {
+		Level level = chunk.getLevel();
+		if (!SnowCommonConfig.restoreOriginalBlocks || level.isClientSide || level.getServer() == null ||
+				chunk.getBlockEntities().isEmpty()) {
+			return;
+		}
+		List<BlockEntity> blockEntities = Lists.newArrayList();
+		for (BlockEntity be : chunk.getBlockEntities().values()) {
+			BlockState blockState = be.getBlockState();
+			if (blockState.getBlock() instanceof SnowVariant) {
+				blockEntities.add(be);
+			}
+		}
+		if (blockEntities.isEmpty()) {
+			return;
+		}
+		level.getServer().tell(new TickTask(
+				0, () -> {
+			for (BlockEntity be : blockEntities) {
+				Level level1 = be.getLevel();
+				if (be.isRemoved() || level1 == null) {
+					continue;
+				}
+				BlockState blockState = be.getBlockState();
+				BlockPos pos = be.getBlockPos();
+				BlockState raw = ((SnowVariant) blockState.getBlock()).srm$getRaw(blockState, level1, pos);
+				if (raw.isAir()) {
+					raw = ((SnowVariant) blockState.getBlock()).srm$getSnowState(blockState, level1, pos);
+				}
+				level1.setBlock(pos, raw, Block.UPDATE_NONE | Block.UPDATE_KNOWN_SHAPE);
+				BlockPos below = pos.below();
+				BlockState belowState = level1.getBlockState(below);
+				if (belowState.hasProperty(BlockStateProperties.SNOWY) && belowState.getValue(BlockStateProperties.SNOWY)) {
+					level1.setBlock(
+							below,
+							belowState.setValue(BlockStateProperties.SNOWY, false),
+							Block.UPDATE_NONE | Block.UPDATE_KNOWN_SHAPE);
+				}
+			}
+		}));
 	}
 }

@@ -42,8 +42,6 @@
 	"snowrealmagic.config.snow-cover.placeSnowOnBlock": "Размещать снег на блок",
 	"snowrealmagic.config.snow-cover.replaceWorldgenFeature.desc": "Блоки, сгенерированные в мире, будут заменены заснеженными блоками",
 	"snowrealmagic.config.snow-cover.replaceWorldgenFeature": "Заменить функцию генерации мира",
-	"snowrealmagic.config.snow-cover.retainOriginalBlocks.desc": "Если вы хотите удалить этот мод, вы, вероятно, захотите вернуть заснеженные блоки в нормальные с помощью случайного такта.",
-	"snowrealmagic.config.snow-cover.retainOriginalBlocks": "Возврат исходных блоков",
 	"snowrealmagic.config.snow-cover": "Снежный покров",
 	"snowrealmagic.config.snowAlwaysReplaceable.desc": "В снег можно поставить блок вне зависимости от количества слоёв снега.",
 	"snowrealmagic.config.snowAlwaysReplaceable": "Снег всегда заменяемый",

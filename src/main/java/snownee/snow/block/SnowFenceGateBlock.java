@@ -24,7 +24,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
-import snownee.snow.SnowCommonConfig;
 import snownee.snow.mixin.FenceGateBlockAccess;
 
 @NotNullByDefault
@@ -65,10 +64,6 @@ public class SnowFenceGateBlock extends FenceGateBlock implements WatcherSnowVar
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
-			return;
-		}
 		Hooks.randomTick(state, worldIn, pos, random);
 	}
 

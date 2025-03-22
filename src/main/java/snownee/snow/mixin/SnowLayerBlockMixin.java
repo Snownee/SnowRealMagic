@@ -40,7 +40,6 @@ import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.util.CommonProxy;
 
 @NotNullByDefault
 @Mixin(value = SnowLayerBlock.class, priority = 500)
@@ -71,7 +70,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			CollisionContext context,
 			Operation<VoxelShape> original) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
+		if (!SnowCommonConfig.thinnerBoundingBox) {
 			return SHAPE_BY_LAYER[layers - 1];
 		}
 		if (layers == 8) {
