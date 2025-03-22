@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -111,7 +112,7 @@ public class TreeGrowerMixin {
 
 		var layer = layers.get().getInt(index.get());
 		if (layer > 0) {
-			Hooks.convert(serverLevel, blockPos, blockState, layer, 4, true);
+			Hooks.convert(serverLevel, blockPos, blockState, layer, Block.UPDATE_INVISIBLE, true);
 		}
 		index.set(index.get() + 1);
 		return result;

@@ -63,7 +63,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 		if (blockHitResult.getDirection() == Direction.UP &&
 				blockEntity.getContainedState().getBlock().asItem() == itemStack.getItem() &&
-				itemStack.getItem() instanceof BlockItem blockItem &&
+				itemStack.getItem() instanceof BlockItem &&
 				itemStack.is(ItemTags.SLABS)) {
 			if (blockState.hasProperty(SlabBlock.TYPE)) {
 				blockState.trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
