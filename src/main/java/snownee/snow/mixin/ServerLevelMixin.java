@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import snownee.snow.SnowCommonConfig;
 import snownee.snow.WorldTickHandler;
 import snownee.snow.util.CommonProxy;
 
@@ -16,7 +17,7 @@ public class ServerLevelMixin {
 	@WrapMethod(method = "tickPrecipitation")
 	private void srm_tickPrecipitation(BlockPos pos, Operation<Void> original) {
 		ServerLevel level = (ServerLevel) (Object) this;
-		if (!CommonProxy.weatherTick(level, () -> WorldTickHandler.tick(level, pos))) {
+		if (SnowCommonConfig.forceVanillaIceSnowLogic || !CommonProxy.weatherTick(level, () -> WorldTickHandler.tick(level, pos))) {
 			original.call(pos);
 		}
 	}

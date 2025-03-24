@@ -10,7 +10,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -24,8 +23,7 @@ public class WorldTickHandler {
 	// See ServerLevel.tickChunk
 	public static boolean tick(ServerLevel level, BlockPos pos) {
 		MutableBlockPos mutable = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).mutable();
-		Holder<Biome> biomeHolder = level.getBiome(mutable);
-		boolean coldEnoughToSnow = CommonProxy.coldEnoughToSnow(level, mutable, biomeHolder);
+		boolean coldEnoughToSnow = CommonProxy.coldEnoughToSnow(level, mutable, level.getBiome(mutable));
 		if (coldEnoughToSnow) {
 			return doSnow(level, mutable);
 		} else {
@@ -35,20 +33,20 @@ public class WorldTickHandler {
 	}
 
 	private static void doMelt(ServerLevel level, MutableBlockPos pos) {
-		BlockState state = level.getBlockState(pos);
-		if (state.getBlock() instanceof IceBlockAccess ice) {
+		BlockState blockState = level.getBlockState(pos.move(Direction.DOWN));
+		if (blockState.getBlock() instanceof IceBlockAccess ice) {
 			Holder<Biome> biome = level.getBiome(pos);
 			if (CommonProxy.snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos)) {
-				ice.callMelt(state, level, pos);
+				ice.callMelt(blockState, level, pos);
 			}
 			return;
+		}
+		if (blockState.getBlock() instanceof SnowVariant) {
+			Hooks.randomTick(blockState, level, pos, level.random, 1);
 		}
 		BlockState stateAbove = level.getBlockState(pos.move(Direction.UP));
 		if (stateAbove.getBlock() instanceof SnowVariant) {
 			Hooks.randomTick(stateAbove, level, pos, level.random, 1);
-		} else if (state.getBlock() instanceof SnowVariant) {
-			pos.move(Direction.DOWN);
-			Hooks.randomTick(state, level, pos, level.random, 1);
 		}
 	}
 
@@ -66,34 +64,41 @@ public class WorldTickHandler {
 			return false;
 		}
 
-		BlockState state = level.getBlockState(pos);
-		if (!Hooks.canContainState(state) && !Hooks.canSnowSurvive(state, level, pos)) {
-			return false;
+		BlockState blockState = level.getBlockState(pos);
+		if (!snowHereIfPossible(level, pos, blockState)) {
+			if (!snowHereIfPossible(level, pos, blockState = level.getBlockState(pos.move(Direction.DOWN)))) {
+				return false;
+			}
 		}
-		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > SnowCommonConfig.snowSpawnMaxLightLevel) {
-			return false;
-		}
-		Hooks.convert(level, pos.move(Direction.DOWN), state, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 
 		for (int i = 0; i < 5; i++) {
-			if (state.is(BlockTags.SLABS) || state.is(BlockTags.STAIRS)) {
+			if (blockState.is(BlockTags.SLABS) || blockState.is(BlockTags.STAIRS)) {
 				break;
 			}
-			state = level.getBlockState(pos.move(Direction.DOWN));
-			if (!state.isAir() && !Hooks.canContainState(state)) {
+			blockState = level.getBlockState(pos.move(Direction.DOWN));
+			if (!blockState.isAir() && !Hooks.canContainState(blockState)) {
 				break;
 			}
-			if (Hooks.canSnowSurvive(Blocks.SNOW.defaultBlockState(), level, pos)) {
+			if (Hooks.canSnowSurvive(level, pos)) {
 				pos.move(Direction.UP);
 				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >
 						SnowCommonConfig.snowSpawnMaxLightLevel) {
 					break;
 				}
-				Hooks.convert(level, pos.move(Direction.DOWN), state, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
+				Hooks.convert(level, pos.move(Direction.DOWN), blockState, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 				//FIXME I should make snow melts somehow
 			}
 		}
 		return true;
+	}
+
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	private static boolean snowHereIfPossible(ServerLevel level, MutableBlockPos pos, BlockState blockState) {
+		if (level.getBrightness(LightLayer.BLOCK, pos.move(Direction.UP)) > SnowCommonConfig.snowSpawnMaxLightLevel) {
+			pos.move(Direction.DOWN);
+			return false;
+		}
+		return Hooks.convert(level, pos.move(Direction.DOWN), blockState, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 	}
 
 	private static void doBlizzard(ServerLevel world, BlockPos pos, int blizzard) {

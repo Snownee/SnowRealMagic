@@ -36,6 +36,7 @@ import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
+import snownee.snow.convert.BlockConverters;
 import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockBehaviourAccess;
@@ -144,9 +145,12 @@ public class CoreModule extends AbstractModule {
 			GameRules.Category.MISC,
 			IntegerValue.create(10000));
 
+	public static final BlockConverters CONVERTERS = new BlockConverters();
+
 	@Override
 	protected void init(InitEvent event) {
 		event.enqueueWork(() -> {
+			CONVERTERS.initSnow();
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				final var below = blockPos.below();
 				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
@@ -164,5 +168,4 @@ public class CoreModule extends AbstractModule {
 			((BlockBehaviourAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 		});
 	}
-
 }

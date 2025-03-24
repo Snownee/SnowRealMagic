@@ -27,26 +27,29 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getOcclusionShape(state, worldIn, pos);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getOcclusionShape(worldIn, pos));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 			BlockPos pos,
 			BlockPos thatPos) {
 		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
-		if (!Hooks.canSnowSurvive(state, level, pos)) {
+		if (!Hooks.canSnowSurvive(level, pos)) {
 			state = state.setValue(OPTIONAL_LAYERS, 0);
 		}
 		return state;

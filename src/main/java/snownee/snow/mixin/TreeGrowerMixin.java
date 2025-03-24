@@ -112,7 +112,7 @@ public class TreeGrowerMixin {
 
 		var layer = layers.get().getInt(index.get());
 		if (layer > 0) {
-			Hooks.convert(serverLevel, blockPos, blockState, layer, Block.UPDATE_INVISIBLE, true);
+			Hooks.convert(serverLevel, blockPos, blockState, layer, Block.UPDATE_INVISIBLE, true, false);
 		}
 		index.set(index.get() + 1);
 		return result;
