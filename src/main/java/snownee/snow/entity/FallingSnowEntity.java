@@ -1,6 +1,5 @@
 package snownee.snow.entity;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -14,6 +13,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -24,23 +24,20 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.block.SnowVariant;
 import snownee.snow.network.SLavaSmokeEffectPacket;
 import snownee.snow.util.CommonProxy;
 
-// FallingBlockEntity
+//TODO use FallingBlockEntity
+@NotNullByDefault
 public class FallingSnowEntity extends Entity {
 	protected static final EntityDataAccessor<BlockPos> START_POS = SynchedEntityData.defineId(
 			FallingSnowEntity.class,
@@ -97,36 +94,33 @@ public class FallingSnowEntity extends Entity {
 					discard();
 				} else if (!pos.equals(prevPos)) {
 					prevPos = pos;
-					BlockState state = level.getBlockState(pos);
-					if (SnowCommonConfig.snowMakingIce && state.is(Blocks.WATER)) {
+					BlockState blockState = level.getBlockState(pos);
+					if (SnowCommonConfig.snowMakingIce && blockState.is(Blocks.WATER)) {
 						level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 						discard();
 						return;
 					}
-					if (CommonProxy.isHot(state.getFluidState(), level, pos)) {
+					if (CommonProxy.isHot(blockState.getFluidState(), level, pos)) {
 						new SLavaSmokeEffectPacket(pos.above()).sendToAround((ServerLevel) level);
 						discard();
 						return;
 					}
-					if (!state.getFluidState().isEmpty()) {
+					if (!blockState.getFluidState().isEmpty()) {
 						discard();
 						return;
 					}
 				}
 			} else {
-				BlockState state = level.getBlockState(pos);
 
 				this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 
-				if (!state.is(Blocks.MOVING_PISTON)) {
-					if (state.getCollisionShape(level, pos, CollisionContext.of(this)).isEmpty()) {
-						BlockPos posDown = pos.below();
-						BlockState stateDown = level.getBlockState(posDown);
-						Block block = stateDown.getBlock();
-						if (block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock ||
-								block instanceof StairBlock && stateDown.getValue(StairBlock.HALF) == Half.BOTTOM) {
-							pos = posDown;
-						}
+				BlockState blockState = level.getBlockState(pos);
+				if (!blockState.is(Blocks.MOVING_PISTON)) {
+					pos = getOnPos();
+					blockState = level.getBlockState(pos);
+					if (!Hooks.canPlaceAt(level, pos) && !(blockState.getBlock() instanceof SnowVariant)) {
+						pos = blockPosition();
+						blockState = level.getBlockState(pos);
 					}
 					Hooks.placeLayersOn(
 							level,
@@ -172,7 +166,6 @@ public class FallingSnowEntity extends Entity {
 	}
 
 	@Override
-	@NotNull
 	protected Entity.MovementEmission getMovementEmission() {
 		return Entity.MovementEmission.NONE;
 	}
@@ -216,6 +209,17 @@ public class FallingSnowEntity extends Entity {
 		this.blocksBuilding = true;
 		this.setPos(packet.getX(), packet.getY(), packet.getZ());
 		this.setStartPos(this.blockPosition());
+	}
+
+	@Nullable
+	@Override
+	public Entity changeDimension(DimensionTransition p_351015_) {
+		ResourceKey<Level> resourcekey = p_351015_.newLevel().dimension();
+		ResourceKey<Level> resourcekey1 = this.level().dimension();
+		boolean flag = (resourcekey1 == Level.END || resourcekey == Level.END) && resourcekey1 != resourcekey;
+		Entity entity = super.changeDimension(p_351015_);
+//		this.forceTickAfterTeleportToDuplicate = entity != null && flag;
+		return entity;
 	}
 
 	@Override

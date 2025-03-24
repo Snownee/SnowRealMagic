@@ -11,6 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.commands.GameRuleCommand;
 import net.minecraft.world.level.GameRules;
+import snownee.snow.SnowCommonConfig;
 
 @Mixin(GameRuleCommand.class)
 public class GameRuleCommandMixin {
@@ -20,7 +21,7 @@ public class GameRuleCommandMixin {
 			CommandContext<CommandSourceStack> context,
 			GameRules.Key<T> key,
 			CallbackInfoReturnable<Integer> ci) {
-		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) {
+		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
 			context.getSource().sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}
 	}
@@ -30,7 +31,7 @@ public class GameRuleCommandMixin {
 			CommandSourceStack context,
 			GameRules.Key<T> key,
 			CallbackInfoReturnable<Integer> ci) {
-		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) {
+		if (key == GameRules.RULE_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
 			context.sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}
 	}

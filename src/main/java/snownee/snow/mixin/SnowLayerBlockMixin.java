@@ -4,9 +4,11 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,7 +26,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -88,7 +89,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
 		if (Hooks.isFallable(state)) {
-			level.scheduleTick(pos, this, getDelayAfterPlace());
+			level.scheduleTick(pos, this, srm$getDelayAfterPlace());
 		}
 	}
 
@@ -102,19 +103,22 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			BlockPos facingPos,
 			Operation<BlockState> original) {
 		if (Hooks.isFallable(stateIn)) {
-			level.scheduleTick(currentPos, this, getDelayAfterPlace());
+			level.scheduleTick(currentPos, this, srm$getDelayAfterPlace());
 			return stateIn;
 		}
 		return original.call(stateIn, facing, facingState, level, currentPos, facingPos);
 	}
 
-	@WrapMethod(method = "canSurvive")
-	private boolean canSurvive(BlockState state, LevelReader level, BlockPos pos, Operation<Boolean> original) {
-		return Hooks.canSnowSurvive(state, level, pos);
+	@WrapOperation(
+			method = "canSurvive", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+	private boolean canSurvive(BlockState blockState, Block block, Operation<Boolean> original) {
+		return blockState.getBlock() instanceof SnowLayerBlock || original.call(blockState, block);
 	}
 
 	@Unique
-	protected int getDelayAfterPlace() {
+	protected int srm$getDelayAfterPlace() {
 		return 2;
 	}
 

@@ -72,7 +72,7 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 			BlockPos pos,
 			BlockPos thatPos) {
 		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
-		if (!Hooks.canSnowSurvive(state, level, pos)) {
+		if (!Hooks.canSnowSurvive(level, pos)) {
 			state = state.setValue(OPTIONAL_LAYERS, 0);
 		}
 		return state;

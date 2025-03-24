@@ -135,7 +135,10 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		var block = blockState.getBlock();
 
 		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
-			((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
+			try {
+				((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
+			} catch (Throwable ignored) {
+			}
 		}
 	}
 
@@ -154,10 +157,13 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (!stateNow.is(this)) {
 			return;
 		}
-		stateIn.randomTick(worldIn, pos, random);
-		BlockState stateNow2 = worldIn.getBlockState(pos);
-		if (!stateNow2.is(this)) {
-			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
+		try {
+			stateIn.randomTick(worldIn, pos, random);
+			BlockState stateNow2 = worldIn.getBlockState(pos);
+			if (!stateNow2.is(this)) {
+				Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
+			}
+		} catch (Throwable ignored) {
 		}
 	}
 
@@ -168,19 +174,22 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockPos blockPos,
 			Player player,
 			BlockHitResult blockHitResult) {
-		InteractionResult result = srm$getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
-		if (result.consumesAction()) {
-			BlockState stateNow = level.getBlockState(blockPos);
-			if (!stateNow.is(this)) {
-				Hooks.convert(
-						level,
-						blockPos,
-						stateNow,
-						blockState.getValue(LAYERS),
-						Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
-						true);
+		try {
+			InteractionResult result = srm$getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
+			if (result.consumesAction()) {
+				BlockState stateNow = level.getBlockState(blockPos);
+				if (!stateNow.is(this)) {
+					Hooks.convert(
+							level,
+							blockPos,
+							stateNow,
+							blockState.getValue(LAYERS),
+							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							true);
+				}
+				return result;
 			}
-			return result;
+		} catch (Throwable ignored) {
 		}
 		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
@@ -194,24 +203,27 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			Player player,
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
-		ItemInteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
-				itemStack,
-				level,
-				player,
-				interactionHand,
-				blockHitResult);
-		if (result.consumesAction()) {
-			BlockState stateNow = level.getBlockState(blockPos);
-			if (!stateNow.is(this)) {
-				Hooks.convert(
-						level,
-						blockPos,
-						stateNow,
-						blockState.getValue(LAYERS),
-						Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
-						true);
+		try {
+			ItemInteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
+					itemStack,
+					level,
+					player,
+					interactionHand,
+					blockHitResult);
+			if (result.consumesAction()) {
+				BlockState stateNow = level.getBlockState(blockPos);
+				if (!stateNow.is(this)) {
+					Hooks.convert(
+							level,
+							blockPos,
+							stateNow,
+							blockState.getValue(LAYERS),
+							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							true);
+				}
+				return result;
 			}
-			return result;
+		} catch (Throwable ignored) {
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}

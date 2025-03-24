@@ -11,12 +11,16 @@ import net.minecraft.world.level.Level;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
 import sereneseasons.season.RandomUpdateHandler;
+import snownee.snow.SnowCommonConfig;
 
 @Mixin(value = RandomUpdateHandler.class, remap = false)
 public abstract class RandomUpdateHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onWorldTick", cancellable = true)
 	private static void srm_onWorldTick(TickEvent.Level event, CallbackInfo ci) {
+		if (SnowCommonConfig.forceVanillaIceSnowLogic) {
+			return;
+		}
 		Level level = event.getLevel();
 		if (event.getPhase() == TickEvent.Phase.END && !level.isClientSide()) {
 			Season.SubSeason subSeason = SeasonHelper.getSeasonState(level).getSubSeason();
