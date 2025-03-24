@@ -24,7 +24,7 @@ import net.minecraft.world.phys.HitResult;
 import snownee.kiwi.block.IKiwiBlock;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.GameEvents;
-import snownee.snow.WrappedSoundType;
+import snownee.snow.util.WrappedSoundType;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.mixin.BlockAccess;
 
