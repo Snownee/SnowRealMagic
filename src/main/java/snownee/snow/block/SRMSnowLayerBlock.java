@@ -21,6 +21,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -99,7 +100,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof SRMSnowLayerBlock) {
+		if (!(worldIn instanceof WorldGenLevel) && state.getBlock() instanceof SRMSnowLayerBlock) {
 			BlockState contained = srm$getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {

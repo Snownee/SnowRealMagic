@@ -25,13 +25,13 @@ public class SnowAndFreezeFeatureMixin {
 	private boolean srm_place(
 			Biome biome,
 			LevelReader levelReader,
-			BlockPos blockPos,
+			BlockPos pos,
 			Operation<Boolean> original,
 			@Local WorldGenLevel level,
 			@Local(ordinal = 1) BlockPos.MutableBlockPos belowPos) {
-		boolean result = original.call(biome, levelReader, blockPos);
+		boolean result = original.call(biome, levelReader, pos);
 		if (!result) {
-			Hooks.placeFeatureExtra(biome, level, blockPos, belowPos);
+			Hooks.placeFeatureExtra(biome, level, pos, belowPos);
 		}
 		return result;
 	}
