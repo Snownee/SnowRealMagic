@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,9 +28,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -40,7 +41,6 @@ import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.entity.FallingSnowEntity;
 
 @NotNullByDefault
 @Mixin(value = SnowLayerBlock.class, priority = 500)
@@ -79,7 +79,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
 			Entity entity = entityContext.getEntity();
-			if (entity.getType() == EntityType.FALLING_BLOCK || CoreModule.ENTITY.is(entity.getType())) {
+			if (entity.getType() == EntityType.FALLING_BLOCK) {
 				return SHAPE_BY_LAYER[layers - 1];
 			}
 		}
@@ -127,13 +127,10 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		BlockPos posDown = pos.below();
 		if (Hooks.canFallThrough(level.getBlockState(posDown), level, posDown)) {
 			level.setBlockAndUpdate(pos, srm$getRaw(state, level, pos));
-			FallingSnowEntity entity = new FallingSnowEntity(
+			FallingBlockEntity.fall(
 					level,
-					pos.getX() + 0.5D,
-					pos.getY(),
-					pos.getZ() + 0.5D,
-					state.getValue(SnowLayerBlock.LAYERS));
-			level.addFreshEntity(entity);
+					pos,
+					Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, state.getValue(SnowLayerBlock.LAYERS)));
 		}
 	}
 
@@ -233,7 +230,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
-		return state.getValue(BlockStateProperties.LAYERS);
+		return state.getValue(SnowLayerBlock.LAYERS);
 	}
 
 	@Override

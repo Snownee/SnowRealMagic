@@ -13,7 +13,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,9 +37,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.GameObjectLookup;
-import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
-import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
@@ -83,8 +80,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		EntityRendererRegistry.register(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
-
 		ModelLoadingPlugin.register(ctx -> {
 			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
 

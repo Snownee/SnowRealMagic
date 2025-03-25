@@ -4,7 +4,6 @@ import java.util.stream.Stream;
 
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -12,10 +11,10 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import snownee.kiwi.AbstractModule;
@@ -26,7 +25,6 @@ import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.KiwiModule.RenderLayer;
 import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
-import snownee.kiwi.util.KiwiEntityTypeBuilder;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
@@ -37,7 +35,6 @@ import snownee.snow.block.SnowWallBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.convert.BlockConverters;
-import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
@@ -125,14 +122,6 @@ public class CoreModule extends AbstractModule {
 			FENCE_GATE,
 			WALL);
 
-	@Name("snow")
-	public static final KiwiGO<EntityType<FallingSnowEntity>> ENTITY = go(() -> KiwiEntityTypeBuilder.<FallingSnowEntity>create()
-			.entityFactory((spawnEntity, world) -> new FallingSnowEntity(world))
-			.dimensions(EntityDimensions.fixed(0.98F, 0.001F))
-			.trackRangeChunks(10)
-			.trackedUpdateRate(20)
-			.build());
-
 	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
 
 	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
@@ -153,7 +142,7 @@ public class CoreModule extends AbstractModule {
 			CONVERTERS.initSnow();
 			BlockBehaviour.StateArgumentPredicate<EntityType<?>> predicate = (blockState, blockGetter, blockPos, entityType) -> {
 				final var below = blockPos.below();
-				return blockState.getValue(BlockStateProperties.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
+				return blockState.getValue(SnowLayerBlock.LAYERS) <= SnowCommonConfig.mobSpawningMaxLayers &&
 						blockGetter.getBlockState(below).isValidSpawn(blockGetter, below, entityType);
 			};
 			Stream.of(

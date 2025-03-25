@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.IceBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 @Mixin(value = IceBlock.class, priority = 500)
 public class IceBlockMixin {
@@ -20,7 +19,7 @@ public class IceBlockMixin {
 		BlockPos above = blockPos.above();
 		BlockState stateAbove = level.getBlockState(above);
 		if (stateAbove.getBlock() instanceof SnowLayerBlock) {
-			if (stateAbove.getValue(BlockStateProperties.LAYERS) < 5) {
+			if (stateAbove.getValue(SnowLayerBlock.LAYERS) < 5) {
 				level.removeBlock(above, false);
 			} else {
 				ci.cancel();

@@ -78,6 +78,7 @@ public final class SnowCommonConfig {
 	@Path("debug.mobSpawningCommand")
 	public static boolean debugSpawningCommand = false;
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !restoreOriginalBlocks;
 	}

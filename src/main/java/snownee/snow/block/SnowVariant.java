@@ -15,8 +15,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.HitResult;
 import snownee.kiwi.block.IKiwiBlock;
@@ -89,7 +89,7 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 
 	default BlockState srm$getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
 		int layers = srm$layers(state, level, pos);
-		return layers == 0 ? Blocks.AIR.defaultBlockState() : Blocks.SNOW.defaultBlockState().setValue(BlockStateProperties.LAYERS, layers);
+		return layers == 0 ? Blocks.AIR.defaultBlockState() : Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 	}
 
 }
