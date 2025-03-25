@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -97,7 +98,7 @@ public class CommonProxy implements ModInitializer {
 		return level.getBrightness(LightLayer.SKY, layers == 8 ? pos.above() : pos) > 2;
 	}
 
-	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
+	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
 			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
 		}

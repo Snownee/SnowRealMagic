@@ -7,6 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
@@ -42,11 +43,8 @@ public class SereneSeasonsCompat {
 		return true;
 	}
 
-	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
-		if (ModConfig.seasons.generateSnowAndIce) {
-			return SeasonHooks.getBiomeTemperature(level, biome, pos) < 0.15F;
-		}
-		return biome.value().coldEnoughToSnow(pos);
+	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
+		return SeasonHooks.getPrecipitationAtTickIceAndSnowHook(level, biome.value(), pos) == Biome.Precipitation.SNOW;
 	}
 
 	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
