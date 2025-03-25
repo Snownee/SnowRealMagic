@@ -403,10 +403,17 @@ public final class Hooks {
 						level,
 						pos,
 						state,
-						(w, p) -> (
-								SnowCommonConfig.snowAccumulationMaxLayers > 8 ||
-										!(w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock)) &&
-								w.getBrightness(LightLayer.BLOCK, p) <= SnowCommonConfig.snowSpawnMaxLightLevel,
+						(w, p) -> {
+							if (SnowCommonConfig.snowAccumulationMaxLayers < 9 &&
+									w.getBlockState(p.below()).getBlock() instanceof SnowLayerBlock) {
+								return false;
+							}
+							if (SnowCommonConfig.snowSpawnMaxLightLevel < 15 && w.getBrightness(LightLayer.BLOCK, p) >
+									SnowCommonConfig.snowSpawnMaxLightLevel) {
+								return false;
+							}
+							return CommonProxy.coldEnoughToSnow(w, p, w.getBiome(p));
+						},
 						true);
 			}
 		} else if (melt) {
