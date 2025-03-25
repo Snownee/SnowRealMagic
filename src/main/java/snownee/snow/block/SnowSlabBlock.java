@@ -62,28 +62,26 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 		if (blockHitResult.getDirection() == Direction.UP &&
 				blockEntity.getContainedState().getBlock().asItem() == itemStack.getItem() &&
-				itemStack.getItem() instanceof BlockItem &&
-				itemStack.is(ItemTags.SLABS)) {
-			if (blockState.hasProperty(SlabBlock.TYPE)) {
-				blockState.trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
-				if (!level.isClientSide) {
-					level.setBlockAndUpdate(blockPos, blockState);
-					if (!player.isCreative()) {
-						itemStack.shrink(1);
-					}
-					CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockPos, itemStack);
+				itemStack.is(ItemTags.SLABS) &&
+				itemStack.getItem() instanceof BlockItem blockItem) {
+			blockState = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
+			if (!level.isClientSide) {
+				level.setBlockAndUpdate(blockPos, blockState);
+				if (!player.isCreative()) {
+					itemStack.shrink(1);
 				}
-
-				SoundType soundtype = blockState.getSoundType();
-				level.playSound(
-						player,
-						blockPos,
-						soundtype.getPlaceSound(),
-						SoundSource.BLOCKS,
-						(soundtype.getVolume() + 1.0F) / 2.0F,
-						soundtype.getPitch() * 0.8F);
-				return ItemInteractionResult.SUCCESS;
+				CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockPos, itemStack);
 			}
+
+			SoundType soundtype = blockState.getSoundType();
+			level.playSound(
+					player,
+					blockPos,
+					soundtype.getPlaceSound(),
+					SoundSource.BLOCKS,
+					(soundtype.getVolume() + 1.0F) / 2.0F,
+					soundtype.getPitch() * 0.8F);
+			return ItemInteractionResult.SUCCESS;
 		}
 
 		return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
