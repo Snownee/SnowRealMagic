@@ -62,18 +62,19 @@ public final class Hooks {
 	}
 
 	public static void placeFeatureExtra(Biome biome, WorldGenLevel level, BlockPos pos, BlockPos belowPos) {
-		if (SnowCommonConfig.replaceWorldFeature && SnowCommonConfig.placeSnowOnBlockNaturally &&
-				SnowCommonConfig.canPlaceSnowInBlock()) {
-			if (biome.warmEnoughToRain(pos) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 ||
-					!Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
-				return;
-			}
-			BlockState blockstate = level.getBlockState(pos);
-			if (convert(level, pos, blockstate, 1, Block.UPDATE_CLIENTS, true)) {
-				blockstate = level.getBlockState(belowPos);
-				if (blockstate.hasProperty(BlockStateProperties.SNOWY)) {
-					level.setBlock(belowPos, blockstate.setValue(BlockStateProperties.SNOWY, true), Block.UPDATE_CLIENTS);
-				}
+		if (!SnowCommonConfig.replaceWorldFeature || !SnowCommonConfig.placeSnowOnBlockNaturally ||
+				!SnowCommonConfig.canPlaceSnowInBlock()) {
+			return;
+		}
+		if (biome.warmEnoughToRain(pos) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Hooks.canSnowSurvive(level, pos)) {
+			return;
+		}
+		BlockState blockstate = level.getBlockState(pos);
+		if (convert(level, pos, blockstate, 1, Block.UPDATE_CLIENTS, true)) {
+//			SnowRealMagic.LOGGER.info("Place {} @ {}", level.getBlockState(pos).getBlock(), pos);
+			blockstate = level.getBlockState(belowPos);
+			if (blockstate.hasProperty(BlockStateProperties.SNOWY)) {
+				level.setBlock(belowPos, blockstate.setValue(BlockStateProperties.SNOWY, true), Block.UPDATE_CLIENTS);
 			}
 		}
 	}
