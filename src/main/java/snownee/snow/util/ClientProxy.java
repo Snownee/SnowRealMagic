@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -30,7 +29,6 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
@@ -41,12 +39,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
-import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
-import snownee.snow.client.FallingSnowRenderer;
 import snownee.snow.client.SnowClient;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
@@ -88,11 +82,6 @@ public class ClientProxy {
 	}
 
 	public static void onInitializeClient(IEventBus eventBus) {
-		eventBus.addListener(
-				EntityRenderersEvent.RegisterRenderers.class, event -> {
-					event.registerEntityRenderer(CoreModule.ENTITY.getOrCreate(), FallingSnowRenderer::new);
-				});
-
 		ModelLoadingPlugin.register(ctx -> {
 			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
 

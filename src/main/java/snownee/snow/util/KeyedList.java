@@ -1,5 +1,6 @@
 package snownee.snow.util;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -10,6 +11,8 @@ import snownee.kiwi.util.NotNullByDefault;
 
 @NotNullByDefault
 public class KeyedList<K, E> extends ArrayList<E> {
+	@Serial
+	private static final long serialVersionUID = -5150601089854895739L;
 	private final ArrayList<K> keys;
 
 	public KeyedList() {

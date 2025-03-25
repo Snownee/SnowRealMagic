@@ -21,7 +21,7 @@ public class CoveredBlockConverter implements BlockConverter {
 
 	@Override
 	public boolean takeIn(BlockState blockState) {
-		return clazz.isAssignableFrom(blockState.getBlock().getClass());
+		return clazz.isInstance(blockState.getBlock());
 	}
 
 	@Override

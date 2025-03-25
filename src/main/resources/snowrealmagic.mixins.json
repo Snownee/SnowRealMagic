@@ -12,6 +12,7 @@
 		"BlockMixin",
 		"BlockStateMixin",
 		"DoublePlantBlockMixin",
+		"FallingBlockEntityMixin",
 		"FenceGateBlockAccess",
 		"GameRuleCommandMixin",
 		"GameRulesMixin",
@@ -19,11 +20,11 @@
 		"IceBlockMixin",
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
+		"SnowBlockEntityMixin",
 		"SnowLayerBlockMixin",
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
-		"fabric.SnowBlockEntityMixin",
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [

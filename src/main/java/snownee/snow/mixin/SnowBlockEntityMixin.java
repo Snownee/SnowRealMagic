@@ -1,4 +1,4 @@
-package snownee.snow.mixin.fabric;
+package snownee.snow.mixin;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,9 +16,9 @@ public abstract class SnowBlockEntityMixin implements RenderDataBlockEntity {
 	@Unique
 	private RenderData renderData;
 	@Shadow
-	private SnowBlockEntity.Options options;
+	public SnowBlockEntity.Options options;
 	@Shadow
-	private BlockState state;
+	protected BlockState state;
 
 	@Override
 	public @Nullable RenderData getRenderData() {

@@ -25,6 +25,8 @@
   "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes": "Snow And Ice Melt In Warm Biomes",
   "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes.",
   "snowrealmagic.config.debug": "Debug",
+  "snowrealmagic.config.debug.forceVanillaIceSnowLogic": "Force Vanilla Ice Snow Logic",
+  "snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",
   "snowrealmagic.config.debug.mobSpawningCommand": "Mob Spawning Command",
   "snowrealmagic.config.debug.mobSpawningCommand.desc": "",
   "snowrealmagic.config.fancySnowOnUpperSlab": "Fancy Snow On Upper Slab",

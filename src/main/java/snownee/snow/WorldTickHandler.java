@@ -7,14 +7,15 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.entity.FallingSnowEntity;
 import snownee.snow.mixin.IceBlockAccess;
 import snownee.snow.util.CommonProxy;
 
@@ -119,8 +120,7 @@ public class WorldTickHandler {
 			blizzard = world.random.nextInt(blizzard) + 1;
 		}
 		pos = pos.above(64);
-		FallingSnowEntity entity = new FallingSnowEntity(world, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, blizzard);
-		world.addFreshEntity(entity);
+		FallingBlockEntity.fall(world, pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blizzard));
 	}
 
 }
