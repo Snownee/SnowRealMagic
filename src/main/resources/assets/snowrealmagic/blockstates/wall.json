@@ -2,14 +2,10 @@
 	"multipart": [
 		{
 			"when": {
-				"up": "true",
-				"west": "none|low",
-				"east": "none|low",
-				"south": "none|low",
-				"north": "none|low"
+				"up": "true"
 			},
 			"apply": {
-				"model": "snowrealmagic:block/wall_post_overlay"
+				"model": "snowrealmagic:block/wall_post"
 			}
 		},
 		{

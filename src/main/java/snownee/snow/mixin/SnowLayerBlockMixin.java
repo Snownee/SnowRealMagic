@@ -15,14 +15,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -140,16 +138,8 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@WrapMethod(method = "canBeReplaced")
-	private boolean canBeReplaced(BlockState state, BlockPlaceContext useContext, Operation<Boolean> original) {
-		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
-			if (useContext.replacingClickedOnBlock()) {
-				return useContext.getClickedFace() == Direction.UP;
-			} else {
-				return true;
-			}
-		}
-		return layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8);
+	private boolean canBeReplaced(BlockState blockState, BlockPlaceContext useContext, Operation<Boolean> original) {
+		return Hooks.canBeReplaced(blockState, useContext);
 	}
 
 	@Override
@@ -176,20 +166,6 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
-	}
-
-	// Right click with empty hand to toggle snow overlay on the block below
-	@Override
-	protected InteractionResult useWithoutItem(
-			BlockState blockState,
-			Level level,
-			BlockPos blockPos,
-			Player player,
-			BlockHitResult blockHitResult) {
-		if (Hooks.useSnowWithEmptyHand(blockState, level, blockPos, player, blockHitResult)) {
-			return InteractionResult.sidedSuccess(level.isClientSide);
-		}
-		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
 
 	@Override

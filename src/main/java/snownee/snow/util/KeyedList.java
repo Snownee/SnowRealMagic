@@ -40,7 +40,7 @@ public class KeyedList<K, E> extends ArrayList<E> {
 
 	private void put(int index, K key, E element) {
 		if (containsKey(key)) {
-			throw new IllegalArgumentException("Key already exists");
+			throw new IllegalArgumentException("Key already exists: " + key);
 		}
 		keys.add(index, key);
 		super.add(index, element);
@@ -57,7 +57,7 @@ public class KeyedList<K, E> extends ArrayList<E> {
 	public void putAfter(K relativeKey, K key, E element) {
 		int index = indexOfKey(relativeKey);
 		if (index == -1) {
-			throw new IllegalArgumentException("Key not found");
+			throw new IllegalArgumentException("Key not found: " + relativeKey);
 		}
 		put(index + 1, key, element);
 	}
@@ -65,7 +65,7 @@ public class KeyedList<K, E> extends ArrayList<E> {
 	public void putBefore(K relativeKey, K key, E element) {
 		int index = indexOfKey(relativeKey);
 		if (index == -1) {
-			throw new IllegalArgumentException("Key not found");
+			throw new IllegalArgumentException("Key not found: " + relativeKey);
 		}
 		put(index, key, element);
 	}

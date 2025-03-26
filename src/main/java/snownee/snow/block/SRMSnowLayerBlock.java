@@ -1,6 +1,5 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -79,16 +78,16 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
+	public boolean canBeReplaced(BlockState blockState, BlockPlaceContext useContext) {
 		if (useContext.getItemInHand().is(Items.SNOW)) {
-			return super.canBeReplaced(state, useContext);
+			return super.canBeReplaced(blockState, useContext);
 		}
-		if (!super.canBeReplaced(state, useContext)) {
-			return false;
+		if (super.canBeReplaced(blockState, useContext)) {
+			return true;
 		}
-		Level world = useContext.getLevel();
+		Level level = useContext.getLevel();
 		BlockPos pos = useContext.getClickedPos();
-		return srm$getRaw(state, world, pos).canBeReplaced(useContext);
+		return srm$getRaw(blockState, level, pos).canBeReplaced(useContext);
 	}
 
 	@Override
@@ -272,7 +271,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public @NotNull Item asItem() {
+	public Item asItem() {
 		return Items.SNOW;
 	}
 }

@@ -1,13 +1,11 @@
 package snownee.snow.convert;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
-import snownee.snow.block.SnowVariant;
 
 @NotNullByDefault
 public class CoveredBlockConverter implements BlockConverter {
@@ -31,14 +29,7 @@ public class CoveredBlockConverter implements BlockConverter {
 
 	@Override
 	public BlockState convert(LevelAccessor level, BlockPos pos, BlockState blockState, int layers) {
-		BlockState newState = Hooks.copyProperties(blockState, result(blockState));
-		if (newState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
-			newState = newState.setValue(SnowVariant.OPTIONAL_LAYERS, layers);
-			BlockPos posDown = pos.below();
-			BlockState stateDown = level.getBlockState(posDown);
-			newState = newState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
-		}
-		return newState;
+		return Hooks.copyProperties(blockState, result(blockState));
 	}
 
 	public BlockState result(BlockState blockState) {

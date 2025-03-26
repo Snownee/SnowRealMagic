@@ -1,6 +1,5 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -16,8 +15,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
+@NotNullByDefault
 public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, SimpleWaterloggedBlock {
 	@Override
 	default boolean canPlaceLiquid(
@@ -44,7 +45,7 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default @NotNull ItemStack pickupBlock(@Nullable Player player, LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState) {
+	default ItemStack pickupBlock(@Nullable Player player, LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState) {
 		return ItemStack.EMPTY;
 	}
 

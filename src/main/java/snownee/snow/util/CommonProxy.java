@@ -1,5 +1,6 @@
 package snownee.snow.util;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import net.fabricmc.api.ModInitializer;
@@ -8,6 +9,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.server.level.ServerLevel;
@@ -17,13 +19,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.material.FluidState;
 import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
+import snownee.snow.compat.diagonalfences.DiagonalFencesCompat;
+import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
@@ -124,5 +130,15 @@ public class CommonProxy implements ModInitializer {
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
+		if (Platform.isModLoaded("diagonalfences")) {
+			DiagonalFencesCompat.init();
+		}
+		if (Platform.isModLoaded("diagonalwalls")) {
+			DiagonalWallsCompat.init();
+		}
+	}
+
+	public static List<Block> allSnowBlocks() {
+		return GameObjectLookup.all(Registries.BLOCK, SnowRealMagic.ID).toList();
 	}
 }

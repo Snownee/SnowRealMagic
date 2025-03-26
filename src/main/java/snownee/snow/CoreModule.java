@@ -32,6 +32,7 @@ import snownee.snow.block.SnowFenceGateBlock;
 import snownee.snow.block.SnowSlabBlock;
 import snownee.snow.block.SnowStairsBlock;
 import snownee.snow.block.SnowWallBlock;
+import snownee.snow.block.WaterLoggableSnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.convert.BlockConverters;
@@ -112,15 +113,11 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SRMSnowLayerBlock.class);
 
+	@SuppressWarnings({"unchecked", "rawtypes"}) //TODO remove type restriction in 1.22
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,
 			null,
-			FENCE,
-			FENCE2,
-			STAIRS,
-			SLAB,
-			FENCE_GATE,
-			WALL);
+			(Class) WaterLoggableSnowVariant.class);
 
 	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
 

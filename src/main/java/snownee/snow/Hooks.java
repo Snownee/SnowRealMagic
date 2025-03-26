@@ -18,7 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -145,7 +144,16 @@ public final class Hooks {
 		if (converter == null) {
 			return null;
 		}
-		return converter.convert(level, pos, blockState, layers);
+		blockState = converter.convert(level, pos, blockState, layers);
+		if (blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			blockState = blockState.setValue(SnowVariant.OPTIONAL_LAYERS, layers);
+			BlockPos posDown = pos.below();
+			BlockState stateDown = level.getBlockState(posDown);
+			blockState = blockState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
+		} else if (blockState.hasProperty(SnowLayerBlock.LAYERS)) {
+			blockState = blockState.setValue(SnowLayerBlock.LAYERS, layers);
+		}
+		return blockState;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -385,15 +393,27 @@ public final class Hooks {
 		return true;
 	}
 
-	public static boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+	public static boolean canBeReplaced(BlockState blockState, BlockPlaceContext context) {
 		if (!context.getItemInHand().is(Items.SNOW)) {
-			return false;
+			return blockState.is(Blocks.SNOW);
 		}
-		int i = state.getValue(SnowVariant.OPTIONAL_LAYERS);
+		int i;
+		boolean opt = false;
+		if (blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
+			i = blockState.getValue(SnowVariant.OPTIONAL_LAYERS);
+			opt = true;
+		} else if (blockState.hasProperty(SnowLayerBlock.LAYERS)) {
+			i = blockState.getValue(SnowLayerBlock.LAYERS);
+		} else {
+			throw new IllegalStateException("Invalid block state: " + blockState);
+		}
 		if (i == 8) {
 			return false;
 		}
-		return i > 0 || canSnowSurvive(context.getLevel(), context.getClickedPos());
+		if (i == 0) {
+			return canSnowSurvive(context.getLevel(), context.getClickedPos());
+		}
+		return opt || SnowCommonConfig.snowAlwaysReplaceable || i == 1;
 	}
 
 	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context) {
@@ -432,38 +452,6 @@ public final class Hooks {
 	public static boolean canPlaceAt(Level level, BlockPos pos) {
 		BlockState snowBlock = getSnowBlockFor(level, pos, level.getBlockState(pos), 1, true);
 		return snowBlock != null && snowBlock.canSurvive(level, pos);
-	}
-
-	public static boolean useSnowWithEmptyHand(BlockState blockState, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-		if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) {
-			return false;
-		}
-		var stateBelow = level.getBlockState(pos.below());
-		if (stateBelow.is(BlockTags.SNOW) || stateBelow.hasProperty(BlockStateProperties.SNOWY)) {
-			return false;
-		}
-		if (blockState.is(Blocks.SNOW)) {
-			level.setBlock(
-					pos,
-					Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()),
-					Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
-		}
-		var blockEntity = level.getBlockEntity(pos);
-		if (!(blockEntity instanceof SnowBlockEntity snowTile)) {
-			return false;
-		}
-		if (blockState.is(CoreModule.SNOW_TAG) && snowTile.getContainedState().isAir()) {
-			level.setBlock(
-					pos,
-					Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()),
-					Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
-		} else {
-			snowTile.options.renderOverlay = !snowTile.options.renderOverlay;
-			if (level.isClientSide) {
-				level.sendBlockUpdated(pos, blockState, blockState, Block.UPDATE_ALL_IMMEDIATE);
-			}
-		}
-		return true;
 	}
 
 	public static boolean useSnowWithItem(
