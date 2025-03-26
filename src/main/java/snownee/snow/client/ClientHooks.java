@@ -11,9 +11,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
@@ -28,7 +26,7 @@ import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.util.ClientProxy;
 
 @NotNullByDefault
-public final class SnowClient {
+public final class ClientHooks {
 
 	public static BakedModel cachedSnowModel;
 	public static BakedModel cachedOverlayModel;
@@ -40,8 +38,6 @@ public final class SnowClient {
 
 	@CanIgnoreReturnValue
 	public static boolean renderHook(
-			BlockAndTintGetter level,
-			BlockPos pos,
 			BlockState blockState,
 			BlockState camo,
 			Options options,
@@ -53,18 +49,14 @@ public final class SnowClient {
 
 		boolean full = blockState.hasProperty(SnowLayerBlock.LAYERS) && blockState.getValue(SnowLayerBlock.LAYERS) == 8;
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
-			boolean useVariant = false;
-			if (SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock())) {
-				useVariant = true;
-			}
+			boolean useVariant = SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock());
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
-			rendered |= api.render(camo, pos, cullSides, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
+			rendered |= api.render(camo, cullSides, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
 
 			if (!useVariant && (renderType == null || renderType == RenderType.cutoutMipped()) &&
 					snowVariant.srm$canRenderDecoration(blockState)) {
 				rendered |= api.render(
 						blockState,
-						pos,
 						cullSides,
 						ClientProxy.getBlockModel(blockState),
 						yOffset + snowVariant.srm$renderDecorationOffset(blockState),
@@ -72,7 +64,7 @@ public final class SnowClient {
 			}
 		}
 
-		BlockState snow = snowVariant.srm$getSnowState(blockState, level, pos);
+		BlockState snow = snowVariant.srm$getSnowState(blockState, api.level(), api.pos());
 		if (!snow.isAir() && (renderType == null || renderType == RenderType.solid())) {
 			BakedModel model;
 			if (snow == Blocks.SNOW.defaultBlockState()) {
@@ -83,30 +75,19 @@ public final class SnowClient {
 			} else {
 				model = ClientProxy.getBlockModel(snow);
 			}
-			rendered |= api.render(
-					snow,
-					pos,
-					cullSides,
-					model,
-					snowVariant.srm$renderLayerOffset(blockState),
-					RenderAPI.ModelPart.SNOW_LAYER);
+			rendered |= api.render(snow, cullSides, model, snowVariant.srm$renderLayerOffset(blockState), RenderAPI.ModelPart.SNOW_LAYER);
 		}
 
 		if (options.renderOverlay && (renderType == null || renderType == RenderType.cutoutMipped()) &&
 				snowVariant.srm$canRenderOverlay(blockState)) {
-			BlockPos pos2 = pos;
-			double yOffset;
 			if (cachedOverlayModel == null) {
 				cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
 			}
-			yOffset = snowVariant.srm$renderLayerOffset(blockState) - 1.0;
-			if (yOffset <= -1) {
-				pos2 = pos.below();
-			}
-			if (snowVariant.srm$layers(blockState, level, pos) == 8) {
+			double yOffset = snowVariant.srm$renderLayerOffset(blockState) - 1.0;
+			if (snowVariant.srm$layers(blockState, api.level(), api.pos()) == 8) {
 				yOffset -= 0.002;
 			}
-			rendered |= api.render(blockState, pos2, cullSides, cachedOverlayModel, yOffset, RenderAPI.ModelPart.SNOW_OVERLAY);
+			rendered |= api.render(blockState, cullSides, cachedOverlayModel, yOffset, RenderAPI.ModelPart.SNOW_OVERLAY);
 		}
 		return rendered;
 	}

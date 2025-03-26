@@ -43,7 +43,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/level/block/state/BlockState;)V", at = @At("RETURN"))
-	private void init(Level level, double x, double y, double z, BlockState blockState, CallbackInfo ci) {
+	private void srm_init(Level level, double x, double y, double z, BlockState blockState, CallbackInfo ci) {
 		if (this.blockState.is(Blocks.SNOW)) {
 			hurtEntities = false;
 			dropItem = false;
@@ -56,7 +56,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;blockPosition()Lnet/minecraft/core/BlockPos;"),
 			cancellable = true)
-	private void touchLiquid(CallbackInfo ci) {
+	private void srm_touchLiquid(CallbackInfo ci) {
 		if (!blockState.is(Blocks.SNOW)) {
 			return;
 		}
@@ -86,7 +86,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;canBeReplaced(Lnet/minecraft/world/item/context/BlockPlaceContext;)Z"),
 			cancellable = true)
-	private void touchGround(CallbackInfo ci) {
+	private void srm_touchGround(CallbackInfo ci) {
 		if (!blockState.is(Blocks.SNOW)) {
 			return;
 		}

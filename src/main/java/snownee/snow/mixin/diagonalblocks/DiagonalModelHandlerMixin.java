@@ -30,7 +30,7 @@ public class DiagonalModelHandlerMixin {
 	@WrapOperation(
 			method = "onModifyUnbakedModel",
 			at = @At(value = "INVOKE", target = "Ljava/util/function/Function;apply(Ljava/lang/Object;)Ljava/lang/Object;"))
-	private static <T, R> R unwrap(Function<T, R> function, T t, Operation<R> original, @Share("snowCovered") LocalBooleanRef snowCovered) {
+	private static <T, R> R srm_unwrap(Function<T, R> function, T t, Operation<R> original, @Share("snowCovered") LocalBooleanRef snowCovered) {
 		R r = original.call(function, t);
 		if (r instanceof WrapperUnbakedModel model) {
 			r = (R) model.wrapped();
@@ -45,7 +45,7 @@ public class DiagonalModelHandlerMixin {
 					value = "FIELD",
 					target = "Lfuzs/diagonalblocks/client/handler/DiagonalModelHandler;UNBAKED_MODEL_CACHE:Ljava/util/Map;",
 					ordinal = 2))
-	private static void wrap(
+	private static void srm_wrap(
 			ModelResourceLocation modelLocation,
 			Supplier<UnbakedModel> unbakedModel,
 			Function<ModelResourceLocation, UnbakedModel> modelGetter,

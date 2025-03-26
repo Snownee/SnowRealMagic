@@ -62,7 +62,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@WrapMethod(method = "getCollisionShape")
-	private VoxelShape getCollisionShape(
+	private VoxelShape srm_getCollisionShape(
 			BlockState state,
 			BlockGetter level,
 			BlockPos pos,
@@ -92,7 +92,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@WrapMethod(method = "updateShape")
-	private BlockState updateShape(
+	private BlockState srm_updateShape(
 			BlockState stateIn,
 			Direction facing,
 			BlockState facingState,
@@ -111,7 +111,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			method = "canSurvive", at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
-	private boolean canSurvive(BlockState blockState, Block block, Operation<Boolean> original) {
+	private boolean srm_canSurvive(BlockState blockState, Block block, Operation<Boolean> original) {
 		return blockState.getBlock() instanceof SnowLayerBlock || original.call(blockState, block);
 	}
 
@@ -133,12 +133,12 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@WrapMethod(method = "randomTick")
-	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Operation<Void> original) {
+	private void srm_randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Operation<Void> original) {
 		Hooks.randomTick(state, level, pos, random);
 	}
 
 	@WrapMethod(method = "canBeReplaced")
-	private boolean canBeReplaced(BlockState blockState, BlockPlaceContext useContext, Operation<Boolean> original) {
+	private boolean srm_canBeReplaced(BlockState blockState, BlockPlaceContext useContext, Operation<Boolean> original) {
 		return Hooks.canBeReplaced(blockState, useContext);
 	}
 

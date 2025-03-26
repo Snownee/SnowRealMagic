@@ -12,7 +12,7 @@ import snownee.snow.block.ShapeCaches;
 public class BlocksMixin {
 
 	@Inject(method = "rebuildCache", at = @At("RETURN"))
-	private static void rebuildCache(CallbackInfo ci) {
+	private static void srm_rebuildCache(CallbackInfo ci) {
 		ShapeCaches.invalidateAll();
 	}
 
