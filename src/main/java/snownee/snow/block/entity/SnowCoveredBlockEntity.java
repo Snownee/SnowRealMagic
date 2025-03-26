@@ -19,18 +19,6 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	}
 
 	@Override
-	public void loadContainedState(CompoundTag data, boolean network) {
-		boolean changed = false;
-		BlockState blockState = parseContainedState(data);
-		if (!blockState.isAir()) {
-			changed = setContainedState(blockState, network);
-		}
-		if (changed && network) {
-			refresh();
-		}
-	}
-
-	@Override
 	public boolean setContainedState(BlockState state, boolean update) {
 		return super.setContainedState(Hooks.copyProperties(getBlockState(), state), update);
 	}
@@ -38,6 +26,9 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	@Override
 	public void saveContainedState(CompoundTag data, boolean network) {
 		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
+		if (options.renderOverlay) {
+			data.putBoolean("RO", true);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
