@@ -65,11 +65,8 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 	}
 
 	public void loadContainedState(CompoundTag data, boolean network) {
-		boolean changed = false;
-		if (data.contains("RO")) {
-			changed = options.renderOverlay != data.getBoolean("RO");
-			options.renderOverlay = data.getBoolean("RO");
-		}
+		boolean changed = options.renderOverlay != data.getBoolean("RO");
+		options.renderOverlay = data.getBoolean("RO");
 		changed |= setContainedState(parseContainedState(data), network);
 		if (changed && network) {
 			refresh();
