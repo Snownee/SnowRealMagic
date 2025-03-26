@@ -1,5 +1,6 @@
-package snownee.snow.block;
+package snownee.snow.compat.diagonalwalls;
 
+import fuzs.diagonalblocks.api.v2.impl.DiagonalWallBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -9,20 +10,20 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
+import snownee.snow.block.OptionalLayerSnowVariant;
+import snownee.snow.block.ShapeCaches;
+import snownee.snow.block.WaterLoggableSnowVariant;
+import snownee.snow.compat.diagonalblocks.SnowStarCollisionBlock;
 
 @NotNullByDefault
-public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVariant, OptionalLayerSnowVariant {
-
-	public SnowFenceBlock(Properties properties) {
-		super(properties);
+public class SnowDiagonalWallBlock extends DiagonalWallBlock implements SnowStarCollisionBlock, WaterLoggableSnowVariant, OptionalLayerSnowVariant {
+	public SnowDiagonalWallBlock(Block block) {
+		super(block);
 	}
 
 	@Override
@@ -43,27 +44,13 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 		return ShapeCaches.get(
 				ShapeCaches.OUTLINE,
 				blockState,
-				it -> super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
+				it -> super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()),
+				SnowStarCollisionBlock::mergeShape);
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		Hooks.randomTick(state, worldIn, pos, random);
-	}
-
-	@Override
-	public String getDescriptionId() {
-		if (CoreModule.FENCE.is(this)) {
-			return super.getDescriptionId();
-		} else {
-			return CoreModule.FENCE.get().getDescriptionId();
-		}
-	}
-
-	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		super.createBlockStateDefinition(builder);
-		builder.add(OPTIONAL_LAYERS);
 	}
 
 	@Override

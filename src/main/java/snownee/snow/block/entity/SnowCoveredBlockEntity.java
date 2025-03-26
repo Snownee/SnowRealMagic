@@ -7,13 +7,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
+import snownee.snow.block.SnowSlabBlock;
+import snownee.snow.block.SnowVariant;
 
 @NotNullByDefault
 public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
-	public SnowCoveredBlockEntity(BlockPos pos, BlockState state) {
-		super(CoreModule.TEXTURE_TILE.get(), pos, state);
-		options.renderOverlay = true;
+	public SnowCoveredBlockEntity(BlockPos pos, BlockState blockState) {
+		super(CoreModule.TEXTURE_TILE.get(), pos, blockState);
+		options.renderOverlay = blockState.getBlock().getClass() == SnowSlabBlock.class;
 	}
 
 	@Override
@@ -42,7 +44,11 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	@Override
 	public void setBlockState(BlockState blockState) {
 		super.setBlockState(blockState);
-		setContainedState(state, false);
+		setContainedState(containedState, false);
+		if (options.renderOverlay && level != null && blockState.getBlock() instanceof SnowVariant snowVariant &&
+				!snowVariant.srm$canRenderOverlay(blockState)) {
+			options.renderOverlay = false;
+		}
 	}
 
 	@Override

@@ -42,10 +42,6 @@ public interface SnowVariant extends IKiwiBlock {
 		return srm$getRaw(state, level, pos);
 	}
 
-	default double srm$getYOffset() {
-		return 0;
-	}
-
 	@Override
 	default ItemStack getCloneItemStack(BlockState state, HitResult result, LevelReader level, BlockPos pos, Player player) {
 		BlockState raw = srm$getRaw(state, level, pos);
@@ -103,4 +99,19 @@ public interface SnowVariant extends IKiwiBlock {
 		return true;
 	}
 
+	default boolean srm$canRenderDecoration(BlockState blockState) {
+		return false;
+	}
+
+	default double srm$renderDecorationOffset(BlockState blockState) {
+		return 0.125;
+	}
+
+	default boolean srm$canRenderOverlay(BlockState blockState) {
+		return true;
+	}
+
+	default double srm$renderLayerOffset(BlockState blockState) {
+		return 0;
+	}
 }

@@ -22,6 +22,10 @@ repositories {
     mavenLocal()
     maven { url "https://api.modrinth.com/maven" }
     maven { url "https://maven.su5ed.dev/releases" }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
     flatDir { dir 'libs' }
 }
 
@@ -128,9 +132,17 @@ dependencies {
     // 10.1.0.1
     implementation "maven.modrinth:serene-seasons:b2S4BcbP"
 
+    implementation "maven.modrinth:diagonal-fences:v21.1.1-1.21.1-NeoForge"
+    implementation "maven.modrinth:diagonal-walls:v21.1.2-1.21.1-NeoForge"
+    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
+    implementation "fuzs.diagonalblocks:diagonalblocks-neoforge:21.1.2"
+    implementation "maven.modrinth:puzzles-lib:v21.1.33-1.21.1-NeoForge"
+
+    implementation "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+neoforge"
+
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:0.107.0+2.0.25+1.21.1"
     jarJar "org.sinytra:forgified-fabric-loader:2.5.29+0.16.0+1.21"
-//    jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19"
+//    jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19" // already included in Kiwi
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+9c40919e19"
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a3919"
     jarJar "org.sinytra.forgified-fabric-api:fabric-block-view-api-v2:1.0.10+9afaaf8c19"

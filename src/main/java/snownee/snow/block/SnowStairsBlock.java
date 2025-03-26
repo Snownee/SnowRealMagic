@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
@@ -33,11 +34,16 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
-				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-					VoxelShape shape = super.getShape(state, worldIn, pos, context).move(0, 0.125, 0);
-					return Shapes.or(shape, Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(worldIn, pos));
+				ShapeCaches.OUTLINE, blockState, it -> {
+					VoxelShape shape = super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()).move(
+							0,
+							0.125,
+							0);
+					return Shapes.or(
+							shape,
+							Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
 				});
 	}
 
@@ -67,8 +73,13 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	//	}
 
 	@Override
-	public double srm$getYOffset() {
-		return 0.125;
+	public boolean srm$canRenderDecoration(BlockState blockState) {
+		return true;
+	}
+
+	@Override
+	public boolean srm$canRenderOverlay(BlockState blockState) {
+		return false;
 	}
 
 	@Override

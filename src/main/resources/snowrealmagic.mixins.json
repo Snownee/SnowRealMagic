@@ -10,6 +10,7 @@
 		"BlockBehaviourMixin",
 		"BlockItemMixin",
 		"BlockMixin",
+		"BlocksMixin",
 		"BlockStateMixin",
 		"DoublePlantBlockMixin",
 		"FallingBlockEntityMixin",
@@ -20,16 +21,18 @@
 		"IceBlockMixin",
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
-		"SnowBlockEntityMixin",
 		"SnowLayerBlockMixin",
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
+		"diagonalblocks.VoxelCollectionAccess",
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
 		"client.CameraMixin",
-		"client.SnowLayerBlockClientMixin"
+		"client.SnowLayerBlockClientMixin",
+		"diagonalblocks.DiagonalModelHandlerMixin",
+		"neoforge.ItemBlockRenderTypesMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

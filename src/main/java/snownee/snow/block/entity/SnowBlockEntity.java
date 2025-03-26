@@ -1,5 +1,6 @@
 package snownee.snow.block.entity;
 
+import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,31 +16,26 @@ import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
 @NotNullByDefault
-public class SnowBlockEntity extends ModBlockEntity {
+public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEntity {
 
 	public static class Options {
 		public boolean renderOverlay;
-
-		public boolean update(boolean renderOverlay) {
-			boolean changed = renderOverlay != this.renderOverlay;
-			this.renderOverlay = renderOverlay;
-			return changed;
-		}
 	}
 
+	private RenderData renderData;
 	public Options options = new Options();
-	protected BlockState state = Blocks.AIR.defaultBlockState();
+	protected BlockState containedState = Blocks.AIR.defaultBlockState();
 
-	public SnowBlockEntity(BlockPos pos, BlockState state) {
-		this(CoreModule.TILE.get(), pos, state);
+	public SnowBlockEntity(BlockPos pos, BlockState containedState) {
+		this(CoreModule.TILE.get(), pos, containedState);
 	}
 
-	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-		super(type, pos, state);
+	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState containedState) {
+		super(type, pos, containedState);
 	}
 
 	public BlockState getContainedState() {
-		return state;
+		return containedState;
 	}
 
 	public void setContainedState(BlockState state) {
@@ -47,15 +43,11 @@ public class SnowBlockEntity extends ModBlockEntity {
 	}
 
 	public boolean setContainedState(BlockState state, boolean update) {
-		if (this.state == state || state.getBlock() instanceof SnowVariant) {
+		if (this.containedState == state || state.getBlock() instanceof SnowVariant) {
 			return false;
 		}
-		this.state = state;
+		this.containedState = state;
 		if (level != null) {
-			//			if (level.isClientSide) {
-			//				getModelData().setData(BLOCKSTATE, state);
-			//				onStateChanged();
-			//			}
 			if (update) {
 				if (level.isClientSide) {
 					level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
@@ -75,10 +67,8 @@ public class SnowBlockEntity extends ModBlockEntity {
 	public void loadContainedState(CompoundTag data, boolean network) {
 		boolean changed = false;
 		if (data.contains("RO")) {
-			changed = options.update(data.getBoolean("RO"));
-			if (changed && network && level != null && level.isClientSide) {
-				//				requestModelDataUpdate();
-			}
+			changed = options.renderOverlay != data.getBoolean("RO");
+			options.renderOverlay = data.getBoolean("RO");
 		}
 		changed |= setContainedState(parseContainedState(data), network);
 		if (changed && network) {
@@ -121,5 +111,13 @@ public class SnowBlockEntity extends ModBlockEntity {
 	protected CompoundTag writePacketData(CompoundTag compoundTag, HolderLookup.Provider provider) {
 		saveContainedState(compoundTag, true);
 		return compoundTag;
+	}
+
+	@Override
+	public RenderData getRenderData() {
+		if (renderData == null || renderData.camo() != containedState) {
+			renderData = new RenderData(containedState, options);
+		}
+		return renderData;
 	}
 }

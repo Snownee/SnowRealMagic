@@ -1,7 +1,5 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,7 +40,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	protected @NotNull ItemInteractionResult useItemOn(
+	protected ItemInteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -52,12 +50,6 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			BlockHitResult blockHitResult) {
 		if (!(level.getBlockEntity(blockPos) instanceof SnowCoveredBlockEntity blockEntity)) {
 			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-		}
-
-		if (itemStack.isEmpty() && player.getOffhandItem().isEmpty()) {
-			blockEntity.options.renderOverlay = !blockEntity.options.renderOverlay;
-			blockEntity.refresh();
-			return ItemInteractionResult.SUCCESS;
 		}
 
 		if (blockHitResult.getDirection() == Direction.UP &&
@@ -124,5 +116,10 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	@Override
 	public BlockState srm$getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
 		return Blocks.SNOW.defaultBlockState();
+	}
+
+	@Override
+	public double srm$renderLayerOffset(BlockState blockState) {
+		return 0.5;
 	}
 }

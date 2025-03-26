@@ -17,42 +17,53 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import snownee.snow.SnowRealMagic;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
+	private final BlockAndTintGetter level;
 	private final RenderContext context;
+	private final @Nullable RenderType renderType;
+	private final Supplier<RandomSource> randomSupplier;
 	private final BlockState selfState;
 	private final BakedModel unwrapped;
 
-	public FabricRendererRenderAPI(RenderContext context, BlockState selfState, BakedModel unwrapped) {
+	public FabricRendererRenderAPI(
+			BlockAndTintGetter level,
+			RenderContext context,
+			@Nullable RenderType renderType,
+			Supplier<RandomSource> randomSupplier,
+			BlockState selfState,
+			BakedModel unwrapped) {
+		this.level = level;
 		this.context = context;
+		this.renderType = renderType;
+		this.randomSupplier = randomSupplier;
 		this.selfState = selfState;
 		this.unwrapped = unwrapped;
 	}
 
 	@Override
-	public boolean translateYAndRender(
-			BlockAndTintGetter world,
-			BlockState state,
-			BlockPos pos,
-			@Nullable RenderType layer,
-			Supplier<RandomSource> randomSupplier,
-			boolean cullSides,
-			BakedModel model,
-			double yOffset) {
+	public boolean render(BlockState blockState, BlockPos pos, boolean cullSides, BakedModel model, double yOffset, ModelPart part) {
 		RandomSource random = randomSupplier.get();
-		if (layer != null && !model.getRenderTypes(state, random, context.getModelData()).contains(layer)) {
+		if (renderType != null && !model.getRenderTypes(blockState, random, context.getModelData()).contains(renderType)) {
 			return false;
 		}
-		Vec3 offset = yOffset == 0 ? state.getOffset(world, pos) : state.getOffset(world, pos).add(0, yOffset, 0);
+
+		for (Direction direction : Direction.values()) {
+			boolean faceCulled = context.isFaceCulled(direction);
+			SnowRealMagic.LOGGER.info("{} {}", direction, faceCulled);
+		}
+
+		Vec3 offset = yOffset == 0 ? blockState.getOffset(level, pos) : blockState.getOffset(level, pos).add(0, yOffset, 0);
 		BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 		context.pushTransform(quad -> {
-			if (state.is(Blocks.SNOW) && quad.cullFace() == Direction.DOWN && yOffset != 0) { // is slab
+			if (blockState.is(Blocks.SNOW) && quad.cullFace() == Direction.DOWN && yOffset != 0) { // is slab
 				return false;
 			}
 			int color = -1;
 			if (quad.colorIndex() != -1) {
-				color = blockColors.getColor(state, world, pos, quad.colorIndex());
+				color = blockColors.getColor(blockState, level, pos, quad.colorIndex());
 				color |= 0xFF000000;
 			}
 			if (offset != Vec3.ZERO || color != -1) {
@@ -63,10 +74,10 @@ public class FabricRendererRenderAPI implements RenderAPI {
 			}
 			return true;
 		});
-		if (state == selfState && model != SnowClient.cachedOverlayModel) {
+		if (blockState == selfState && model != SnowClient.cachedOverlayModel) {
 			model = unwrapped;
 		}
-		((FabricBakedModel) model).emitBlockQuads(world, state, pos, randomSupplier, context);
+		((FabricBakedModel) model).emitBlockQuads(level, blockState, pos, randomSupplier, context);
 		context.popTransform();
 		return true;
 	}

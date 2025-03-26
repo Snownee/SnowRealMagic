@@ -6,50 +6,43 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
 
 @NotNullByDefault
-public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant, WatcherSnowVariant {
+public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant, OptionalLayerSnowVariant {
 
 	public SnowWallBlock(Properties properties) {
 		super(properties);
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
-				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-					VoxelShape shape = super.getCollisionShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-				});
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(
-				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-					VoxelShape shape = super.getVisualShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getVisualShape(worldIn, pos, context));
-				});
+				ShapeCaches.COLLIDER,
+				blockState,
+				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos) {
+		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, it -> super.getOcclusionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
-				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-					VoxelShape shape = super.getShape(state.setValue(OPTIONAL_LAYERS, 1), worldIn, pos, context);
-					return Shapes.or(shape, srm$getSnowState(state, worldIn, pos).getShape(worldIn, pos, context));
-				});
+				ShapeCaches.OUTLINE,
+				blockState,
+				it -> super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
 	@Override

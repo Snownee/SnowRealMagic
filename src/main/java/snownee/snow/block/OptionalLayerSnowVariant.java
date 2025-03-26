@@ -4,19 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.snow.block.entity.SnowBlockEntity.Options;
+import snownee.kiwi.util.NotNullByDefault;
 
-public interface WatcherSnowVariant extends SnowVariant {
-
-	@Override
-	default double srm$getYOffset() {
-		return 0.125;
-	}
-
-	default boolean srm$updateOptions(BlockState state, BlockGetter level, BlockPos pos, Options options) {
-		boolean ro = level.getBlockState(pos.above()).isAir();
-		return options.update(ro);
-	}
+@NotNullByDefault
+public interface OptionalLayerSnowVariant extends SnowVariant {
 
 	@Override
 	default int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
@@ -37,5 +28,15 @@ public interface WatcherSnowVariant extends SnowVariant {
 		} else {
 			return srm$getRaw(state, level, pos);
 		}
+	}
+
+	@Override
+	default boolean srm$canRenderDecoration(BlockState blockState) {
+		return true;
+	}
+
+	@Override
+	default boolean srm$canRenderOverlay(BlockState blockState) {
+		return blockState.getValue(OPTIONAL_LAYERS) != 0;
 	}
 }
