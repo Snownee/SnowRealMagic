@@ -13,8 +13,8 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.block.entity.RenderData;
+import snownee.snow.client.ClientHooks;
 import snownee.snow.client.FabricRendererRenderAPI;
-import snownee.snow.client.SnowClient;
 
 @NotNullByDefault
 public class SnowCoveredModel extends ForwardingBakedModel {
@@ -40,16 +40,9 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				context.getRenderType(),
 				randomSupplier,
 				blockState,
-				wrapped);
-		SnowClient.renderHook(
-				blockView,
 				pos,
-				blockState,
-				renderData.camo(),
-				renderData.options(),
-				context.getRenderType(),
-				true,
-				api);
+				wrapped);
+		ClientHooks.renderHook(blockState, renderData.camo(), renderData.options(), context.getRenderType(), true, api);
 	}
 
 	@Override

@@ -30,7 +30,14 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 			BlockGetter blockGetter,
 			BlockPos blockPos,
 			CollisionContext collisionContext) {
+		// to make Entity#getOnPos work properly
 		return super.getShape(blockState, blockGetter, blockPos, collisionContext);
+	}
+
+	@Override
+	protected VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos pos) {
+		// to make top face culled correctly
+		return super.getShape(blockState, blockGetter, pos, CollisionContext.empty());
 	}
 
 	@Override
@@ -80,10 +87,5 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	@Override
 	public boolean srm$canRenderOverlay(BlockState blockState) {
 		return false;
-	}
-
-	@Override
-	public boolean isRandomlyTicking(BlockState state) {
-		return true;
 	}
 }

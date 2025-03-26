@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import snownee.snow.client.SnowClient;
+import snownee.snow.client.ClientHooks;
 import snownee.snow.client.SnowVariantMetadataSectionSerializer;
 import snownee.snow.client.model.ModelDefinition;
 import snownee.snow.client.model.SnowCoveredModel;
@@ -49,9 +49,9 @@ public class ClientProxy {
 
 	public static void onInitializeClient(IEventBus eventBus) {
 		ModelLoadingPlugin.register(ctx -> {
-			List<ResourceLocation> extraModels = Lists.newArrayList(SnowClient.OVERLAY_MODEL);
+			List<ResourceLocation> extraModels = Lists.newArrayList(ClientHooks.OVERLAY_MODEL);
 
-			SnowClient.snowVariantMapping.clear();
+			ClientHooks.snowVariantMapping.clear();
 			ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 			ModelBakery.MODEL_LISTER.listMatchingResources(resourceManager).forEach((key, resource) -> {
 				ModelDefinition def;
@@ -63,13 +63,13 @@ public class ClientProxy {
 				if (def == null || def.model == null) {
 					return;
 				}
-				SnowClient.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
+				ClientHooks.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
 				extraModels.add(def.model);
 				if (def.overrideBlocks != null) {
 					for (ResourceLocation id : def.overrideBlocks) {
 						Block block = BuiltInRegistries.BLOCK.get(id);
 						if (block != Blocks.AIR) {
-							SnowClient.overrideBlocks.add(block);
+							ClientHooks.overrideBlocks.add(block);
 						}
 					}
 				}
@@ -99,7 +99,7 @@ public class ClientProxy {
 						if (model == null || modelState.getClass() != Variant.class) {
 							return model;
 						}
-						ModelDefinition def = SnowClient.snowVariantMapping.get(context.resourceId());
+						ModelDefinition def = ClientHooks.snowVariantMapping.get(context.resourceId());
 						if (def == null) {
 							return model;
 						}
@@ -116,8 +116,8 @@ public class ClientProxy {
 						return new SnowVariantModel(model, variantModel);
 					});
 
-			SnowClient.cachedOverlayModel = null;
-			SnowClient.cachedSnowModel = null;
+			ClientHooks.cachedOverlayModel = null;
+			ClientHooks.cachedSnowModel = null;
 		});
 
 		eventBus.addListener(

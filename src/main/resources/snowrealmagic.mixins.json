@@ -29,6 +29,7 @@
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
+		"client.AbstractBlockRenderContextAccess",
 		"client.CameraMixin",
 		"client.SnowLayerBlockClientMixin",
 		"diagonalblocks.DiagonalModelHandlerMixin",
