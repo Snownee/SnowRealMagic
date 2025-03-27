@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import snownee.snow.SnowRealMagic;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
 
 public class FabricRendererRenderAPI implements RenderAPI {
@@ -87,9 +86,6 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
 			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
 			blockInfo.prepareForBlock(blockState, pos, model.useAmbientOcclusion());
-			if (part == ModelPart.DECORATION) {
-				SnowRealMagic.LOGGER.info("blockState: {}", blockState);
-			}
 			if (part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0) {
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
