@@ -79,6 +79,9 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	public boolean canBeReplaced(BlockState blockState, BlockPlaceContext useContext) {
+		if (blockState.getValue(LAYERS) == 8) {
+			return false;
+		}
 		if (useContext.getItemInHand().is(Items.SNOW)) {
 			return super.canBeReplaced(blockState, useContext);
 		}

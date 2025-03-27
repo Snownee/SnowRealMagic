@@ -175,10 +175,7 @@ public final class Hooks {
 	public static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 			Property<T> property = (Property<T>) entry.getKey();
-			if (!newState.hasProperty(property)) {
-				continue;
-			}
-			newState = newState.setValue(property, property.getValueClass().cast(entry.getValue()));
+			newState = newState.trySetValue(property, property.getValueClass().cast(entry.getValue()));
 		}
 		return newState;
 	}
@@ -395,9 +392,6 @@ public final class Hooks {
 	}
 
 	public static boolean canBeReplaced(BlockState blockState, BlockPlaceContext context) {
-		if (!context.getItemInHand().is(Items.SNOW)) {
-			return blockState.is(Blocks.SNOW);
-		}
 		int i;
 		boolean opt = false;
 		if (blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
@@ -410,6 +404,9 @@ public final class Hooks {
 		}
 		if (i == 8) {
 			return false;
+		}
+		if (!context.getItemInHand().is(Items.SNOW)) {
+			return ((SnowVariant) blockState.getBlock()).srm$getRaw(blockState, context.getLevel(), context.getClickedPos()).isAir();
 		}
 		if (i == 0) {
 			return canSnowSurvive(context.getLevel(), context.getClickedPos());
