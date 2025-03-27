@@ -15,15 +15,18 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
+	private static final BlockState TOP_SLAB = Blocks.OAK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
 	private final BlockAndTintGetter level;
 	private final RenderContext context;
 	private final @Nullable RenderType renderType;
@@ -90,13 +93,14 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		}
 		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
 			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
+			boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
 			blockInfo.prepareForBlock(
-					blockState,
+					generalOverlay ? TOP_SLAB : blockState,
 					pos,
 					model.useAmbientOcclusion(),
 					context.getModelData(),
 					renderType);
-			if (part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0) {
+			if (generalOverlay) {
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
 					context.isFaceCulled(direction);
