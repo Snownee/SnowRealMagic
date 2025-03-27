@@ -67,7 +67,7 @@ public final class GameEvents {
 			if (!(level.getBlockEntity(pos) instanceof SnowBlockEntity be)) {
 				return InteractionResult.PASS;
 			}
-			if (blockState.getBlock() instanceof SnowLayerBlock && be.getContainedState().isAir()) {
+			if (!blockState.is(Blocks.SNOW) && blockState.getBlock() instanceof SnowLayerBlock && be.getContainedState().isAir()) {
 				level.setBlock(
 						pos,
 						Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()),
