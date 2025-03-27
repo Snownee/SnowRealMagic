@@ -89,7 +89,6 @@ public abstract class BlockItemMixin extends Item {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;getStateForPlacement(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"))
 	private BlockState srm_getPlacementState(Block block, BlockPlaceContext context, Operation<BlockState> original) {
-		BlockState state = Hooks.getStateForPlacement(block, context);
-		return state != null ? state : original.call(block, context);
+		return Hooks.getStateForPlacement(block, context, original.call(block, context));
 	}
 }
