@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface RenderAPI {
 
-	boolean render(BlockState blockState, boolean cullSides, BakedModel model, double yOffset, ModelPart part);
+	boolean render(BlockState blockState, BakedModel model, double yOffset, ModelPart part);
 
 	BlockAndTintGetter level();
 

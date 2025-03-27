@@ -42,7 +42,6 @@ public final class ClientHooks {
 			BlockState camo,
 			Options options,
 			@Nullable RenderType renderType,
-			boolean cullSides,
 			RenderAPI api) {
 		boolean rendered = false;
 		SnowVariant snowVariant = (SnowVariant) blockState.getBlock();
@@ -51,13 +50,12 @@ public final class ClientHooks {
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			boolean useVariant = SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock());
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
-			rendered |= api.render(camo, cullSides, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
+			rendered |= api.render(camo, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
 
 			if (!useVariant && (renderType == null || renderType == RenderType.cutoutMipped()) &&
 					snowVariant.srm$canRenderDecoration(blockState)) {
 				rendered |= api.render(
 						blockState,
-						cullSides,
 						ClientProxy.getBlockModel(blockState),
 						yOffset + snowVariant.srm$renderDecorationOffset(blockState),
 						RenderAPI.ModelPart.DECORATION);
@@ -75,7 +73,7 @@ public final class ClientHooks {
 			} else {
 				model = ClientProxy.getBlockModel(snow);
 			}
-			rendered |= api.render(snow, cullSides, model, snowVariant.srm$renderLayerOffset(blockState), RenderAPI.ModelPart.SNOW_LAYER);
+			rendered |= api.render(snow, model, snowVariant.srm$renderLayerOffset(blockState), RenderAPI.ModelPart.SNOW_LAYER);
 		}
 
 		if (options.renderOverlay && (renderType == null || renderType == RenderType.cutoutMipped()) &&
@@ -87,7 +85,7 @@ public final class ClientHooks {
 			if (snowVariant.srm$layers(blockState, api.level(), api.pos()) == 8) {
 				yOffset -= 0.002;
 			}
-			rendered |= api.render(blockState, cullSides, cachedOverlayModel, yOffset, RenderAPI.ModelPart.SNOW_OVERLAY);
+			rendered |= api.render(blockState, cachedOverlayModel, yOffset, RenderAPI.ModelPart.SNOW_OVERLAY);
 		}
 		return rendered;
 	}

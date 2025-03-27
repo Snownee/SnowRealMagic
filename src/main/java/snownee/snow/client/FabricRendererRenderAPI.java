@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import snownee.snow.SnowRealMagic;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
 
 public class FabricRendererRenderAPI implements RenderAPI {
@@ -51,11 +52,15 @@ public class FabricRendererRenderAPI implements RenderAPI {
 
 	@SuppressWarnings("UnstableApiUsage")
 	@Override
-	public boolean render(BlockState blockState, boolean cullSides, BakedModel model, double yOffset, ModelPart part) {
+	public boolean render(BlockState blockState, BakedModel model, double yOffset, ModelPart part) {
 		Vec3 offset = yOffset == 0 ? blockState.getOffset(level, pos) : blockState.getOffset(level, pos).add(0, yOffset, 0);
 		context.pushTransform(quad -> {
-			if (part == ModelPart.SNOW_LAYER && quad.nominalFace() == Direction.DOWN && yOffset != 0) { // is slab
-				return false;
+			if (part == ModelPart.SNOW_LAYER && yOffset != 0) { // is slab
+				if (quad.nominalFace() == Direction.DOWN) {
+					return false;
+				} else if (quad.cullFace() != null) {
+					quad.cullFace(null);
+				}
 			}
 			if (part == ModelPart.CAMO && quad.nominalFace() == Direction.UP) {
 				Block block = blockState.getBlock();
@@ -82,6 +87,9 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
 			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
 			blockInfo.prepareForBlock(blockState, pos, model.useAmbientOcclusion());
+			if (part == ModelPart.DECORATION) {
+				SnowRealMagic.LOGGER.info("blockState: {}", blockState);
+			}
 			if (part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0) {
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
