@@ -134,7 +134,8 @@ public final class Hooks {
 
 	@Nullable
 	public static BlockState getSnowBlockFor(LevelAccessor level, BlockPos pos, BlockState blockState, int layers, boolean canConvert) {
-		if (SnowCommonConfig.restoreOriginalBlocks || blockState.hasBlockEntity() || blockState.is(CoreModule.NOT_CONTAINABLES)) {
+		if (SnowCommonConfig.restoreOriginalBlocks || blockState.hasBlockEntity() || !blockState.getFluidState().isEmpty() || blockState.is(
+				CoreModule.NOT_CONTAINABLES)) {
 			return null;
 		}
 		if (!blockState.isAir() && (!canConvert || !SnowCommonConfig.canPlaceSnowInBlock())) {
@@ -441,10 +442,8 @@ public final class Hooks {
 		var blockEntityData = context.getItemInHand().get(DataComponents.BLOCK_ENTITY_DATA);
 		if (blockEntityData != null) {
 			ResourceLocation id = blockEntityData.read(BLOCK_ENTITY_ID).result().orElse(null);
-			if (CoreModule.TILE.key().equals(id) || CoreModule.TEXTURE_TILE.key().equals(id)) {
-				if (originalState.canSurvive(level, pos)) {
-					return getSnowBlockFor(level, pos, originalState, 1, true);
-				}
+			if (originalState.canSurvive(level, pos) && (CoreModule.TILE.key().equals(id) || CoreModule.TEXTURE_TILE.key().equals(id))) {
+				return getSnowBlockFor(level, pos, originalState.trySetValue(BlockStateProperties.WATERLOGGED, false), 1, true);
 			}
 		}
 		return originalState;

@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -91,14 +89,6 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			BlockPos blockPos,
 			CollisionContext collisionContext) {
 		return BOTTOM_SHAPE;
-	}
-
-	@Override
-	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
-		if (pathComputationType == PathComputationType.WATER) {
-			return blockState.getFluidState().is(FluidTags.WATER);
-		}
-		return false;
 	}
 
 	@Override
