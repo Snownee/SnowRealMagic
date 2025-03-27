@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -36,8 +37,11 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	protected VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos pos) {
-		// to make top face culled correctly
-		return super.getShape(blockState, blockGetter, pos, CollisionContext.empty());
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, blockState, it -> {
+					VoxelShape shape = getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
+					return Shapes.join(shape, Shapes.block(), BooleanOp.AND);
+				});
 	}
 
 	@Override

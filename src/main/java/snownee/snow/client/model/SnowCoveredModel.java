@@ -42,7 +42,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				blockState,
 				pos,
 				wrapped);
-		ClientHooks.renderHook(blockState, renderData.camo(), renderData.options(), context.getRenderType(), true, api);
+		ClientHooks.renderHook(blockState, renderData.camo(), renderData.options(), context.getRenderType(), api);
 	}
 
 	@Override
