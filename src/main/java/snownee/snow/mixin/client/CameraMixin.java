@@ -1,67 +1,49 @@
 package snownee.snow.mixin.client;
 
-import java.util.Arrays;
-
-import org.joml.Vector3f;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FogType;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
+import snownee.snow.block.SnowVariant;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
 	@Shadow
-	private boolean initialized;
-	@Shadow
 	private BlockGetter level;
-	@Shadow
-	private Vec3 position;
-	@Final
-	@Shadow
-	private Vector3f forwards;
 
-	@Inject(at = @At("HEAD"), method = "getFluidInCamera", cancellable = true)
-	private void srm_getFluidInCamera(CallbackInfoReturnable<FogType> ci) {
-		if (!initialized || !SnowCommonConfig.thinnerBoundingBox) {
-			return;
+	@WrapOperation(
+			method = "getFluidInCamera", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+	private boolean srm_getFluidInCamera(
+			BlockState blockState,
+			Block powderSnow,
+			Operation<Boolean> original,
+			@Local BlockPos pos,
+			@Local(ordinal = 1) Vec3 point) {
+		boolean originalValue = original.call(blockState, powderSnow);
+		if (originalValue || !SnowCommonConfig.thinnerBoundingBox) {
+			return originalValue;
 		}
-		Camera.NearPlane camera$nearplane = getNearPlane();
-		Vec3 forward = new Vec3(forwards).scale(0.05F);
-		for (Vec3 vec3 : Arrays.asList(
-				forward,
-				camera$nearplane.getTopLeft(),
-				camera$nearplane.getTopRight(),
-				camera$nearplane.getBottomLeft(),
-				camera$nearplane.getBottomRight())) {
-			Vec3 vec31 = position.add(vec3);
-			BlockPos blockpos = BlockPos.containing(vec31);
-			BlockState blockstate = level.getBlockState(blockpos);
-			if (blockstate.getBlock() instanceof SnowLayerBlock) {
-				VoxelShape shape = blockstate.getVisualShape(level, blockpos, CollisionContext.empty());
-				HitResult hitResult = shape.clip(position, vec31, blockpos);
-				if (hitResult != null && hitResult.getType() != Type.MISS) {
-					ci.setReturnValue(FogType.POWDER_SNOW);
-					return;
-				}
-			}
+		if (!blockState.is(CoreModule.SNOWY_SETTING) || !(blockState.getBlock() instanceof SnowVariant snowVariant) ||
+				snowVariant.srm$layers(blockState, level, pos) < 2) {
+			return false;
 		}
+		return snowVariant.srm$getSnowState(blockState, level, pos)
+				.getOcclusionShape(level, pos)
+				.bounds()
+				.contains(point.subtract(pos.getX(), pos.getY(), pos.getZ()));
 	}
-
-	@Shadow
-	public abstract Camera.NearPlane getNearPlane();
 }
