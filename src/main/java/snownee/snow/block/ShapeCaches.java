@@ -57,11 +57,16 @@ public class ShapeCaches {
 			}
 			shape = shapeFunc.apply(blockState);
 			if (layers != 0 && blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
-				shape = shapeMerger.apply(
-						shape,
-						Blocks.SNOW.defaultBlockState()
-								.setValue(SnowLayerBlock.LAYERS, layers)
-								.getShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
+				BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+				VoxelShape snowShape;
+				if (cache == VISUAL) {
+					snowShape = snowState.getOcclusionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+				} else if (cache == COLLIDER) {
+					snowShape = snowState.getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
+				} else {
+					snowShape = snowState.getShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
+				}
+				shape = shapeMerger.apply(shape, snowShape);
 			}
 			cache.put(key, shape);
 		}
