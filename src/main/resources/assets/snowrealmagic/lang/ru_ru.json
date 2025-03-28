@@ -5,7 +5,6 @@
 	"block.snowrealmagic.stairs": "Заснеженные ступени",
 	"block.snowrealmagic.wall": "Заснеженная ограда",
 	"commands.gamerule.snowrealmagic.hint": "«Снежная Магия» установлен, это игровое правило игнорируется. Вместо этого используйте конфигурацию.",
-	"entity.snowrealmagic.snow": "Снег",
 	"gamerule.snowrealmagic:blizzardFrequency": "Шуточная опция: частота метели",
 	"gamerule.snowrealmagic:blizzardFrequency.description": "Частота метели. Значение N/10000 в тик за чанк. Добавлено модом «Снежная Магия».",
 	"gamerule.snowrealmagic:blizzardStrength": "Шуточная опция: сила метели",
