@@ -38,6 +38,8 @@
   "snowrealmagic.config.mobSpawningMaxLayers.desc": "Maximum layers of snow for mobs to spawn.",
   "snowrealmagic.config.particleThroughLeaves": "Particle Through Leaves",
   "snowrealmagic.config.particleThroughLeaves.desc": "Generates snowflake particles under snow that is above leaves.",
+  "snowrealmagic.config.rightClickToggleFancySnow": "Right Click Toggle Fancy Snow",
+  "snowrealmagic.config.rightClickToggleFancySnow.desc": "Right click with empty hands to toggle the fancy snow overlay on any snow layer.",
   "snowrealmagic.config.sneakSnowball": "Sneak Snowball",
   "snowrealmagic.config.sneakSnowball.desc": "Sneak+use on snow layer to obtain snowball, consuming one layer of snow.",
   "snowrealmagic.config.snow-cover": "Snow-cover",

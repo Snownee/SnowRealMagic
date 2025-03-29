@@ -22,6 +22,7 @@
 	"snowrealmagic.config.sustainGrassIfLayerMoreThanOne.desc": "Prevents grass block from turning into dirt when snow layer is more than 1.",
 	"snowrealmagic.config.sneakSnowball.desc": "Sneak+use on snow layer to obtain snowball, consuming one layer of snow.",
 	"snowrealmagic.config.fancySnowOnUpperSlab.desc": "Snow layer on upper slab will render snow overlay on the side of the slab.",
+	"snowrealmagic.config.rightClickToggleFancySnow.desc": "Right click with empty hands to toggle the fancy snow overlay on any snow layer.",
 	"snowrealmagic.config.mobSpawningMaxLayers.desc": "Maximum layers of snow for mobs to spawn.",
 	"snowrealmagic.config.snow-cover.placeSnowOnBlock.desc": "Snow can be placed on some blocks to make them snow-covered.",
 	"snowrealmagic.config.snow-cover.placeNaturally.desc": "Snow can be placed on some blocks not only by player, but also from snowfall or world generation.",
