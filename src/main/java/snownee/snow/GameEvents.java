@@ -50,8 +50,9 @@ public final class GameEvents {
 				}
 			}
 			return InteractionResult.sidedSuccess(level.isClientSide);
-		} else if (!SnowCommonConfig.restoreOriginalBlocks && snowVariant.srm$canRenderOverlay(blockState) &&
-				!player.isSecondaryUseActive() && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
+		} else if (SnowCommonConfig.rightClickToggleFancySnow && !SnowCommonConfig.restoreOriginalBlocks &&
+				snowVariant.srm$canRenderOverlay(blockState) && !player.isSecondaryUseActive() && player.getMainHandItem().isEmpty() &&
+				player.getOffhandItem().isEmpty()) {
 			if (snowVariant.srm$renderLayerOffset(blockState) == 0) {
 				BlockState stateBelow = level.getBlockState(pos.below());
 				if (stateBelow.is(BlockTags.SNOW) || stateBelow.hasProperty(BlockStateProperties.SNOWY)) {

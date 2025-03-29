@@ -40,6 +40,8 @@ public final class SnowCommonConfig {
 	public static boolean sneakSnowball = true;
 	@PerformanceImpact(PerformanceType.LOW)
 	public static boolean fancySnowOnUpperSlab = true;
+	@PerformanceImpact(PerformanceType.NONE)
+	public static boolean rightClickToggleFancySnow = true;
 	@Range(min = 1, max = 8)
 	@ConfigUI.Slider
 	@PerformanceImpact(PerformanceType.NONE)
@@ -95,7 +97,8 @@ public final class SnowCommonConfig {
 	@Listen("thinnerBoundingBox")
 	public static void onThinnerBoundingBoxChange(String path) {
 		ShapeCaches.invalidateAll();
-		if (Platform.isPhysicalClient() && Minecraft.getInstance().level != null) {
+		//noinspection ConstantValue
+		if (Platform.isPhysicalClient() && Minecraft.getInstance() != null && Minecraft.getInstance().level != null) {
 			for (Block block : CommonProxy.allSnowBlocks()) {
 				for (BlockState blockState : block.getStateDefinition().getPossibleStates()) {
 					blockState.initCache();
