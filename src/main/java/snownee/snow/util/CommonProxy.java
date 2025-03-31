@@ -27,7 +27,6 @@ import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
-	public static boolean terraforged;
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
 
