@@ -45,11 +45,6 @@ public class FabricRendererRenderAPI implements RenderAPI {
 
 	@Override
 	public boolean render(BlockState blockState, BlockPos pos, boolean cullSides, BakedModel model, double yOffset, ModelPart part) {
-		RandomSource random = randomSupplier.get();
-		if (renderType != null && !model.getRenderTypes(blockState, random, context.getModelData()).contains(renderType)) {
-			return false;
-		}
-
 		for (Direction direction : Direction.values()) {
 			boolean faceCulled = context.isFaceCulled(direction);
 			SnowRealMagic.LOGGER.info("{} {}", direction, faceCulled);

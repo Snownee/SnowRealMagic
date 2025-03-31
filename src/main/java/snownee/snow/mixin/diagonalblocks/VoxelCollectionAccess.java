@@ -9,7 +9,7 @@ import fuzs.diagonalblocks.world.phys.shapes.NoneVoxelShape;
 import fuzs.diagonalblocks.world.phys.shapes.VoxelCollection;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-@Mixin(VoxelCollection.class)
+@Mixin(value = VoxelCollection.class, remap = false)
 public interface VoxelCollectionAccess {
 	@Accessor
 	VoxelShape getOutlineShape();

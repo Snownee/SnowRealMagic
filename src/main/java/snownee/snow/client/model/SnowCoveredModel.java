@@ -37,7 +37,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
 				blockView,
 				context,
-				context.getRenderType(),
+				null,
 				randomSupplier,
 				blockState,
 				wrapped);
@@ -47,7 +47,7 @@ public class SnowCoveredModel extends ForwardingBakedModel {
 				blockState,
 				renderData.camo(),
 				renderData.options(),
-				context.getRenderType(),
+				null,
 				true,
 				api);
 	}

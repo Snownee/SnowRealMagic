@@ -31,8 +31,7 @@
 	"client": [
 		"client.CameraMixin",
 		"client.SnowLayerBlockClientMixin",
-		"diagonalblocks.DiagonalModelHandlerMixin",
-		"neoforge.ItemBlockRenderTypesMixin"
+		"diagonalblocks.DiagonalModelHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

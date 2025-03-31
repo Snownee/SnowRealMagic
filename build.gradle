@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -22,6 +22,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
     maven { url "https://api.modrinth.com/maven" }
     maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     flatDir { dir 'libs' }
@@ -40,6 +44,8 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation 'com.google.errorprone:error_prone_annotations:2.37.0'
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
@@ -63,9 +69,18 @@ dependencies {
     modImplementation "maven.modrinth:glitchcore:lbSHOhee"
     implementation("net.jodah:typetools:0.6.3")
 
-    modImplementation "maven.modrinth:regions-unexplored:A-0.5.6.1+1.21"
+    modImplementation "maven.modrinth:regions-unexplored:A-0.5.6.1+1.21.1"
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.2"
     modImplementation "maven.modrinth:terrablender:yHeHBZPt"
+
+    modImplementation "maven.modrinth:diagonal-fences:v21.1.1-1.21.1-Fabric"
+    modImplementation "maven.modrinth:diagonal-walls:v21.1.2-1.21.1-Fabric"
+    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
+    modImplementation "fuzs.diagonalblocks:diagonalblocks-fabric:21.1.2"
+    modImplementation "fuzs.puzzleslib:puzzleslib-common:21.1.33"
+    modImplementation "fuzs.puzzleslib:puzzleslib-fabric:21.1.33"
+
+    modImplementation "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 }
 
 fabricApi {
