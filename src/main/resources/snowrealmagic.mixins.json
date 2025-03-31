@@ -10,8 +10,10 @@
 		"BlockBehaviourMixin",
 		"BlockItemMixin",
 		"BlockMixin",
+		"BlocksMixin",
 		"BlockStateMixin",
 		"DoublePlantBlockMixin",
+		"FallingBlockEntityMixin",
 		"FenceGateBlockAccess",
 		"GameRuleCommandMixin",
 		"GameRulesMixin",
@@ -23,13 +25,14 @@
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
-		"fabric.ServerPlayerGameModeMixin",
-		"fabric.SnowBlockEntityMixin",
+		"diagonalblocks.VoxelCollectionAccess",
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
+		"client.AbstractBlockRenderContextAccess",
 		"client.CameraMixin",
-		"client.SnowLayerBlockClientMixin"
+		"client.SnowLayerBlockClientMixin",
+		"diagonalblocks.DiagonalModelHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

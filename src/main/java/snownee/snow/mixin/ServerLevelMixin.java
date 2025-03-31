@@ -1,31 +1,24 @@
 package snownee.snow.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.chunk.LevelChunk;
+import snownee.snow.SnowCommonConfig;
 import snownee.snow.WorldTickHandler;
 import snownee.snow.util.CommonProxy;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
-
-	/**
-	 * @reason We don't inject into "snowandice" body because sometimes we want to customize the random chance
-	 */
 	@SuppressWarnings("UnreachableCode")
-	@Inject(
-			method = "tickChunk",
-			at = @At(
-					value = "INVOKE",
-					ordinal = 1,
-					target = "Lnet/minecraft/util/RandomSource;nextInt(I)I")
-	)
-	private void srm_tickSnow(LevelChunk chunk, int tickBlocks, CallbackInfo ci) {
+	@WrapMethod(method = "tickPrecipitation")
+	private void srm_tickPrecipitation(BlockPos pos, Operation<Void> original) {
 		ServerLevel level = (ServerLevel) (Object) this;
-		CommonProxy.weatherTick(level, () -> WorldTickHandler.tick(level, chunk));
+		if (SnowCommonConfig.forceVanillaIceSnowLogic || !CommonProxy.weatherTick(level, () -> WorldTickHandler.tick(level, pos))) {
+			original.call(pos);
+		}
 	}
 }

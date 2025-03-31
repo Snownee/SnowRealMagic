@@ -5,31 +5,30 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -40,8 +39,6 @@ import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
-import snownee.snow.entity.FallingSnowEntity;
-import snownee.snow.util.CommonProxy;
 
 @NotNullByDefault
 @Mixin(value = SnowLayerBlock.class, priority = 500)
@@ -55,8 +52,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			Block.box(0, 0, 0, 16, 3, 16),
 			Block.box(0, 0, 0, 16, 4, 16),
 			Block.box(0, 0, 0, 16, 5, 16),
-			Block.box(0, 0, 0, 16, 6, 16),
-			Block.box(0, 0, 0, 16, 8, 16)};
+			Block.box(0, 0, 0, 16, 6, 16)};
 	@Final
 	@Shadow
 	protected static VoxelShape[] SHAPE_BY_LAYER;
@@ -65,61 +61,62 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		super(properties);
 	}
 
-	@Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-	private void getCollisionShape(
+	@WrapMethod(method = "getCollisionShape")
+	private VoxelShape srm_getCollisionShape(
 			BlockState state,
 			BlockGetter level,
 			BlockPos pos,
 			CollisionContext context,
-			CallbackInfoReturnable<VoxelShape> ci) {
+			Operation<VoxelShape> original) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		if (CommonProxy.terraforged || !SnowCommonConfig.thinnerBoundingBox) {
-			ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
-			return;
+		if (!SnowCommonConfig.thinnerBoundingBox) {
+			return SHAPE_BY_LAYER[layers - 1];
 		}
 		if (layers == 8) {
-			ci.setReturnValue(Shapes.block());
-			return;
+			return Shapes.block();
 		}
 		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
 			Entity entity = entityContext.getEntity();
-			if (entity.getType() == EntityType.FALLING_BLOCK || CoreModule.ENTITY.is(entity.getType())) {
-				ci.setReturnValue(SHAPE_BY_LAYER[layers - 1]);
-				return;
+			if (entity.getType() == EntityType.FALLING_BLOCK) {
+				return SHAPE_BY_LAYER[layers - 1];
 			}
 		}
-		ci.setReturnValue(SNOW_SHAPES_MAGIC[layers - 1]);
+		return SNOW_SHAPES_MAGIC[layers - 1];
 	}
 
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
 		if (Hooks.isFallable(state)) {
-			level.scheduleTick(pos, this, getDelayAfterPlace());
+			level.scheduleTick(pos, this, srm$getDelayAfterPlace());
 		}
 	}
 
-	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
-	private void updateShape(
+	@WrapMethod(method = "updateShape")
+	private BlockState srm_updateShape(
 			BlockState stateIn,
 			Direction facing,
 			BlockState facingState,
 			LevelAccessor level,
 			BlockPos currentPos,
 			BlockPos facingPos,
-			CallbackInfoReturnable<BlockState> ci) {
+			Operation<BlockState> original) {
 		if (Hooks.isFallable(stateIn)) {
-			level.scheduleTick(currentPos, this, getDelayAfterPlace());
-			ci.setReturnValue(stateIn);
+			level.scheduleTick(currentPos, this, srm$getDelayAfterPlace());
+			return stateIn;
 		}
+		return original.call(stateIn, facing, facingState, level, currentPos, facingPos);
 	}
 
-	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
-	private void canSurvive(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue(Hooks.canSnowSurvive(state, level, pos));
+	@WrapOperation(
+			method = "canSurvive", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+	private boolean srm_canSurvive(BlockState blockState, Block block, Operation<Boolean> original) {
+		return blockState.getBlock() instanceof SnowLayerBlock || original.call(blockState, block);
 	}
 
 	@Unique
-	protected int getDelayAfterPlace() {
+	protected int srm$getDelayAfterPlace() {
 		return 2;
 	}
 
@@ -128,33 +125,21 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		BlockPos posDown = pos.below();
 		if (Hooks.canFallThrough(level.getBlockState(posDown), level, posDown)) {
 			level.setBlockAndUpdate(pos, srm$getRaw(state, level, pos));
-			FallingSnowEntity entity = new FallingSnowEntity(
+			FallingBlockEntity.fall(
 					level,
-					pos.getX() + 0.5D,
-					pos.getY(),
-					pos.getZ() + 0.5D,
-					state.getValue(SnowLayerBlock.LAYERS));
-			level.addFreshEntity(entity);
+					pos,
+					Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, state.getValue(SnowLayerBlock.LAYERS)));
 		}
 	}
 
-	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+	@WrapMethod(method = "randomTick")
+	private void srm_randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Operation<Void> original) {
 		Hooks.randomTick(state, level, pos, random);
-		ci.cancel();
 	}
 
-	@Inject(method = "canBeReplaced", at = @At("HEAD"), cancellable = true)
-	private void canBeReplaced(BlockState state, BlockPlaceContext useContext, CallbackInfoReturnable<Boolean> ci) {
-		int layers = state.getValue(SnowLayerBlock.LAYERS);
-		if (useContext.getItemInHand().is(Items.SNOW) && layers < 8) {
-			if (useContext.replacingClickedOnBlock()) {
-				ci.setReturnValue(useContext.getClickedFace() == Direction.UP);
-			} else {
-				ci.setReturnValue(true);
-			}
-		}
-		ci.setReturnValue(layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8));
+	@WrapMethod(method = "canBeReplaced")
+	private boolean srm_canBeReplaced(BlockState blockState, BlockPlaceContext useContext, Operation<Boolean> original) {
+		return Hooks.canBeReplaced(blockState, useContext);
 	}
 
 	@Override
@@ -181,25 +166,6 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
-	}
-
-	// Right click with empty hand to toggle snow overlay on the block below
-	@Override
-	protected InteractionResult useWithoutItem(
-			BlockState blockState,
-			Level level,
-			BlockPos blockPos,
-			Player player,
-			BlockHitResult blockHitResult) {
-		if (Hooks.useSnowWithEmptyHand(blockState, level, blockPos, player, blockHitResult)) {
-			return InteractionResult.sidedSuccess(level.isClientSide);
-		}
-		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
-	}
-
-	@Inject(method = "getStateForPlacement", at = @At("HEAD"), cancellable = true)
-	private void getStateForPlacement(BlockPlaceContext context, CallbackInfoReturnable<BlockState> ci) {
-		ci.setReturnValue(Hooks.getStateForPlacement(context));
 	}
 
 	@Override
@@ -240,7 +206,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	@Override
 	public int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
-		return state.getValue(BlockStateProperties.LAYERS);
+		return state.getValue(SnowLayerBlock.LAYERS);
 	}
 
 	@Override

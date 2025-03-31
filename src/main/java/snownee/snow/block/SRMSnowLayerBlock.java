@@ -1,6 +1,5 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -39,7 +39,6 @@ import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
-import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
@@ -57,18 +56,20 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	public VoxelShape getVisualShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getVisualShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getVisualShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.OUTLINE, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getShape(worldIn, pos, context));
+				});
 	}
 
 	@Override
@@ -77,16 +78,19 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
-		if (useContext.getItemInHand().is(Items.SNOW)) {
-			return super.canBeReplaced(state, useContext);
-		}
-		if (!super.canBeReplaced(state, useContext)) {
+	public boolean canBeReplaced(BlockState blockState, BlockPlaceContext useContext) {
+		if (blockState.getValue(LAYERS) == 8) {
 			return false;
 		}
-		Level world = useContext.getLevel();
+		if (useContext.getItemInHand().is(Items.SNOW)) {
+			return super.canBeReplaced(blockState, useContext);
+		}
+		if (super.canBeReplaced(blockState, useContext)) {
+			return true;
+		}
+		Level level = useContext.getLevel();
 		BlockPos pos = useContext.getClickedPos();
-		return srm$getRaw(state, world, pos).canBeReplaced(useContext);
+		return srm$getRaw(blockState, level, pos).canBeReplaced(useContext);
 	}
 
 	@Override
@@ -98,30 +102,29 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof SRMSnowLayerBlock) {
+		if (!(worldIn instanceof WorldGenLevel) && state.getBlock() instanceof SRMSnowLayerBlock) {
 			BlockState contained = srm$getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
-				setContainedState(worldIn, currentPos, containedNew, state);
+				if (containedNew.isAir()) {
+					return srm$getSnowState(stateIn, worldIn, currentPos);
+				} else {
+					setContainedState(worldIn, currentPos, containedNew);
+				}
 			}
 		}
 		return state;
 	}
 
-	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
-		BlockEntity tile = world.getBlockEntity(pos);
-		if (tile instanceof SnowBlockEntity) {
-			if (state.isAir()) {
-				world.setBlock(pos, srm$getSnowState(snow, world, pos), 3);
-			} else {
-				((SnowBlockEntity) tile).setContainedState(state);
-			}
+	public static void setContainedState(LevelAccessor world, BlockPos pos, BlockState state) {
+		if (world.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+			be.setContainedState(state);
 		}
 	}
 
 	@Override
-	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-		Hooks.setPlacedBy(level, pos, state);
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack itemStack) {
+		Hooks.processFancyOverlay(level, pos, itemStack);
 	}
 
 	@Override
@@ -135,17 +138,16 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		var block = blockState.getBlock();
 
 		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
-			((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
+			try {
+				((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
+			} catch (Throwable ignored) {
+			}
 		}
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		BlockState stateIn = srm$getRaw(state, worldIn, pos);
-		if (SnowCommonConfig.retainOriginalBlocks) {
-			worldIn.setBlockAndUpdate(pos, stateIn);
-			return;
-		}
 		try {
 			super.randomTick(state, worldIn, pos, random);
 		} catch (Throwable e) {
@@ -158,10 +160,13 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (!stateNow.is(this)) {
 			return;
 		}
-		stateIn.randomTick(worldIn, pos, random);
-		BlockState stateNow2 = worldIn.getBlockState(pos);
-		if (!stateNow2.is(this)) {
-			Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), 18, true);
+		try {
+			stateIn.randomTick(worldIn, pos, random);
+			BlockState stateNow2 = worldIn.getBlockState(pos);
+			if (!stateNow2.is(this)) {
+				Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
+			}
+		} catch (Throwable ignored) {
 		}
 	}
 
@@ -172,13 +177,22 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockPos blockPos,
 			Player player,
 			BlockHitResult blockHitResult) {
-		InteractionResult result = srm$getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
-		if (result.consumesAction()) {
-			BlockState stateNow = level.getBlockState(blockPos);
-			if (!stateNow.is(this)) {
-				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+		try {
+			InteractionResult result = srm$getRaw(blockState, level, blockPos).useWithoutItem(level, player, blockHitResult);
+			if (result.consumesAction()) {
+				BlockState stateNow = level.getBlockState(blockPos);
+				if (!stateNow.is(this)) {
+					Hooks.convert(
+							level,
+							blockPos,
+							stateNow,
+							blockState.getValue(LAYERS),
+							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							true);
+				}
+				return result;
 			}
-			return result;
+		} catch (Throwable ignored) {
 		}
 		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
@@ -192,18 +206,27 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			Player player,
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
-		ItemInteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
-				itemStack,
-				level,
-				player,
-				interactionHand,
-				blockHitResult);
-		if (result.consumesAction()) {
-			BlockState stateNow = level.getBlockState(blockPos);
-			if (!stateNow.is(this)) {
-				Hooks.convert(level, blockPos, stateNow, blockState.getValue(LAYERS), 18, true);
+		try {
+			ItemInteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
+					itemStack,
+					level,
+					player,
+					interactionHand,
+					blockHitResult);
+			if (result.consumesAction()) {
+				BlockState stateNow = level.getBlockState(blockPos);
+				if (!stateNow.is(this)) {
+					Hooks.convert(
+							level,
+							blockPos,
+							stateNow,
+							blockState.getValue(LAYERS),
+							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							true);
+				}
+				return result;
 			}
-			return result;
+		} catch (Throwable ignored) {
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
@@ -246,12 +269,12 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (block instanceof BonemealableBlock) {
 			((BonemealableBlock) block).performBonemeal(worldIn, rand, pos, contained);
 			BlockState stateNow = worldIn.getBlockState(pos);
-			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
+			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), Block.UPDATE_ALL, true);
 		}
 	}
 
 	@Override
-	public @NotNull Item asItem() {
+	public Item asItem() {
 		return Items.SNOW;
 	}
 }

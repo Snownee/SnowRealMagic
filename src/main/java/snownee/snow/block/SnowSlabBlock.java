@@ -1,14 +1,11 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -24,12 +21,10 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.util.CommonProxy;
 
@@ -43,7 +38,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	protected @NotNull ItemInteractionResult useItemOn(
+	protected ItemInteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -55,36 +50,28 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 		}
 
-		if (itemStack.isEmpty() && player.getOffhandItem().isEmpty()) {
-			blockEntity.options.renderOverlay = !blockEntity.options.renderOverlay;
-			blockEntity.refresh();
-			return ItemInteractionResult.SUCCESS;
-		}
-
 		if (blockHitResult.getDirection() == Direction.UP &&
 				blockEntity.getContainedState().getBlock().asItem() == itemStack.getItem() &&
-				itemStack.getItem() instanceof BlockItem blockItem &&
-				itemStack.is(ItemTags.SLABS)) {
-			if (blockState.hasProperty(SlabBlock.TYPE)) {
-				blockState.trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
-				if (!level.isClientSide) {
-					level.setBlockAndUpdate(blockPos, blockState);
-					if (!player.isCreative()) {
-						itemStack.shrink(1);
-					}
-					CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockPos, itemStack);
+				itemStack.is(ItemTags.SLABS) &&
+				itemStack.getItem() instanceof BlockItem blockItem) {
+			blockState = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
+			if (!level.isClientSide) {
+				level.setBlockAndUpdate(blockPos, blockState);
+				if (!player.isCreative()) {
+					itemStack.shrink(1);
 				}
-
-				SoundType soundtype = blockState.getSoundType();
-				level.playSound(
-						player,
-						blockPos,
-						soundtype.getPlaceSound(),
-						SoundSource.BLOCKS,
-						(soundtype.getVolume() + 1.0F) / 2.0F,
-						soundtype.getPitch() * 0.8F);
-				return ItemInteractionResult.SUCCESS;
+				CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockPos, itemStack);
 			}
+
+			SoundType soundtype = blockState.getSoundType();
+			level.playSound(
+					player,
+					blockPos,
+					soundtype.getPlaceSound(),
+					SoundSource.BLOCKS,
+					(soundtype.getVolume() + 1.0F) / 2.0F,
+					soundtype.getPitch() * 0.8F);
+			return ItemInteractionResult.SUCCESS;
 		}
 
 		return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
@@ -105,16 +92,8 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
-		if (pathComputationType == PathComputationType.WATER) {
-			return blockState.getFluidState().is(FluidTags.WATER);
-		}
-		return false;
-	}
-
-	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (SnowCommonConfig.retainOriginalBlocks || CommonProxy.shouldMelt(worldIn, pos)) {
+		if (CommonProxy.shouldMelt(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 		}
 	}
@@ -127,5 +106,10 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	@Override
 	public BlockState srm$getSnowState(BlockState state, BlockGetter level, BlockPos pos) {
 		return Blocks.SNOW.defaultBlockState();
+	}
+
+	@Override
+	public double srm$renderLayerOffset(BlockState blockState) {
+		return 0.5;
 	}
 }

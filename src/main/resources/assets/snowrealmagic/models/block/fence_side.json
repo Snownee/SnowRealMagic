@@ -24,7 +24,8 @@
 						8.02,
 						8
 					],
-					"texture": "#1"
+					"texture": "#1",
+					"cullface": "north"
 				},
 				"east": {
 					"uv": [

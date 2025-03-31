@@ -6,8 +6,10 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.client.model.ModelDefinition;
 
+@NotNullByDefault
 public class SnowVariantMetadataSectionSerializer implements MetadataSectionSerializer<ModelDefinition> {
 
 	public static final SnowVariantMetadataSectionSerializer SERIALIZER = new SnowVariantMetadataSectionSerializer();
