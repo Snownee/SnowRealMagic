@@ -414,7 +414,7 @@ public final class Hooks {
 		return opt || SnowCommonConfig.snowAlwaysReplaceable || i == 1;
 	}
 
-	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context, BlockState originalState) {
+	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context, @Nullable BlockState originalState) {
 		if (SnowCommonConfig.restoreOriginalBlocks) {
 			return originalState;
 		}
@@ -437,7 +437,7 @@ public final class Hooks {
 			}
 		}
 		var blockEntityData = context.getItemInHand().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (blockEntityData != null) {
+		if (originalState != null && blockEntityData != null) {
 			ResourceLocation id = blockEntityData.read(BLOCK_ENTITY_ID).result().orElse(null);
 			if (originalState.canSurvive(level, pos) && (CoreModule.TILE.key().equals(id) || CoreModule.TEXTURE_TILE.key().equals(id))) {
 				return getSnowBlockFor(level, pos, originalState.trySetValue(BlockStateProperties.WATERLOGGED, false), 1, true);
