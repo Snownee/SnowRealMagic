@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
+import snownee.snow.mixin.client.BlockRenderInfoAccess;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
@@ -94,6 +95,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 					pos,
 					model.useAmbientOcclusion());
 			if (generalOverlay) {
+				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(RenderType.cutout());
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
 					context.isFaceCulled(direction);

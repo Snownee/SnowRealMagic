@@ -30,6 +30,7 @@
 	],
 	"client": [
 		"client.AbstractBlockRenderContextAccess",
+		"client.BlockRenderInfoAccess",
 		"client.CameraMixin",
 		"client.SnowLayerBlockClientMixin",
 		"diagonalblocks.DiagonalModelHandlerMixin"
