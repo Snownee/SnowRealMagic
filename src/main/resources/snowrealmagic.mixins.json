@@ -1,42 +1,42 @@
 {
-  "required": true,
-  "package": "snownee.snow.mixin",
-  "plugin": "snownee.snow.mixin.MixinPlugin",
-  "compatibilityLevel": "JAVA_21",
-  "refmap": "snowrealmagic.refmap.json",
-  "mixins": [
-    "BlockAccess",
-    "BlockBehaviourAccess",
-    "BlockBehaviourMixin",
-    "BlockItemMixin",
-    "BlockMixin",
-    "BlocksMixin",
-    "BlockStateMixin",
-    "DoublePlantBlockMixin",
-    "FallingBlockEntityMixin",
-    "FenceGateBlockAccess",
-    "GameRuleCommandMixin",
-    "GameRulesMixin",
-    "IceBlockAccess",
-    "IceBlockMixin",
-    "ServerLevelMixin",
-    "SnowAndFreezeFeatureMixin",
-    "SnowLayerBlockMixin",
-    "SnowyDirtBlockMixin",
-    "SpreadableSnowyDirtBlockMixin",
-    "TreeGrowerMixin",
-    "diagonalblocks.VoxelCollectionAccess",
-    "sereneseasons.RandomUpdateHandlerMixin"
-  ],
-  "client": [
-    "client.AbstractBlockRenderContextAccess",
-    "client.BlockRenderInfoAccess",
-    "client.CameraMixin",
-    "client.SnowLayerBlockClientMixin",
-    "diagonalblocks.DiagonalModelHandlerMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "minVersion": "0.8"
+	"required": true,
+	"package": "snownee.snow.mixin",
+	"plugin": "snownee.snow.mixin.MixinPlugin",
+	"compatibilityLevel": "JAVA_21",
+	"refmap": "snowrealmagic.refmap.json",
+	"mixins": [
+		"BlockAccess",
+		"BlockBehaviourAccess",
+		"BlockBehaviourMixin",
+		"BlockItemMixin",
+		"BlockMixin",
+		"BlocksMixin",
+		"BlockStateMixin",
+		"DoublePlantBlockMixin",
+		"FallingBlockEntityMixin",
+		"FenceGateBlockAccess",
+		"GameRuleCommandMixin",
+		"GameRulesMixin",
+		"IceBlockAccess",
+		"IceBlockMixin",
+		"ServerLevelMixin",
+		"SnowAndFreezeFeatureMixin",
+		"SnowLayerBlockMixin",
+		"SnowyDirtBlockMixin",
+		"SpreadableSnowyDirtBlockMixin",
+		"TreeGrowerMixin",
+		"diagonalblocks.VoxelCollectionAccess",
+		"sereneseasons.RandomUpdateHandlerMixin"
+	],
+	"client": [
+		"client.AbstractBlockRenderContextAccess",
+		"client.BlockRenderInfoAccess",
+		"client.CameraMixin",
+		"client.SnowLayerBlockClientMixin",
+		"diagonalblocks.DiagonalModelHandlerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"minVersion": "0.8"
 }
