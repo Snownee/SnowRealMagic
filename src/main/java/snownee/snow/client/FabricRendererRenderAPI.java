@@ -96,8 +96,6 @@ public class FabricRendererRenderAPI implements RenderAPI {
 					model.useAmbientOcclusion());
 			if (generalOverlay) {
 				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(RenderType.cutout());
-			}
-			if (generalOverlay) {
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
 					context.isFaceCulled(direction);
