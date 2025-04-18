@@ -3,12 +3,12 @@ package snownee.snow.mixin.client;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.fabricmc.fabric.impl.client.indigo.renderer.render.AbstractBlockRenderContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderInfo;
+import net.minecraft.client.renderer.RenderType;
 
 @SuppressWarnings("UnstableApiUsage")
-@Mixin(AbstractBlockRenderContext.class)
-public interface AbstractBlockRenderContextAccess {
+@Mixin(BlockRenderInfo.class)
+public interface BlockRenderInfoAccess {
 	@Accessor(remap = false)
-	BlockRenderInfo getBlockInfo();
+	void setDefaultLayer(RenderType defaultLayer);
 }
