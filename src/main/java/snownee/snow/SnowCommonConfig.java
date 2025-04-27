@@ -3,7 +3,6 @@ package snownee.snow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.KiwiModule;
 import snownee.kiwi.config.ConfigUI;
 import snownee.kiwi.config.KiwiConfig;
 import snownee.kiwi.config.KiwiConfig.Listen;
@@ -79,7 +78,6 @@ public final class SnowCommonConfig {
 	@PerformanceImpact(PerformanceType.LOW)
 	public static boolean smoothAccumulation = true;
 
-	@KiwiModule.Skip // Unavailable on Fabric
 	@Path("integration.accumulationWinterOnly")
 	@PerformanceImpact(PerformanceType.NONE)
 	public static boolean accumulationWinterOnly = false;
