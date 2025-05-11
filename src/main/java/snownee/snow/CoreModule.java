@@ -39,23 +39,25 @@ import snownee.snow.convert.BlockConverters;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
-@KiwiModule
+@KiwiModule(modId = SnowRealMagic.ID)
 public class CoreModule extends AbstractModule {
-	public static final TagKey<Block> SNOW_TAG = blockTag(SnowRealMagic.ID, "snow");
+	public static final TagKey<Block> SNOW_TAG = blockTag("snow");
 
-	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.ID, "snowy_setting");
+	public static final TagKey<Block> SNOWY_SETTING = blockTag("snowy_setting");
 
-	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.ID, "containables");
+	public static final TagKey<Block> CONTAINABLES = blockTag("containables");
 
-	public static final TagKey<Block> PLANTS = blockTag(SnowRealMagic.ID, "plants");
+	public static final TagKey<Block> PLANTS = blockTag("plants");
 
-	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.ID, "not_containables");
+	public static final TagKey<Block> NOT_CONTAINABLES = blockTag("not_containables");
 
-	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.ID, "entity_inside");
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag("entity_inside");
 
-	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.ID, "offset_y");
+	public static final TagKey<Block> OFFSET_Y = blockTag("offset_y");
 
-	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.ID, "cannot_accumulate_on");
+	public static final TagKey<Block> EXPAND_MODEL = blockTag("expand_model");
+
+	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag("cannot_accumulate_on");
 
 	@NoItem
 	@Name("snow_extra_collision")

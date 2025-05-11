@@ -6,14 +6,15 @@ license = "MIT"
 modId = "snowrealmagic"
 version = "${file.jarVersion}"
 displayName = "Snow! Real Magic!"
-authors = "Snownee, minzhi, WZD"
+authors = "Snownee"
+credits = "SettingDust, minzhi, WZD"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/snowrealmagic"
 description = "Tweaks vanilla snow layer"
 
 [[dependencies.snowrealmagic]]
 modId = "kiwi"
 type = "required"
-versionRange = "[15.2.2, )"
+versionRange = "[15.5.2, )"
 
 [[mixins]]
 config = "snowrealmagic.mixins.json"

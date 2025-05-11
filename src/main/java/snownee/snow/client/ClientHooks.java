@@ -46,7 +46,8 @@ public final class ClientHooks {
 		boolean rendered = false;
 		SnowVariant snowVariant = (SnowVariant) blockState.getBlock();
 
-		boolean full = blockState.hasProperty(SnowLayerBlock.LAYERS) && blockState.getValue(SnowLayerBlock.LAYERS) == 8;
+		boolean full = blockState.hasProperty(SnowLayerBlock.LAYERS) && blockState.getValue(SnowLayerBlock.LAYERS) == 8 && !camo.is(
+				CoreModule.EXPAND_MODEL);
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			boolean useVariant = SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock());
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;

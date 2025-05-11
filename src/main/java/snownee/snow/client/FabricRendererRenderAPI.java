@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
+import snownee.snow.CoreModule;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
 import snownee.snow.mixin.client.BlockRenderInfoAccess;
 
@@ -62,6 +64,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		}
 
 		Vec3 offset = yOffset == 0 ? blockState.getOffset(level, pos) : blockState.getOffset(level, pos).add(0, yOffset, 0);
+		boolean expandModel = part == ModelPart.CAMO && blockState.is(CoreModule.EXPAND_MODEL);
 		context.pushTransform(quad -> {
 			if (part == ModelPart.SNOW_LAYER && yOffset != 0) { // is slab
 				if (quad.nominalFace() == Direction.DOWN) {
@@ -81,9 +84,17 @@ public class FabricRendererRenderAPI implements RenderAPI {
 				color = Minecraft.getInstance().getBlockColors().getColor(blockState, level, pos, quad.colorIndex());
 				color |= 0xFF000000;
 			}
-			if (offset != Vec3.ZERO || color != -1) {
+			if (expandModel || offset != Vec3.ZERO || color != -1) {
 				for (int i = 0; i < 4; ++i) {
-					quad.pos(i, quad.x(i) + (float) offset.x, quad.y(i) + (float) offset.y, quad.z(i) + (float) offset.z);
+					float x = quad.x(i) + (float) offset.x;
+					float y = quad.y(i) + (float) offset.y;
+					float z = quad.z(i) + (float) offset.z;
+					if (expandModel) {
+						x = expandModel(x);
+						y = expandModel(y);
+						z = expandModel(z);
+					}
+					quad.pos(i, x, y, z);
 					quad.color(i, color);
 				}
 			}
@@ -113,6 +124,16 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		((FabricBakedModel) model).emitBlockQuads(level, blockState, pos, randomSupplier, context);
 		context.popTransform();
 		return true;
+	}
+
+	private static float expandModel(float f) {
+		if (Mth.equal(f, 0f)) {
+			return f - 0.001f;
+		}
+		if (Mth.equal(f, 1f)) {
+			return f + 0.001f;
+		}
+		return f;
 	}
 
 	@Override
