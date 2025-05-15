@@ -55,6 +55,8 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.MODID, "cannot_accumulate_on");
 
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.MODID, "entity_inside");
+
 	@NoItem
 	@Name("snow")
 	public static final KiwiGO<EntitySnowLayerBlock> TILE_BLOCK = go(() -> new EntitySnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
