@@ -277,4 +277,14 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	public Item asItem() {
 		return Items.SNOW;
 	}
+
+	@Override
+	protected boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+		return false;
+	}
+
+	@Override
+	protected int getLightBlock(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+		return blockGetter.getMaxLightLevel();
+	}
 }
