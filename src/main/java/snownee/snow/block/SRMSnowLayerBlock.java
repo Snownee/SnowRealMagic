@@ -285,6 +285,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	protected int getLightBlock(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-		return blockGetter.getMaxLightLevel();
+		return 0;
 	}
 }
