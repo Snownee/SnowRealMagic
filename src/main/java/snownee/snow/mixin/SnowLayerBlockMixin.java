@@ -153,6 +153,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			} else {
 				ci.setReturnValue(true);
 			}
+			return;
 		}
 		ci.setReturnValue(layers == 1 || (SnowCommonConfig.snowAlwaysReplaceable && layers < 8));
 	}
