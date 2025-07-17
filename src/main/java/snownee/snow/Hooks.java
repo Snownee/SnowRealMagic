@@ -406,12 +406,15 @@ public final class Hooks {
 			return false;
 		}
 		if (!context.getItemInHand().is(Items.SNOW)) {
-			return ((SnowVariant) blockState.getBlock()).srm$getRaw(blockState, context.getLevel(), context.getClickedPos()).isAir();
+			if (!((SnowVariant) blockState.getBlock()).srm$getRaw(blockState, context.getLevel(), context.getClickedPos()).isAir()) {
+				return false;
+			}
+			return SnowCommonConfig.snowAlwaysReplaceable || i == 1;
 		}
 		if (i == 0) {
 			return canSnowSurvive(context.getLevel(), context.getClickedPos());
 		}
-		return opt || SnowCommonConfig.snowAlwaysReplaceable || i == 1;
+		return opt || context.replacingClickedOnBlock() || context.getClickedFace() == Direction.UP;
 	}
 
 	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context, @Nullable BlockState originalState) {
