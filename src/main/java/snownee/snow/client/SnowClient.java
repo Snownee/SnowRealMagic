@@ -49,11 +49,9 @@ public final class SnowClient {
 			Supplier<RandomSource> randomSupplier,
 			boolean cullSides,
 			RenderAPI api) {
-		if (layer == null || layer == RenderType.solid()) {
-			if (state.getBlock() instanceof WatcherSnowVariant watcher) {
-				//FIXME find out if still necessary
-				watcher.updateOptions(state, world, pos, options);
-			}
+		if (state.getBlock() instanceof WatcherSnowVariant watcher) {
+			//FIXME find out if still necessary
+			watcher.updateOptions(state, world, pos, options);
 		}
 		boolean rendered = false;
 		boolean useVariant = false;
@@ -70,7 +68,7 @@ public final class SnowClient {
 		}
 		SnowVariant snowVariant = (SnowVariant) state.getBlock();
 		BlockState snow = snowVariant.getSnowState(state, world, pos);
-		if (!snow.isAir() && (layer == null || layer == RenderType.solid())) {
+		if (!snow.isAir()) {
 			if (snow == Blocks.SNOW.defaultBlockState()) {
 				if (cachedSnowModel == null) {
 					cachedSnowModel = ClientProxy.getBlockModel(snow);
