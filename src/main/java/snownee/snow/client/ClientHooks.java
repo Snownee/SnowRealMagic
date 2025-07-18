@@ -63,7 +63,7 @@ public final class ClientHooks {
 		}
 
 		BlockState snow = snowVariant.srm$getSnowState(blockState, api.level(), api.pos());
-		if (!snow.isAir() && (renderType == null || renderType == RenderType.solid())) {
+		if (!snow.isAir()) {
 			BakedModel model;
 			if (snow == Blocks.SNOW.defaultBlockState()) {
 				if (cachedSnowModel == null) {
