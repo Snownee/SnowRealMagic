@@ -55,6 +55,8 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.ID, "offset_y");
 
+	public static final TagKey<Block> EXPAND_MODEL = blockTag(SnowRealMagic.ID, "expand_model");
+
 	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.ID, "cannot_accumulate_on");
 
 	@NoItem

@@ -1,6 +1,8 @@
 {
 	"values": [
 		"#snowrealmagic:offset_y",
-		"#snowrealmagic:plants"
+		"#snowrealmagic:expand_model",
+		"#snowrealmagic:plants",
+		"#c:chains"
 	]
 }
