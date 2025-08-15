@@ -187,24 +187,29 @@ dependencies {
 
     //implementation fg.deobf("curse.maven:jei-238222:3944627")
 
-    annotationProcessor "curse.maven:kiwi-303657:5603816"
     // https://modrinth.com/mod/kiwi/versions?g=1.20.1&l=forge
-    implementation fg.deobf("maven.modrinth:kiwi:11.8.30+forge")
-    annotationProcessor "maven.modrinth:kiwi:11.8.30+forge"
+    implementation fg.deobf("maven.modrinth:kiwi:11.8.31+forge")
+    annotationProcessor "maven.modrinth:kiwi:11.8.31+forge"
 
     // https://modrinth.com/mod/jade/versions?g=1.20.1&l=forge
-    implementation fg.deobf("maven.modrinth:jade:11.12.3+forge")
+    implementation fg.deobf("maven.modrinth:jade:11.13.2+forge")
 
     // 9.1.0.0
     implementation fg.deobf("curse.maven:serene-seasons-291874:5790653")
     implementation fg.deobf("curse.maven:glitchcore-955399:5787839")
     implementation fg.deobf("curse.maven:cloth-config-348521:4633444")
-    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-api-base:0.4.31+ef105b4977"))
-    jarJar("dev.su5ed.sinytra.fabric-api:fabric-api-base:[0.4.30,0.4.32)")
-    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-renderer-api-v1:3.2.1+1d29b44577"))
-    jarJar("dev.su5ed.sinytra.fabric-api:fabric-renderer-api-v1:[3.2.1,3.2.2)")
-    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-renderer-indigo:1.5.2+b5b2da4177"))
-    jarJar("dev.su5ed.sinytra.fabric-api:fabric-renderer-indigo:[1.5.1,1.5.3)")
+    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-api-base:0.4.32+ef105b4977"))
+    jarJar("dev.su5ed.sinytra.fabric-api:fabric-api-base:0.4.32+ef105b4977") {
+        jarJar.ranged(it, "[0.4.32,)")
+    }
+    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-renderer-api-v1:3.2.2+cf68abbe77"))
+    jarJar("dev.su5ed.sinytra.fabric-api:fabric-renderer-api-v1:3.2.2+cf68abbe77") {
+        jarJar.ranged(it, "[3.2.2,)")
+    }
+    implementation(fg.deobf("dev.su5ed.sinytra.fabric-api:fabric-renderer-indigo:1.5.3+b5b2da4177"))
+    jarJar("dev.su5ed.sinytra.fabric-api:fabric-renderer-indigo:1.5.3+b5b2da4177") {
+        jarJar.ranged(it, "[1.5.3,)")
+    }
 
     //implementation fg.deobf("curse.maven:terraforged-363820:3799083")
 
