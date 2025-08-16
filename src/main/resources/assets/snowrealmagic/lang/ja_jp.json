@@ -1,9 +1,9 @@
 {
   "block.snowrealmagic.slab": "雪で覆われたハーフブロック",
-	"block.snowrealmagic.stairs": "雪で覆われた階段",
-	"block.snowrealmagic.wall": "雪で覆われた塀",
-	"block.snowrealmagic.fence": "雪で覆われたフェンス",
-	"block.snowrealmagic.fence_gate": "雪で覆われたフェンスゲート",
+  "block.snowrealmagic.stairs": "雪で覆われた階段",
+  "block.snowrealmagic.wall": "雪で覆われた塀",
+  "block.snowrealmagic.fence": "雪で覆われたフェンス",
+  "block.snowrealmagic.fence_gate": "雪で覆われたフェンスゲート",
   "commands.gamerule.snowrealmagic.hint": "Snow! Real Magic! がインストールされているため、このゲームルールは無視されます。設定ファイルを使用してください",
   "gamerule.snowrealmagic:blizzardFrequency": "ジョーク機能：吹雪の頻度",
   "gamerule.snowrealmagic:blizzardFrequency.description": "吹雪が発生する確率。1ティックあたりチャンクごとに N/10000。Snow! Real Magic! によって追加されます",
