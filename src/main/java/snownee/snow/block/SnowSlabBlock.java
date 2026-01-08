@@ -93,7 +93,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (CommonProxy.shouldMelt(worldIn, pos)) {
+		if (CommonProxy.shouldMeltInGeneral(worldIn, pos)) {
 			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
 		}
 	}
