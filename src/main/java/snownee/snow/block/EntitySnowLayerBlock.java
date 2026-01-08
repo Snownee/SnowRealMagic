@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -104,11 +105,16 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.getBlock() instanceof EntitySnowLayerBlock) {
+		if (!(worldIn instanceof WorldGenRegion) && state.getBlock() instanceof EntitySnowLayerBlock) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
-				setContainedState(worldIn, currentPos, containedNew, state);
+				if (containedNew.isAir()) {
+					worldIn.destroyBlock(currentPos, true);
+					return getSnowState(stateIn, worldIn, currentPos);
+				} else {
+					setContainedState(worldIn, currentPos, containedNew, state);
+				}
 			}
 		}
 		return state;
