@@ -377,11 +377,11 @@ public final class Hooks {
 				if (upState.getBlock() instanceof SnowVariant s && s.layers(upState, level, above) > 0) {
 					return;
 				}
-				meltByBrightness = level.getBrightness(LightLayer.BLOCK, above) >= SnowCommonConfig.snowPersistMaxLightLevel;
+				meltByBrightness = CommonProxy.blockLightEnoughToMelt(level, above);
 			} else {
-				meltByBrightness = level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowPersistMaxLightLevel;
+				meltByBrightness = CommonProxy.blockLightEnoughToMelt(level, pos);
 			}
-			meltByTemperature = CommonProxy.shouldMelt(level, pos, biome, layers);
+			meltByTemperature = CommonProxy.shouldMeltByTemperature(level, pos, biome, layers);
 		}
 
 		boolean melt = meltByTemperature || meltByBrightness;
