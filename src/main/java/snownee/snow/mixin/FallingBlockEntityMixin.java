@@ -67,7 +67,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 		srm$oBlockPos = pos;
 		BlockState blockState = level().getBlockState(pos);
 		boolean handled = true;
-		if (SnowCommonConfig.snowMakingIce && blockState.is(Blocks.WATER)) {
+		if (SnowCommonConfig.snowMakingIce && blockState.is(Blocks.WATER) && blockState.getFluidState().isSource()) {
 			level().setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		} else if (CommonProxy.isHot(blockState.getFluidState(), level(), pos)) {
 			new SLavaSmokeEffectPacket(pos.above()).sendToAround((ServerLevel) level());
