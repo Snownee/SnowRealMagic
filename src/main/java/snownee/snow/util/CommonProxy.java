@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -65,21 +66,36 @@ public class CommonProxy implements ModInitializer {
 		return false;
 	}
 
+	/**
+	 * @deprecated use {@link #shouldMeltByTemperature(Level, BlockPos)}
+	 */
+	@Deprecated(forRemoval = true)
 	public static boolean shouldMelt(Level level, BlockPos pos) {
-		return shouldMelt(level, pos, level.getBiome(pos), 1);
+		return shouldMeltByTemperature(level, pos);
 	}
 
+	/**
+	 * @deprecated use {@link #shouldMeltByTemperature(Level, BlockPos, Holder, int)}
+	 */
+	@Deprecated(forRemoval = true)
 	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
+		return shouldMeltByTemperature(level, pos, biome, layers);
+	}
+
+	public static boolean shouldMeltByTemperature(Level level, BlockPos pos) {
+		return shouldMeltByTemperature(level, pos, level.getBiome(pos), 1);
+	}
+
+	public static boolean shouldMeltByTemperature(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
 		if (SnowCommonConfig.snowNeverMelt) {
 			return false;
 		}
 		if (sereneSeasons) {
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		}
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos) && skyLightEnoughToMelt(
-				level,
-				pos,
-				layers)) {
+		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome)
+				&& biome.value().warmEnoughToRain(pos)
+				&& skyLightEnoughToMelt(level, pos, layers)) {
 			return true;
 		}
 		if (layers <= 1) {
@@ -107,7 +123,19 @@ public class CommonProxy implements ModInitializer {
 		return level.getBrightness(LightLayer.SKY, layers == 8 ? pos.above() : pos) > 2;
 	}
 
-	public static boolean coldEnoughToSnow(Level level, BlockPos pos, Holder<Biome> biome) {
+	public static boolean blockLightEnoughToMelt(Level level, BlockPos pos) {
+		return level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowPersistMaxLightLevel;
+	}
+
+	public static boolean shouldMeltInGeneral(Level level, BlockPos pos, int layers) {
+		return shouldMeltByTemperature(level, pos, level.getBiome(pos), layers) || blockLightEnoughToMelt(level, pos);
+	}
+
+	public static boolean shouldMeltInGeneral(Level level, BlockPos pos) {
+		return shouldMeltInGeneral(level, pos, 1);
+	}
+
+	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
 			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
 		}
@@ -130,5 +158,8 @@ public class CommonProxy implements ModInitializer {
 		});
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
+		if (sereneSeasons) {
+			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
+		}
 	}
 }
