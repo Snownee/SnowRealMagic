@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -102,11 +102,12 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (!(worldIn instanceof WorldGenLevel) && state.getBlock() instanceof SRMSnowLayerBlock) {
+		if (!(worldIn instanceof WorldGenRegion) && state.getBlock() instanceof SRMSnowLayerBlock) {
 			BlockState contained = srm$getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
 				if (containedNew.isAir()) {
+					worldIn.destroyBlock(currentPos, true);
 					return srm$getSnowState(stateIn, worldIn, currentPos);
 				} else {
 					setContainedState(worldIn, currentPos, containedNew);
