@@ -5,12 +5,14 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -104,11 +106,16 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockPos currentPos,
 			BlockPos facingPos) {
 		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (state.is(this)) {
+		if (!(worldIn instanceof WorldGenRegion) && state.getBlock() instanceof EntitySnowLayerBlock) {
 			BlockState contained = getRaw(state, worldIn, currentPos);
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
-				state = setContainedState(worldIn, currentPos, containedNew, state);
+				if (containedNew.isAir()) {
+					worldIn.destroyBlock(currentPos, true);
+					return getSnowState(stateIn, worldIn, currentPos);
+				} else {
+					setContainedState(worldIn, currentPos, containedNew, state);
+				}
 			}
 		}
 		return state;
@@ -119,16 +126,15 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 		return getRaw(state, worldIn, pos).isPathfindable(worldIn, pos, type);
 	}
 
-	public BlockState setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
+	public void setContainedState(LevelAccessor world, BlockPos pos, BlockState state, BlockState snow) {
 		BlockEntity tile = world.getBlockEntity(pos);
 		if (tile instanceof SnowBlockEntity) {
 			if (state.isAir()) {
-				return getSnowState(snow, world, pos);
+				world.setBlock(pos, getSnowState(snow, world, pos), 3);
 			} else {
 				((SnowBlockEntity) tile).setContainedState(state);
 			}
 		}
-		return snow;
 	}
 
 	@Override
@@ -253,6 +259,11 @@ public class EntitySnowLayerBlock extends SnowLayerBlock implements EntityBlock,
 			BlockState stateNow = worldIn.getBlockState(pos);
 			Hooks.convert(worldIn, pos, stateNow, state.getValue(LAYERS), 3, true);
 		}
+	}
+
+	@Override
+	public Item asItem() {
+		return Items.SNOW;
 	}
 
 }

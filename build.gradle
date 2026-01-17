@@ -194,6 +194,11 @@ dependencies {
     // https://modrinth.com/mod/jade/versions?g=1.20.1&l=forge
     implementation fg.deobf("maven.modrinth:jade:11.13.2+forge")
 
+    runtimeOnly fg.deobf("maven.modrinth:biomes-o-plenty:19.0.0.96-forge")
+    runtimeOnly fg.deobf("maven.modrinth:terrablender:3.0.1.10-forge")
+
+    runtimeOnly fg.deobf("curse.maven:domum-ornamentum-527361:7421161")
+
     // 9.1.0.0
     implementation fg.deobf("curse.maven:serene-seasons-291874:5790653")
     implementation fg.deobf("curse.maven:glitchcore-955399:5787839")
