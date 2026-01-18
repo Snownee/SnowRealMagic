@@ -7,9 +7,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
-import snownee.kiwi.util.NotNullByDefault;
 
-@NotNullByDefault
 public class KeyedList<K, E> extends ArrayList<E> {
 	@Serial
 	private static final long serialVersionUID = -5150601089854895739L;
@@ -71,7 +69,12 @@ public class KeyedList<K, E> extends ArrayList<E> {
 	}
 
 	public boolean removeKey(K key) {
-		return remove(indexOfKey(key)) != null;
+		int index = indexOfKey(key);
+		if (index == -1) {
+			return false;
+		}
+		remove(index);
+		return true;
 	}
 
 	public boolean replace(K key, E element) {

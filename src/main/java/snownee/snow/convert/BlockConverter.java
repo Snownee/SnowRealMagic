@@ -3,9 +3,7 @@ package snownee.snow.convert;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
 
-@NotNullByDefault
 public interface BlockConverter {
 	boolean takeIn(BlockState blockState);
 

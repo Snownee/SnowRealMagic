@@ -1,24 +1,18 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.fabric.api.block.BlockPickInteractionAware;
 import net.fabricmc.fabric.api.block.v1.FabricBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.phys.HitResult;
 import snownee.kiwi.block.IKiwiBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 
@@ -36,30 +30,23 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 		return srm$getRaw(state, level, pos);
 	}
 
-	@Override
-	default ItemStack getCloneItemStack(
-			LevelReader level,
-			BlockPos blockPos,
-			BlockState blockState,
-			@Nullable Player player,
-			@Nullable HitResult hit) {
-		BlockState raw = srm$getRaw(blockState, level, blockPos);
-		if (raw.isAir()) {
-			return Items.SNOW.getDefaultInstance();
-		}
-		if (raw.getBlock() instanceof BlockPickInteractionAware) {
-			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, level, blockPos, player, hit));
-		}
-		return raw.getBlock().getCloneItemStack(level, blockPos, raw);
-	}
-
-	//	@Override
-	//	default SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
-	//		if (state.hasBlockEntity() && !(state.getBlock() instanceof SnowLayerBlock)) {
-	//			return WrappedSoundType.get(getRaw(state, world, pos).getSoundType(world, pos, entity));
-	//		}
-	//		return IForgeBlock.super.getSoundType(state, world, pos, entity);
-	//	}
+// FIXME mixin BlockBehaviour#getCloneItemStack
+//	@Override
+//	default ItemStack getCloneItemStack(
+//			LevelReader level,
+//			BlockPos blockPos,
+//			BlockState blockState,
+//			@Nullable Player player,
+//			@Nullable HitResult hit) {
+//		BlockState raw = srm$getRaw(blockState, level, blockPos);
+//		if (raw.isAir()) {
+//			return Items.SNOW.getDefaultInstance();
+//		}
+//		if (raw.getBlock() instanceof BlockPickInteractionAware) {
+//			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, level, blockPos, player, hit));
+//		}
+//		return raw.getBlock().getCloneItemStack(level, blockPos, raw);
+//	}
 
 	@Override
 	default BlockState getAppearance(

@@ -1,9 +1,9 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -15,19 +15,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 
-@NotNullByDefault
 public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, SimpleWaterloggedBlock {
 	@Override
-	default boolean canPlaceLiquid(
-			@Nullable Player player,
-			BlockGetter blockGetter,
-			BlockPos blockPos,
-			BlockState blockState,
-			Fluid fluid) {
-		return fluid.isSame(Fluids.WATER);
+	default boolean canPlaceLiquid(@Nullable LivingEntity user, BlockGetter level, BlockPos pos, BlockState state, Fluid type) {
+		return type.isSame(Fluids.WATER);
 	}
 
 	@Override
@@ -45,7 +38,7 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default ItemStack pickupBlock(@Nullable Player player, LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState) {
+	default ItemStack pickupBlock(@Nullable LivingEntity user, LevelAccessor level, BlockPos pos, BlockState state) {
 		return ItemStack.EMPTY;
 	}
 

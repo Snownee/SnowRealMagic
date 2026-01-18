@@ -6,14 +6,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,11 +22,9 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
 import snownee.snow.mixin.FenceGateBlockAccess;
 
-@NotNullByDefault
 public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerSnowVariant, WaterLoggableSnowVariant {
 
 	public SnowFenceGateBlock(Properties properties) {
@@ -41,10 +39,10 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
-	@Override
-	public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, it -> super.getOcclusionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
-	}
+//	@Override
+//	public VoxelShape getOcclusionShape(BlockState blockState) {
+//		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, super::getOcclusionShape);
+//	}
 
 	@Override
 	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
@@ -65,7 +63,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 	}
 
 	@Override
-	protected ItemInteractionResult useItemOn(
+	protected InteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -88,7 +86,7 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 	}
 
-	private void adjustSounds(BlockState blockState, LevelAccessor level, BlockPos blockPos) {
+	private void adjustSounds(BlockState blockState, LevelReader level, BlockPos blockPos) {
 		BlockState raw = srm$getRaw(blockState, level, blockPos);
 		if (raw.getBlock() instanceof FenceGateBlock) {
 			FenceGateBlockAccess rawFenceGate = (FenceGateBlockAccess) raw.getBlock();
@@ -104,15 +102,17 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 	}
 
 	@Override
-	public BlockState updateShape(
+	protected BlockState updateShape(
 			BlockState state,
-			Direction direction,
-			BlockState thatState,
-			LevelAccessor level,
+			LevelReader level,
+			ScheduledTickAccess ticks,
 			BlockPos pos,
-			BlockPos thatPos) {
+			Direction directionToNeighbour,
+			BlockPos neighbourPos,
+			BlockState neighbourState,
+			RandomSource random) {
 		adjustSounds(state, level, pos);
-		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
+		state = super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
 		if (!Hooks.canSnowSurvive(level, pos)) {
 			state = state.setValue(OPTIONAL_LAYERS, 0);
 		}

@@ -1,10 +1,10 @@
 package snownee.snow.convert;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -25,19 +25,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.util.KeyedList;
 
-@NotNullByDefault
 public class BlockConverters {
-	public final KeyedList<ResourceLocation, BlockConverter> converters = new KeyedList<>();
-	public final KeyedList<ResourceLocation, BlockConverter> airConverters = new KeyedList<>(1);
+	public final KeyedList<Identifier, BlockConverter> converters = new KeyedList<>();
+	public final KeyedList<Identifier, BlockConverter> airConverters = new KeyedList<>(1);
 	private final Object2ObjectLinkedOpenHashMap<BlockState, @Nullable BlockConverter> cache = new Object2ObjectLinkedOpenHashMap<>();
 
-	public void add(ResourceLocation id, BlockConverter converter) {
+	public void add(Identifier id, BlockConverter converter) {
 		if (converter.acceptAir()) {
 			airConverters.putLast(id, converter);
 		} else {

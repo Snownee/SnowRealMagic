@@ -16,21 +16,24 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import fuzs.diagonalblocks.client.handler.DiagonalModelHandler;
+import fuzs.diagonalblocks.impl.client.handler.DiagonalModelHandler;
 import fuzs.puzzleslib.api.event.v1.core.EventResultHolder;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.snow.client.model.SnowCoveredModel;
 import snownee.snow.client.model.WrapperUnbakedModel;
 
-@Mixin(value = DiagonalModelHandler.class, remap = false)
+@Mixin(value = DiagonalModelHandler.class)
 public class DiagonalModelHandlerMixin {
 	@SuppressWarnings({"unchecked", "MixinExtrasOperationParameters"})
 	@WrapOperation(
-			method = "onModifyUnbakedModel",
+			method = "transformBlockModelDefinition",
 			at = @At(value = "INVOKE", target = "Ljava/util/function/Function;apply(Ljava/lang/Object;)Ljava/lang/Object;"))
-	private static <T, R> R srm_unwrap(Function<T, R> function, T t, Operation<R> original, @Share("snowCovered") LocalBooleanRef snowCovered) {
+	private static <T, R> R srm_unwrap(
+			Function<T, R> function,
+			T t,
+			Operation<R> original,
+			@Share("snowCovered") LocalBooleanRef snowCovered) {
 		R r = original.call(function, t);
 		if (r instanceof WrapperUnbakedModel model) {
 			r = (R) model.wrapped();
@@ -40,16 +43,16 @@ public class DiagonalModelHandlerMixin {
 	}
 
 	@Inject(
-			method = "onModifyUnbakedModel",
+			method = "transformBlockModelDefinition",
 			at = @At(
 					value = "FIELD",
 					target = "Lfuzs/diagonalblocks/client/handler/DiagonalModelHandler;UNBAKED_MODEL_CACHE:Ljava/util/Map;",
 					ordinal = 2))
 	private static void srm_wrap(
-			ModelResourceLocation modelLocation,
+			ModelIdentifier modelLocation,
 			Supplier<UnbakedModel> unbakedModel,
-			Function<ModelResourceLocation, UnbakedModel> modelGetter,
-			BiConsumer<ResourceLocation, UnbakedModel> modelAdder,
+			Function<ModelIdentifier, UnbakedModel> modelGetter,
+			BiConsumer<Identifier, UnbakedModel> modelAdder,
 			CallbackInfoReturnable<EventResultHolder<UnbakedModel>> cir,
 			@Share("snowCovered") LocalBooleanRef snowCovered,
 			@Local(ordinal = 1) LocalRef<UnbakedModel> newModel) {

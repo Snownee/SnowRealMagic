@@ -1,15 +1,15 @@
 package snownee.snow.client;
 
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -30,37 +30,39 @@ import snownee.snow.mixin.client.BlockRenderInfoAccess;
 public class FabricRendererRenderAPI implements RenderAPI {
 
 	private static final BlockState TOP_SLAB = Blocks.OAK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+
+	private final QuadEmitter emitter;
 	private final BlockAndTintGetter level;
-	private final RenderContext context;
-	private final @Nullable RenderType renderType;
-	private final Supplier<RandomSource> randomSupplier;
 	private final BlockState selfState;
+	private final RandomSource random;
 	private final BlockPos pos;
-	private final BakedModel unwrapped;
+	private final Predicate<@Nullable Direction> cullTest;
+	private final BlockStateModel unwrapped;
+
 
 	public FabricRendererRenderAPI(
+			QuadEmitter emitter,
 			BlockAndTintGetter level,
-			RenderContext context,
-			@Nullable RenderType renderType,
-			Supplier<RandomSource> randomSupplier,
-			BlockState selfState,
 			BlockPos pos,
-			BakedModel unwrapped) {
+			BlockState selfState,
+			RandomSource random,
+			Predicate<@Nullable Direction> cullTest,
+			BlockStateModel wrapped) {
+		this.emitter = emitter;
 		this.level = level;
-		this.context = context;
-		this.renderType = renderType;
-		this.randomSupplier = randomSupplier;
-		this.selfState = selfState;
 		this.pos = pos;
-		this.unwrapped = unwrapped;
+		this.selfState = selfState;
+		this.random = random;
+		this.cullTest = cullTest;
+		this.unwrapped = wrapped;
 	}
 
 	@SuppressWarnings("UnstableApiUsage")
 	@Override
-	public boolean render(BlockState blockState, BakedModel model, double yOffset, ModelPart part) {
-		Vec3 offset = yOffset == 0 ? blockState.getOffset(level, pos) : blockState.getOffset(level, pos).add(0, yOffset, 0);
+	public boolean render(BlockState blockState, BlockStateModel model, double yOffset, ModelPart part) {
+		Vec3 offset = yOffset == 0 ? blockState.getOffset(pos) : blockState.getOffset(pos).add(0, yOffset, 0);
 		boolean expandModel = part == ModelPart.CAMO && blockState.is(CoreModule.EXPAND_MODEL);
-		context.pushTransform(quad -> {
+		emitter.pushTransform(quad -> {
 			if (part == ModelPart.SNOW_LAYER && yOffset != 0) { // is slab
 				if (quad.nominalFace() == Direction.DOWN) {
 					return false;
@@ -75,8 +77,8 @@ public class FabricRendererRenderAPI implements RenderAPI {
 				}
 			}
 			int color = -1;
-			if (quad.colorIndex() != -1) {
-				color = Minecraft.getInstance().getBlockColors().getColor(blockState, level, pos, quad.colorIndex());
+			if (quad.tintIndex() != -1) {
+				color = Minecraft.getInstance().getBlockColors().getColor(blockState, level, pos, quad.tintIndex());
 				color |= 0xFF000000;
 			}
 			if (expandModel || offset != Vec3.ZERO || color != -1) {
@@ -106,16 +108,16 @@ public class FabricRendererRenderAPI implements RenderAPI {
 					pos,
 					model.useAmbientOcclusion());
 			if (generalOverlay) {
-				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(RenderType.cutout());
+				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(ChunkSectionLayer.CUTOUT);
 				blockInfo.blockPos = pos.below();
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
-					context.isFaceCulled(direction);
+					emitter.isFaceCulled(direction);
 				}
 				blockInfo.blockPos = pos;
 			}
 		}
-		((FabricBakedModel) model).emitBlockQuads(level, blockState, pos, randomSupplier, context);
-		context.popTransform();
+		((FabricBlockStateModel) model).emitQuads(emitter, level, pos, blockState, random, cullTest);
+		emitter.popTransform();
 		return true;
 	}
 

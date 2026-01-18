@@ -25,3 +25,4 @@ run/*
 /logs
 /.factorypath
 /CHANGELOG.md
+/libs/*.jar

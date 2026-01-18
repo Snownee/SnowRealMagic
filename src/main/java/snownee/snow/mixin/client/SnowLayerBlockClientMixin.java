@@ -12,10 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.client.SnowClientConfig;
 
-@NotNullByDefault
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockClientMixin extends Block {
 

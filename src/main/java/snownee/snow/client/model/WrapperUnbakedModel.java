@@ -1,51 +1,30 @@
 package snownee.snow.client.model;
 
-import java.util.Collection;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
-import snownee.kiwi.util.NotNullByDefault;
 
-@NotNullByDefault
-public class WrapperUnbakedModel implements UnbakedModel {
-	private final UnbakedModel wrapped;
-	private final UnaryOperator<BakedModel> transformer;
+public class WrapperUnbakedModel implements BlockStateModel.Unbaked {
+	private final BlockStateModel.Unbaked wrapped;
+	private final UnaryOperator<BlockStateModel> transformer;
 
-	public WrapperUnbakedModel(UnbakedModel wrapped, UnaryOperator<BakedModel> transformer) {
+	public WrapperUnbakedModel(BlockStateModel.Unbaked wrapped, UnaryOperator<BlockStateModel> transformer) {
 		this.wrapped = wrapped;
 		this.transformer = transformer;
 	}
 
 	@Override
-	public Collection<ResourceLocation> getDependencies() {
-		return wrapped.getDependencies();
+	public void resolveDependencies(Resolver resolver) {
+		wrapped.resolveDependencies(resolver);
 	}
 
 	@Override
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> function) {
-		wrapped.resolveParents(function);
+	public BlockStateModel bake(ModelBaker modelBakery) {
+		return transformer.apply(wrapped.bake(modelBakery));
 	}
 
-	@Nullable
-	@Override
-	public BakedModel bake(
-			ModelBaker modelBaker,
-			Function<Material, TextureAtlasSprite> function,
-			ModelState modelState) {
-		BakedModel baked = wrapped.bake(modelBaker, function, modelState);
-		return baked == null ? null : transformer.apply(baked);
-	}
-
-	public final UnbakedModel wrapped() {
+	public final BlockStateModel.Unbaked wrapped() {
 		return wrapped;
 	}
 }

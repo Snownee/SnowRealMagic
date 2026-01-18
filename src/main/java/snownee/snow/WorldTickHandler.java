@@ -43,11 +43,11 @@ public class WorldTickHandler {
 			return;
 		}
 		if (blockState.getBlock() instanceof SnowVariant) {
-			Hooks.randomTick(blockState, level, pos, level.random, 1);
+			Hooks.randomTick(blockState, level, pos, level.getRandom(), 1);
 		}
 		BlockState stateAbove = level.getBlockState(pos.move(Direction.UP));
 		if (stateAbove.getBlock() instanceof SnowVariant) {
-			Hooks.randomTick(stateAbove, level, pos, level.random, 1);
+			Hooks.randomTick(stateAbove, level, pos, level.getRandom(), 1);
 		}
 	}
 
@@ -55,7 +55,7 @@ public class WorldTickHandler {
 		if (!level.isRaining()) {
 			return false;
 		}
-		int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().getInt(CoreModule.BLIZZARD_STRENGTH) : 0;
+		int blizzard = SnowCommonConfig.snowGravity ? level.getGameRules().get(CoreModule.BLIZZARD_STRENGTH) : 0;
 		if (blizzard > 0) {
 			doBlizzard(level, pos, blizzard);
 			return true;
@@ -106,18 +106,18 @@ public class WorldTickHandler {
 		if (pos.getY() == world.getHeight()) {
 			return;
 		}
-		int frequency = world.getGameRules().getInt(CoreModule.BLIZZARD_FREQUENCY);
+		int frequency = world.getGameRules().get(CoreModule.BLIZZARD_FREQUENCY);
 		frequency = Mth.clamp(frequency, 0, 10000);
 		if (frequency == 0) {
 			return;
 		}
-		int i = world.random.nextInt(10000);
+		int i = world.getRandom().nextInt(10000);
 		if (frequency != 10000 && i >= frequency) {
 			return;
 		}
 		blizzard = Mth.clamp(blizzard, 1, 8);
 		if (blizzard > 1) {
-			blizzard = world.random.nextInt(blizzard) + 1;
+			blizzard = world.getRandom().nextInt(blizzard) + 1;
 		}
 		pos = pos.above(64);
 		FallingBlockEntity.fall(world, pos, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, blizzard));

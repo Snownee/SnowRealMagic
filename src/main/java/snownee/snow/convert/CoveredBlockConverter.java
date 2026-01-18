@@ -4,10 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
 
-@NotNullByDefault
 public class CoveredBlockConverter implements BlockConverter {
 	protected final Class<? extends Block> clazz;
 	protected final BlockState result;

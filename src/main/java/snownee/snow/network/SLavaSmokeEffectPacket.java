@@ -1,6 +1,6 @@
 package snownee.snow.network;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public record SLavaSmokeEffectPacket(BlockPos pos) implements CustomPacketPayloa
 
 
 	@Override
-	public @NotNull Type<SLavaSmokeEffectPacket> type() {
+	public Type<SLavaSmokeEffectPacket> type() {
 		return TYPE;
 	}
 
@@ -44,7 +44,7 @@ public record SLavaSmokeEffectPacket(BlockPos pos) implements CustomPacketPayloa
 		@Override
 		public void handle(SLavaSmokeEffectPacket packet, PayloadContext payloadContext) {
 			payloadContext.execute(() -> {
-				var level = Minecraft.getInstance().level;
+				var level = Objects.requireNonNull(Minecraft.getInstance().level);
 				for (var i = 0; i < 10; ++i) {
 					var d0 = RANDOM.nextGaussian() * 0.02D;
 					var d1 = RANDOM.nextGaussian() * 0.02D;

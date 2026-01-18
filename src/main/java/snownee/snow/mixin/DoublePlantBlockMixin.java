@@ -12,10 +12,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
@@ -54,20 +55,24 @@ public class DoublePlantBlockMixin {
 
 	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
 	private void srm_updateShape(
-			BlockState stateIn,
-			Direction facing,
-			BlockState facingState,
-			LevelAccessor level,
-			BlockPos currentPos,
-			BlockPos facingPos,
+			BlockState state,
+			LevelReader level,
+			ScheduledTickAccess ticks,
+			BlockPos pos,
+			Direction directionToNeighbour,
+			BlockPos neighbourPos,
+			BlockState neighbourState,
+			RandomSource random,
 			CallbackInfoReturnable<BlockState> cir) {
-		// at this time, the raw facingState may not be set yet
-		DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
-		if (doubleblockhalf == DoubleBlockHalf.UPPER && facing == Direction.DOWN && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(facingState)) {
-			cir.setReturnValue(stateIn);
+		// at this time, the raw neighbourState may not be set yet
+		DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
+		if (doubleblockhalf == DoubleBlockHalf.UPPER && directionToNeighbour == Direction.DOWN && CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(
+				neighbourState)) {
+			cir.setReturnValue(state);
 		}
-		if (doubleblockhalf == DoubleBlockHalf.LOWER && facing == Direction.UP && CoreModule.SNOWY_DOUBLE_PLANT_UPPER.is(facingState)) {
-			cir.setReturnValue(stateIn);
+		if (doubleblockhalf == DoubleBlockHalf.LOWER && directionToNeighbour == Direction.UP && CoreModule.SNOWY_DOUBLE_PLANT_UPPER.is(
+				neighbourState)) {
+			cir.setReturnValue(state);
 		}
 	}
 

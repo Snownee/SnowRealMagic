@@ -1,5 +1,6 @@
 package snownee.snow.mixin;
 
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -56,11 +57,11 @@ public abstract class BlockItemMixin extends Item {
 			return original.call(instance, placeContext);
 		} else {
 			Player player = placeContext.getPlayer();
-			if (Hooks.placeLayersOn(level, placePos, 1, false, placeContext, true, true) && !level.isClientSide &&
+			if (Hooks.placeLayersOn(level, placePos, 1, false, placeContext, true, true) && !level.isClientSide() &&
 					(player == null || !player.getAbilities().instabuild)) {
 				placeContext.getItemInHand().shrink(1);
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return InteractionResult.SUCCESS_SERVER;
 		}
 	}
 
@@ -74,7 +75,7 @@ public abstract class BlockItemMixin extends Item {
 			ItemStack stack,
 			BlockState blockState,
 			CallbackInfoReturnable<Boolean> ci) {
-		if (worldIn.isClientSide && worldIn.getServer() == null && worldIn.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+		if (worldIn.isClientSide() && worldIn.getServer() == null && worldIn.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 			var blockEntityData = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
 			if (!blockEntityData.isEmpty()) {
 				blockEntityData.loadInto(be, worldIn.registryAccess());
@@ -88,7 +89,7 @@ public abstract class BlockItemMixin extends Item {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;getStateForPlacement(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"))
-	private BlockState srm_getPlacementState(Block block, BlockPlaceContext context, Operation<BlockState> original) {
+	private BlockState srm_getPlacementState(Block block, BlockPlaceContext context, Operation<@Nullable BlockState> original) {
 		return Hooks.getStateForPlacement(block, context, original.call(block, context));
 	}
 }

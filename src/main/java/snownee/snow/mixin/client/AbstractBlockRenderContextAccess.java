@@ -9,6 +9,6 @@ import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderInfo;
 @SuppressWarnings("UnstableApiUsage")
 @Mixin(AbstractBlockRenderContext.class)
 public interface AbstractBlockRenderContextAccess {
-	@Accessor(remap = false)
+	@Accessor
 	BlockRenderInfo getBlockInfo();
 }

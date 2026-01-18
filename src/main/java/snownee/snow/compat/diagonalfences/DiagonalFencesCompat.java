@@ -2,11 +2,11 @@ package snownee.snow.compat.diagonalfences;
 
 import com.google.common.collect.BiMap;
 
-import fuzs.diagonalblocks.api.v2.DiagonalBlockType;
-import fuzs.diagonalblocks.api.v2.impl.DiagonalBlockTypeImpl;
-import fuzs.diagonalblocks.api.v2.impl.DiagonalFenceBlock;
+import fuzs.diagonalblocks.api.v2.block.DiagonalFenceBlock;
+import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockType;
+import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockTypeImpl;
 import fuzs.diagonalfences.DiagonalFences;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,14 +16,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.loader.event.PostInitEvent;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.SnowFenceBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.convert.CoveredBlockConverter;
 
-@NotNullByDefault
 @KiwiModule(value = DiagonalFencesCompat.ID, dependencies = DiagonalFencesCompat.ID)
 public class DiagonalFencesCompat extends AbstractModule {
 	public static final String ID = "diagonalfences";
@@ -38,7 +36,7 @@ public class DiagonalFencesCompat extends AbstractModule {
 			CrossCollisionBlock.WATERLOGGED,
 			SnowVariant.OPTIONAL_LAYERS) {
 		@Override
-		public ResourceLocation id(String path) {
+		public Identifier id(String path) {
 			return DiagonalFences.id(path);
 		}
 	};
@@ -55,7 +53,7 @@ public class DiagonalFencesCompat extends AbstractModule {
 	protected void postInit(PostInitEvent event) {
 		event.enqueueWork(() -> CoreModule.CONVERTERS.converters.putBefore(
 				SnowRealMagic.id("fence"),
-				ResourceLocation.fromNamespaceAndPath(ID, "fence"),
+				Identifier.fromNamespaceAndPath(ID, "fence"),
 				new CoveredBlockConverter(DiagonalFenceBlock.class, Blocks.AIR.defaultBlockState()) {
 					@Override
 					public boolean accept(BlockState blockState) {

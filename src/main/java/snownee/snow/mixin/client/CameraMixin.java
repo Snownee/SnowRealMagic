@@ -42,7 +42,7 @@ public abstract class CameraMixin {
 			return false;
 		}
 		return snowVariant.srm$getSnowState(blockState, level, pos)
-				.getOcclusionShape(level, pos)
+				.getOcclusionShape()
 				.bounds()
 				.contains(point.subtract(pos.getX(), pos.getY(), pos.getZ()));
 	}

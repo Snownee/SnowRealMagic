@@ -1,5 +1,7 @@
 package snownee.snow;
 
+import org.jspecify.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -39,7 +41,7 @@ public final class GameEvents {
 				Block.popResource(level, pos, new ItemStack(Items.SNOWBALL));
 				held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return InteractionResult.SUCCESS_SERVER;
 		} else if (player.isSecondaryUseActive() && SnowCommonConfig.sneakSnowball) {
 			if (playerCollectSnowball(level, pos, blockState, snowVariant)) {
 				ItemStack snowball = new ItemStack(Items.SNOWBALL);
@@ -49,7 +51,7 @@ public final class GameEvents {
 					}
 				}
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return InteractionResult.SUCCESS_SERVER;
 		} else if (SnowCommonConfig.rightClickToggleFancySnow && !SnowCommonConfig.restoreOriginalBlocks &&
 				snowVariant.srm$canRenderOverlay(blockState) && !player.isSecondaryUseActive() && player.getMainHandItem().isEmpty() &&
 				player.getOffhandItem().isEmpty()) {
@@ -77,7 +79,7 @@ public final class GameEvents {
 				be.options.renderOverlay = !be.options.renderOverlay;
 				be.refresh();
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return InteractionResult.SUCCESS_SERVER;
 		}
 		return InteractionResult.PASS;
 	}
@@ -86,7 +88,7 @@ public final class GameEvents {
 	 * @return should drop snowball
 	 */
 	private static boolean playerCollectSnowball(Level level, BlockPos pos, BlockState state, SnowVariant snowVariant) {
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return false;
 		}
 		BlockState newState = snowVariant.srm$decreaseLayer(state, level, pos, true);
@@ -97,7 +99,12 @@ public final class GameEvents {
 		return layers > 0 || !state.hasProperty(SnowVariant.OPTIONAL_LAYERS);
 	}
 
-	public static boolean onDestroyedByPlayer(Level world, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+	public static boolean onDestroyedByPlayer(
+			Level world,
+			@Nullable Player player,
+			BlockPos pos,
+			BlockState state,
+			BlockEntity blockEntity) {
 		if ((player == null || player.isCreative()) && blockEntity instanceof SnowBlockEntity) {
 			BlockState newState = ((SnowBlockEntity) blockEntity).getContainedState();
 			world.setBlockAndUpdate(pos, newState);

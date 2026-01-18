@@ -1,3 +1,4 @@
+/*
 package snownee.snow.compat.sereneseasons;
 
 import java.util.function.BooleanSupplier;
@@ -88,4 +89,4 @@ public class SereneSeasonsCompat {
 		}
 		return result;
 	}
-}
+}*/

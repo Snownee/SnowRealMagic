@@ -6,7 +6,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,10 +14,8 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.util.CommonProxy;
 
-@NotNullByDefault
 public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVariant {
 
 	public SnowStairsBlock(Properties properties) {
@@ -36,7 +33,7 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	}
 
 	@Override
-	protected VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos pos) {
+	protected VoxelShape getOcclusionShape(BlockState blockState) {
 		return ShapeCaches.get(
 				ShapeCaches.VISUAL, blockState, it -> {
 					VoxelShape shape = getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
@@ -56,14 +53,6 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 							shape,
 							Blocks.OAK_SLAB.defaultBlockState().getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
 				});
-	}
-
-	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.hasBlockEntity() && state.getBlock() != newState.getBlock()) {
-			worldIn.removeBlockEntity(pos);
-		}
-		super.onRemove(state, worldIn, pos, newState, isMoving);
 	}
 
 	@Override

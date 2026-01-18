@@ -9,7 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -24,11 +24,9 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.block.entity.SnowCoveredBlockEntity;
 import snownee.snow.util.CommonProxy;
 
-@NotNullByDefault
 public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
@@ -38,7 +36,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	protected ItemInteractionResult useItemOn(
+	protected InteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -47,7 +45,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
 		if (!(level.getBlockEntity(blockPos) instanceof SnowCoveredBlockEntity blockEntity)) {
-			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+			return InteractionResult.PASS;
 		}
 
 		if (blockHitResult.getDirection() == Direction.UP &&
@@ -55,7 +53,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 				itemStack.is(ItemTags.SLABS) &&
 				itemStack.getItem() instanceof BlockItem blockItem) {
 			blockState = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
-			if (!level.isClientSide) {
+			if (!level.isClientSide()) {
 				level.setBlockAndUpdate(blockPos, blockState);
 				if (!player.isCreative()) {
 					itemStack.shrink(1);
@@ -71,10 +69,10 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 					SoundSource.BLOCKS,
 					(soundtype.getVolume() + 1.0F) / 2.0F,
 					soundtype.getPitch() * 0.8F);
-			return ItemInteractionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
 
-		return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+		return InteractionResult.PASS;
 	}
 
 	@Override

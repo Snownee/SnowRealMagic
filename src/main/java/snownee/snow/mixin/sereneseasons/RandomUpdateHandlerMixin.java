@@ -1,3 +1,4 @@
+/*
 package snownee.snow.mixin.sereneseasons;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +14,7 @@ import sereneseasons.api.season.SeasonHelper;
 import sereneseasons.season.RandomUpdateHandler;
 import snownee.snow.SnowCommonConfig;
 
-@Mixin(value = RandomUpdateHandler.class, remap = false)
+@Mixin(value = RandomUpdateHandler.class)
 public abstract class RandomUpdateHandlerMixin {
 
 	@Inject(at = @At("HEAD"), method = "onWorldTick", cancellable = true)
@@ -34,4 +35,4 @@ public abstract class RandomUpdateHandlerMixin {
 		throw new AssertionError();
 	}
 
-}
+}*/

@@ -4,17 +4,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
-import com.mojang.serialization.MapDecoder;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -55,7 +55,7 @@ import snownee.snow.network.SSnowLandEffectPacket;
 import snownee.snow.util.CommonProxy;
 
 public final class Hooks {
-	private static final MapDecoder<ResourceLocation> BLOCK_ENTITY_ID = ResourceLocation.CODEC.fieldOf("id");
+	private static final MapCodec<Identifier> BLOCK_ENTITY_ID = Identifier.CODEC.fieldOf("id");
 
 	private Hooks() {
 	}
@@ -65,7 +65,9 @@ public final class Hooks {
 				!SnowCommonConfig.canPlaceSnowInBlock()) {
 			return;
 		}
-		if (biome.warmEnoughToRain(pos) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Hooks.canSnowSurvive(level, pos)) {
+		if (biome.warmEnoughToRain(pos, level.getSeaLevel()) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Hooks.canSnowSurvive(
+				level,
+				pos)) {
 			return;
 		}
 		BlockState blockstate = level.getBlockState(pos);
@@ -150,7 +152,7 @@ public final class Hooks {
 			blockState = blockState.setValue(SnowVariant.OPTIONAL_LAYERS, layers);
 			BlockPos posDown = pos.below();
 			BlockState stateDown = level.getBlockState(posDown);
-			blockState = blockState.updateShape(Direction.DOWN, stateDown, level, pos, posDown);
+			blockState = blockState.updateShape(level, level, pos, Direction.DOWN, posDown, stateDown, level.getRandom());
 		} else if (blockState.hasProperty(SnowLayerBlock.LAYERS)) {
 			blockState = blockState.setValue(SnowLayerBlock.LAYERS, layers);
 		}
@@ -417,6 +419,7 @@ public final class Hooks {
 		return opt || context.replacingClickedOnBlock() || context.getClickedFace() == Direction.UP;
 	}
 
+	@Nullable
 	public static BlockState getStateForPlacement(Block block, BlockPlaceContext context, @Nullable BlockState originalState) {
 		if (SnowCommonConfig.restoreOriginalBlocks) {
 			return originalState;
@@ -441,7 +444,7 @@ public final class Hooks {
 		}
 		var blockEntityData = context.getItemInHand().get(DataComponents.BLOCK_ENTITY_DATA);
 		if (originalState != null && blockEntityData != null) {
-			ResourceLocation id = blockEntityData.read(BLOCK_ENTITY_ID).result().orElse(null);
+			Identifier id = blockEntityData.copyTagWithoutId().read(BLOCK_ENTITY_ID).orElse(null);
 			if (originalState.canSurvive(level, pos) && (CoreModule.TILE.key().equals(id) || CoreModule.TEXTURE_TILE.key().equals(id))) {
 				return getSnowBlockFor(level, pos, originalState.trySetValue(BlockStateProperties.WATERLOGGED, false), 1, true);
 			}
@@ -474,7 +477,7 @@ public final class Hooks {
 		if (state2 == null || !Hooks.canContainState(state2) || !state2.canSurvive(level, pos)) {
 			return false;
 		}
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			int i = blockState.getValue(SnowLayerBlock.LAYERS);
 			boolean hasOverlay = false;
 			if (i != 0 && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
@@ -500,7 +503,7 @@ public final class Hooks {
 
 	public static void restoreOriginalBlocks(LevelChunk chunk) {
 		Level level = chunk.getLevel();
-		if (!SnowCommonConfig.restoreOriginalBlocks || level.isClientSide || level.getServer() == null ||
+		if (!SnowCommonConfig.restoreOriginalBlocks || level.isClientSide() || level.getServer() == null ||
 				chunk.getBlockEntities().isEmpty()) {
 			return;
 		}
@@ -514,7 +517,7 @@ public final class Hooks {
 		if (blockEntities.isEmpty()) {
 			return;
 		}
-		level.getServer().tell(new TickTask(
+		level.getServer().execute(new TickTask(
 				0, () -> {
 			for (BlockEntity be : blockEntities) {
 				Level level1 = be.getLevel();

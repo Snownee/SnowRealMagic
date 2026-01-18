@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        maven { url "https://maven.architectury.dev/" }
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'

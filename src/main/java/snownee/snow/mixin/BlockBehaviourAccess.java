@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -17,7 +18,13 @@ public interface BlockBehaviourAccess {
 	BlockBehaviour.Properties getProperties();
 
 	@Invoker
-	void callEntityInside(BlockState state, Level level, BlockPos pos, Entity entity);
+	void callEntityInside(
+			BlockState state,
+			Level level,
+			BlockPos pos,
+			Entity entity,
+			InsideBlockEffectApplier effectApplier,
+			boolean isPrecise);
 
 	@Invoker
 	SoundType callGetSoundType(BlockState state);

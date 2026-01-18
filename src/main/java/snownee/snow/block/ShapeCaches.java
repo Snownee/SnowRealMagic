@@ -22,11 +22,9 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowRealMagic;
 
-@NotNullByDefault
 public class ShapeCaches {
 
 	public record Key(BlockState state, int layers) {
@@ -60,7 +58,7 @@ public class ShapeCaches {
 				BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
 				VoxelShape snowShape;
 				if (cache == VISUAL) {
-					snowShape = snowState.getOcclusionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+					snowShape = snowState.getVisualShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
 				} else if (cache == COLLIDER) {
 					snowShape = snowState.getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
 				} else {

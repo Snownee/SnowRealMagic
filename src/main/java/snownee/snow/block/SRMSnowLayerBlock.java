@@ -1,6 +1,6 @@
 package snownee.snow.block;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,8 +9,8 @@ import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,8 +19,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -36,17 +36,15 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.RenderLayerEnum;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
-@NotNullByDefault
 @KiwiModule.RenderLayer(RenderLayerEnum.CUTOUT)
 public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public SRMSnowLayerBlock(Properties properties) {
-		super(properties);
+		super(properties.overrideDescription(Blocks.SNOW.getDescriptionId()));
 	}
 
 	@Override
@@ -73,8 +71,8 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public VoxelShape getOcclusionShape(BlockState p_60578_, BlockGetter p_60579_, BlockPos p_60580_) {
-		return super.getShape(p_60578_, p_60579_, p_60580_, CollisionContext.empty());
+	protected VoxelShape getOcclusionShape(BlockState state) {
+		return Shapes.block();
 	}
 
 	@Override
@@ -96,28 +94,30 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	@Override
 	public BlockState updateShape(
 			BlockState stateIn,
-			Direction facing,
-			BlockState facingState,
-			LevelAccessor worldIn,
-			BlockPos currentPos,
-			BlockPos facingPos) {
-		BlockState state = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		if (!(worldIn instanceof WorldGenRegion) && state.getBlock() instanceof SRMSnowLayerBlock) {
-			BlockState contained = srm$getRaw(state, worldIn, currentPos);
-			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
+			LevelReader level,
+			ScheduledTickAccess ticks,
+			BlockPos pos,
+			Direction directionToNeighbour,
+			BlockPos neighbourPos,
+			BlockState neighbourState,
+			RandomSource random) {
+		BlockState state = super.updateShape(stateIn, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+		if (!(level instanceof WorldGenRegion) && state.getBlock() instanceof SRMSnowLayerBlock) {
+			BlockState contained = srm$getRaw(state, level, pos);
+			BlockState containedNew = contained.updateShape(level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
 			if (contained != containedNew) {
 				if (containedNew.isAir()) {
-					worldIn.destroyBlock(currentPos, true);
-					return srm$getSnowState(stateIn, worldIn, currentPos);
+//					level.destroyBlock(pos, true);
+					return srm$getSnowState(stateIn, level, pos);
 				} else {
-					setContainedState(worldIn, currentPos, containedNew);
+					setContainedState(level, pos, containedNew);
 				}
 			}
 		}
 		return state;
 	}
 
-	public static void setContainedState(LevelAccessor world, BlockPos pos, BlockState state) {
+	public static void setContainedState(LevelReader world, BlockPos pos, BlockState state) {
 		if (world.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 			be.setContainedState(state);
 		}
@@ -129,18 +129,19 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public String getDescriptionId() {
-		return Blocks.SNOW.getDescriptionId();
-	}
-
-	@Override
-	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
-		var blockState = srm$getRaw(state, worldIn, pos);
+	protected void entityInside(
+			BlockState state,
+			Level level,
+			BlockPos pos,
+			Entity entity,
+			InsideBlockEffectApplier effectApplier,
+			boolean isPrecise) {
+		var blockState = srm$getRaw(state, level, pos);
 		var block = blockState.getBlock();
 
 		if (blockState.is(CoreModule.ENTITY_INSIDE)) {
 			try {
-				((BlockBehaviourAccess) block).callEntityInside(blockState, worldIn, pos, entityIn);
+				((BlockBehaviourAccess) block).callEntityInside(state, level, pos, entity, effectApplier, isPrecise);
 			} catch (Throwable ignored) {
 			}
 		}
@@ -199,7 +200,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	protected ItemInteractionResult useItemOn(
+	protected InteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -208,7 +209,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
 		try {
-			ItemInteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
+			InteractionResult result = srm$getRaw(blockState, level, blockPos).useItemOn(
 					itemStack,
 					level,
 					player,
@@ -234,7 +235,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		if (worldIn.isClientSide) {
+		if (worldIn.isClientSide()) {
 			return;
 		}
 		try {
@@ -280,12 +281,12 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	protected boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+	protected boolean propagatesSkylightDown(BlockState state) {
 		return false;
 	}
 
 	@Override
-	protected int getLightBlock(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+	protected int getLightBlock(BlockState state) {
 		return 0;
 	}
 }

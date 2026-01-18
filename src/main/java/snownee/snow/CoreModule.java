@@ -2,21 +2,23 @@ package snownee.snow;
 
 import java.util.stream.Stream;
 
-import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import com.mojang.serialization.MapCodec;
+
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.gamerules.GameRule;
+import net.minecraft.world.level.gamerules.GameRuleCategory;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
 import snownee.kiwi.KiwiModule;
@@ -86,7 +88,8 @@ public class CoreModule extends AbstractModule {
 	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
 			.sound(SoundType.SNOW)
-			.randomTicks()));
+			.randomTicks()
+			.overrideDescription(FENCE.get().getDescriptionId())));
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
@@ -115,23 +118,24 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SRMSnowLayerBlock.class);
 
-	@SuppressWarnings({"unchecked", "rawtypes"}) //TODO remove type restriction in 1.22
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,
 			null,
-			(Class) WaterLoggableSnowVariant.class);
+			WaterLoggableSnowVariant.class);
 
-	public static final KiwiGO<LootPoolEntryType> NORMALIZE = go(() -> new LootPoolEntryType(NormalizeLoot.CODEC));
+	public static final KiwiGO<MapCodec<NormalizeLoot>> NORMALIZE = go(() -> NormalizeLoot.CODEC, Registries.LOOT_POOL_ENTRY_TYPE);
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_STRENGTH = GameRuleRegistry.register(
-			SnowRealMagic.ID + ":blizzardStrength",
-			GameRules.Category.MISC,
-			IntegerValue.create(0));
+	public static final GameRule<Integer> BLIZZARD_STRENGTH = GameRules.registerInteger(
+			SnowRealMagic.ID + ":blizzard_strength",
+			GameRuleCategory.MISC,
+			0,
+			0);
 
-	public static final GameRules.Key<IntegerValue> BLIZZARD_FREQUENCY = GameRuleRegistry.register(
-			SnowRealMagic.ID + ":blizzardFrequency",
-			GameRules.Category.MISC,
-			IntegerValue.create(10000));
+	public static final GameRule<Integer> BLIZZARD_FREQUENCY = GameRules.registerInteger(
+			SnowRealMagic.ID + ":blizzard_frequency",
+			GameRuleCategory.MISC,
+			10000,
+			0);
 
 	public static final BlockConverters CONVERTERS = new BlockConverters();
 

@@ -3,6 +3,7 @@ package snownee.snow.util;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
+import fuzs.puzzleslib.api.event.v1.server.TagsUpdatedCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -28,9 +29,9 @@ import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
+import snownee.snow.block.ShapeCaches;
 import snownee.snow.compat.diagonalfences.DiagonalFencesCompat;
 import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
-import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
@@ -43,7 +44,7 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean weatherTick(ServerLevel level, BooleanSupplier action) {
 		if (sereneSeasons) {
-			return SereneSeasonsCompat.weatherTick(level, action);
+//			return SereneSeasonsCompat.weatherTick(level, action);
 		}
 		return action.getAsBoolean();
 	}
@@ -87,10 +88,10 @@ public class CommonProxy implements ModInitializer {
 			return false;
 		}
 		if (sereneSeasons) {
-			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
+//			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		}
 		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome)
-				&& biome.value().warmEnoughToRain(pos)
+				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
 				&& skyLightEnoughToMelt(level, pos, layers)) {
 			return true;
 		}
@@ -110,7 +111,7 @@ public class CommonProxy implements ModInitializer {
 			return true;
 		}
 		if (sereneSeasons) {
-			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
+//			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
 		}
 		return fabricSeasons;
 	}
@@ -133,14 +134,14 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
-			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
+//			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
 		}
-		return biome.value().coldEnoughToSnow(pos);
+		return biome.value().coldEnoughToSnow(pos, level.getSeaLevel());
 	}
 
 	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
-			return SereneSeasonsCompat.isWinter(level, pos, biome);
+//			return SereneSeasonsCompat.isWinter(level, pos, biome);
 		}
 		return false;
 	}
@@ -154,6 +155,9 @@ public class CommonProxy implements ModInitializer {
 		});
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
+		TagsUpdatedCallback.EVENT.register((_, _) -> {
+			ShapeCaches.invalidateAll();
+		});
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}

@@ -15,7 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -34,13 +34,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 
-@NotNullByDefault
 @Mixin(value = SnowLayerBlock.class, priority = 500)
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
@@ -154,7 +152,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 
 	// Right click with block item to place it inside snow layer
 	@Override
-	protected ItemInteractionResult useItemOn(
+	protected InteractionResult useItemOn(
 			ItemStack itemStack,
 			BlockState blockState,
 			Level level,
@@ -163,24 +161,24 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			InteractionHand interactionHand,
 			BlockHitResult blockHitResult) {
 		if (Hooks.useSnowWithItem(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult, this)) {
-			return ItemInteractionResult.sidedSuccess(level.isClientSide);
+			return InteractionResult.SUCCESS_SERVER;
 		}
 		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
 	}
 
 	@Override
-	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entityIn, float fallDistance) {
+	public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
 		if (SnowCommonConfig.snowReduceFallDamage) {
 			BlockState stateBelow = level.getBlockState(pos.below());
 			if (stateBelow.is(CoreModule.SNOW_TAG)) {
-				entityIn.causeFallDamage(fallDistance, 0.2F, level.damageSources().fall());
+				entity.causeFallDamage(fallDistance, 0.2F, level.damageSources().fall());
 				return;
 			}
 			state = level.getBlockState(pos);
-			entityIn.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, level.damageSources().fall());
+			entity.causeFallDamage(fallDistance, 1 - state.getValue(SnowLayerBlock.LAYERS) * 0.1F, level.damageSources().fall());
 			return;
 		}
-		super.fallOn(level, state, pos, entityIn, fallDistance);
+		super.fallOn(level, state, pos, entity, fallDistance);
 	}
 
 	@Override

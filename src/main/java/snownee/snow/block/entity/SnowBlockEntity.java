@@ -1,28 +1,30 @@
 package snownee.snow.block.entity;
 
-import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
+import java.util.Optional;
+
+import org.jspecify.annotations.Nullable;
+
+import net.fabricmc.fabric.api.blockgetter.v2.RenderDataBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import snownee.kiwi.block.entity.ModBlockEntity;
-import snownee.kiwi.util.KUtil;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.CoreModule;
 import snownee.snow.block.SnowVariant;
 
-@NotNullByDefault
 public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEntity {
 
 	public static class Options {
 		public boolean renderOverlay;
 	}
 
-	private RenderData renderData;
+	private @Nullable RenderData renderData;
 	public Options options = new Options();
 	protected BlockState containedState = Blocks.AIR.defaultBlockState();
 
@@ -49,7 +51,7 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 		this.containedState = state;
 		if (level != null) {
 			if (update) {
-				if (level.isClientSide) {
+				if (level.isClientSide()) {
 					level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
 				} else {
 					refresh();
@@ -59,55 +61,58 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 		return true;
 	}
 
-	@Override
-	protected void readPacketData(CompoundTag data) {
-		loadContainedState(data, true);
-	}
-
-	public void loadContainedState(CompoundTag data, boolean network) {
-		boolean changed = options.renderOverlay != data.getBoolean("RO");
-		options.renderOverlay = data.getBoolean("RO");
-		changed |= setContainedState(parseContainedState(data), network);
+	public void loadContainedState(ValueInput data, boolean network) {
+		boolean renderOverlay = data.getBooleanOr("RO", false);
+		boolean changed = options.renderOverlay != renderOverlay;
+		options.renderOverlay = renderOverlay;
+		Optional<BlockState> blockState = parseContainedState(data);
+		if (blockState.isPresent()) {
+			changed |= setContainedState(blockState.get(), network);
+		}
 		if (changed && network) {
 			refresh();
 		}
 	}
 
-	public static BlockState parseContainedState(CompoundTag data) {
-		if (data.contains("Block")) {
-			return BuiltInRegistries.BLOCK.get(KUtil.RL(data.getString("Block"))).defaultBlockState();
+	public static Optional<BlockState> parseContainedState(ValueInput input) {
+		if (input.contains("Block")) {
+			return input.read("Block", Identifier.CODEC).map(BuiltInRegistries.BLOCK::getValue).map(Block::defaultBlockState);
 		} else {
-			return NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), data.getCompound("State"));
+			return input.read("State", BlockState.CODEC);
 		}
 	}
 
-	public void saveContainedState(CompoundTag data, boolean network) {
+	public void saveContainedState(ValueOutput output, boolean network) {
 		if (getContainedState() == getContainedState().getBlock().defaultBlockState()) {
-			data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
+			output.store("Block", Identifier.CODEC, BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()));
 		} else {
-			data.put("State", NbtUtils.writeBlockState(getContainedState()));
+			output.store("State", BlockState.CODEC, getContainedState());
 		}
 		if (options.renderOverlay) {
-			data.putBoolean("RO", true);
+			output.putBoolean("RO", true);
 		}
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-		super.loadAdditional(compoundTag, provider);
-		loadContainedState(compoundTag, false);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		loadContainedState(input, false);
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-		super.saveAdditional(compoundTag, provider);
-		saveContainedState(compoundTag, false);
+	protected void readPacketData(ValueInput input) {
+		loadContainedState(input, true);
 	}
 
 	@Override
-	protected CompoundTag writePacketData(CompoundTag compoundTag, HolderLookup.Provider provider) {
-		saveContainedState(compoundTag, true);
-		return compoundTag;
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		saveContainedState(output, false);
+	}
+
+	@Override
+	protected void writePacketData(ValueOutput output) {
+		saveContainedState(output, true);
 	}
 
 	@Override

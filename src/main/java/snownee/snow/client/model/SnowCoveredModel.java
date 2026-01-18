@@ -1,58 +1,48 @@
 package snownee.snow.client.model;
 
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
-import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
-import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.BakedModel;
+import org.jspecify.annotations.Nullable;
+
+import net.fabricmc.fabric.api.blockgetter.v2.FabricBlockGetter;
+import net.fabricmc.fabric.api.client.model.loading.v1.wrapper.WrapperBlockStateModel;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.block.entity.RenderData;
 import snownee.snow.client.ClientHooks;
 import snownee.snow.client.FabricRendererRenderAPI;
 
-@NotNullByDefault
-public class SnowCoveredModel extends ForwardingBakedModel {
+public class SnowCoveredModel extends WrapperBlockStateModel {
 
-	public SnowCoveredModel(BakedModel model) {
+	public SnowCoveredModel(BlockStateModel model) {
 		wrapped = model;
 	}
 
 	@Override
-	public void emitBlockQuads(
-			BlockAndTintGetter blockView,
-			BlockState blockState,
+	public void emitQuads(
+			QuadEmitter emitter,
+			BlockAndTintGetter level,
 			BlockPos pos,
-			Supplier<RandomSource> randomSupplier,
-			RenderContext context) {
-		Object data = ((FabricBlockView) blockView).getBlockEntityRenderData(pos);
+			BlockState state,
+			RandomSource random,
+			Predicate<@Nullable Direction> cullTest) {
+		Object data = ((FabricBlockGetter) level).getBlockEntityRenderData(pos);
 		if (!(data instanceof RenderData renderData)) {
 			return;
 		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
-				blockView,
-				context,
-				null,
-				randomSupplier,
-				blockState,
+				emitter,
+				level,
 				pos,
+				state,
+				random,
+				cullTest,
 				wrapped);
-		ClientHooks.renderHook(blockState, renderData.camo(), renderData.options(), null, api);
+		ClientHooks.renderHook(state, renderData.camo(), renderData.options(), null, api);
 	}
-
-	@Override
-	public ItemTransforms getTransforms() {
-		return ItemTransforms.NO_TRANSFORMS;
-	}
-
-	@Override
-	public boolean isVanillaAdapter() {
-		return false;
-	}
-
 }

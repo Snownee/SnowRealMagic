@@ -16,8 +16,8 @@ import static snownee.snow.CoreModule.WALL;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -28,12 +28,12 @@ import snownee.kiwi.KiwiGO;
 import snownee.snow.CoreModule;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 
-public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
+public class SRMBlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
 	TagKey<Block> GRASS = AbstractModule.blockTag("c", "grass");
 	TagKey<Block> MUSHROOMS = AbstractModule.blockTag("c", "mushrooms");
 
 	public SRMBlockTagsProvider(
-			FabricDataOutput output,
+			FabricPackOutput output,
 			CompletableFuture<HolderLookup.Provider> registriesFuture) {
 		super(output, registriesFuture);
 	}
@@ -46,35 +46,35 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 				SNOWY_DOUBLE_PLANT_UPPER,
 				SNOW_BLOCK,
 				SNOWY_PLANT).map(KiwiGO::get).toList()) {
-			getOrCreateTagBuilder(CoreModule.SNOW_TAG).add(block);
+			valueLookupBuilder(CoreModule.SNOW_TAG).add(block);
 			if (!(block instanceof ExtraCollisionSnowLayerBlock)) {
-				getOrCreateTagBuilder(BlockTags.GOATS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.RABBITS_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.FOXES_SPAWNABLE_ON).add(block);
-				getOrCreateTagBuilder(BlockTags.WOLVES_SPAWNABLE_ON).add(block);
+				valueLookupBuilder(BlockTags.GOATS_SPAWNABLE_ON).add(block);
+				valueLookupBuilder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
+				valueLookupBuilder(BlockTags.RABBITS_SPAWNABLE_ON).add(block);
+				valueLookupBuilder(BlockTags.FOXES_SPAWNABLE_ON).add(block);
+				valueLookupBuilder(BlockTags.WOLVES_SPAWNABLE_ON).add(block);
 			}
 		}
 
-		getOrCreateTagBuilder(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
-		getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
-		getOrCreateTagBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
+		valueLookupBuilder(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
+		valueLookupBuilder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
+		valueLookupBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
 
-		getOrCreateTagBuilder(BlockTags.STAIRS).add(STAIRS.get());
-		getOrCreateTagBuilder(BlockTags.SLABS).add(SLAB.get());
-		getOrCreateTagBuilder(BlockTags.FENCE_GATES).add(FENCE_GATE.get());
-		getOrCreateTagBuilder(BlockTags.FENCES).add(FENCE2.get());
-		getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(FENCE2.get());
-		getOrCreateTagBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
-		getOrCreateTagBuilder(BlockTags.WALLS).add(WALL.get());
+		valueLookupBuilder(BlockTags.STAIRS).add(STAIRS.get());
+		valueLookupBuilder(BlockTags.SLABS).add(SLAB.get());
+		valueLookupBuilder(BlockTags.FENCE_GATES).add(FENCE_GATE.get());
+		valueLookupBuilder(BlockTags.FENCES).add(FENCE2.get());
+		valueLookupBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(FENCE2.get());
+		valueLookupBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
+		valueLookupBuilder(BlockTags.WALLS).add(WALL.get());
 
-		getOrCreateTagBuilder(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).forceAddTag(BlockTags.LEAVES);
-		getOrCreateTagBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
-		getOrCreateTagBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
+		valueLookupBuilder(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER).forceAddTag(BlockTags.LEAVES);
+		valueLookupBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
+		valueLookupBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
 
-		getOrCreateTagBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
+		valueLookupBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
 
-		getOrCreateTagBuilder(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
-		getOrCreateTagBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
+		valueLookupBuilder(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
+		valueLookupBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
 	}
 }

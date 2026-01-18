@@ -7,18 +7,16 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
-import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 
-@NotNullByDefault
 public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVariant, OptionalLayerSnowVariant {
 
 	public SnowFenceBlock(Properties properties) {
@@ -33,10 +31,10 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
-	@Override
-	public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos) {
-		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, it -> super.getOcclusionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
-	}
+//	@Override
+//	public VoxelShape getOcclusionShape(BlockState blockState) {
+//		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, super::getOcclusionShape);
+//	}
 
 	@Override
 	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
@@ -52,15 +50,6 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 	}
 
 	@Override
-	public String getDescriptionId() {
-		if (CoreModule.FENCE.is(this)) {
-			return super.getDescriptionId();
-		} else {
-			return CoreModule.FENCE.get().getDescriptionId();
-		}
-	}
-
-	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);
 		builder.add(OPTIONAL_LAYERS);
@@ -69,12 +58,14 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 	@Override
 	public BlockState updateShape(
 			BlockState state,
-			Direction direction,
-			BlockState thatState,
-			LevelAccessor level,
+			LevelReader level,
+			ScheduledTickAccess ticks,
 			BlockPos pos,
-			BlockPos thatPos) {
-		state = super.updateShape(state, direction, thatState, level, pos, thatPos);
+			Direction directionToNeighbour,
+			BlockPos neighbourPos,
+			BlockState neighbourState,
+			RandomSource random) {
+		state = super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
 		if (!Hooks.canSnowSurvive(level, pos)) {
 			state = state.setValue(OPTIONAL_LAYERS, 0);
 		}

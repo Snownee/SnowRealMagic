@@ -1,6 +1,6 @@
 package snownee.snow.compat.diagonalfences;
 
-import fuzs.diagonalblocks.api.v2.impl.DiagonalFenceBlock;
+import fuzs.diagonalblocks.api.v2.block.DiagonalFenceBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,14 +13,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.snow.Hooks;
 import snownee.snow.block.OptionalLayerSnowVariant;
 import snownee.snow.block.ShapeCaches;
 import snownee.snow.block.WaterLoggableSnowVariant;
 import snownee.snow.compat.diagonalblocks.SnowStarCollisionBlock;
 
-@NotNullByDefault
 public class SnowDiagonalFenceBlock extends DiagonalFenceBlock implements SnowStarCollisionBlock, WaterLoggableSnowVariant, OptionalLayerSnowVariant {
 	public SnowDiagonalFenceBlock(Block block) {
 		super(block);

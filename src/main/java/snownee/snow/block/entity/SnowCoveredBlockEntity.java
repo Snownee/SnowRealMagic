@@ -2,15 +2,13 @@ package snownee.snow.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
+import net.minecraft.world.level.storage.ValueOutput;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.block.SnowSlabBlock;
 import snownee.snow.block.SnowVariant;
 
-@NotNullByDefault
 public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
 	public SnowCoveredBlockEntity(BlockPos pos, BlockState blockState) {
@@ -24,10 +22,10 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	}
 
 	@Override
-	public void saveContainedState(CompoundTag data, boolean network) {
-		data.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
+	public void saveContainedState(ValueOutput output, boolean network) {
+		output.putString("Block", BuiltInRegistries.BLOCK.getKey(getContainedState().getBlock()).toString());
 		if (options.renderOverlay) {
-			data.putBoolean("RO", true);
+			output.putBoolean("RO", true);
 		}
 	}
 
@@ -45,7 +43,7 @@ public class SnowCoveredBlockEntity extends SnowBlockEntity {
 	@Override
 	public void refresh() {
 		super.refresh();
-		if (level != null && level.isClientSide) {
+		if (level != null && level.isClientSide()) {
 			setChanged();
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 11);
 		}

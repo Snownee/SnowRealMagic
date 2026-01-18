@@ -1,13 +1,16 @@
 package snownee.snow.client.model;
 
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
-import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.resources.model.BakedModel;
+import org.jspecify.annotations.Nullable;
+
+import net.fabricmc.fabric.api.blockgetter.v2.FabricBlockGetter;
+import net.fabricmc.fabric.api.client.model.loading.v1.wrapper.WrapperBlockStateModel;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.DoublePlantBlock;
@@ -16,40 +19,35 @@ import snownee.snow.CoreModule;
 import snownee.snow.block.entity.RenderData;
 import snownee.snow.client.SnowClientConfig;
 
-public class SnowVariantModel extends ForwardingBakedModel {
+public class SnowVariantModel extends WrapperBlockStateModel {
 
-	private final BakedModel variantModel;
+	private final BlockStateModel variantModel;
 
-	public SnowVariantModel(BakedModel model, BakedModel variantModel) {
+	public SnowVariantModel(BlockStateModel model, BlockStateModel variantModel) {
 		wrapped = model;
 		this.variantModel = variantModel;
 	}
 
 	@Override
-	public void emitBlockQuads(
-			BlockAndTintGetter blockView,
-			BlockState state,
+	public void emitQuads(
+			QuadEmitter emitter,
+			BlockAndTintGetter level,
 			BlockPos pos,
-			Supplier<RandomSource> randomSupplier,
-			RenderContext context) {
-		BakedModel model = null;
+			BlockState state,
+			RandomSource random,
+			Predicate<@Nullable Direction> cullTest) {
+		BlockStateModel model = null;
 		if (SnowClientConfig.snowVariants && pos != null) {
-			if (((FabricBlockView) blockView).getBlockEntityRenderData(pos) instanceof RenderData) {
+			if (((FabricBlockGetter) level).getBlockEntityRenderData(pos) instanceof RenderData) {
 				model = variantModel;
 			} else if (state.hasProperty(DoublePlantBlock.HALF) &&
-					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(blockView.getBlockState(pos.below()))) {
+					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(level.getBlockState(pos.below()))) {
 				model = variantModel;
 			}
 		}
 		if (model == null) {
 			model = wrapped;
 		}
-		((FabricBakedModel) model).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+		((FabricBlockStateModel) model).emitQuads(emitter, level, pos, state, random, cullTest);
 	}
-
-	@Override
-	public boolean isVanillaAdapter() {
-		return false;
-	}
-
 }

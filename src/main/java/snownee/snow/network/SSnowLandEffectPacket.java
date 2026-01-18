@@ -1,5 +1,7 @@
 package snownee.snow.network;
 
+import java.util.Objects;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -48,7 +50,7 @@ public record SSnowLandEffectPacket(BlockPos pos, byte originLayers, byte layers
 		@Override
 		public void handle(SSnowLandEffectPacket packet, PayloadContext payloadContext) {
 			payloadContext.execute(() -> {
-				ClientLevel level = Minecraft.getInstance().level;
+				ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
 				double offsetY = packet.originLayers / 8D;
 				int times = packet.layers * 10;
 				for (int i = 0; i < times; ++i) {

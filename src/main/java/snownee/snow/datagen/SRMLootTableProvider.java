@@ -2,8 +2,8 @@ package snownee.snow.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootSubProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -13,9 +13,9 @@ import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.loot.NormalizeLoot;
 
-public class SRMLootTableProvider extends FabricBlockLootTableProvider {
+public class SRMLootTableProvider extends FabricBlockLootSubProvider {
 	protected SRMLootTableProvider(
-			FabricDataOutput dataOutput,
+			FabricPackOutput dataOutput,
 			CompletableFuture<HolderLookup.Provider> registryLookup) {
 		super(dataOutput, registryLookup);
 	}

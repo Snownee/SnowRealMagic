@@ -5,9 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.world.level.block.SoundType;
-import snownee.kiwi.util.NotNullByDefault;
 
-@NotNullByDefault
 public final class WrappedSoundType extends SoundType {
 
 	private WrappedSoundType(SoundType type) {
