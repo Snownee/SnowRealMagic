@@ -11,7 +11,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
@@ -26,9 +25,8 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 			method = "randomTick",
 			at = @At(
 					value = "INVOKE",
-					ordinal = 1,
-					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
-	private boolean srm_isSnowySetting(BlockState blockState, Block block, Operation<Boolean> original) {
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"))
+	private boolean srm_isSnowySetting(BlockState blockState, Object block, Operation<Boolean> original) {
 		return Hooks.isSnowySetting(blockState);
 	}
 
@@ -36,7 +34,7 @@ public abstract class SpreadableSnowyDirtBlockMixin {
 			method = "canBeGrass",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"),
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"),
 			cancellable = true)
 	private static void srm_checkSnowFirst(
 			final BlockState blockState,

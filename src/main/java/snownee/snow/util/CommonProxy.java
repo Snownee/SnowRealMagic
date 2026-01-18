@@ -3,9 +3,9 @@ package snownee.snow.util;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import fuzs.puzzleslib.api.event.v1.server.TagsUpdatedCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
@@ -30,8 +30,6 @@ import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
-import snownee.snow.compat.diagonalfences.DiagonalFencesCompat;
-import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
@@ -155,17 +153,17 @@ public class CommonProxy implements ModInitializer {
 		});
 		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
 		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
-		TagsUpdatedCallback.EVENT.register((_, _) -> {
+		CommonLifecycleEvents.TAGS_LOADED.register((_, _) -> {
 			ShapeCaches.invalidateAll();
 		});
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
 		if (Platform.isModLoaded("diagonalfences")) {
-			DiagonalFencesCompat.init();
+//			DiagonalFencesCompat.init();
 		}
 		if (Platform.isModLoaded("diagonalwalls")) {
-			DiagonalWallsCompat.init();
+//			DiagonalWallsCompat.init();
 		}
 	}
 

@@ -37,7 +37,9 @@ public class WorldTickHandler {
 		BlockState blockState = level.getBlockState(pos.move(Direction.DOWN));
 		if (blockState.getBlock() instanceof IceBlockAccess ice) {
 			Holder<Biome> biome = level.getBiome(pos);
-			if (CommonProxy.snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(pos)) {
+			if (CommonProxy.snowAndIceMeltInWarmBiomes(level.dimension(), biome) && biome.value().warmEnoughToRain(
+					pos,
+					level.getSeaLevel())) {
 				ice.callMelt(blockState, level, pos);
 			}
 			return;

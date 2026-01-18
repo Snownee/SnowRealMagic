@@ -5,6 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -24,7 +26,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -43,7 +46,7 @@ import snownee.snow.block.SnowVariant;
 public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	// NaturalSpawner#getTopNonCollidingPos
 	@Unique
-	private static final VoxelShape[] SNOW_SHAPES_MAGIC = new VoxelShape[]{
+	private static final VoxelShape[] SHAPES_MAGIC = new VoxelShape[]{
 			Shapes.empty(),
 			Block.box(0, 0, 0, 16, 1, 16),
 			Block.box(0, 0, 0, 16, 2, 16),
@@ -53,7 +56,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			Block.box(0, 0, 0, 16, 6, 16)};
 	@Final
 	@Shadow
-	protected static VoxelShape[] SHAPE_BY_LAYER;
+	protected static VoxelShape[] SHAPES;
 
 	public SnowLayerBlockMixin(Block.Properties properties) {
 		super(properties);
@@ -68,7 +71,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			Operation<VoxelShape> original) {
 		int layers = state.getValue(SnowLayerBlock.LAYERS);
 		if (!SnowCommonConfig.thinnerBoundingBox) {
-			return SHAPE_BY_LAYER[layers - 1];
+			return SHAPES[layers - 1];
 		}
 		if (layers == 8) {
 			return Shapes.block();
@@ -76,10 +79,10 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
 			Entity entity = entityContext.getEntity();
 			if (entity.getType() == EntityType.FALLING_BLOCK) {
-				return SHAPE_BY_LAYER[layers - 1];
+				return SHAPES[layers - 1];
 			}
 		}
-		return SNOW_SHAPES_MAGIC[layers - 1];
+		return SHAPES_MAGIC[layers - 1];
 	}
 
 	@Override
@@ -89,27 +92,28 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 	}
 
-	@WrapMethod(method = "updateShape")
-	private BlockState srm_updateShape(
-			BlockState stateIn,
-			Direction facing,
-			BlockState facingState,
-			LevelAccessor level,
-			BlockPos currentPos,
-			BlockPos facingPos,
-			Operation<BlockState> original) {
-		if (Hooks.isFallable(stateIn)) {
-			level.scheduleTick(currentPos, this, srm$getDelayAfterPlace());
-			return stateIn;
+	@Inject(method = "updateShape", at = @At("HEAD"), cancellable = true)
+	private void updateShape(
+			BlockState state,
+			LevelReader level,
+			ScheduledTickAccess ticks,
+			BlockPos pos,
+			Direction directionToNeighbour,
+			BlockPos neighbourPos,
+			BlockState neighbourState,
+			RandomSource random,
+			CallbackInfoReturnable<BlockState> ci) {
+		if (Hooks.isFallable(state)) {
+			ticks.scheduleTick(pos, this, srm$getDelayAfterPlace());
+			ci.setReturnValue(state);
 		}
-		return original.call(stateIn, facing, facingState, level, currentPos, facingPos);
 	}
 
 	@WrapOperation(
 			method = "canSurvive", at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
-	private boolean srm_canSurvive(BlockState blockState, Block block, Operation<Boolean> original) {
+			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"))
+	private boolean srm_canSurvive(BlockState blockState, Object block, Operation<Boolean> original) {
 		return blockState.getBlock() instanceof SnowLayerBlock || original.call(blockState, block);
 	}
 

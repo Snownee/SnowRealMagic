@@ -116,11 +116,10 @@ public class CoreModule extends AbstractModule {
 			.randomTicks()));
 
 	@Name("snow")
-	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, null, SRMSnowLayerBlock.class);
+	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, SRMSnowLayerBlock.class);
 
 	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
 			SnowCoveredBlockEntity::new,
-			null,
 			WaterLoggableSnowVariant.class);
 
 	public static final KiwiGO<MapCodec<NormalizeLoot>> NORMALIZE = go(() -> NormalizeLoot.CODEC, Registries.LOOT_POOL_ENTRY_TYPE);

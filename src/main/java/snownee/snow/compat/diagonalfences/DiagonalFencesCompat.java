@@ -1,3 +1,4 @@
+/*
 package snownee.snow.compat.diagonalfences;
 
 import com.google.common.collect.BiMap;
@@ -75,3 +76,4 @@ public class DiagonalFencesCompat extends AbstractModule {
 				}));
 	}
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package snownee.snow.compat.diagonalwalls;
 
 import fuzs.diagonalblocks.api.v2.block.DiagonalWallBlock;
@@ -71,3 +72,4 @@ public class SnowDiagonalWallBlock extends DiagonalWallBlock implements SnowStar
 		return Hooks.canBeReplaced(state, context);
 	}
 }
+*/

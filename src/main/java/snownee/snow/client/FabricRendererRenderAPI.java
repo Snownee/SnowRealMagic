@@ -6,10 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
-import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -24,8 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.CoreModule;
-import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
-import snownee.snow.mixin.client.BlockRenderInfoAccess;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
@@ -100,22 +96,20 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (blockState == selfState && model != ClientHooks.cachedOverlayModel) {
 			model = unwrapped;
 		}
-		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
-			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
-			boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
-			blockInfo.prepareForBlock(
-					generalOverlay ? TOP_SLAB : blockState,
-					pos,
-					model.useAmbientOcclusion());
-			if (generalOverlay) {
-				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(ChunkSectionLayer.CUTOUT);
-				blockInfo.blockPos = pos.below();
-				for (Direction direction : Direction.Plane.HORIZONTAL) {
-					emitter.isFaceCulled(direction);
-				}
-				blockInfo.blockPos = pos;
-			}
-		}
+		//FIXME
+//		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
+//			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
+//			boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
+//			blockInfo.prepareForBlock(pos, generalOverlay ? TOP_SLAB : blockState);
+//			if (generalOverlay) {
+//				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(ChunkSectionLayer.CUTOUT);
+//				blockInfo.blockPos = pos.below();
+//				for (Direction direction : Direction.Plane.HORIZONTAL) {
+//					emitter.cullFace(direction);
+//				}
+//				blockInfo.blockPos = pos;
+//			}
+//		}
 		((FabricBlockStateModel) model).emitQuads(emitter, level, pos, blockState, random, cullTest);
 		emitter.popTransform();
 		return true;

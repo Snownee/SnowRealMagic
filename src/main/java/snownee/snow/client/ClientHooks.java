@@ -78,7 +78,7 @@ public final class ClientHooks {
 		if (options.renderOverlay && (renderType == null || renderType == ChunkSectionLayer.CUTOUT) &&
 				snowVariant.srm$canRenderOverlay(blockState)) {
 			if (cachedOverlayModel == null) {
-				cachedOverlayModel = ClientProxy.getBlockModel(OVERLAY_MODEL);
+				cachedOverlayModel = ClientProxy.getBlockModel(ClientProxy.OVERLAY_MODEL);
 			}
 			double yOffset = snowVariant.srm$renderLayerOffset(blockState) - 1.0;
 			if (snowVariant.srm$layers(blockState, api.level(), api.pos()) == 8) {

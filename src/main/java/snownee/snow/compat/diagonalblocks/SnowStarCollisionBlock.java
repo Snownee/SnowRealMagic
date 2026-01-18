@@ -1,3 +1,4 @@
+/*
 package snownee.snow.compat.diagonalblocks;
 
 import fuzs.diagonalblocks.api.v2.block.StarCollisionBlock;
@@ -31,3 +32,4 @@ public interface SnowStarCollisionBlock extends StarCollisionBlock {
 		}
 	}
 }
+*/

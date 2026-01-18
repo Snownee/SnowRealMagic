@@ -17,7 +17,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -76,8 +75,8 @@ public abstract class BlockItemMixin extends Item {
 			BlockState blockState,
 			CallbackInfoReturnable<Boolean> ci) {
 		if (worldIn.isClientSide() && worldIn.getServer() == null && worldIn.getBlockEntity(pos) instanceof SnowBlockEntity be) {
-			var blockEntityData = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
-			if (!blockEntityData.isEmpty()) {
+			var blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+			if (blockEntityData != null) {
 				blockEntityData.loadInto(be, worldIn.registryAccess());
 				be.setChanged();
 			}
@@ -89,7 +88,7 @@ public abstract class BlockItemMixin extends Item {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;getStateForPlacement(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"))
-	private BlockState srm_getPlacementState(Block block, BlockPlaceContext context, Operation<@Nullable BlockState> original) {
+	private @Nullable BlockState srm_getPlacementState(Block block, BlockPlaceContext context, Operation<@Nullable BlockState> original) {
 		return Hooks.getStateForPlacement(block, context, original.call(block, context));
 	}
 }

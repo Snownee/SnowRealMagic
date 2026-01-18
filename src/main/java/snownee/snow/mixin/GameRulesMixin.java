@@ -18,7 +18,8 @@ public class GameRulesMixin {
 	@Inject(method = "get", at = @At("HEAD"), cancellable = true)
 	private <T> void srm_get(GameRule<T> rule, CallbackInfoReturnable<T> ci) {
 		if (rule == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
-			ci.setReturnValue(Integer.valueOf(0));
+			//noinspection unchecked
+			ci.setReturnValue((T) Integer.valueOf(0));
 		}
 	}
 

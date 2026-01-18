@@ -9,3 +9,5 @@ accessible field net/minecraft/util/context/ContextMap params Ljava/util/Map;
 accessible field net/minecraft/world/entity/Entity dimensions Lnet/minecraft/world/entity/EntityDimensions;
 
 accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
+
+accessible field net/minecraft/client/resources/model/ModelManager MODEL_LISTER Lnet/minecraft/resources/FileToIdConverter;

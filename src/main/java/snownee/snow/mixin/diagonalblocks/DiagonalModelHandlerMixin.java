@@ -1,3 +1,4 @@
+/*
 package snownee.snow.mixin.diagonalblocks;
 
 import java.util.function.BiConsumer;
@@ -61,3 +62,4 @@ public class DiagonalModelHandlerMixin {
 		}
 	}
 }
+*/

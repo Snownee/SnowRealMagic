@@ -14,6 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.block.entity.RenderData;
+import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.client.ClientHooks;
 import snownee.snow.client.FabricRendererRenderAPI;
 
@@ -32,7 +33,7 @@ public class SnowCoveredModel extends WrapperBlockStateModel {
 			RandomSource random,
 			Predicate<@Nullable Direction> cullTest) {
 		Object data = ((FabricBlockGetter) level).getBlockEntityRenderData(pos);
-		if (!(data instanceof RenderData renderData)) {
+		if (!(data instanceof RenderData(BlockState camo, SnowBlockEntity.Options options))) {
 			return;
 		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
@@ -43,6 +44,6 @@ public class SnowCoveredModel extends WrapperBlockStateModel {
 				random,
 				cullTest,
 				wrapped);
-		ClientHooks.renderHook(state, renderData.camo(), renderData.options(), null, api);
+		ClientHooks.renderHook(state, camo, options, null, api);
 	}
 }

@@ -37,7 +37,7 @@ public class SnowVariantModel extends WrapperBlockStateModel {
 			RandomSource random,
 			Predicate<@Nullable Direction> cullTest) {
 		BlockStateModel model = null;
-		if (SnowClientConfig.snowVariants && pos != null) {
+		if (SnowClientConfig.snowVariants) {
 			if (((FabricBlockGetter) level).getBlockEntityRenderData(pos) instanceof RenderData) {
 				model = variantModel;
 			} else if (state.hasProperty(DoublePlantBlock.HALF) &&

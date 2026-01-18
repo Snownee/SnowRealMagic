@@ -23,15 +23,13 @@
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
-		"diagonalblocks.VoxelCollectionAccess",
-		"sereneseasons.RandomUpdateHandlerMixin"
+		"diagonalblocks.VoxelCollectionAccess"
 	],
 	"client": [
-		"client.AbstractBlockRenderContextAccess",
+		"client.AbstractTerrainRenderContextAccess",
 		"client.BlockRenderInfoAccess",
 		"client.CameraMixin",
-		"client.SnowLayerBlockClientMixin",
-		"diagonalblocks.DiagonalModelHandlerMixin"
+		"client.SnowLayerBlockClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
