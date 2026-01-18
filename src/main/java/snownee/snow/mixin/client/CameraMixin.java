@@ -10,8 +10,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.CoreModule;
@@ -21,15 +20,15 @@ import snownee.snow.block.SnowVariant;
 @Mixin(Camera.class)
 public abstract class CameraMixin {
 	@Shadow
-	private BlockGetter level;
+	private Level level;
 
 	@WrapOperation(
 			method = "getFluidInCamera", at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+			target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"))
 	private boolean srm_getFluidInCamera(
 			BlockState blockState,
-			Block powderSnow,
+			Object powderSnow,
 			Operation<Boolean> original,
 			@Local BlockPos pos,
 			@Local(ordinal = 1) Vec3 point) {

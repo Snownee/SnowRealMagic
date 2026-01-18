@@ -63,57 +63,71 @@ public class CoreModule extends AbstractModule {
 
 	@NoItem
 	@Name("snow_extra_collision")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = go(() -> new ExtraCollisionSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = block(
+			$ -> new ExtraCollisionSnowLayerBlock($.dynamicShape()),
+			() -> Blocks.SNOW);
 
 	@NoItem
 	@Name("snow")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = block(
+			$ -> new SRMSnowLayerBlock($.dynamicShape()),
+			() -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = block(
+			$ -> new SRMSnowLayerBlock($.dynamicShape()),
+			() -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = block(
+			$ -> new SRMSnowLayerBlock($.dynamicShape()),
+			() -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = go(() -> new SRMSnowLayerBlock(blockProp(Blocks.SNOW).dynamicShape()));
-
-	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> FENCE = go(() -> new SnowFenceBlock(blockProp(Blocks.OAK_FENCE).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()));
-
-	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> FENCE2 = go(() -> new SnowFenceBlock(blockProp(Blocks.NETHER_BRICK_FENCE).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()
-			.overrideDescription(FENCE.get().getDescriptionId())));
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = block(
+			$ -> new SRMSnowLayerBlock($.dynamicShape()),
+			() -> Blocks.SNOW);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> STAIRS = go(() -> new SnowStairsBlock(blockProp(Blocks.OAK_STAIRS).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()));
+	public static final KiwiGO<Block> FENCE = block(
+			$ -> new SnowFenceBlock($.mapColor(MapColor.SNOW).sound(SoundType.SNOW).randomTicks()),
+			() -> Blocks.OAK_FENCE);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> SLAB = go(() -> new SnowSlabBlock(blockProp(Blocks.OAK_SLAB).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()));
+	public static final KiwiGO<Block> FENCE2 = block(
+			$ -> new SnowFenceBlock($.mapColor(MapColor.SNOW)
+					.sound(SoundType.SNOW)
+					.randomTicks()
+					.overrideDescription(FENCE.get().getDescriptionId())), () -> Blocks.NETHER_BRICK_FENCE);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> FENCE_GATE = go(() -> new SnowFenceGateBlock(blockProp(Blocks.OAK_FENCE_GATE).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()));
+	public static final KiwiGO<Block> STAIRS = block(
+			$ -> new SnowStairsBlock($.mapColor(MapColor.SNOW)
+					.sound(SoundType.SNOW)
+					.randomTicks()), () -> Blocks.OAK_STAIRS);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
-	public static final KiwiGO<Block> WALL = go(() -> new SnowWallBlock(blockProp(Blocks.COBBLESTONE_WALL).mapColor(MapColor.SNOW)
-			.sound(SoundType.SNOW)
-			.randomTicks()));
+	public static final KiwiGO<Block> SLAB = block(
+			$ -> new SnowSlabBlock($.mapColor(MapColor.SNOW).sound(SoundType.SNOW).randomTicks()),
+			() -> Blocks.OAK_SLAB);
+
+	@NoItem
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<Block> FENCE_GATE = block(
+			$ -> new SnowFenceGateBlock($.mapColor(MapColor.SNOW)
+					.sound(SoundType.SNOW)
+					.randomTicks()), () -> Blocks.OAK_FENCE_GATE);
+
+	@NoItem
+	@RenderLayer(RenderLayerEnum.CUTOUT)
+	public static final KiwiGO<Block> WALL = block(
+			$ -> new SnowWallBlock($.mapColor(MapColor.SNOW)
+					.sound(SoundType.SNOW)
+					.randomTicks()), () -> Blocks.COBBLESTONE_WALL);
 
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, SRMSnowLayerBlock.class);

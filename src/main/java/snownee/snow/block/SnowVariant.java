@@ -30,24 +30,6 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 		return srm$getRaw(state, level, pos);
 	}
 
-// FIXME mixin BlockBehaviour#getCloneItemStack
-//	@Override
-//	default ItemStack getCloneItemStack(
-//			LevelReader level,
-//			BlockPos blockPos,
-//			BlockState blockState,
-//			@Nullable Player player,
-//			@Nullable HitResult hit) {
-//		BlockState raw = srm$getRaw(blockState, level, blockPos);
-//		if (raw.isAir()) {
-//			return Items.SNOW.getDefaultInstance();
-//		}
-//		if (raw.getBlock() instanceof BlockPickInteractionAware) {
-//			return (((BlockPickInteractionAware) raw.getBlock()).getPickedStack(raw, level, blockPos, player, hit));
-//		}
-//		return raw.getBlock().getCloneItemStack(level, blockPos, raw);
-//	}
-
 	@Override
 	default BlockState getAppearance(
 			BlockState state,
