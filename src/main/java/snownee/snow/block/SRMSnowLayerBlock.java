@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
@@ -72,7 +73,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	protected VoxelShape getOcclusionShape(BlockState state) {
-		return Shapes.block();
+		return super.getShape(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
 	}
 
 	@Override

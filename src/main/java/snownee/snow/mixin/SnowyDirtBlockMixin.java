@@ -13,8 +13,8 @@ import snownee.snow.Hooks;
 public class SnowyDirtBlockMixin {
 
 	@WrapMethod(method = "isSnowySetting")
-	private static boolean srm_isSnowySetting(BlockState blockState, Operation<Boolean> original) {
-		return Hooks.isSnowySetting(blockState);
+	private static boolean srm_isSnowySetting(BlockState aboveState, Operation<Boolean> original) {
+		return Hooks.isSnowySetting(aboveState);
 	}
 
 }

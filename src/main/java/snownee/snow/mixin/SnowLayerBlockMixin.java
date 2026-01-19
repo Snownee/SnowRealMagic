@@ -56,7 +56,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			Block.box(0, 0, 0, 16, 6, 16)};
 	@Final
 	@Shadow
-	protected static VoxelShape[] SHAPES;
+	private static VoxelShape[] SHAPES;
 
 	public SnowLayerBlockMixin(Block.Properties properties) {
 		super(properties);
@@ -140,8 +140,8 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@WrapMethod(method = "canBeReplaced")
-	private boolean srm_canBeReplaced(BlockState blockState, BlockPlaceContext useContext, Operation<Boolean> original) {
-		return Hooks.canBeReplaced(blockState, useContext);
+	private boolean srm_canBeReplaced(BlockState state, BlockPlaceContext context, Operation<Boolean> original) {
+		return Hooks.canBeReplaced(state, context);
 	}
 
 	@Override
@@ -199,12 +199,6 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 			}
 		}
 	}
-
-	//	@Override
-	//	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
-	//		ItemStack stack = getRaw(state, world, pos).getCloneItemStack(target, world, pos, player);
-	//		return stack.isEmpty() ? new ItemStack(CoreModule.ITEM) : stack;
-	//	}
 
 	@Override
 	public int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {

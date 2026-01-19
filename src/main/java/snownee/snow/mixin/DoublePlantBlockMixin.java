@@ -39,8 +39,8 @@ public class DoublePlantBlockMixin {
 			BlockState state,
 			Player player,
 			CallbackInfo ci,
-			@Local DoubleBlockHalf doubleBlockHalf) {
-		if (doubleBlockHalf != DoubleBlockHalf.UPPER) {
+			@Local(name = "part") DoubleBlockHalf part) {
+		if (part != DoubleBlockHalf.UPPER) {
 			return;
 		}
 		var belowPos = pos.below();

@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class IceBlockMixin {
 
 	@Inject(method = "melt", at = @At("HEAD"), cancellable = true)
-	private void srm_melt(BlockState blockState, Level level, BlockPos blockPos, CallbackInfo ci) {
-		BlockPos above = blockPos.above();
+	private void srm_melt(BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
+		BlockPos above = pos.above();
 		BlockState stateAbove = level.getBlockState(above);
 		if (stateAbove.getBlock() instanceof SnowLayerBlock) {
 			if (stateAbove.getValue(SnowLayerBlock.LAYERS) < 5) {

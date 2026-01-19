@@ -7,7 +7,6 @@ import org.jspecify.annotations.Nullable;
 import net.fabricmc.fabric.api.blockgetter.v2.FabricBlockGetter;
 import net.fabricmc.fabric.api.client.model.loading.v1.wrapper.WrapperBlockStateModel;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,11 +20,8 @@ import snownee.snow.client.SnowClientConfig;
 
 public class SnowVariantModel extends WrapperBlockStateModel {
 
-	private final BlockStateModel variantModel;
-
-	public SnowVariantModel(BlockStateModel model, BlockStateModel variantModel) {
-		wrapped = model;
-		this.variantModel = variantModel;
+	public SnowVariantModel(BlockStateModel model) {
+		super(model);
 	}
 
 	@Override
@@ -36,18 +32,14 @@ public class SnowVariantModel extends WrapperBlockStateModel {
 			BlockState state,
 			RandomSource random,
 			Predicate<@Nullable Direction> cullTest) {
-		BlockStateModel model = null;
 		if (SnowClientConfig.snowVariants) {
 			if (((FabricBlockGetter) level).getBlockEntityRenderData(pos) instanceof RenderData) {
-				model = variantModel;
+				emitter = new SnowyQuadEmitter(emitter);
 			} else if (state.hasProperty(DoublePlantBlock.HALF) &&
 					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(level.getBlockState(pos.below()))) {
-				model = variantModel;
+				emitter = new SnowyQuadEmitter(emitter);
 			}
 		}
-		if (model == null) {
-			model = wrapped;
-		}
-		((FabricBlockStateModel) model).emitQuads(emitter, level, pos, state, random, cullTest);
+		super.emitQuads(emitter, level, pos, state, random, cullTest);
 	}
 }

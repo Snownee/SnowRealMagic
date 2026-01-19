@@ -20,20 +20,20 @@ public class GameRuleCommandMixin {
 	@Inject(method = "setRule", at = @At("RETURN"))
 	private static <T> void srm_setRule(
 			CommandContext<CommandSourceStack> context,
-			GameRule<T> key,
+			GameRule<T> gameRule,
 			CallbackInfoReturnable<Integer> ci) {
-		if (key == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
+		if (gameRule == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
 			context.getSource().sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}
 	}
 
 	@Inject(method = "queryRule", at = @At("RETURN"))
 	private static <T> void srm_queryRule(
-			CommandSourceStack context,
-			GameRule<T> key,
+			CommandSourceStack source,
+			GameRule<T> gameRule,
 			CallbackInfoReturnable<Integer> ci) {
-		if (key == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
-			context.sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
+		if (gameRule == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
+			source.sendFailure(Component.translatable("commands.gamerule.snowrealmagic.hint"));
 		}
 	}
 

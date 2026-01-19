@@ -37,7 +37,7 @@ public class SnowCoveredModel extends WrapperBlockStateModel {
 			return;
 		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
-				emitter,
+				new SnowyQuadEmitter(emitter),
 				level,
 				pos,
 				state,

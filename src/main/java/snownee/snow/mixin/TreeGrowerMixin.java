@@ -53,11 +53,11 @@ public class TreeGrowerMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
 	private void srm_initLayers(
-			final ServerLevel serverLevel,
-			final ChunkGenerator chunkGenerator,
-			final BlockPos blockPos,
-			final BlockState blockState,
-			final RandomSource randomSource,
+			final ServerLevel level,
+			final ChunkGenerator generator,
+			final BlockPos pos,
+			final BlockState state,
+			final RandomSource random,
 			final CallbackInfoReturnable<Boolean> cir,
 			@Share("layers") LocalRef<IntList> layers,
 			@Share("index") LocalIntRef index) {
@@ -77,11 +77,11 @@ public class TreeGrowerMixin {
 							target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z")))
 	private BlockPos srm_recordLayers(
 			final BlockPos blockPos,
-			ServerLevel serverLevel,
+			ServerLevel level,
 			@Share("layers") LocalRef<IntList> layers) {
-		var blockState = serverLevel.getBlockState(blockPos);
+		var blockState = level.getBlockState(blockPos);
 		if (blockState.getBlock() instanceof SnowVariant snow) {
-			layers.get().add(snow.srm$layers(blockState, serverLevel, blockPos));
+			layers.get().add(snow.srm$layers(blockState, level, blockPos));
 		} else {
 			layers.get().add(0);
 		}

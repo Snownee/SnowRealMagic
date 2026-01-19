@@ -41,52 +41,42 @@ import snownee.snow.convert.BlockConverters;
 import snownee.snow.loot.NormalizeLoot;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
-@KiwiModule
+@KiwiModule(modId = SnowRealMagic.ID)
 public class CoreModule extends AbstractModule {
-	public static final TagKey<Block> SNOW_TAG = blockTag(SnowRealMagic.ID, "snow");
+	public static final TagKey<Block> SNOW_TAG = blockTag("snow");
 
-	public static final TagKey<Block> SNOWY_SETTING = blockTag(SnowRealMagic.ID, "snowy_setting");
+	public static final TagKey<Block> SNOWY_SETTING = blockTag("snowy_setting");
 
-	public static final TagKey<Block> CONTAINABLES = blockTag(SnowRealMagic.ID, "containables");
+	public static final TagKey<Block> CONTAINABLES = blockTag("containables");
 
-	public static final TagKey<Block> PLANTS = blockTag(SnowRealMagic.ID, "plants");
+	public static final TagKey<Block> PLANTS = blockTag("plants");
 
-	public static final TagKey<Block> NOT_CONTAINABLES = blockTag(SnowRealMagic.ID, "not_containables");
+	public static final TagKey<Block> NOT_CONTAINABLES = blockTag("not_containables");
 
-	public static final TagKey<Block> ENTITY_INSIDE = blockTag(SnowRealMagic.ID, "entity_inside");
+	public static final TagKey<Block> ENTITY_INSIDE = blockTag("entity_inside");
 
-	public static final TagKey<Block> OFFSET_Y = blockTag(SnowRealMagic.ID, "offset_y");
+	public static final TagKey<Block> OFFSET_Y = blockTag("offset_y");
 
-	public static final TagKey<Block> EXPAND_MODEL = blockTag(SnowRealMagic.ID, "expand_model");
+	public static final TagKey<Block> EXPAND_MODEL = blockTag("expand_model");
 
-	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag(SnowRealMagic.ID, "cannot_accumulate_on");
+	public static final TagKey<Block> CANNOT_ACCUMULATE_ON = blockTag("cannot_accumulate_on");
 
 	@NoItem
 	@Name("snow_extra_collision")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = block(
-			$ -> new ExtraCollisionSnowLayerBlock($.dynamicShape()),
-			() -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = block(ExtraCollisionSnowLayerBlock::new, () -> Blocks.SNOW);
 
 	@NoItem
 	@Name("snow")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = block(
-			$ -> new SRMSnowLayerBlock($.dynamicShape()),
-			() -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = block(
-			$ -> new SRMSnowLayerBlock($.dynamicShape()),
-			() -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = block(
-			$ -> new SRMSnowLayerBlock($.dynamicShape()),
-			() -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = block(
-			$ -> new SRMSnowLayerBlock($.dynamicShape()),
-			() -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)

@@ -41,14 +41,14 @@ public abstract class BlockItemMixin extends Item {
 			BlockItem instance,
 			BlockPlaceContext placeContext,
 			Operation<InteractionResult> original,
-			UseOnContext useOnContext) {
+			UseOnContext context) {
 		if (this != Items.SNOW || !SnowCommonConfig.canPlaceSnowInBlock()) {
 			return original.call(instance, placeContext);
 		}
 		Level level = placeContext.getLevel();
 		BlockPos placePos = null;
-		if (Hooks.canPlaceAt(level, useOnContext.getClickedPos())) {
-			placePos = useOnContext.getClickedPos();
+		if (Hooks.canPlaceAt(level, context.getClickedPos())) {
+			placePos = context.getClickedPos();
 		} else if (Hooks.canPlaceAt(level, placeContext.getClickedPos())) {
 			placePos = placeContext.getClickedPos();
 		}
@@ -69,15 +69,15 @@ public abstract class BlockItemMixin extends Item {
 			method = "updateCustomBlockEntityTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z")
 	private void srm_updateCustomBlockEntityTag(
 			BlockPos pos,
-			Level worldIn,
+			Level level,
 			Player player,
-			ItemStack stack,
-			BlockState blockState,
+			ItemStack itemStack,
+			BlockState placedState,
 			CallbackInfoReturnable<Boolean> ci) {
-		if (worldIn.isClientSide() && worldIn.getServer() == null && worldIn.getBlockEntity(pos) instanceof SnowBlockEntity be) {
-			var blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+		if (level.isClientSide() && level.getServer() == null && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
+			var blockEntityData = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);
 			if (blockEntityData != null) {
-				blockEntityData.loadInto(be, worldIn.registryAccess());
+				blockEntityData.loadInto(be, level.registryAccess());
 				be.setChanged();
 			}
 		}

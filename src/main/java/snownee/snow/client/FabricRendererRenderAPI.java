@@ -53,7 +53,6 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		this.unwrapped = wrapped;
 	}
 
-	@SuppressWarnings("UnstableApiUsage")
 	@Override
 	public boolean render(BlockState blockState, BlockStateModel model, double yOffset, ModelPart part) {
 		Vec3 offset = yOffset == 0 ? blockState.getOffset(pos) : blockState.getOffset(pos).add(0, yOffset, 0);

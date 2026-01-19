@@ -30,19 +30,19 @@ public abstract class CameraMixin {
 			BlockState blockState,
 			Object powderSnow,
 			Operation<Boolean> original,
-			@Local BlockPos pos,
-			@Local(ordinal = 1) Vec3 point) {
+			@Local(name = "checkPos") BlockPos checkPos,
+			@Local(name = "offsetPos") Vec3 offsetPos) {
 		boolean originalValue = original.call(blockState, powderSnow);
 		if (originalValue || !SnowCommonConfig.thinnerBoundingBox) {
 			return originalValue;
 		}
 		if (!blockState.is(CoreModule.SNOWY_SETTING) || !(blockState.getBlock() instanceof SnowVariant snowVariant) ||
-				snowVariant.srm$layers(blockState, level, pos) < 2) {
+				snowVariant.srm$layers(blockState, level, checkPos) < 2) {
 			return false;
 		}
-		return snowVariant.srm$getSnowState(blockState, level, pos)
+		return snowVariant.srm$getSnowState(blockState, level, checkPos)
 				.getOcclusionShape()
 				.bounds()
-				.contains(point.subtract(pos.getX(), pos.getY(), pos.getZ()));
+				.contains(offsetPos.subtract(checkPos.getX(), checkPos.getY(), checkPos.getZ()));
 	}
 }

@@ -16,8 +16,8 @@ public class GameRulesMixin {
 	 * @reason Disable the vanilla snow accumulation
 	 */
 	@Inject(method = "get", at = @At("HEAD"), cancellable = true)
-	private <T> void srm_get(GameRule<T> rule, CallbackInfoReturnable<T> ci) {
-		if (rule == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
+	private <T> void srm_get(GameRule<T> gameRule, CallbackInfoReturnable<T> ci) {
+		if (gameRule == GameRules.MAX_SNOW_ACCUMULATION_HEIGHT && !SnowCommonConfig.forceVanillaIceSnowLogic) {
 			//noinspection unchecked
 			ci.setReturnValue((T) Integer.valueOf(0));
 		}

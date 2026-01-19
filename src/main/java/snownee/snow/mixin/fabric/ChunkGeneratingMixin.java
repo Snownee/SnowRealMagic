@@ -15,8 +15,8 @@ import snownee.snow.Hooks;
 
 @Mixin(ChunkStatusTasks.class)
 abstract class ChunkGeneratingMixin {
-	@ModifyReturnValue(method = "method_60553", at = @At("TAIL"))
-	private static ChunkAccess onChunkLoad(final ChunkAccess original, @Local ProtoChunk protoChunk) {
+	@ModifyReturnValue(method = "lambda$full$0", at = @At("TAIL"))
+	private static ChunkAccess onChunkLoad(final ChunkAccess original, @Local(name = "protoChunk") ProtoChunk protoChunk) {
 		if (!(protoChunk instanceof ImposterProtoChunk)) {
 			Hooks.restoreOriginalBlocks((LevelChunk) original);
 		}

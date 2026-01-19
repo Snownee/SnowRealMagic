@@ -20,13 +20,13 @@ import snownee.snow.block.WaterLoggableSnowVariant;
 public class BlockBehaviourMixin {
 	@Inject(method = "getDestroyProgress", at = @At("HEAD"), cancellable = true)
 	private void srm_getDestroyProgress(
-			BlockState blockState,
+			BlockState state,
 			Player player,
 			BlockGetter level,
 			BlockPos pos,
 			CallbackInfoReturnable<Float> cir) {
-		if (blockState.getBlock() instanceof WaterLoggableSnowVariant snowVariant) {
-			cir.setReturnValue(snowVariant.srm$getRaw(blockState, level, pos).getDestroyProgress(player, level, pos));
+		if (state.getBlock() instanceof WaterLoggableSnowVariant snowVariant) {
+			cir.setReturnValue(snowVariant.srm$getRaw(state, level, pos).getDestroyProgress(player, level, pos));
 		}
 	}
 
@@ -34,11 +34,11 @@ public class BlockBehaviourMixin {
 	private void srm_getCloneItemStack(
 			LevelReader level,
 			BlockPos pos,
-			BlockState blockState,
+			BlockState state,
 			boolean includeData,
 			CallbackInfoReturnable<ItemStack> cir) {
-		if (blockState.getBlock() instanceof SnowVariant snowVariant) {
-			BlockState raw = snowVariant.srm$getRaw(blockState, level, pos);
+		if (state.getBlock() instanceof SnowVariant snowVariant) {
+			BlockState raw = snowVariant.srm$getRaw(state, level, pos);
 			if (raw.isAir()) {
 				cir.setReturnValue(Items.SNOW.getDefaultInstance());
 			}

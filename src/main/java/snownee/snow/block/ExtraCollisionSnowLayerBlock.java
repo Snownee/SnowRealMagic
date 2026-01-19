@@ -11,7 +11,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ExtraCollisionSnowLayerBlock extends SRMSnowLayerBlock {
 	public ExtraCollisionSnowLayerBlock(Properties properties) {
-		super(properties);
+		super(properties.dynamicShape());
 	}
 
 	@Override
@@ -21,9 +21,10 @@ public class ExtraCollisionSnowLayerBlock extends SRMSnowLayerBlock {
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return ShapeCaches.get(ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
-			VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
-			return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
-		});
+		return ShapeCaches.get(
+				ShapeCaches.COLLIDER, state, worldIn, pos, () -> {
+					VoxelShape shape = super.getCollisionShape(state, worldIn, pos, context);
+					return Shapes.or(shape, srm$getRaw(state, worldIn, pos).getCollisionShape(worldIn, pos, context));
+				});
 	}
 }
