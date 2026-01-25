@@ -155,22 +155,27 @@ public class BlockConverters {
 
 					@Override
 					public boolean takeIn(BlockState blockState) {
+						return isTakeInPlant(blockState) || blockState.is(CoreModule.CONTAINABLES);
+					}
+
+					@Override
+					public BlockState convert(LevelAccessor level, BlockPos pos, BlockState blockState, int layers) {
+						if (!blockState.getCollisionShape(level, pos).isEmpty()) {
+							return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
+						}
+						return isTakeInPlant(blockState) ?
+								CoreModule.SNOWY_PLANT.defaultBlockState() :
+								CoreModule.SNOW_BLOCK.defaultBlockState();
+					}
+
+					private boolean isTakeInPlant(BlockState blockState) {
 						return cache.computeIfAbsent(
 								blockState.getBlock(),
 								block -> block instanceof TallGrassBlock || block instanceof TallDryGrassBlock ||
 										block instanceof ShortDryGrassBlock || block instanceof BushBlock ||
 										block instanceof FireflyBushBlock || block instanceof FlowerBlock ||
 										block instanceof SaplingBlock || block instanceof MushroomBlock ||
-										block instanceof SweetBerryBushBlock || block instanceof FlowerBedBlock ||
-										blockState.is(CoreModule.CONTAINABLES));
-					}
-
-					@Override
-					public BlockState convert(LevelAccessor level, BlockPos pos, BlockState blockState, int layers) {
-						return (
-								blockState.getCollisionShape(level, pos).isEmpty() ?
-										CoreModule.SNOW_BLOCK :
-										CoreModule.SNOW_EXTRA_COLLISION_BLOCK).defaultBlockState();
+										block instanceof SweetBerryBushBlock || block instanceof FlowerBedBlock);
 					}
 				});
 	}
