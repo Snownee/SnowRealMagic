@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
+import snownee.kiwi.loader.Platform;
 import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
@@ -483,7 +484,7 @@ public final class Hooks {
 			if (i != 0 && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 				hasOverlay = be.options.renderOverlay;
 			}
-			level.setBlock(pos, state2, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
+			level.setBlock(pos, state2, Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS);
 			block.setPlacedBy(level, pos, state2, player, context.getItemInHand());
 			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true)) {
 				if (!player.isCreative()) {
@@ -541,5 +542,11 @@ public final class Hooks {
 				}
 			}
 		}));
+	}
+
+	public static void logError(Throwable e, String template, Object... args) {
+		if (SnowCommonConfig.logBlockError || Platform.isProduction()) {
+			SnowRealMagic.LOGGER.error(template.formatted(args), e);
+		}
 	}
 }

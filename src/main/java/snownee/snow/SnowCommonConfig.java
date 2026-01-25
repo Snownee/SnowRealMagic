@@ -86,6 +86,8 @@ public final class SnowCommonConfig {
 	public static boolean forceVanillaIceSnowLogic = false;
 	@Path("debug.mobSpawningCommand")
 	public static boolean debugSpawningCommand = false;
+	@Path("debug.logBlockError")
+	public static boolean logBlockError = false;
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean canPlaceSnowInBlock() {

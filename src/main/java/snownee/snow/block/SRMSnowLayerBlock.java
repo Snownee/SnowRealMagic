@@ -104,9 +104,9 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			RandomSource random) {
 		BlockState stateNew = super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
 		if (!(level instanceof WorldGenRegion) && stateNew.getBlock() instanceof SRMSnowLayerBlock) {
-			BlockState contained = srm$getRaw(stateNew, level, pos);
-			BlockState containedNew = contained.updateShape(level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
-			if (contained != containedNew) {
+			BlockState raw = srm$getRaw(stateNew, level, pos);
+			BlockState containedNew = raw.updateShape(level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+			if (raw != containedNew) {
 				if (containedNew.isAir()) {
 //					level.destroyBlock(pos, true);
 					return srm$getSnowState(state, level, pos);
@@ -141,7 +141,8 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (raw.is(CoreModule.ENTITY_INSIDE)) {
 			try {
 				((BlockBehaviourAccess) raw.getBlock()).callEntityInside(raw, level, pos, entity, effectApplier, isPrecise);
-			} catch (Throwable _) {
+			} catch (Throwable e) {
+				Hooks.logError(e, "Error in entityInside of block %s", raw);
 			}
 		}
 	}
@@ -152,20 +153,22 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (raw.is(CoreModule.ANIMATE_TICK)) {
 			try {
 				raw.getBlock().animateTick(raw, level, pos, random);
-			} catch (Throwable _) {
+			} catch (Throwable e) {
+				Hooks.logError(e, "Error in animateTick of block %s", raw);
 			}
 		}
 	}
 
 	@Override
 	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		BlockState stateIn = srm$getRaw(state, level, pos);
+		BlockState raw = srm$getRaw(state, level, pos);
 		try {
 			super.randomTick(state, level, pos, random);
 		} catch (Throwable e) {
+			Hooks.logError(e, "Error in randomTick stage 1 of block %s", raw);
 			return;
 		}
-		if (stateIn.getBlock() instanceof TallGrassBlock || stateIn.getBlock() instanceof DoublePlantBlock) {
+		if (raw.getBlock() instanceof TallGrassBlock || raw.getBlock() instanceof DoublePlantBlock) {
 			return;
 		}
 		BlockState stateNow = level.getBlockState(pos);
@@ -173,19 +176,21 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			return;
 		}
 		try {
-			stateIn.randomTick(level, pos, random);
+			raw.randomTick(level, pos, random);
 			BlockState stateNow2 = level.getBlockState(pos);
 			if (!stateNow2.is(this)) {
-				Hooks.convert(level, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
+				Hooks.convert(level, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_ALL, true);
 			}
-		} catch (Throwable ignored) {
+		} catch (Throwable e) {
+			Hooks.logError(e, "Error in randomTick stage 2 of block %s", raw);
 		}
 	}
 
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		BlockState raw = srm$getRaw(state, level, pos);
 		try {
-			InteractionResult result = srm$getRaw(state, level, pos).useWithoutItem(level, player, hitResult);
+			InteractionResult result = raw.useWithoutItem(level, player, hitResult);
 			if (result.consumesAction()) {
 				BlockState stateNow = level.getBlockState(pos);
 				if (!stateNow.is(this)) {
@@ -193,7 +198,8 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 				}
 				return result;
 			}
-		} catch (Throwable ignored) {
+		} catch (Throwable e) {
+			Hooks.logError(e, "Error in useWithoutItem of block %s", raw);
 		}
 		return super.useWithoutItem(state, level, pos, player, hitResult);
 	}
@@ -207,8 +213,9 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			Player player,
 			InteractionHand hand,
 			BlockHitResult hitResult) {
+		BlockState raw = srm$getRaw(state, level, pos);
 		try {
-			InteractionResult result = srm$getRaw(state, level, pos).useItemOn(itemStack, level, player, hand, hitResult);
+			InteractionResult result = raw.useItemOn(itemStack, level, player, hand, hitResult);
 			if (result.consumesAction()) {
 				BlockState stateNow = level.getBlockState(pos);
 				if (!stateNow.is(this)) {
@@ -216,7 +223,8 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 				}
 				return result;
 			}
-		} catch (Throwable ignored) {
+		} catch (Throwable e) {
+			Hooks.logError(e, "Error in useItemOn of block %s", raw);
 		}
 		return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
 	}
@@ -226,38 +234,39 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 		if (level.isClientSide()) {
 			return;
 		}
+		BlockState raw = srm$getRaw(state, level, pos);
 		try {
-			BlockState contained = srm$getRaw(state, level, pos);
-			if (!contained.isAir() && contained.getDestroySpeed(level, pos) == 0) {
-				level.levelEvent(2001, pos, Block.getId(contained));
-				Block.dropResources(contained, level, pos, null, player, ItemStack.EMPTY);
+			if (!raw.isAir() && raw.getDestroySpeed(level, pos) == 0) {
+				level.levelEvent(2001, pos, Block.getId(raw));
+				Block.dropResources(raw, level, pos, null, player, ItemStack.EMPTY);
 				int layers = state.getValue(LAYERS);
 				level.setBlockAndUpdate(pos, Blocks.SNOW.defaultBlockState().setValue(LAYERS, layers));
 			}
-		} catch (Throwable ignored) {
+		} catch (Throwable e) {
+			Hooks.logError(e, "Error in attack of block %s", raw);
 		}
 	}
 
 	@Override
 	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
-		BlockState contained = srm$getRaw(state, level, pos);
-		Block block = contained.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(level, pos, contained);
+		BlockState raw = srm$getRaw(state, level, pos);
+		Block block = raw.getBlock();
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(level, pos, raw);
 	}
 
 	@Override
 	public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-		BlockState contained = srm$getRaw(state, level, pos);
-		Block block = contained.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isBonemealSuccess(level, random, pos, contained);
+		BlockState raw = srm$getRaw(state, level, pos);
+		Block block = raw.getBlock();
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isBonemealSuccess(level, random, pos, raw);
 	}
 
 	@Override
 	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-		BlockState contained = srm$getRaw(state, level, pos);
-		Block block = contained.getBlock();
+		BlockState raw = srm$getRaw(state, level, pos);
+		Block block = raw.getBlock();
 		if (block instanceof BonemealableBlock) {
-			((BonemealableBlock) block).performBonemeal(level, random, pos, contained);
+			((BonemealableBlock) block).performBonemeal(level, random, pos, raw);
 			BlockState stateNow = level.getBlockState(pos);
 			Hooks.convert(level, pos, stateNow, state.getValue(LAYERS), Block.UPDATE_ALL, true);
 		}

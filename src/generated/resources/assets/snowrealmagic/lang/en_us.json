@@ -27,6 +27,8 @@
   "snowrealmagic.config.debug": "Debug",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic": "Force Vanilla Ice Snow Logic",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",
+  "snowrealmagic.config.debug.logBlockError": "Log Block Error",
+  "snowrealmagic.config.debug.logBlockError.desc": "",
   "snowrealmagic.config.debug.mobSpawningCommand": "Mob Spawning Command",
   "snowrealmagic.config.debug.mobSpawningCommand.desc": "",
   "snowrealmagic.config.fancySnowOnUpperSlab": "Fancy Snow On Upper Slab",
