@@ -22,20 +22,20 @@ public class SnowLayerBlockClientMixin extends Block {
 	}
 
 	@Override
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
-		if (!SnowClientConfig.particleThroughLeaves || rand.nextInt(32) > 0) {
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+		if (!SnowClientConfig.particleThroughLeaves || random.nextInt(32) > 0) {
 			return;
 		}
 		Entity entity = Minecraft.getInstance().getCameraEntity();
 		if (entity != null && entity.blockPosition().distSqr(pos) > 256) {
 			return;
 		}
-		BlockState stateDown = worldIn.getBlockState(pos.below());
+		BlockState stateDown = level.getBlockState(pos.below());
 		if (stateDown.is(BlockTags.LEAVES)) {
-			double d0 = pos.getX() + rand.nextDouble();
+			double d0 = pos.getX() + random.nextDouble();
 			double d1 = pos.getY() - 0.05D;
-			double d2 = pos.getZ() + rand.nextDouble();
-			worldIn.addParticle(ParticleTypes.SNOWFLAKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			double d2 = pos.getZ() + random.nextDouble();
+			level.addParticle(ParticleTypes.SNOWFLAKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
 		}
 	}
 

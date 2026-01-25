@@ -32,10 +32,10 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
 				ShapeCaches.COLLIDER,
-				blockState,
+				state,
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
@@ -45,45 +45,45 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 //	}
 
 	@Override
-	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
 				ShapeCaches.OUTLINE,
-				blockState,
+				state,
 				it -> super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
 	@Override
-	public VoxelShape getVisualShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return blockState.getCollisionShape(worldIn, pos, context);
+	public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return state.getCollisionShape(level, pos, context);
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		Hooks.randomTick(state, worldIn, pos, random);
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		Hooks.randomTick(state, level, pos, random);
 	}
 
 	@Override
 	protected InteractionResult useItemOn(
 			ItemStack itemStack,
-			BlockState blockState,
+			BlockState state,
 			Level level,
-			BlockPos blockPos,
+			BlockPos pos,
 			Player player,
-			InteractionHand interactionHand,
-			BlockHitResult blockHitResult) {
-		adjustSounds(blockState, level, blockPos);
-		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+			InteractionHand hand,
+			BlockHitResult hitResult) {
+		adjustSounds(state, level, pos);
+		return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
 	}
 
 	@Override
 	protected InteractionResult useWithoutItem(
-			BlockState blockState,
+			BlockState state,
 			Level level,
-			BlockPos blockPos,
+			BlockPos pos,
 			Player player,
-			BlockHitResult blockHitResult) {
-		adjustSounds(blockState, level, blockPos);
-		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
+			BlockHitResult hitResult) {
+		adjustSounds(state, level, pos);
+		return super.useWithoutItem(state, level, pos, player, hitResult);
 	}
 
 	private void adjustSounds(BlockState blockState, LevelReader level, BlockPos blockPos) {

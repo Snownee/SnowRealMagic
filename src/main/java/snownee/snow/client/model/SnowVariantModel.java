@@ -20,8 +20,8 @@ import snownee.snow.client.SnowClientConfig;
 
 public class SnowVariantModel extends WrapperBlockStateModel {
 
-	public SnowVariantModel(BlockStateModel model) {
-		super(model);
+	public SnowVariantModel(BlockStateModel wrapped) {
+		super(wrapped);
 	}
 
 	@Override

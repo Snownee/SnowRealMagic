@@ -55,6 +55,8 @@ public class CoreModule extends AbstractModule {
 
 	public static final TagKey<Block> ENTITY_INSIDE = blockTag("entity_inside");
 
+	public static final TagKey<Block> ANIMATE_TICK = blockTag("animate_tick");
+
 	public static final TagKey<Block> OFFSET_Y = blockTag("offset_y");
 
 	public static final TagKey<Block> EXPAND_MODEL = blockTag("expand_model");

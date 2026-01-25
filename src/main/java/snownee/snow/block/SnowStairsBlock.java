@@ -24,27 +24,27 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 
 	@Override
 	public VoxelShape getCollisionShape(
-			BlockState blockState,
-			BlockGetter blockGetter,
-			BlockPos blockPos,
-			CollisionContext collisionContext) {
+			BlockState state,
+			BlockGetter level,
+			BlockPos pos,
+			CollisionContext context) {
 		// to make Entity#getOnPos work properly
-		return super.getShape(blockState, blockGetter, blockPos, collisionContext);
+		return super.getShape(state, level, pos, context);
 	}
 
 	@Override
-	protected VoxelShape getOcclusionShape(BlockState blockState) {
+	protected VoxelShape getOcclusionShape(BlockState state) {
 		return ShapeCaches.get(
-				ShapeCaches.VISUAL, blockState, it -> {
+				ShapeCaches.VISUAL, state, it -> {
 					VoxelShape shape = getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty());
 					return Shapes.join(shape, Shapes.block(), BooleanOp.AND);
 				});
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
-				ShapeCaches.OUTLINE, blockState, it -> {
+				ShapeCaches.OUTLINE, state, it -> {
 					VoxelShape shape = super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()).move(
 							0,
 							0.125,
@@ -56,9 +56,9 @@ public class SnowStairsBlock extends StairBlock implements WaterLoggableSnowVari
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (CommonProxy.shouldMeltInGeneral(worldIn, pos)) {
-			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (CommonProxy.shouldMeltInGeneral(level, pos)) {
+			level.setBlockAndUpdate(pos, srm$getRaw(state, level, pos));
 		}
 	}
 

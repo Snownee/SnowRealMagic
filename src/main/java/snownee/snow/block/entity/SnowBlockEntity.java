@@ -32,8 +32,8 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 		this(CoreModule.TILE.get(), pos, containedState);
 	}
 
-	public SnowBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState containedState) {
-		super(type, pos, containedState);
+	public SnowBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+		super(tileEntityTypeIn, pos, state);
 	}
 
 	public BlockState getContainedState() {
@@ -100,8 +100,8 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 	}
 
 	@Override
-	protected void readPacketData(ValueInput input) {
-		loadContainedState(input, true);
+	protected void readPacketData(ValueInput valueInput) {
+		loadContainedState(valueInput, true);
 	}
 
 	@Override
@@ -111,8 +111,8 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 	}
 
 	@Override
-	protected void writePacketData(ValueOutput output) {
-		saveContainedState(output, true);
+	protected void writePacketData(ValueOutput valueOutput) {
+		saveContainedState(valueOutput, true);
 	}
 
 	@Override

@@ -41,8 +41,9 @@ public class BlockBehaviourMixin {
 			BlockState raw = snowVariant.srm$getRaw(state, level, pos);
 			if (raw.isAir()) {
 				cir.setReturnValue(Items.SNOW.getDefaultInstance());
+			} else {
+				cir.setReturnValue(raw.getCloneItemStack(level, pos, false));
 			}
-			cir.setReturnValue(raw.getCloneItemStack(level, pos, false));
 		}
 	}
 }

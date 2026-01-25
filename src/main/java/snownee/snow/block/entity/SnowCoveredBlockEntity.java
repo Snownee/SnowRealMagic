@@ -11,9 +11,9 @@ import snownee.snow.block.SnowVariant;
 
 public class SnowCoveredBlockEntity extends SnowBlockEntity {
 
-	public SnowCoveredBlockEntity(BlockPos pos, BlockState blockState) {
-		super(CoreModule.TEXTURE_TILE.get(), pos, blockState);
-		options.renderOverlay = blockState.getBlock().getClass() == SnowSlabBlock.class;
+	public SnowCoveredBlockEntity(BlockPos pos, BlockState containedState) {
+		super(CoreModule.TEXTURE_TILE.get(), pos, containedState);
+		options.renderOverlay = containedState.getBlock().getClass() == SnowSlabBlock.class;
 	}
 
 	@Override

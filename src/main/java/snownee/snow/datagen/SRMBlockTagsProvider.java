@@ -34,12 +34,12 @@ public class SRMBlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
 
 	public SRMBlockTagsProvider(
 			FabricPackOutput output,
-			CompletableFuture<HolderLookup.Provider> registriesFuture) {
-		super(output, registriesFuture);
+			CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+		super(output, registryLookupFuture);
 	}
 
 	@Override
-	protected void addTags(HolderLookup.Provider wrapperLookup) {
+	protected void addTags(HolderLookup.Provider provider) {
 		for (Block block : Stream.of(
 				SNOW_EXTRA_COLLISION_BLOCK,
 				SNOWY_DOUBLE_PLANT_LOWER,

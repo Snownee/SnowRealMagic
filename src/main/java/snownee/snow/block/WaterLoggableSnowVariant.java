@@ -24,12 +24,12 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-		BlockState raw = srm$getRaw(state, worldIn, pos);
-		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidStateIn.is(Fluids.WATER)) {
-			if (!worldIn.isClientSide()) {
-				worldIn.setBlock(pos, raw.setValue(BlockStateProperties.WATERLOGGED, true), 3);
-				worldIn.scheduleTick(pos, fluidStateIn.getType(), fluidStateIn.getType().getTickDelay(worldIn));
+	default boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+		BlockState raw = srm$getRaw(state, level, pos);
+		if (raw.hasProperty(BlockStateProperties.WATERLOGGED) && fluidState.is(Fluids.WATER)) {
+			if (!level.isClientSide()) {
+				level.setBlock(pos, raw.setValue(BlockStateProperties.WATERLOGGED, true), 3);
+				level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
 			}
 			return true;
 		} else {
@@ -43,8 +43,8 @@ public interface WaterLoggableSnowVariant extends EntityBlock, SnowVariant, Simp
 	}
 
 	@Override
-	default BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
-		return new SnowCoveredBlockEntity(pos, blockState);
+	default BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
+		return new SnowCoveredBlockEntity(worldPosition, blockState);
 	}
 
 }

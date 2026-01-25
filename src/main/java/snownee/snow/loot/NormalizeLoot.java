@@ -24,8 +24,8 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 					.apply(instance, NormalizeLoot::new)
 	);
 
-	private NormalizeLoot(int weightIn, int qualityIn, List<LootItemCondition> conditionsIn, List<LootItemFunction> functionsIn) {
-		super(weightIn, qualityIn, conditionsIn, functionsIn);
+	private NormalizeLoot(int weight, int quality, List<LootItemCondition> conditions, List<LootItemFunction> functions) {
+		super(weight, quality, conditions, functions);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 	}
 
 	@Override
-	protected void createItemStack(Consumer<ItemStack> consumer, LootContext context) {
+	protected void createItemStack(Consumer<ItemStack> output, LootContext context) {
 		BlockEntity tile = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 		if (!(tile instanceof SnowBlockEntity)) {
 			return;
@@ -57,6 +57,6 @@ public class NormalizeLoot extends LootPoolSingletonContainer {
 			}
 		});
 		builder.withLuck(context.getLuck());
-		state.getDrops(builder).forEach(consumer);
+		state.getDrops(builder).forEach(output);
 	}
 }

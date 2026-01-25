@@ -31,40 +31,40 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	protected static final VoxelShape BOTTOM_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
 	protected static final VoxelShape BOTTOM_RENDER_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
 
-	public SnowSlabBlock(Properties builder) {
-		super(builder);
+	public SnowSlabBlock(Properties properties) {
+		super(properties);
 	}
 
 	@Override
 	protected InteractionResult useItemOn(
 			ItemStack itemStack,
-			BlockState blockState,
+			BlockState state,
 			Level level,
-			BlockPos blockPos,
+			BlockPos pos,
 			Player player,
-			InteractionHand interactionHand,
-			BlockHitResult blockHitResult) {
-		if (!(level.getBlockEntity(blockPos) instanceof SnowCoveredBlockEntity blockEntity)) {
+			InteractionHand hand,
+			BlockHitResult hitResult) {
+		if (!(level.getBlockEntity(pos) instanceof SnowCoveredBlockEntity blockEntity)) {
 			return InteractionResult.PASS;
 		}
 
-		if (blockHitResult.getDirection() == Direction.UP &&
+		if (hitResult.getDirection() == Direction.UP &&
 				blockEntity.getContainedState().getBlock().asItem() == itemStack.getItem() &&
 				itemStack.is(ItemTags.SLABS) &&
 				itemStack.getItem() instanceof BlockItem blockItem) {
-			blockState = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
+			state = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
 			if (!level.isClientSide()) {
-				level.setBlockAndUpdate(blockPos, blockState);
+				level.setBlockAndUpdate(pos, state);
 				if (!player.isCreative()) {
 					itemStack.shrink(1);
 				}
-				CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockPos, itemStack);
+				CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, pos, itemStack);
 			}
 
-			SoundType soundtype = blockState.getSoundType();
+			SoundType soundtype = state.getSoundType();
 			level.playSound(
 					player,
-					blockPos,
+					pos,
 					soundtype.getPlaceSound(),
 					SoundSource.BLOCKS,
 					(soundtype.getVolume() + 1.0F) / 2.0F,
@@ -76,23 +76,23 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return BOTTOM_RENDER_SHAPE;
 	}
 
 	@Override
 	public VoxelShape getCollisionShape(
-			BlockState blockState,
-			BlockGetter blockGetter,
-			BlockPos blockPos,
-			CollisionContext collisionContext) {
+			BlockState state,
+			BlockGetter level,
+			BlockPos pos,
+			CollisionContext context) {
 		return BOTTOM_SHAPE;
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		if (CommonProxy.shouldMeltInGeneral(worldIn, pos)) {
-			worldIn.setBlockAndUpdate(pos, srm$getRaw(state, worldIn, pos));
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (CommonProxy.shouldMeltInGeneral(level, pos)) {
+			level.setBlockAndUpdate(pos, srm$getRaw(state, level, pos));
 		}
 	}
 

@@ -86,7 +86,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
 		if (Hooks.isFallable(state)) {
 			level.scheduleTick(pos, this, srm$getDelayAfterPlace());
 		}
@@ -158,16 +158,16 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	@Override
 	protected InteractionResult useItemOn(
 			ItemStack itemStack,
-			BlockState blockState,
+			BlockState state,
 			Level level,
-			BlockPos blockPos,
+			BlockPos pos,
 			Player player,
-			InteractionHand interactionHand,
-			BlockHitResult blockHitResult) {
-		if (Hooks.useSnowWithItem(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult, this)) {
+			InteractionHand hand,
+			BlockHitResult hitResult) {
+		if (Hooks.useSnowWithItem(itemStack, state, level, pos, player, hand, hitResult, this)) {
 			return InteractionResult.SUCCESS_SERVER;
 		}
-		return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
+		return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
 	}
 
 	@Override
@@ -186,16 +186,16 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 	}
 
 	@Override
-	public void stepOn(Level level, BlockPos pos, BlockState state, Entity entityIn) {
-		if (!SnowCommonConfig.thinnerBoundingBox || !state.is(this)) {
+	public void stepOn(Level level, BlockPos pos, BlockState onState, Entity entity) {
+		if (!SnowCommonConfig.thinnerBoundingBox || !onState.is(this)) {
 			return;
 		}
-		int layers = state.getValue(SnowLayerBlock.LAYERS) - 2;
+		int layers = onState.getValue(SnowLayerBlock.LAYERS) - 2;
 		if (layers > 0) {
-			double d0 = Math.abs(entityIn.getDeltaMovement().y);
-			if (d0 < 0.1D && !entityIn.isSteppingCarefully()) {
+			double d0 = Math.abs(entity.getDeltaMovement().y);
+			if (d0 < 0.1D && !entity.isSteppingCarefully()) {
 				double d1 = 1 - layers * 0.05f;
-				entityIn.setDeltaMovement(entityIn.getDeltaMovement().multiply(d1, 1.0D, d1));
+				entity.setDeltaMovement(entity.getDeltaMovement().multiply(d1, 1.0D, d1));
 			}
 		}
 	}

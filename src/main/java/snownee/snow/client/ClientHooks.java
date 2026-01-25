@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerBedBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,11 +49,11 @@ public final class ClientHooks {
 				CoreModule.EXPAND_MODEL);
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
 			boolean useVariant = SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock());
-			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
+			double yOffset = isOffsetY(camo) ? 0.101 : 0;
 			rendered |= api.render(camo, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
 
-			if (!useVariant && (renderType == null || renderType == ChunkSectionLayer.CUTOUT) &&
-					snowVariant.srm$canRenderDecoration(blockState)) {
+			if (!useVariant && (renderType == null || renderType == ChunkSectionLayer.CUTOUT) && snowVariant.srm$canRenderDecoration(
+					blockState)) {
 				rendered |= api.render(
 						blockState,
 						ClientProxy.getBlockModel(blockState),
@@ -75,8 +76,8 @@ public final class ClientHooks {
 			rendered |= api.render(snow, model, snowVariant.srm$renderLayerOffset(blockState), RenderAPI.ModelPart.SNOW_LAYER);
 		}
 
-		if (options.renderOverlay && (renderType == null || renderType == ChunkSectionLayer.CUTOUT) &&
-				snowVariant.srm$canRenderOverlay(blockState)) {
+		if (options.renderOverlay && (renderType == null || renderType == ChunkSectionLayer.CUTOUT) && snowVariant.srm$canRenderOverlay(
+				blockState)) {
 			if (cachedOverlayModel == null) {
 				cachedOverlayModel = ClientProxy.getExtraBlockModel(ClientProxy.OVERLAY_MODEL);
 			}
@@ -87,6 +88,10 @@ public final class ClientHooks {
 			rendered |= api.render(blockState, cachedOverlayModel, yOffset, RenderAPI.ModelPart.SNOW_OVERLAY);
 		}
 		return rendered;
+	}
+
+	public static boolean isOffsetY(BlockState blockState) {
+		return blockState.getBlock() instanceof FlowerBedBlock || blockState.is(CoreModule.OFFSET_Y);
 	}
 
 }

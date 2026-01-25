@@ -24,24 +24,24 @@ public class SnowWallBlock extends WallBlock implements WaterLoggableSnowVariant
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
 				ShapeCaches.COLLIDER,
-				blockState,
+				state,
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState blockState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return ShapeCaches.get(
 				ShapeCaches.OUTLINE,
-				blockState,
+				state,
 				it -> super.getShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
 	@Override
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-		Hooks.randomTick(state, worldIn, pos, random);
+	public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		Hooks.randomTick(state, level, pos, random);
 	}
 
 	@Override

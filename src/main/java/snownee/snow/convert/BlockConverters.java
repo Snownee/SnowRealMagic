@@ -2,6 +2,7 @@ package snownee.snow.convert;
 
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -9,16 +10,21 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FireflyBushBlock;
+import net.minecraft.world.level.block.FlowerBedBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.MushroomBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.ShortDryGrassBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.TallDryGrassBlock;
 import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -124,7 +130,6 @@ public class BlockConverters {
 				SnowRealMagic.id("fence"), new CoveredBlockConverter(FenceBlock.class, CoreModule.FENCE.defaultBlockState()) {
 					@Override
 					public BlockState result(BlockState blockState) {
-						//noinspection deprecation
 						return (
 								blockState.getSoundType() == SoundType.WOOD || blockState.is(BlockTags.WOODEN_FENCES) ?
 										CoreModule.FENCE :
@@ -146,12 +151,18 @@ public class BlockConverters {
 				});
 		add(
 				SnowRealMagic.id("fallback"), new BlockConverter() {
+					private final Object2BooleanOpenHashMap<Block> cache = new Object2BooleanOpenHashMap<>();
+
 					@Override
 					public boolean takeIn(BlockState blockState) {
-						Block block = blockState.getBlock();
-						return block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock ||
-								block instanceof MushroomBlock || block instanceof SweetBerryBushBlock ||
-								blockState.is(CoreModule.CONTAINABLES);
+						return cache.computeIfAbsent(
+								blockState.getBlock(),
+								block -> block instanceof TallGrassBlock || block instanceof TallDryGrassBlock ||
+										block instanceof ShortDryGrassBlock || block instanceof BushBlock ||
+										block instanceof FireflyBushBlock || block instanceof FlowerBlock ||
+										block instanceof SaplingBlock || block instanceof MushroomBlock ||
+										block instanceof SweetBerryBushBlock || block instanceof FlowerBedBlock ||
+										blockState.is(CoreModule.CONTAINABLES));
 					}
 
 					@Override

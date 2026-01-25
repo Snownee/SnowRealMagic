@@ -15,9 +15,9 @@ import snownee.snow.loot.NormalizeLoot;
 
 public class SRMLootTableProvider extends FabricBlockLootSubProvider {
 	protected SRMLootTableProvider(
-			FabricPackOutput dataOutput,
-			CompletableFuture<HolderLookup.Provider> registryLookup) {
-		super(dataOutput, registryLookup);
+			FabricPackOutput packOutput,
+			CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(packOutput, registriesFuture);
 	}
 
 	@Override
