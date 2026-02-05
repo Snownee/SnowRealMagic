@@ -26,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -78,15 +77,6 @@ public final class Hooks {
 			if (blockstate.hasProperty(BlockStateProperties.SNOWY)) {
 				level.setBlock(belowPos, blockstate.setValue(BlockStateProperties.SNOWY, true), Block.UPDATE_CLIENTS);
 			}
-		}
-	}
-
-	@Deprecated
-	public static boolean canSnowSurvive(BlockState blockState, BlockGetter level, BlockPos pos) {
-		try {
-			return Blocks.SNOW.defaultBlockState().canSurvive((LevelReader) level, pos);
-		} catch (Exception e) {
-			return false;
 		}
 	}
 

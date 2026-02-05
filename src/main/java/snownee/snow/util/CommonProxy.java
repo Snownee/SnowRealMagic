@@ -61,22 +61,6 @@ public class CommonProxy implements ModInitializer {
 		return false;
 	}
 
-	/**
-	 * @deprecated use {@link #shouldMeltByTemperature(Level, BlockPos)}
-	 */
-	@Deprecated(forRemoval = true)
-	public static boolean shouldMelt(Level level, BlockPos pos) {
-		return shouldMeltByTemperature(level, pos);
-	}
-
-	/**
-	 * @deprecated use {@link #shouldMeltByTemperature(Level, BlockPos, Holder, int)}
-	 */
-	@Deprecated(forRemoval = true)
-	public static boolean shouldMelt(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
-		return shouldMeltByTemperature(level, pos, biome, layers);
-	}
-
 	public static boolean shouldMeltByTemperature(Level level, BlockPos pos) {
 		return shouldMeltByTemperature(level, pos, level.getBiome(pos), 1);
 	}
