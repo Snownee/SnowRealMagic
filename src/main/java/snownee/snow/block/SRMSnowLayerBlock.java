@@ -164,7 +164,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			stateIn.randomTick(worldIn, pos, random);
 			BlockState stateNow2 = worldIn.getBlockState(pos);
 			if (!stateNow2.is(this)) {
-				Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE, true);
+				Hooks.convert(worldIn, pos, stateNow2, stateNow.getValue(LAYERS), Block.UPDATE_ALL, true);
 			}
 		} catch (Throwable ignored) {
 		}
@@ -187,7 +187,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 							blockPos,
 							stateNow,
 							blockState.getValue(LAYERS),
-							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							Block.UPDATE_ALL,
 							true);
 				}
 				return result;
@@ -221,7 +221,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 							blockPos,
 							stateNow,
 							blockState.getValue(LAYERS),
-							Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE,
+							Block.UPDATE_ALL,
 							true);
 				}
 				return result;

@@ -63,7 +63,7 @@ public final class GameEvents {
 				level.setBlock(
 						pos,
 						Hooks.copyProperties(blockState, CoreModule.SNOW_BLOCK.defaultBlockState()),
-						Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
+						Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS);
 			}
 			if (!(level.getBlockEntity(pos) instanceof SnowBlockEntity be)) {
 				return InteractionResult.PASS;
@@ -72,7 +72,7 @@ public final class GameEvents {
 				level.setBlock(
 						pos,
 						Hooks.copyProperties(blockState, Blocks.SNOW.defaultBlockState()),
-						Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS);
+						Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS);
 			} else {
 				be.options.renderOverlay = !be.options.renderOverlay;
 				be.refresh();
