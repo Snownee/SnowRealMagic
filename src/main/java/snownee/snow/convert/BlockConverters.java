@@ -2,6 +2,7 @@ package snownee.snow.convert;
 
 import org.jetbrains.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.MushroomBlock;
+import net.minecraft.world.level.block.PinkPetalsBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -148,20 +150,29 @@ public class BlockConverters {
 				});
 		add(
 				SnowRealMagic.id("fallback"), new BlockConverter() {
+					private final Object2BooleanOpenHashMap<Block> cache = new Object2BooleanOpenHashMap<>();
+
 					@Override
 					public boolean takeIn(BlockState blockState) {
-						Block block = blockState.getBlock();
-						return block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock ||
-								block instanceof MushroomBlock || block instanceof SweetBerryBushBlock ||
-								blockState.is(CoreModule.CONTAINABLES);
+						return isTakeInPlant(blockState) || blockState.is(CoreModule.CONTAINABLES);
 					}
 
 					@Override
 					public BlockState convert(LevelAccessor level, BlockPos pos, BlockState blockState, int layers) {
-						return (
-								blockState.getCollisionShape(level, pos).isEmpty() ?
-										CoreModule.SNOW_BLOCK :
-										CoreModule.SNOW_EXTRA_COLLISION_BLOCK).defaultBlockState();
+						if (!blockState.getCollisionShape(level, pos).isEmpty()) {
+							return CoreModule.SNOW_EXTRA_COLLISION_BLOCK.defaultBlockState();
+						}
+						return isTakeInPlant(blockState) ?
+								CoreModule.SNOWY_PLANT.defaultBlockState() :
+								CoreModule.SNOW_BLOCK.defaultBlockState();
+					}
+
+					private boolean isTakeInPlant(BlockState blockState) {
+						return cache.computeIfAbsent(
+								blockState.getBlock(),
+								block -> block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock ||
+										block instanceof MushroomBlock || block instanceof SweetBerryBushBlock ||
+										block instanceof PinkPetalsBlock);
 					}
 				});
 	}
