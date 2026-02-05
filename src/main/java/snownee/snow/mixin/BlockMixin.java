@@ -7,9 +7,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowVariant;
 
 @Mixin(Block.class)
@@ -32,4 +36,21 @@ public class BlockMixin {
 		}
 	}
 
+	@Inject(
+			method = "updateOrDestroy(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;II)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z"))
+	private static void updateOrDestroy(
+			BlockState blockState,
+			BlockState newState,
+			LevelAccessor level,
+			BlockPos blockPos,
+			int updateFlags,
+			int updateLimit,
+			CallbackInfo ci) {
+		if (!level.isClientSide() && newState.is(Blocks.SNOW) && blockState.getBlock() instanceof SRMSnowLayerBlock) {
+			level.destroyBlock(blockPos, (updateFlags & 32) == 0, null, updateLimit);
+		}
+	}
 }
