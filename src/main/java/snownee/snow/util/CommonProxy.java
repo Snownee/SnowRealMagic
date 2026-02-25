@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.server.level.ServerLevel;
@@ -152,6 +152,6 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static List<Block> allSnowBlocks() {
-		return GameObjectLookup.all(Registries.BLOCK, SnowRealMagic.ID).toList();
+		return GameObjectLookup.all(BuiltInRegistries.BLOCK, SnowRealMagic.ID).toList();
 	}
 }

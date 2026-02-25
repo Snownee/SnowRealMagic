@@ -17,7 +17,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -25,10 +24,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
+import snownee.kiwi.datagen.KiwiBlockTagsProvider;
 import snownee.snow.CoreModule;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 
-public class SRMBlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
+public class SRMBlockTagsProvider extends KiwiBlockTagsProvider {
 	TagKey<Block> GRASS = AbstractModule.blockTag("c", "grass");
 	TagKey<Block> MUSHROOMS = AbstractModule.blockTag("c", "mushrooms");
 
@@ -39,7 +39,7 @@ public class SRMBlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
 	}
 
 	@Override
-	protected void addTags(HolderLookup.Provider provider) {
+	protected void addTags(HolderLookup.Provider registries) {
 		for (Block block : Stream.of(
 				SNOW_EXTRA_COLLISION_BLOCK,
 				SNOWY_DOUBLE_PLANT_LOWER,

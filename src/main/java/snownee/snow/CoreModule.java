@@ -1,5 +1,6 @@
 package snownee.snow;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.mojang.serialization.MapCodec;
@@ -65,20 +66,20 @@ public class CoreModule extends AbstractModule {
 
 	@NoItem
 	@Name("snow_extra_collision")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = block(ExtraCollisionSnowLayerBlock::new, () -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_EXTRA_COLLISION_BLOCK = snowLayer(ExtraCollisionSnowLayerBlock::new);
 
 	@NoItem
 	@Name("snow")
-	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOW_BLOCK = snowLayer(SRMSnowLayerBlock::new);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_PLANT = snowLayer(SRMSnowLayerBlock::new);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_LOWER = snowLayer(SRMSnowLayerBlock::new);
 
 	@NoItem
-	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = block(SRMSnowLayerBlock::new, () -> Blocks.SNOW);
+	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = snowLayer(SRMSnowLayerBlock::new);
 
 	@NoItem
 	@RenderLayer(RenderLayerEnum.CUTOUT)
@@ -164,5 +165,14 @@ public class CoreModule extends AbstractModule {
 			});
 			((BlockBehaviourAccess) Blocks.SNOW).getProperties().isValidSpawn(predicate);
 		});
+	}
+
+	private static KiwiGO<SRMSnowLayerBlock> snowLayer(Function<BlockBehaviour.Properties, SRMSnowLayerBlock> factory) {
+		return block(
+				$ -> {
+					$.replaceable = false;
+					$.overrideDescription(Blocks.SNOW.getDescriptionId());
+					return factory.apply($);
+				}, () -> Blocks.SNOW);
 	}
 }

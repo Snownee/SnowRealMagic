@@ -23,7 +23,6 @@
 		"SnowyDirtBlockMixin",
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
-		"diagonalblocks.VoxelCollectionAccess",
 		"fabric.ChunkGeneratingMixin"
 	],
 	"client": [

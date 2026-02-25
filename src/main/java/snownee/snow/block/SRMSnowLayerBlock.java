@@ -45,7 +45,7 @@ import snownee.snow.mixin.BlockBehaviourAccess;
 @KiwiModule.RenderLayer(RenderLayerEnum.CUTOUT)
 public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public SRMSnowLayerBlock(Properties properties) {
-		super(properties.overrideDescription(Blocks.SNOW.getDescriptionId()));
+		super(properties);
 	}
 
 	@Override

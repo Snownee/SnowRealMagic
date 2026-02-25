@@ -13,8 +13,8 @@ base {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
-    enableTransitiveAccessWideners = false // awaiting diagonal blocks update
+    accessWidenerPath = file("src/main/resources/${project.mod_id}.classtweaker")
+//    enableTransitiveAccessWideners = false // awaiting diagonal blocks update
 }
 
 fabricApi {
@@ -84,12 +84,12 @@ dependencies {
 //    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.2"
 //    modImplementation "maven.modrinth:terrablender:yHeHBZPt"
 
-    compileOnly "maven.modrinth:diagonal-fences:bfHGiDIS"
-    compileOnly "maven.modrinth:diagonal-walls:OdHaQ8ZU"
-    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
-    compileOnly "fuzs.diagonalblocks:diagonalblocks-fabric:21.11.1"
-    compileOnly "fuzs.puzzleslib:puzzleslib-common:21.11.6"
-    compileOnly "fuzs.puzzleslib:puzzleslib-fabric:21.11.6"
+//    compileOnly "maven.modrinth:diagonal-fences:bfHGiDIS"
+//    compileOnly "maven.modrinth:diagonal-walls:OdHaQ8ZU"
+//    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
+//    compileOnly "fuzs.diagonalblocks:diagonalblocks-fabric:21.11.1"
+//    compileOnly "fuzs.puzzleslib:puzzleslib-common:21.11.6"
+//    compileOnly "fuzs.puzzleslib:puzzleslib-fabric:21.11.6"
 
 //    modImplementation "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 

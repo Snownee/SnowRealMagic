@@ -1,4 +1,4 @@
-accessWidener   v2  official
+classTweaker v1 official
 accessible class net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl
 
 accessible method net/minecraft/world/level/gamerules/GameRules registerInteger (Ljava/lang/String;Lnet/minecraft/world/level/gamerules/GameRuleCategory;II)Lnet/minecraft/world/level/gamerules/GameRule;
@@ -11,3 +11,5 @@ accessible field net/minecraft/world/entity/Entity dimensions Lnet/minecraft/wor
 accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
 
 accessible field net/minecraft/client/resources/model/ModelManager MODEL_LISTER Lnet/minecraft/resources/FileToIdConverter;
+
+accessible field net/minecraft/world/level/block/state/BlockBehaviour$Properties replaceable Z

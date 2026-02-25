@@ -1,3 +1,4 @@
+/*
 package snownee.snow.mixin.diagonalblocks;
 
 import java.util.List;
@@ -17,3 +18,4 @@ public interface VoxelCollectionAccess {
 	@Accessor
 	List<NoneVoxelShape> getNoneVoxels();
 }
+*/
