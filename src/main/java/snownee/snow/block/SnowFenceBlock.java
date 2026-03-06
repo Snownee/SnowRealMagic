@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.Hooks;
 
@@ -31,10 +32,14 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
-//	@Override
-//	public VoxelShape getOcclusionShape(BlockState blockState) {
-//		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, super::getOcclusionShape);
-//	}
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state) {
+		return ShapeCaches.get(
+				ShapeCaches.VISUAL, state, it -> {
+					VoxelShape shape = super.getOcclusionShape(it);
+					return Shapes.or(shape, shape.move(0, 0.001, 0));
+				});
+	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
