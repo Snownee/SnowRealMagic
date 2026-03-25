@@ -25,8 +25,6 @@ import snownee.kiwi.KiwiGO;
 import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
-import snownee.kiwi.KiwiModule.RenderLayer;
-import snownee.kiwi.RenderLayerEnum;
 import snownee.kiwi.loader.event.InitEvent;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 import snownee.snow.block.SRMSnowLayerBlock;
@@ -82,13 +80,11 @@ public class CoreModule extends AbstractModule {
 	public static final KiwiGO<SRMSnowLayerBlock> SNOWY_DOUBLE_PLANT_UPPER = snowLayer(SRMSnowLayerBlock::new);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE = block(
 			$ -> new SnowFenceBlock($.mapColor(MapColor.SNOW).sound(SoundType.SNOW).randomTicks()),
 			() -> Blocks.OAK_FENCE);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE2 = block(
 			$ -> new SnowFenceBlock($.mapColor(MapColor.SNOW)
 					.sound(SoundType.SNOW)
@@ -96,27 +92,23 @@ public class CoreModule extends AbstractModule {
 					.overrideDescription(FENCE.get().getDescriptionId())), () -> Blocks.NETHER_BRICK_FENCE);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> STAIRS = block(
 			$ -> new SnowStairsBlock($.mapColor(MapColor.SNOW)
 					.sound(SoundType.SNOW)
 					.randomTicks()), () -> Blocks.OAK_STAIRS);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> SLAB = block(
 			$ -> new SnowSlabBlock($.mapColor(MapColor.SNOW).sound(SoundType.SNOW).randomTicks()),
 			() -> Blocks.OAK_SLAB);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> FENCE_GATE = block(
 			$ -> new SnowFenceGateBlock($.mapColor(MapColor.SNOW)
 					.sound(SoundType.SNOW)
 					.randomTicks()), () -> Blocks.OAK_FENCE_GATE);
 
 	@NoItem
-	@RenderLayer(RenderLayerEnum.CUTOUT)
 	public static final KiwiGO<Block> WALL = block(
 			$ -> new SnowWallBlock($.mapColor(MapColor.SNOW)
 					.sound(SoundType.SNOW)

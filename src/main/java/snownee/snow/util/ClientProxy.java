@@ -9,12 +9,8 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
-import net.fabricmc.fabric.api.client.model.loading.v1.SimpleUnbakedExtraModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -32,17 +28,17 @@ public class ClientProxy implements ClientModInitializer {
 	public static final ExtraModelKey<BlockStateModel> OVERLAY_MODEL = ExtraModelKey.create(() -> "SRM Snow Overlay Model");
 
 	public static BlockStateModel getBlockModel(BlockState state) {
-		return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+		return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
 	}
 
 	public static BlockStateModel getExtraBlockModel(@Nullable Object key) {
 		ModelManager modelManager = Minecraft.getInstance().getModelManager();
 		if (key == null) {
-			return modelManager.getMissingBlockStateModel();
+			return modelManager.getBlockStateModelSet().missingModel();
 		}
 		@SuppressWarnings("unchecked")
 		BlockStateModel model = modelManager.getModel((ExtraModelKey<BlockStateModel>) key);
-		return model != null ? model : modelManager.getMissingBlockStateModel();
+		return model != null ? model : modelManager.getBlockStateModelSet().missingModel();
 	}
 
 	@Override

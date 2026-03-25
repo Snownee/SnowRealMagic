@@ -32,12 +32,6 @@ repositories {
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
         name = "Fuzs Mod Resources"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
@@ -64,12 +58,12 @@ dependencies {
 //    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 //        exclude(group: "net.fabricmc.fabric-api")
 //    }
-    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+//    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
-//    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
     implementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
@@ -93,8 +87,8 @@ dependencies {
 
 //    modImplementation "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
+//    implementation fileTree(dir: "libs", include: ["*.jar"])
+//    annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
 }
 
 processResources {

@@ -20,8 +20,8 @@
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
-		"SnowyDirtBlockMixin",
-		"SpreadableSnowyDirtBlockMixin",
+		"SnowyBlockMixin",
+		"SpreadingSnowyBlockMixin",
 		"TreeGrowerMixin",
 		"fabric.ChunkGeneratingMixin"
 	],

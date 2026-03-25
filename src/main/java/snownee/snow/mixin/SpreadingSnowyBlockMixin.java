@@ -9,17 +9,17 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
+import net.minecraft.world.level.block.SpreadingSnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.snow.CoreModule;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.block.SnowVariant;
 
-@Mixin(SpreadingSnowyDirtBlock.class)
-public abstract class SpreadableSnowyDirtBlockMixin {
+@Mixin(SpreadingSnowyBlock.class)
+public abstract class SpreadingSnowyBlockMixin {
 
 	@Inject(
-			method = "canBeGrass",
+			method = "canStayAlive",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"),

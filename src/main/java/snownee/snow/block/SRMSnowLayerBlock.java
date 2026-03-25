@@ -35,14 +35,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import snownee.kiwi.KiwiModule;
-import snownee.kiwi.RenderLayerEnum;
 import snownee.snow.CoreModule;
 import snownee.snow.Hooks;
 import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.mixin.BlockBehaviourAccess;
 
-@KiwiModule.RenderLayer(RenderLayerEnum.CUTOUT)
 public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, BonemealableBlock, SnowVariant {
 	public SRMSnowLayerBlock(Properties properties) {
 		super(properties);
@@ -282,7 +279,7 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	protected int getLightBlock(BlockState state) {
+	protected int getLightDampening(BlockState state) {
 		return 0;
 	}
 }

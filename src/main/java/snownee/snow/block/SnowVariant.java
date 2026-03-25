@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.block.v1.FabricBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -33,15 +33,15 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	@Override
 	default BlockState getAppearance(
 			BlockState state,
-			BlockAndTintGetter blockAndTintGetter,
+			BlockAndLightGetter blockAndLightGetter,
 			BlockPos pos,
 			Direction side,
 			@Nullable BlockState sourceState,
 			@Nullable BlockPos sourcePos) {
-		if (srm$layers(state, blockAndTintGetter, pos) > 0 && sourceState != null && sourceState.is(BlockTags.SNOW)) {
-			return srm$getSnowState(state, blockAndTintGetter, pos);
+		if (srm$layers(state, blockAndLightGetter, pos) > 0 && sourceState != null && sourceState.is(BlockTags.SNOW)) {
+			return srm$getSnowState(state, blockAndLightGetter, pos);
 		}
-		return srm$getRaw(state, blockAndTintGetter, pos);
+		return srm$getRaw(state, blockAndLightGetter, pos);
 	}
 
 	default int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
