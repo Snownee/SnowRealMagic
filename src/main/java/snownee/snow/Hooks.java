@@ -1,7 +1,6 @@
 package snownee.snow;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.jspecify.annotations.Nullable;
@@ -150,10 +149,8 @@ public final class Hooks {
 		return blockState;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T extends Comparable<T>> boolean hasAllProperties(BlockState oldState, BlockState newState) {
-		for (Map.Entry<Property<?>, Comparable<?>> entry : newState.getValues().entrySet()) {
-			Property<T> property = (Property<T>) entry.getKey();
+		for (Property<?> property : newState.getProperties()) {
 			if (property == SnowVariant.OPTIONAL_LAYERS) {
 				continue;
 			}
@@ -166,9 +163,9 @@ public final class Hooks {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends Comparable<T>> BlockState copyProperties(BlockState oldState, BlockState newState) {
-		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
-			Property<T> property = (Property<T>) entry.getKey();
-			newState = newState.trySetValue(property, property.getValueClass().cast(entry.getValue()));
+		for (Property.Value<?> value : oldState.getValues().toList()) {
+			Property<T> property = (Property<T>) value.property();
+			newState = newState.trySetValue(property, property.getValueClass().cast(value.value()));
 		}
 		return newState;
 	}

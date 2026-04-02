@@ -5,6 +5,8 @@ import java.util.function.Predicate;
 import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.blockgetter.v2.FabricBlockGetter;
+import net.fabricmc.fabric.api.client.model.loading.v1.wrapper.WrapperBlockStateModel;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
@@ -35,7 +37,7 @@ public class SnowCoveredModel extends WrapperBlockStateModel {
 			return;
 		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
-				new SnowyQuadEmitter(emitter),
+				new SRMQuadEmitter(emitter),
 				level,
 				pos,
 				state,

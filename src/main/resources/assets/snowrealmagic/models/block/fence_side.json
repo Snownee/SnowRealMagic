@@ -2,7 +2,8 @@
 	"credit": "Made by Snownee",
 	"textures": {
 		"1": "snowrealmagic:block/snow_overlay",
-		"2": "block/snow"
+		"2": "block/snow",
+		"particle": "block/snow"
 	},
 	"elements": [
 		{

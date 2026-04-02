@@ -5,21 +5,24 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadAtlas;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadTransform;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.Direction;
 
-public class SnowyQuadEmitter implements QuadEmitter {
+public class SRMQuadEmitter implements QuadEmitter {
 	private final QuadEmitter wrapped;
 
-	public SnowyQuadEmitter(QuadEmitter wrapped) {
+	public SRMQuadEmitter(QuadEmitter wrapped) {
 		this.wrapped = wrapped;
 	}
 
@@ -59,8 +62,13 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
-	public QuadEmitter chunkLayer(@Nullable ChunkSectionLayer layer) {
+	public QuadEmitter chunkLayer(ChunkSectionLayer layer) {
 		return wrapped.chunkLayer(layer);
+	}
+
+	@Override
+	public QuadEmitter itemRenderType(RenderType renderType) {
+		return wrapped.itemRenderType(renderType);
 	}
 
 	@Override
@@ -89,6 +97,11 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
+	public QuadEmitter animated(boolean animated) {
+		return wrapped.animated(animated);
+	}
+
+	@Override
 	public QuadEmitter atlas(QuadAtlas quadAtlas) {
 		return wrapped.atlas(quadAtlas);
 	}
@@ -109,8 +122,13 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
-	public QuadEmitter fromBakedQuad(BakedQuad quad) {
+	public QuadEmitter fromBakedQuad(net.minecraft.client.resources.model.geometry.BakedQuad quad) {
 		return wrapped.fromBakedQuad(quad);
+	}
+
+	@Override
+	public QuadEmitter clear() {
+		return wrapped.clear();
 	}
 
 	@Override
@@ -224,8 +242,13 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
-	public @Nullable ChunkSectionLayer chunkLayer() {
+	public ChunkSectionLayer chunkLayer() {
 		return wrapped.chunkLayer();
+	}
+
+	@Override
+	public RenderType itemRenderType() {
+		return wrapped.itemRenderType();
 	}
 
 	@Override
@@ -254,6 +277,11 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
+	public boolean animated() {
+		return false;
+	}
+
+	@Override
 	public QuadAtlas atlas() {
 		return wrapped.atlas();
 	}
@@ -266,5 +294,15 @@ public class SnowyQuadEmitter implements QuadEmitter {
 	@Override
 	public int tag() {
 		return wrapped.tag();
+	}
+
+	@Override
+	public void buffer(int overlayCoords, VertexConsumer vertexConsumer) {
+		wrapped.buffer(overlayCoords, vertexConsumer);
+	}
+
+	@Override
+	public void buffer(int overlayCoords, PoseStack.Pose pose, VertexConsumer vertexConsumer) {
+		wrapped.buffer(overlayCoords, pose, vertexConsumer);
 	}
 }
