@@ -36,7 +36,6 @@ public class FabricRendererRenderAPI implements RenderAPI {
 	private final Predicate<@Nullable Direction> cullTest;
 	private final BlockStateModel unwrapped;
 
-
 	public FabricRendererRenderAPI(
 			QuadEmitter emitter,
 			BlockAndTintGetter level,
@@ -98,22 +97,39 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (blockState == selfState && model != ClientHooks.cachedOverlayModel) {
 			model = unwrapped;
 		}
-		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
-			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
-			boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
-			blockInfo.prepareForBlock(pos, generalOverlay ? TOP_SLAB : blockState);
-			if (generalOverlay) {
-				((BlockRenderInfoAccess) blockInfo).setDefaultLayer(ChunkSectionLayer.CUTOUT);
-				blockInfo.blockPos = pos.below();
-				for (Direction direction : Direction.Plane.HORIZONTAL) {
-					emitter.cullFace(direction);
-				}
-				blockInfo.blockPos = pos;
-			}
-		}
+
+		var cullTest = newCullTest(blockState, part, offset);
+
 		((FabricBlockStateModel) model).emitQuads(emitter, level, pos, blockState, random, cullTest);
 		emitter.popTransform();
 		return true;
+	}
+
+	private Predicate<@Nullable Direction> newCullTest(BlockState blockState, ModelPart part, Vec3 offset) {
+		var cullTest = this.cullTest;
+		BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
+		boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
+		if (part == ModelPart.DECORATION || part == ModelPart.SNOW_OVERLAY || part == ModelPart.SNOW_LAYER) {
+			cullTest = $ -> {
+				if (this.cullTest.test($)) {
+					return true;
+				}
+				if ($ == null) {
+					return false;
+				}
+				BlockPos.MutableBlockPos pos1 = scratchPos.setWithOffset(pos, $);
+				BlockState selfState = blockState;
+				if (generalOverlay) {
+					pos1.move(Direction.DOWN);
+					selfState = TOP_SLAB;
+				} else if (part == ModelPart.SNOW_LAYER && CoreModule.SLAB.is(this.selfState)) {
+					selfState = this.selfState;
+				}
+				BlockState neighborState = level.getBlockState(pos1);
+				return !Block.shouldRenderFace(selfState, neighborState, $);
+			};
+		}
+		return cullTest;
 	}
 
 	private static float expandModel(float f) {
