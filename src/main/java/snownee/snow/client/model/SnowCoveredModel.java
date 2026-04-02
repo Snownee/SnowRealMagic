@@ -18,7 +18,7 @@ import snownee.snow.block.entity.SnowBlockEntity;
 import snownee.snow.client.ClientHooks;
 import snownee.snow.client.FabricRendererRenderAPI;
 
-public class SnowCoveredModel extends WrapperBlockStateModel implements SRMModel {
+public class SnowCoveredModel extends WrapperBlockStateModel {
 
 	public SnowCoveredModel(BlockStateModel model) {
 		wrapped = model;
@@ -37,7 +37,7 @@ public class SnowCoveredModel extends WrapperBlockStateModel implements SRMModel
 			return;
 		}
 		FabricRendererRenderAPI api = new FabricRendererRenderAPI(
-				emitter,
+				new SRMQuadEmitter(emitter),
 				level,
 				pos,
 				state,
@@ -45,10 +45,5 @@ public class SnowCoveredModel extends WrapperBlockStateModel implements SRMModel
 				cullTest,
 				wrapped);
 		ClientHooks.renderHook(state, camo, options, null, api);
-	}
-
-	@Override
-	public boolean isSnowy(BlockAndTintGetter level, BlockPos pos, BlockState state) {
-		return true;
 	}
 }

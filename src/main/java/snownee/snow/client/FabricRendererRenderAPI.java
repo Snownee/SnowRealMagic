@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.CoreModule;
-import snownee.snow.client.model.SRMQuadEmitter;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
@@ -99,7 +98,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		if (blockState == selfState && model != ClientHooks.cachedOverlayModel) {
 			model = unwrapped;
 		}
-		if (emitter instanceof SRMQuadEmitter srmQuadEmitter) {
+		if (context instanceof AbstractBlockRenderContextAccess blockRenderContext) {
 			BlockRenderInfo blockInfo = blockRenderContext.getBlockInfo();
 			boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
 			blockInfo.prepareForBlock(pos, generalOverlay ? TOP_SLAB : blockState);
