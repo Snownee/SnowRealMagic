@@ -38,7 +38,8 @@
 	],
 	"accessWidener": "snowrealmagic.classtweaker",
 	"depends": {
-		"kiwi": ">=26"
+		"kiwi": ">=26",
+		"fabric-api": ">=0.145.2"
 	},
 	"custom": {
 		"modmenu": {
