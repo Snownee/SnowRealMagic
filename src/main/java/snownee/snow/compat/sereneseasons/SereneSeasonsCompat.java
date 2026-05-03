@@ -1,4 +1,3 @@
-/*
 package snownee.snow.compat.sereneseasons;
 
 import java.util.function.BooleanSupplier;
@@ -45,7 +44,7 @@ public class SereneSeasonsCompat {
 	}
 
 	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
-		return SeasonHooks.getPrecipitationAtTickIceAndSnowHook(level, biome.value(), pos) == Biome.Precipitation.SNOW;
+		return SeasonHooks.getPrecipitationAtTickIceAndSnowHook(level, biome.value(), pos, level.getSeaLevel()) == Biome.Precipitation.SNOW;
 	}
 
 	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
@@ -83,10 +82,10 @@ public class SereneSeasonsCompat {
 		}
 		boolean result = false;
 		for (int i = 0; i < meltRolls; i++) {
-			if (level.random.nextFloat() < meltChance && action.getAsBoolean()) {
+			if (level.getRandom().nextFloat() < meltChance && action.getAsBoolean()) {
 				result = true;
 			}
 		}
 		return result;
 	}
-}*/
+}

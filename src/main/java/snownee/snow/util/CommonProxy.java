@@ -34,6 +34,7 @@ import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
 import snownee.snow.compat.diagonalfences.DiagonalFencesCompat;
 import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
+import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
@@ -47,7 +48,7 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean weatherTick(ServerLevel level, BooleanSupplier action) {
 		if (sereneSeasons) {
-//			return SereneSeasonsCompat.weatherTick(level, action);
+			return SereneSeasonsCompat.weatherTick(level, action);
 		}
 		return action.getAsBoolean();
 	}
@@ -75,7 +76,7 @@ public class CommonProxy implements ModInitializer {
 			return false;
 		}
 		if (sereneSeasons) {
-//			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
+			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		}
 		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome)
 				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
@@ -98,7 +99,7 @@ public class CommonProxy implements ModInitializer {
 			return true;
 		}
 		if (sereneSeasons) {
-//			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
+			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
 		}
 		return fabricSeasons;
 	}
@@ -121,14 +122,14 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean coldEnoughToSnow(LevelReader level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
-//			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
+			return SereneSeasonsCompat.coldEnoughToSnow(level, pos, biome);
 		}
 		return biome.value().coldEnoughToSnow(pos, level.getSeaLevel());
 	}
 
 	public static boolean isWinter(Level level, BlockPos pos, Holder<Biome> biome) {
 		if (sereneSeasons) {
-//			return SereneSeasonsCompat.isWinter(level, pos, biome);
+			return SereneSeasonsCompat.isWinter(level, pos, biome);
 		}
 		return false;
 	}

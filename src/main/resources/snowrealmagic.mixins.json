@@ -24,7 +24,8 @@
 		"SpreadingSnowyBlockMixin",
 		"TreeGrowerMixin",
 		"diagonalblocks.VoxelCollectionAccess",
-		"fabric.ChunkGeneratingMixin"
+		"fabric.ChunkGeneratingMixin",
+		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
 		"client.CameraMixin",
