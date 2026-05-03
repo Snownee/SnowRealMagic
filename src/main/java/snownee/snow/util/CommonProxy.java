@@ -3,6 +3,8 @@ package snownee.snow.util;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
+import com.google.common.collect.ImmutableList;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
@@ -30,11 +32,14 @@ import snownee.snow.GameEvents;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
+import snownee.snow.compat.diagonalfences.DiagonalFencesCompat;
+import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
 
 @Mod(SnowRealMagic.ID)
 public class CommonProxy implements ModInitializer {
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
+	public static ImmutableList<Block> snowBlocks = ImmutableList.of();
 
 	public static boolean isHot(FluidState fluidState, Level level, BlockPos pos) {
 		return fluidState.getType().getPickupSound().orElse(null) == SoundEvents.BUCKET_FILL_LAVA || fluidState.is(FluidTags.LAVA);
@@ -143,15 +148,20 @@ public class CommonProxy implements ModInitializer {
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
-		if (Platform.isModLoaded("diagonalfences")) {
-//			DiagonalFencesCompat.init();
-		}
-		if (Platform.isModLoaded("diagonalwalls")) {
-//			DiagonalWallsCompat.init();
-		}
 	}
 
 	public static List<Block> allSnowBlocks() {
-		return GameObjectLookup.all(BuiltInRegistries.BLOCK, SnowRealMagic.ID).toList();
+		if (snowBlocks.isEmpty()) {
+			var list = ImmutableList.<Block>builder();
+			list.addAll(GameObjectLookup.all(BuiltInRegistries.BLOCK, SnowRealMagic.ID).toList());
+			if (Platform.isModLoaded("diagonalfences")) {
+				DiagonalFencesCompat.getBlockConversions().values().forEach(list::add);
+			}
+			if (Platform.isModLoaded("diagonalwalls")) {
+				DiagonalWallsCompat.getBlockConversions().values().forEach(list::add);
+			}
+			snowBlocks = list.build();
+		}
+		return snowBlocks;
 	}
 }

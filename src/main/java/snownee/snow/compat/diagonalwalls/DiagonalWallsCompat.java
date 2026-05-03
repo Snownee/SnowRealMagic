@@ -1,14 +1,13 @@
-/*
 package snownee.snow.compat.diagonalwalls;
 
 import com.google.common.collect.BiMap;
 
-import fuzs.diagonalblocks.api.v2.block.DiagonalWallBlock;
-import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockType;
-import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockTypeImpl;
-import fuzs.diagonalblocks.api.v2.client.MultiPartTranslator;
-import fuzs.diagonalblocks.impl.client.resources.translator.WallMultiPartTranslator;
-import fuzs.diagonalwalls.DiagonalWalls;
+import fuzs.diagonalblocks.common.api.v2.block.DiagonalWallBlock;
+import fuzs.diagonalblocks.common.api.v2.block.type.DiagonalBlockType;
+import fuzs.diagonalblocks.common.api.v2.block.type.DiagonalBlockTypeImpl;
+import fuzs.diagonalblocks.common.api.v2.client.MultiPartTranslator;
+import fuzs.diagonalblocks.common.impl.client.resources.translator.WallMultiPartTranslator;
+import fuzs.diagonalwalls.common.DiagonalWalls;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
@@ -29,7 +28,7 @@ public class DiagonalWallsCompat extends AbstractModule {
 	public static final DiagonalBlockType TYPE = new DiagonalBlockTypeImpl(
 			"snowwalls",
 			SnowWallBlock.class,
-			SnowDiagonalWallBlock::new,
+			_ -> SnowDiagonalWallBlock::new,
 			WallBlock.UP,
 			WallBlock.NORTH,
 			WallBlock.EAST,
@@ -43,7 +42,8 @@ public class DiagonalWallsCompat extends AbstractModule {
 		}
 	};
 
-	public static void init() {
+	@Override
+	public void addRegistries() {
 		DiagonalBlockType.register(TYPE);
 		if (Platform.isPhysicalClient()) {
 			MultiPartTranslator.register(TYPE, new WallMultiPartTranslator());
@@ -63,15 +63,14 @@ public class DiagonalWallsCompat extends AbstractModule {
 					@Override
 					public boolean accept(BlockState blockState) {
 						Block block = result.getBlock();
-						return TYPE.getBlockConversions().containsKey(block) && super.accept(blockState);
+						return getBlockConversions().containsKey(block) && super.accept(blockState);
 					}
 
 					@Override
 					public BlockState result(BlockState blockState) {
 						Block block = result.getBlock();
-						return TYPE.getBlockConversions().getOrDefault(block, block).defaultBlockState();
+						return getBlockConversions().getOrDefault(block, block).defaultBlockState();
 					}
 				}));
 	}
 }
-*/

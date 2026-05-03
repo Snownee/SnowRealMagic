@@ -1,12 +1,11 @@
-/*
 package snownee.snow.compat.diagonalfences;
 
 import com.google.common.collect.BiMap;
 
-import fuzs.diagonalblocks.api.v2.block.DiagonalFenceBlock;
-import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockType;
-import fuzs.diagonalblocks.api.v2.block.type.DiagonalBlockTypeImpl;
-import fuzs.diagonalfences.DiagonalFences;
+import fuzs.diagonalblocks.common.api.v2.block.DiagonalFenceBlock;
+import fuzs.diagonalblocks.common.api.v2.block.type.DiagonalBlockType;
+import fuzs.diagonalblocks.common.api.v2.block.type.DiagonalBlockTypeImpl;
+import fuzs.diagonalfences.common.DiagonalFences;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
@@ -29,7 +28,7 @@ public class DiagonalFencesCompat extends AbstractModule {
 	public static final DiagonalBlockType TYPE = new DiagonalBlockTypeImpl(
 			"snowfences",
 			SnowFenceBlock.class,
-			SnowDiagonalFenceBlock::new,
+			_ -> SnowDiagonalFenceBlock::new,
 			CrossCollisionBlock.NORTH,
 			CrossCollisionBlock.EAST,
 			CrossCollisionBlock.WEST,
@@ -42,7 +41,8 @@ public class DiagonalFencesCompat extends AbstractModule {
 		}
 	};
 
-	public static void init() {
+	@Override
+	public void addRegistries() {
 		DiagonalBlockType.register(TYPE);
 	}
 
@@ -58,13 +58,13 @@ public class DiagonalFencesCompat extends AbstractModule {
 				new CoveredBlockConverter(DiagonalFenceBlock.class, Blocks.AIR.defaultBlockState()) {
 					@Override
 					public boolean accept(BlockState blockState) {
-						return TYPE.getBlockConversions().containsKey(normalFenceOf(blockState)) && super.accept(blockState);
+						return getBlockConversions().containsKey(normalFenceOf(blockState)) && super.accept(blockState);
 					}
 
 					@Override
 					public BlockState result(BlockState blockState) {
 						Block block = normalFenceOf(blockState);
-						return TYPE.getBlockConversions().getOrDefault(block, block).defaultBlockState();
+						return getBlockConversions().getOrDefault(block, block).defaultBlockState();
 					}
 
 					private Block normalFenceOf(BlockState blockState) {
@@ -76,4 +76,3 @@ public class DiagonalFencesCompat extends AbstractModule {
 				}));
 	}
 }
-*/

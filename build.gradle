@@ -55,10 +55,10 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 
-//    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-//        exclude(group: "net.fabricmc.fabric-api")
-//    }
-//    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
@@ -70,22 +70,22 @@ dependencies {
 //    modRuntimeOnly "curse.maven:minihud-244260:5096818"
 //    modRuntimeOnly "curse.maven:malilib-303119:5096807"
 
-//    modImplementation "maven.modrinth:serene-seasons:qsbPIZeU"
-//    modImplementation "maven.modrinth:glitchcore:lbSHOhee"
+    implementation "maven.modrinth:serene-seasons:lIBnRbQL"
+    implementation "maven.modrinth:glitchcore:NGrOgEp8"
 //    implementation("net.jodah:typetools:0.6.3")
 
 //    modImplementation "maven.modrinth:regions-unexplored:A-0.5.6.1+1.21.1"
 //    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.2"
 //    modImplementation "maven.modrinth:terrablender:yHeHBZPt"
 
-//    compileOnly "maven.modrinth:diagonal-fences:bfHGiDIS"
-//    compileOnly "maven.modrinth:diagonal-walls:OdHaQ8ZU"
-//    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
-//    compileOnly "fuzs.diagonalblocks:diagonalblocks-fabric:21.11.1"
-//    compileOnly "fuzs.puzzleslib:puzzleslib-common:21.11.6"
-//    compileOnly "fuzs.puzzleslib:puzzleslib-fabric:21.11.6"
+    implementation "maven.modrinth:diagonal-fences:UUuyVvvj"
+    implementation "maven.modrinth:diagonal-walls:lLuopUKw"
+    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
+    implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.1.0"
+    implementation "fuzs.puzzleslib:puzzleslib-common:26.1.4"
+    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.1.4"
 
-//    modImplementation "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
+//    compileOnly "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 
 //    implementation fileTree(dir: "libs", include: ["*.jar"])
 //    annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
@@ -140,6 +140,7 @@ publishMods {
         projectId = "560441"
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
+        minecraftVersions.add("26.1.1")
         minecraftVersions.add("26.1")
         requires("kiwi-fabric")
         optional("cloth-config")
@@ -148,6 +149,7 @@ publishMods {
         projectId = "iJNje1E8"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
+        minecraftVersions.add("26.1.1")
         minecraftVersions.add("26.1")
         requires("kiwi")
         optional("cloth-config")

@@ -1,9 +1,8 @@
-/*
 package snownee.snow.compat.diagonalblocks;
 
-import fuzs.diagonalblocks.api.v2.block.StarCollisionBlock;
-import fuzs.diagonalblocks.impl.world.phys.shapes.NoneVoxelShape;
-import fuzs.diagonalblocks.impl.world.phys.shapes.VoxelCollection;
+import fuzs.diagonalblocks.common.api.v2.block.StarCollisionBlock;
+import fuzs.diagonalblocks.common.impl.world.phys.shapes.NoneVoxelShape;
+import fuzs.diagonalblocks.common.impl.world.phys.shapes.VoxelCollection;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -32,4 +31,3 @@ public interface SnowStarCollisionBlock extends StarCollisionBlock {
 		}
 	}
 }
-*/
