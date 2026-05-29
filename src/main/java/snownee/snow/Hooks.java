@@ -480,7 +480,7 @@ public final class Hooks {
 			if (i != 0 && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 				hasOverlay = be.options.renderOverlay;
 			}
-			level.setBlock(pos, state2, Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS);
+			level.setBlock(pos, state2, Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
 			block.setPlacedBy(level, pos, state2, player, context.getItemInHand());
 			if (Hooks.placeLayersOn(level, pos, i, false, context, true, true)) {
 				if (!player.isCreative()) {
