@@ -237,10 +237,10 @@ public final class Hooks {
 	}
 
 	public static void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, float chance) {
-//		level.sendParticles(ParticleTypes.CRIT, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 1, 0.0, 0.0, 0.0, 0.0);
 		if (chance != 1 && random.nextFloat() > chance) {
 			return;
 		}
+//		level.sendParticles(ParticleTypes.CRIT, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 1, 0.0, 0.0, 0.0, 0.0);
 		Holder<Biome> biome = level.getBiome(pos);
 		SnowVariant snow = (SnowVariant) state.getBlock();
 		int layers = snow.srm$layers(state, level, pos);
@@ -249,8 +249,9 @@ public final class Hooks {
 		if (!SnowCommonConfig.snowNeverMelt) {
 			if (layers == 8) {
 				BlockPos above = pos.above();
-				BlockState upState = level.getBlockState(above);
-				if (upState.getBlock() instanceof SnowVariant s && s.srm$layers(upState, level, above) > 0) {
+				BlockState aboveState = level.getBlockState(above);
+				boolean hasSnowLayerAbove = aboveState.getBlock() instanceof SnowVariant s && s.srm$layers(aboveState, level, above) > 0;
+				if (hasSnowLayerAbove) {
 					return;
 				}
 				meltByBrightness = CommonProxy.blockLightEnoughToMelt(level, above);
@@ -268,7 +269,7 @@ public final class Hooks {
 		if (layers < SnowCommonConfig.snowAccumulationMaxLayers && !meltByBrightness && level.isRaining() && CommonProxy.coldEnoughToSnow(
 				level,
 				pos,
-				biome) && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() == pos.getY()) {
+				biome) && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() <= pos.getY()) {
 			accumulate = CommonProxy.snowAccumulationNow(level);
 		}
 
