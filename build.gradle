@@ -80,10 +80,11 @@ dependencies {
 
     implementation "maven.modrinth:diagonal-fences:UUuyVvvj"
     implementation "maven.modrinth:diagonal-walls:lLuopUKw"
-    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
+    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/26.1.0
     implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.1.0"
-    implementation "fuzs.puzzleslib:puzzleslib-common:26.1.4"
-    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.1.4"
+    // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/puzzleslib/puzzleslib-fabric
+    implementation "fuzs.puzzleslib:puzzleslib-common:26.1.10"
+    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.1.10"
 
 //    compileOnly "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 
