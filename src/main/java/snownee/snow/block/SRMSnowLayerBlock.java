@@ -107,7 +107,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 			BlockState containedNew = contained.updateShape(facing, facingState, worldIn, currentPos, facingPos);
 			if (contained != containedNew) {
 				if (containedNew.isAir()) {
-					worldIn.destroyBlock(currentPos, true);
 					return srm$getSnowState(stateIn, worldIn, currentPos);
 				} else {
 					setContainedState(worldIn, currentPos, containedNew);
