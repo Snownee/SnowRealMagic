@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
-    id "me.shedaniel.unified-publishing" version "0.1.+"
+    id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
 sourceCompatibility = JavaVersion.VERSION_21
@@ -160,39 +160,32 @@ publishing {
     }
 }
 
-unifiedPublishing {
-    project {
-        displayName = "[Fabric $project.supported_version] $project.mod_version"
-        version = realVersion // Optional, Inferred from project by default
-        changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
-        releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.21", project.minecraft_version]
-        gameLoaders = ["fabric", "quilt"]
+publishMods {
+    file = tasks.remapJar.archiveFile
+    changelog = file('CHANGELOG.md').exists() ? file('CHANGELOG.md').text : ''
+    type = ['release': STABLE, 'beta': BETA, 'alpha': ALPHA][project.release_type]
+    modLoaders.add("fabric")
+    modLoaders.add("quilt")
+    displayName = "[Fabric ${supported_version}] ${mod_version}"
+    version = realVersion
 
-        mainPublication tasks.remapJar // Declares the publicated jar
+    curseforge {
+        projectId = "560441"
+        client = true
+        server = true
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        minecraftVersions.add("1.21")
+        minecraftVersions.add(project.minecraft_version)
+        requires("kiwi-fabric")
+        optional("cloth-config")
+    }
 
-        if (System.getenv("CURSE_TOKEN") != null) {
-            curseforge {
-                token = System.getenv("CURSE_TOKEN")
-                id = "560441" // Required, must be a string, ID of CurseForge project
-
-                relations { // Optional, Inferred from the relations above by default
-                    depends "kiwi-fabric"
-                    optional "cloth-config"
-                }
-            }
-        }
-
-        if (System.getenv("MODRINTH_TOKEN") != null) {
-            modrinth {
-                token = System.getenv("MODRINTH_TOKEN")
-                id = "iJNje1E8" // Required, must be a string, ID of Modrinth project
-
-                relations { // Optional, Inferred from the relations above by default
-                    depends "kiwi"
-                    optional "cloth-config"
-                }
-            }
-        }
+    modrinth {
+        projectId = "iJNje1E8"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add("1.21")
+        minecraftVersions.add(project.minecraft_version)
+        requires("kiwi")
+        optional("cloth-config")
     }
 }
