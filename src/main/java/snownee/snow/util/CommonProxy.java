@@ -5,7 +5,8 @@ import java.util.function.BooleanSupplier;
 
 import com.google.common.collect.ImmutableList;
 
-import net.fabricmc.api.ModInitializer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.material.FluidState;
-import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
@@ -37,7 +37,7 @@ import snownee.snow.compat.diagonalwalls.DiagonalWallsCompat;
 import snownee.snow.compat.sereneseasons.SereneSeasonsCompat;
 
 @Mod(SnowRealMagic.ID)
-public class CommonProxy implements ModInitializer {
+public class CommonProxy {
 	public static boolean fabricSeasons = Platform.isModLoaded("seasons");
 	public static boolean sereneSeasons = Platform.isModLoaded("sereneseasons");
 	public static ImmutableList<Block> snowBlocks = ImmutableList.of();
@@ -134,8 +134,7 @@ public class CommonProxy implements ModInitializer {
 		return false;
 	}
 
-	@Override
-	public void onInitialize() {
+	public CommonProxy(IEventBus eventBus) {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			if (SnowCommonConfig.debugSpawningCommand) {
 				DebugMobSpawningCommand.register(dispatcher);
