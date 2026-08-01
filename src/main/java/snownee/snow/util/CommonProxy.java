@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
@@ -140,6 +141,9 @@ public class CommonProxy {
 	}
 
 	public CommonProxy(IEventBus eventBus) {
+		if (FMLEnvironment.getDist().isClient()) {
+			ClientProxy.onInitializeClient(eventBus);
+		}
 		NeoForge.EVENT_BUS.addListener(
 				RegisterCommandsEvent.class, event -> {
 					if (SnowCommonConfig.debugSpawningCommand) {

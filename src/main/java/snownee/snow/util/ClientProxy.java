@@ -8,8 +8,9 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.neoforged.bus.api.IEventBus;
 import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
+import net.fabricmc.fabric.api.client.model.loading.v1.FabricModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.model.loading.v1.SimpleUnbakedExtraModel;
@@ -27,7 +28,7 @@ import snownee.snow.client.model.ModelMetadataSection;
 import snownee.snow.client.model.SnowCoveredModel;
 import snownee.snow.client.model.SnowVariantModel;
 
-public class ClientProxy implements ClientModInitializer {
+public class ClientProxy {
 
 	public static final ExtraModelKey<BlockStateModel> OVERLAY_MODEL = ExtraModelKey.create(() -> "SRM Snow Overlay Model");
 
@@ -41,12 +42,11 @@ public class ClientProxy implements ClientModInitializer {
 			return modelManager.getBlockStateModelSet().missingModel();
 		}
 		@SuppressWarnings("unchecked")
-		BlockStateModel model = modelManager.getModel((ExtraModelKey<BlockStateModel>) key);
+		BlockStateModel model = ((FabricModelManager) modelManager).getModel((ExtraModelKey<BlockStateModel>) key);
 		return model != null ? model : modelManager.getBlockStateModelSet().missingModel();
 	}
 
-	@Override
-	public void onInitializeClient() {
+	public static void onInitializeClient(IEventBus eventBus) {
 		ModelLoadingPlugin.register(ctx -> {
 			ctx.addModel(OVERLAY_MODEL, SimpleUnbakedExtraModel.blockStateModel(ClientHooks.OVERLAY_MODEL));
 
