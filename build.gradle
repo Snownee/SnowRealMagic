@@ -67,6 +67,13 @@ repositories {
 dependencies {
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_api_version}"
 
+    jarJar "org.sinytra:forgified-fabric-loader:2.5.83+0.19.3+26.1.2"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:13.0.8+2ef06a054c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:8.1.5+342cbca04c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-block-getter-api-v2:2.0.6+ec56b6014c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-model-loading-api-v1:8.0.11+5d98d6aa4c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-game-rule-api-v1:4.0.5+d871b99e4c"
+
     implementation 'com.google.errorprone:error_prone_annotations:2.37.0'
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
