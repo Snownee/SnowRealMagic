@@ -106,13 +106,6 @@ dependencies {
 //    annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
 }
 
-processResources {
-    inputs.property "version", realVersion
-
-    filesMatching("fabric.mod.json") {
-        expand "version": realVersion
-    }
-}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
