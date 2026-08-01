@@ -7,10 +7,12 @@ import com.google.common.collect.ImmutableList;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,16 +21,19 @@ import net.minecraft.server.commands.DebugMobSpawningCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.FluidState;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
+import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
@@ -135,16 +140,50 @@ public class CommonProxy {
 	}
 
 	public CommonProxy(IEventBus eventBus) {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			if (SnowCommonConfig.debugSpawningCommand) {
-				DebugMobSpawningCommand.register(dispatcher);
-			}
-		});
-		UseBlockCallback.EVENT.register(GameEvents::onItemUse);
-		PlayerBlockBreakEvents.BEFORE.register(GameEvents::onDestroyedByPlayer);
-		CommonLifecycleEvents.TAGS_LOADED.register((_, _) -> {
-			ShapeCaches.invalidateAll();
-		});
+		NeoForge.EVENT_BUS.addListener(
+				RegisterCommandsEvent.class, event -> {
+					if (SnowCommonConfig.debugSpawningCommand) {
+						DebugMobSpawningCommand.register(event.getDispatcher());
+					}
+				});
+		NeoForge.EVENT_BUS.addListener(
+				PlayerInteractEvent.RightClickBlock.class, event -> {
+					InteractionResult result = GameEvents.onItemUse(
+							event.getEntity(),
+							event.getLevel(),
+							event.getHand(),
+							event.getHitVec());
+					if (result != InteractionResult.PASS) {
+						event.setCancellationResult(result);
+						event.setCanceled(true);
+					}
+				});
+		NeoForge.EVENT_BUS.addListener(
+				BreakBlockEvent.class, event -> {
+					if (!(event.getLevel() instanceof ServerLevel level)) {
+						return;
+					}
+					BlockEntity blockEntity = level.getBlockEntity(event.getPos());
+					if (!GameEvents.onDestroyedByPlayer(
+							level,
+							event.getPlayer(),
+							event.getPos(),
+							event.getState(),
+							blockEntity)) {
+						event.setNotifyClient(true);
+						event.setCanceled(true);
+					}
+				});
+		NeoForge.EVENT_BUS.addListener(
+				TagsUpdatedEvent.class, event -> {
+					ShapeCaches.invalidateAll();
+				});
+		NeoForge.EVENT_BUS.addListener(
+				ChunkEvent.Load.class, event -> {
+					if (event.getLevel() instanceof ServerLevel && event.isNewChunk()) {
+						Hooks.restoreOriginalBlocks(event.getChunk());
+					}
+				});
 		if (sereneSeasons) {
 			SnowRealMagic.LOGGER.info("SereneSeasons detected. Overriding weather behavior.");
 		}
