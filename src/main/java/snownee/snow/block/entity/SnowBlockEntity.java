@@ -75,7 +75,7 @@ public class SnowBlockEntity extends ModBlockEntity implements RenderDataBlockEn
 	}
 
 	public static Optional<BlockState> parseContainedState(ValueInput input) {
-		if (input.contains("Block")) {
+		if (input.keySet().contains("Block")) {
 			return input.read("Block", Identifier.CODEC).map(BuiltInRegistries.BLOCK::getValue).map(Block::defaultBlockState);
 		} else {
 			return input.read("State", BlockState.CODEC);
