@@ -18,6 +18,7 @@
 		"IceBlockAccess",
 		"IceBlockMixin",
 		"ServerLevelMixin",
+		"ServerPlayerGameModeMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
 		"SnowyBlockMixin",
