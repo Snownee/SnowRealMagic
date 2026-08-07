@@ -1,33 +1,51 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.143'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
-version = "mc${archive_minecraft_version}-Fabric-${mod_version}"
+version = "mc${archive_minecraft_version}-NeoForge-${mod_version}"
 group = project.maven_group
-var realVersion = project.mod_version + '+fabric'
+var realVersion = project.mod_version + '+neoforge'
 
 base {
     archivesName = project.archives_base_name
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/${project.mod_id}.classtweaker")
-//    enableTransitiveAccessWideners = false // awaiting diagonal blocks update
-}
+neoForge {
+    version = project.neo_version
 
-fabricApi {
-    configureDataGeneration() {
-        modId = project.mod_id
-        client = true
-        outputDirectory = file("src/generated/resources")
-        createSourceSet = true
-        strictValidation = true
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            serverData()
+            programArguments = [
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources').absolutePath,
+                    '--existing', file('src/main/resources').absolutePath
+            ]
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
     }
 }
 
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
 repositories {
+    mavenCentral()
     maven { url "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
@@ -37,6 +55,7 @@ repositories {
     }
     maven { url "https://api.modrinth.com/maven" }
     maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
+    maven { url "https://maven.su5ed.dev/releases" }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -46,45 +65,47 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_api_version}"
+
+    jarJar "org.sinytra:forgified-fabric-loader:2.5.83+0.19.3+26.1.2"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:13.0.8+2ef06a054c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:8.1.5+342cbca04c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-block-getter-api-v2:2.0.6+ec56b6014c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-model-loading-api-v1:8.0.11+5d98d6aa4c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-game-rule-api-v1:4.0.5+d871b99e4c"
 
     implementation 'com.google.errorprone:error_prone_annotations:2.37.0'
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 
-    api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    api("maven.modrinth:cloth-config:${project.cloth_config_version}+neoforge")
 
     //modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
-    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    implementation "maven.modrinth:kiwi:${project.kiwi_version}+neoforge"
+    annotationProcessor "maven.modrinth:kiwi:${project.kiwi_version}+neoforge"
 
-    implementation "maven.modrinth:jade:${project.jade_version}+fabric"
+    implementation "maven.modrinth:jade:${project.jade_version}+neoforge"
 
 //    modRuntimeOnly "curse.maven:minihud-244260:5096818"
 //    modRuntimeOnly "curse.maven:malilib-303119:5096807"
 
-    implementation "maven.modrinth:serene-seasons:lIBnRbQL"
-    implementation "maven.modrinth:glitchcore:NGrOgEp8"
+    implementation "maven.modrinth:serene-seasons:26.1.2.0.4"
+    implementation "maven.modrinth:glitchcore:26.1.2.0.2"
 //    implementation("net.jodah:typetools:0.6.3")
 
 //    modImplementation "maven.modrinth:regions-unexplored:A-0.5.6.1+1.21.1"
 //    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.2"
 //    modImplementation "maven.modrinth:terrablender:yHeHBZPt"
 
-    implementation "maven.modrinth:diagonal-fences:UUuyVvvj"
-    implementation "maven.modrinth:diagonal-walls:lLuopUKw"
+    implementation "maven.modrinth:diagonal-fences:LeJEFOb1"
+    implementation "maven.modrinth:diagonal-walls:Z0E1ude9"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/26.1.0
-    implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.1.0"
+    implementation "fuzs.diagonalblocks:diagonalblocks-neoforge:26.1.0"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/puzzleslib/puzzleslib-fabric
-    implementation "fuzs.puzzleslib:puzzleslib-common:26.1.10"
-    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.1.10"
+    implementation "fuzs.puzzleslib:puzzleslib-neoforge:26.1.2"
 
 //    compileOnly "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 
@@ -92,12 +113,13 @@ dependencies {
 //    annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
 }
 
-processResources {
-    inputs.property "version", realVersion
 
-    filesMatching("fabric.mod.json") {
-        expand "version": realVersion
-    }
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+tasks.withType(JavaExec).configureEach {
+    executable = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(25)
+    }.get().executablePath.asFile.absolutePath
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -132,20 +154,19 @@ publishMods {
     file = jar.archiveFile
     changelog = file('CHANGELOG.md').exists() ? file('CHANGELOG.md').text : ''
     type = ['release': STABLE, 'beta': BETA, 'alpha': ALPHA][release_type]
-    modLoaders.add("fabric")
-    modLoaders.add("quilt")
-    displayName = "[Fabric ${supported_version}] ${mod_version}"
+    modLoaders.add("neoforge")
+    displayName = "[NeoForge ${supported_version}] ${mod_version}"
     version = realVersion
 
     curseforge {
-        projectId = "560441"
+        projectId = "308663"
         client = true
         server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
         minecraftVersions.add("26.1.1")
         minecraftVersions.add("26.1")
-        requires("kiwi-fabric")
+        requires("kiwi")
         optional("cloth-config")
     }
     modrinth {

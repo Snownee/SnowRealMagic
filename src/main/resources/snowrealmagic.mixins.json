@@ -18,13 +18,13 @@
 		"IceBlockAccess",
 		"IceBlockMixin",
 		"ServerLevelMixin",
+		"ServerPlayerGameModeMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
 		"SnowyBlockMixin",
 		"SpreadingSnowyBlockMixin",
 		"TreeGrowerMixin",
 		"diagonalblocks.VoxelCollectionAccess",
-		"fabric.ChunkGeneratingMixin",
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [

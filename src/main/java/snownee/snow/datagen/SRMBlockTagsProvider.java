@@ -68,11 +68,11 @@ public class SRMBlockTagsProvider extends KiwiBlockTagsProvider {
 		valueLookupBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
 		valueLookupBuilder(BlockTags.WALLS).add(WALL.get());
 
-		valueLookupBuilder(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER).forceAddTag(BlockTags.LEAVES);
-		valueLookupBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
+		valueLookupBuilder(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER).addTag(BlockTags.LEAVES);
+		valueLookupBuilder(SNOWY_SETTING).addTag(BlockTags.SNOW);
 		valueLookupBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
 
-		valueLookupBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
+		valueLookupBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).addTag(BlockTags.SLABS);
 
 		valueLookupBuilder(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 		valueLookupBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);

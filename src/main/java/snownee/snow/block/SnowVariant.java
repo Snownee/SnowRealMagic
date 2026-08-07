@@ -2,7 +2,6 @@ package snownee.snow.block;
 
 import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.fabric.api.block.v1.FabricBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -13,10 +12,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.neoforged.neoforge.common.extensions.IBlockExtension;
 import snownee.kiwi.block.IKiwiBlock;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public interface SnowVariant extends IKiwiBlock, FabricBlock {
+public interface SnowVariant extends IKiwiBlock, IBlockExtension {
 	IntegerProperty OPTIONAL_LAYERS = IntegerProperty.create("layers", 0, 8);
 
 	default BlockState srm$getRaw(BlockState state, BlockGetter level, BlockPos pos) {

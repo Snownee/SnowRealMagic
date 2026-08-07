@@ -6,12 +6,13 @@ import java.util.function.Predicate;
 import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 
-public class SnowyBlockStateModelPart implements BlockStateModelPart {
+public class SnowyBlockStateModelPart implements BlockStateModelPart, FabricBlockStateModelPart {
 	private final BlockStateModelPart normal;
 	private final BlockStateModelPart snowy;
 
@@ -42,10 +43,7 @@ public class SnowyBlockStateModelPart implements BlockStateModelPart {
 
 	@Override
 	public void emitQuads(QuadEmitter emitter, Predicate<@Nullable Direction> cullTest) {
-		if (emitter instanceof SRMQuadEmitter) {
-			snowy.emitQuads(emitter, cullTest);
-		} else {
-			normal.emitQuads(emitter, cullTest);
-		}
+		FabricBlockStateModelPart modelPart = (FabricBlockStateModelPart) (emitter instanceof SRMQuadEmitter ? snowy : normal);
+		modelPart.emitQuads(emitter, cullTest);
 	}
 }
