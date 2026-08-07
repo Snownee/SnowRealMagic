@@ -26,7 +26,6 @@ import snownee.kiwi.KiwiModule;
 import snownee.kiwi.KiwiModule.Name;
 import snownee.kiwi.KiwiModule.NoItem;
 import snownee.kiwi.loader.event.InitEvent;
-import snownee.kiwi.block.entity.InheritanceBlockEntityType;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
 import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowFenceBlock;
@@ -118,25 +117,33 @@ public class CoreModule extends AbstractModule {
 	@Name("snow")
 	public static final KiwiGO<BlockEntityType<SnowBlockEntity>> TILE = blockEntity(SnowBlockEntity::new, SRMSnowLayerBlock.class);
 
-	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = go(
-			() -> new InheritanceBlockEntityType<>(SnowCoveredBlockEntity::new, WaterLoggableSnowVariant.class, false),
-			Registries.BLOCK_ENTITY_TYPE);
+	public static final KiwiGO<BlockEntityType<SnowCoveredBlockEntity>> TEXTURE_TILE = blockEntity(
+			SnowCoveredBlockEntity::new,
+			WaterLoggableSnowVariant.class);
 
 	public static final KiwiGO<MapCodec<NormalizeLoot>> NORMALIZE = go(() -> NormalizeLoot.CODEC, Registries.LOOT_POOL_ENTRY_TYPE);
 
-	public static final GameRule<Integer> BLIZZARD_STRENGTH = GameRules.registerInteger(
-			SnowRealMagic.ID + ":blizzard_strength",
-			GameRuleCategory.MISC,
-			0,
-			0);
+	@SuppressWarnings("NotNullFieldNotInitialized")
+	public static GameRule<Integer> BLIZZARD_STRENGTH;
 
-	public static final GameRule<Integer> BLIZZARD_FREQUENCY = GameRules.registerInteger(
-			SnowRealMagic.ID + ":blizzard_frequency",
-			GameRuleCategory.MISC,
-			10000,
-			0);
+	@SuppressWarnings("NotNullFieldNotInitialized")
+	public static GameRule<Integer> BLIZZARD_FREQUENCY;
 
 	public static final BlockConverters CONVERTERS = new BlockConverters();
+
+	@Override
+	protected void addEntries() {
+		BLIZZARD_STRENGTH = GameRules.registerInteger(
+				SnowRealMagic.ID + ":blizzard_strength",
+				GameRuleCategory.MISC,
+				0,
+				0);
+		BLIZZARD_FREQUENCY = GameRules.registerInteger(
+				SnowRealMagic.ID + ":blizzard_frequency",
+				GameRuleCategory.MISC,
+				10000,
+				0);
+	}
 
 	@Override
 	protected void init(InitEvent event) {
