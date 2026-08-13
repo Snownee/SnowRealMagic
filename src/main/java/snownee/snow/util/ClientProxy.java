@@ -8,7 +8,6 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 
-import net.neoforged.bus.api.IEventBus;
 import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -23,6 +22,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import snownee.snow.client.ClientHooks;
 import snownee.snow.client.model.ModelMetadataSection;
 import snownee.snow.client.model.SnowCoveredModel;
@@ -73,18 +75,6 @@ public class ClientProxy {
 			});
 
 			{
-				Set<Block> snowBlocks = Set.copyOf(CommonProxy.allSnowBlocks());
-				Interner<BlockStateModel> interner = Interners.newStrongInterner();
-				ctx.modifyBlockModelAfterBake().register(
-						ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
-							if (!snowBlocks.contains(context.state().getBlock()) || model instanceof SnowCoveredModel) {
-								return model;
-							}
-							return interner.intern(new SnowCoveredModel(model));
-						});
-			}
-
-			{
 				Interner<BlockStateModel> interner = Interners.newStrongInterner();
 				ctx.modifyBlockModelAfterBake().register(
 						ModelModifier.WRAP_LAST_PHASE, (model, context) -> {
@@ -97,6 +87,16 @@ public class ClientProxy {
 
 			ClientHooks.cachedOverlayModel = null;
 			ClientHooks.cachedSnowModel = null;
+		});
+
+		eventBus.addListener(EventPriority.LOW, ModelEvent.ModifyBakingResult.class, event -> {
+			Set<Block> snowBlocks = Set.copyOf(CommonProxy.allSnowBlocks());
+			event.getBakingResult().blockStateModels().replaceAll((state, model) -> {
+				if (!snowBlocks.contains(state.getBlock()) || model instanceof SnowCoveredModel) {
+					return model;
+				}
+				return new SnowCoveredModel(model);
+			});
 		});
 	}
 }
