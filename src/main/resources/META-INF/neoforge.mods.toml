@@ -14,7 +14,7 @@ description = "Tweaks vanilla snow layer"
 [[dependencies.snowrealmagic]]
 modId = "kiwi"
 type = "required"
-versionRange = "[26.0,)"
+versionRange = "[26.0.17,)"
 
 [[mixins]]
 config = "snowrealmagic.mixins.json"
