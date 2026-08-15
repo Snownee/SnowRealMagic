@@ -280,6 +280,6 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 
 	@Override
 	protected int getLightDampening(BlockState state) {
-		return 0;
+		return state.getValue(LAYERS) == 8 ? 15 : 0;
 	}
 }
