@@ -143,8 +143,8 @@ publishMods {
         server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1.1")
         minecraftVersions.add("26.1")
+        minecraftVersions.add("26.1.1")
         requires("kiwi-fabric")
         optional("cloth-config")
     }
@@ -152,8 +152,8 @@ publishMods {
         projectId = "iJNje1E8"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1.1")
         minecraftVersions.add("26.1")
+        minecraftVersions.add("26.1.1")
         requires("kiwi")
         optional("cloth-config")
     }
