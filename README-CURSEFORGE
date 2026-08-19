@@ -1,5 +1,3 @@
-# Snow! Real Magic! ⛄
-
 A simple tweak mod that enriches the vanilla snow layer's behavior.
 
 ## Features
@@ -20,17 +18,19 @@ With this mod you can:
 
 All features can be toggled in the config.
 
-<details>
-<summary>Joke feature</summary>
+### Joke feature
+
+<div class="spoiler">
 
 Two game rules, `snowrealmagic:blizzardStrength` (1–8, max layers) and `snowrealmagic:blizzardFrequency` (N/10000 per tick per chunk), make snow blocks fall from the sky. Have fun!
 
-</details>
+</div>
 
 ## Customization
 
-<details>
-<summary>Tweaking behavior with block tags</summary>
+### Tweaking behavior with block tags
+
+<div class="spoiler">
 
 Datapacks can change which blocks interact with snow by adding to the mod's block tags. To append entries, create the file under the `snowrealmagic` namespace in your datapack, e.g. `data/snowrealmagic/tags/block/containables.json`:
 
@@ -59,10 +59,11 @@ Available tags:
 - **expand_model**: Blocks whose model should be treated as a full cube when snow-covered. Used for compat with mods like vertical slabs.
 - **cannot_accumulate_on**: Snow will not naturally accumulate on top of these blocks. (Default: hay block, slabs)
 
-</details>
+</div>
 
-<details>
-<summary>Custom snowy models with .mcmeta</summary>
+### Custom snowy models with .mcmeta
+
+<div class="spoiler">
 
 Resource packs can change how a block looks when it is snow-covered. Add a `.json.mcmeta` file next to the block's **model** file with an `srm` section pointing to the model to use instead. For example, `assets/minecraft/models/block/dandelion.json.mcmeta`:
 
@@ -99,7 +100,7 @@ For double-height plants such as tall grass, put the mcmeta on the top-half mode
 
 This feature requires the client config `snowVariants` to be enabled (it is by default).
 
-</details>
+</div>
 
 ## Uninstalling
 
@@ -107,8 +108,9 @@ Before removing the mod, you may want to enable `snow-cover.restoreOriginalBlock
 
 ## Configuration
 
-<details>
-<summary>Common</summary>
+### Common
+
+<div class="spoiler">
 
 - **snowGravity** (default: true): Snow layer falls like sand. \[Performance impact: low]
 - **snowMakingIce** (default: true): Falling snow becomes ice when it touches water. \[Performance impact: none]
@@ -135,12 +137,19 @@ Before removing the mod, you may want to enable `snow-cover.restoreOriginalBlock
 - **accumulation.smoothAccumulation** (default: true): Snow layer will accumulate and melt more smoothly. \[Performance impact: low]
 - **integration.accumulationWinterOnly** (default: false): If you have a mod that adds seasons, snow accumulation only happens in winter. \[Performance impact: none]
 
-</details>
+</div>
 
-<details>
-<summary>Client</summary>
+### Client
+
+<div class="spoiler">
 
 - **particleThroughLeaves** (default: true): Generates snowflake particles under snow that is above leaves. \[Performance impact: low]
 - **snowVariants** (default: true): Some snow-covered foliage will be rendered differently. \[Performance impact: low]
 
-</details>
+</div>
+
+[![Interested in supporting me and the development of mods? BisectHosting is the perfect solution. New customers can use the promotion code "snownee" to get a 25% discount on their first month of a gaming server. With 24/7 support and fast response times, you can expect top-notch service for all your gaming needs.](https://media.forgecdn.net/attachments/988/592/e826c64b-9e14-433d-a083-26f659f8a41c.webp)](https://rb.gy/87fgcz)
+
+<span><iframe src="https://www.youtube.com/embed/TEy0a-Yu-Ak?si=C2WqAVVbxVDVqV_y" width="560" height="314" allowfullscreen="allowfullscreen"></iframe></span>
+
+[Discord](https://discord.gg/KzGQW7a)
