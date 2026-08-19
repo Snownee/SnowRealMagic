@@ -68,6 +68,8 @@ dependencies {
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_api_version}"
 
     jarJar "org.sinytra:forgified-fabric-loader:2.5.83+0.19.3+26.1.2"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:2.0.3+b11575294c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-rendering-v1:23.3.1+9e54f1904c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:13.0.8+2ef06a054c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:8.1.5+342cbca04c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-block-getter-api-v2:2.0.6+ec56b6014c"
