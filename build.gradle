@@ -46,7 +46,6 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
     mavenCentral()
-    maven { url "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
@@ -54,7 +53,6 @@ repositories {
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
     maven { url "https://api.modrinth.com/maven" }
-    maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url "https://maven.su5ed.dev/releases" }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
