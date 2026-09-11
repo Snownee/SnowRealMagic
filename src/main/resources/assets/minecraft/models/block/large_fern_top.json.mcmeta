@@ -1,6 +1,0 @@
-{
-  "srm": {
-    "model": "snowrealmagic:block/snowy_large_fern_top",
-    "overrideBlocks": ["large_fern"]
-  }
-}

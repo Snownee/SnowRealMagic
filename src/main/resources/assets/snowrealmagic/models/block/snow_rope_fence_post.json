@@ -1,0 +1,41 @@
+{
+	"credit": "Made by Snownee",
+	"textures": {
+		"1": "snowrealmagic:block/snow_overlay",
+		"2": "block/snow",
+		"particle": "block/snow"
+	},
+	"elements": [
+		{
+			"from": [6.99, 13, 6.99],
+			"to": [9.01, 15, 9.01],
+			"faces": {
+				"north": {
+					"uv": [0, 0, 2.02, 2],
+					"texture": "#1",
+					"cullface": "up"
+				},
+				"east": {
+					"uv": [0, 0, 2.02, 2],
+					"texture": "#1",
+					"cullface": "up"
+				},
+				"south": {
+					"uv": [0, 0, 2.02, 2],
+					"texture": "#1",
+					"cullface": "up"
+				},
+				"west": {
+					"uv": [0, 0, 2.02, 2],
+					"texture": "#1",
+					"cullface": "up"
+				},
+				"up": {
+					"uv": [6.99, 6.99, 9.01, 9.01],
+					"texture": "#2",
+					"cullface": "up"
+				}
+			}
+		}
+	]
+}

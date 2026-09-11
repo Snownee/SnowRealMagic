@@ -1,5 +1,6 @@
 package snownee.snow.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricModelManager;
@@ -17,14 +19,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import snownee.snow.SnowRealMagic;
 import snownee.snow.client.ClientHooks;
 import snownee.snow.client.model.ModelMetadataSection;
 import snownee.snow.client.model.SnowCoveredModel;
@@ -54,6 +60,7 @@ public class ClientProxy {
 
 			ClientHooks.snowVariantMapping.clear();
 			ClientHooks.overrideBlocks.clear();
+			ClientHooks.requiredOverrideBlocks.clear();
 			ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 			ModelManager.MODEL_LISTER.listMatchingResources(resourceManager).forEach((key, resource) -> {
 				ModelMetadataSection section;
@@ -62,16 +69,19 @@ public class ClientProxy {
 				} catch (IOException e) {
 					return;
 				}
-				if (section == null) {
+				addModelDefinition(ModelManager.MODEL_LISTER.fileToId(key), section);
+			});
+			FileToIdConverter srmVariantLister = new FileToIdConverter("srm_variants", ".json");
+			srmVariantLister.listMatchingResources(resourceManager).forEach((key, resource) -> {
+				ModelMetadataSection section;
+				try (BufferedReader reader = resource.openAsReader()) {
+					section = ModelMetadataSection.CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(reader))
+							.resultOrPartial(SnowRealMagic.LOGGER::error)
+							.orElse(null);
+				} catch (IOException e) {
 					return;
 				}
-				ClientHooks.snowVariantMapping.put(ModelManager.MODEL_LISTER.fileToId(key), section);
-				for (ResourceKey<Block> id : section.overrideBlocks()) {
-					Block block = BuiltInRegistries.BLOCK.getValue(id);
-					if (block != Blocks.AIR && block != null) {
-						ClientHooks.overrideBlocks.add(block);
-					}
-				}
+				addModelDefinition(srmVariantLister.fileToId(key), section);
 			});
 
 			{
@@ -81,7 +91,7 @@ public class ClientProxy {
 							if (!ClientHooks.overrideBlocks.contains(context.state().getBlock()) || model instanceof SnowVariantModel) {
 								return model;
 							}
-							return interner.intern(new SnowVariantModel(model));
+							return interner.intern(new SnowVariantModel(model, ClientHooks.requiredOverrideBlocks.contains(context.state().getBlock())));
 						});
 			}
 
@@ -98,5 +108,21 @@ public class ClientProxy {
 				return new SnowCoveredModel(model);
 			});
 		});
+	}
+
+	private static void addModelDefinition(Identifier id, @Nullable ModelMetadataSection section) {
+		if (section == null || section.model() == null) {
+			return;
+		}
+		ClientHooks.snowVariantMapping.put(id, section);
+		for (ResourceKey<Block> blockId : section.overrideBlocks()) {
+			Block block = BuiltInRegistries.BLOCK.getValue(blockId);
+			if (block != Blocks.AIR && block != null) {
+				ClientHooks.overrideBlocks.add(block);
+				if (section.required()) {
+					ClientHooks.requiredOverrideBlocks.add(block);
+				}
+			}
+		}
 	}
 }

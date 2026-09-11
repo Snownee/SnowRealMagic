@@ -20,8 +20,11 @@ import snownee.snow.client.SnowClientConfig;
 
 public class SnowVariantModel extends WrapperBlockStateModel {
 
-	public SnowVariantModel(BlockStateModel wrapped) {
+	private final boolean required;
+
+	public SnowVariantModel(BlockStateModel wrapped, boolean required) {
 		super(wrapped);
+		this.required = required;
 	}
 
 	@Override
@@ -32,10 +35,10 @@ public class SnowVariantModel extends WrapperBlockStateModel {
 			BlockState state,
 			RandomSource random,
 			Predicate<@Nullable Direction> cullTest) {
-		if (SnowClientConfig.snowVariants) {
+		if (SnowClientConfig.snowVariants || required) {
 			if (((FabricBlockGetter) level).getBlockEntityRenderData(pos) instanceof RenderData) {
 				emitter = new SRMQuadEmitter(emitter);
-			} else if (state.hasProperty(DoublePlantBlock.HALF) &&
+			} else if (SnowClientConfig.snowVariants && state.hasProperty(DoublePlantBlock.HALF) &&
 					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(level.getBlockState(pos.below()))) {
 				emitter = new SRMQuadEmitter(emitter);
 			}

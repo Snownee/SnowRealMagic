@@ -1,0 +1,6 @@
+{
+	"model": "snowrealmagic:block/snowy_tall_grass_top",
+	"overrideBlocks": [
+		"tall_grass"
+	]
+}
