@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-17T00:45:47.2590615	Snow! Real Magic!/Tags for minecraft:block mod id vanilla
+// 1.21.1	2026-09-12T06:59:56.5926662	Snow! Real Magic!/Tags for minecraft:block mod id vanilla
 9363345bbd9f130a6ed15b668e663ed2108a3a99 data/c/tags/block/grass.json
 36a491a695201f5b03b2c0cca537c626edbc6f3f data/c/tags/block/mushrooms.json
 62ce7645ad0741a3ddddad8c5e97bafa72f3de64 data/minecraft/tags/block/fences.json
@@ -19,4 +19,4 @@ df452e72045d7f8f7c5eef06331938e64e7eb4d0 data/minecraft/tags/block/stairs.json
 665ff7ab6901ffeb785fb54663b5690cb42ca40b data/minecraft/tags/block/wooden_fences.json
 3003df870d529e581408fbaf8e898d3f7b84c4f8 data/snowrealmagic/tags/block/cannot_accumulate_on.json
 f3d2f8378cfc98550418907eff13f4edc6a62d81 data/snowrealmagic/tags/block/snow.json
-17d286cefc512519bc39cbb832d477349f57a35b data/snowrealmagic/tags/block/snowy_setting.json
+b148c4f3fda786da3bf439b59b44b99804032bd0 data/snowrealmagic/tags/block/snowy_setting.json

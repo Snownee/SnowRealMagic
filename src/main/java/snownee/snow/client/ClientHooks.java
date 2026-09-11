@@ -35,6 +35,7 @@ public final class ClientHooks {
 
 	public static final Map<ResourceLocation, ModelDefinition> snowVariantMapping = Maps.newLinkedHashMap();
 	public static final Set<Block> overrideBlocks = Sets.newHashSet();
+	public static final Set<Block> requiredOverrideBlocks = Sets.newHashSet();
 
 	@CanIgnoreReturnValue
 	public static boolean renderHook(
@@ -49,7 +50,7 @@ public final class ClientHooks {
 		boolean full = blockState.hasProperty(SnowLayerBlock.LAYERS) && blockState.getValue(SnowLayerBlock.LAYERS) == 8 && !camo.is(
 				CoreModule.EXPAND_MODEL);
 		if (!full && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL) {
-			boolean useVariant = SnowClientConfig.snowVariants && overrideBlocks.contains(camo.getBlock());
+			boolean useVariant = (SnowClientConfig.snowVariants || requiredOverrideBlocks.contains(camo.getBlock())) && overrideBlocks.contains(camo.getBlock());
 			double yOffset = camo.is(CoreModule.OFFSET_Y) ? 0.101 : 0;
 			rendered |= api.render(camo, ClientProxy.getBlockModel(camo), yOffset, RenderAPI.ModelPart.CAMO);
 

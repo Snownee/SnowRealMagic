@@ -27,6 +27,7 @@ import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiGO;
 import snownee.snow.CoreModule;
 import snownee.snow.block.ExtraCollisionSnowLayerBlock;
+import snownee.snow.compat.farmersdelight.FarmersDelightCompat;
 
 public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 	TagKey<Block> GRASS = AbstractModule.blockTag("c", "grass");
@@ -71,6 +72,7 @@ public class SRMBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 		tag(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON).forceAddTag(BlockTags.LEAVES);
 		tag(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
 		tag(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
+		tag(SNOWY_SETTING).addOptional(FarmersDelightCompat.ROPE_FENCE.key());
 
 		tag(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
 

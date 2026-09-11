@@ -1,0 +1,9 @@
+{
+	"multipart": [
+		{
+			"apply": {
+				"model": "snowrealmagic:block/snow_rope_fence_post"
+			}
+		}
+	]
+}

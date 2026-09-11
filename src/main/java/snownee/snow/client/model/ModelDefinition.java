@@ -6,5 +6,6 @@ public class ModelDefinition {
 
 	public ResourceLocation model;
 	public ResourceLocation[] overrideBlocks;
+	public boolean required;
 
 }

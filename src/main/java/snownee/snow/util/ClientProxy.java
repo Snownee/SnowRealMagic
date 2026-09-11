@@ -1,9 +1,12 @@
 package snownee.snow.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,8 +25,10 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,19 +65,17 @@ public class ClientProxy {
 				} catch (IOException e) {
 					return;
 				}
-				if (def == null || def.model == null) {
+				addModelDefinition(ModelBakery.MODEL_LISTER.fileToId(key), def, extraModels);
+			});
+			FileToIdConverter srmVariantLister = new FileToIdConverter("srm_variants", ".json");
+			srmVariantLister.listMatchingResources(resourceManager).forEach((key, resource) -> {
+				ModelDefinition def;
+				try (BufferedReader reader = resource.openAsReader()) {
+					def = SnowVariantMetadataSectionSerializer.SERIALIZER.fromJson(GsonHelper.parse(reader));
+				} catch (IOException e) {
 					return;
 				}
-				ClientHooks.snowVariantMapping.put(ModelBakery.MODEL_LISTER.fileToId(key), def);
-				extraModels.add(def.model);
-				if (def.overrideBlocks != null) {
-					for (ResourceLocation id : def.overrideBlocks) {
-						Block block = BuiltInRegistries.BLOCK.get(id);
-						if (block != Blocks.AIR) {
-							ClientHooks.overrideBlocks.add(block);
-						}
-					}
-				}
+				addModelDefinition(srmVariantLister.fileToId(key), def, extraModels);
 			});
 			ctx.addModels(extraModels);
 
@@ -113,7 +116,7 @@ public class ClientProxy {
 						if (variantModel == null) {
 							return model;
 						}
-						return new SnowVariantModel(model, variantModel);
+						return new SnowVariantModel(model, variantModel, def.required);
 					});
 
 			ClientHooks.cachedOverlayModel = null;
@@ -129,5 +132,24 @@ public class ClientProxy {
 						}
 					});
 				});
+	}
+
+	private static void addModelDefinition(ResourceLocation id, @Nullable ModelDefinition def, List<ResourceLocation> extraModels) {
+		if (def == null || def.model == null) {
+			return;
+		}
+		ClientHooks.snowVariantMapping.put(id, def);
+		extraModels.add(def.model);
+		if (def.overrideBlocks != null) {
+			for (ResourceLocation blockId : def.overrideBlocks) {
+				Block block = BuiltInRegistries.BLOCK.get(blockId);
+				if (block != Blocks.AIR) {
+					ClientHooks.overrideBlocks.add(block);
+					if (def.required) {
+						ClientHooks.requiredOverrideBlocks.add(block);
+					}
+				}
+			}
+		}
 	}
 }

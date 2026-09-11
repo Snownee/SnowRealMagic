@@ -94,6 +94,8 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 			FenceGateBlockAccess rawFenceGate = (FenceGateBlockAccess) raw.getBlock();
 			FenceGateBlockAccess fenceGate = (FenceGateBlockAccess) blockState.getBlock();
 			fenceGate.setType(rawFenceGate.getType());
+			fenceGate.setOpenSound(rawFenceGate.getOpenSound());
+			fenceGate.setCloseSound(rawFenceGate.getCloseSound());
 		}
 	}
 

@@ -1,0 +1,7 @@
+{
+	"model": "snowrealmagic:block/snow_rope_fence_gate_open",
+	"overrideBlocks": [
+		"farmersdelight:rope_fence_gate"
+	],
+	"required": true
+}

@@ -19,10 +19,12 @@ import snownee.snow.client.SnowClientConfig;
 public class SnowVariantModel extends ForwardingBakedModel {
 
 	private final BakedModel variantModel;
+	private final boolean required;
 
-	public SnowVariantModel(BakedModel model, BakedModel variantModel) {
+	public SnowVariantModel(BakedModel model, BakedModel variantModel, boolean required) {
 		wrapped = model;
 		this.variantModel = variantModel;
+		this.required = required;
 	}
 
 	@Override
@@ -33,10 +35,10 @@ public class SnowVariantModel extends ForwardingBakedModel {
 			Supplier<RandomSource> randomSupplier,
 			RenderContext context) {
 		BakedModel model = null;
-		if (SnowClientConfig.snowVariants && pos != null) {
+		if (pos != null && (SnowClientConfig.snowVariants || required)) {
 			if (((FabricBlockView) blockView).getBlockEntityRenderData(pos) instanceof RenderData) {
 				model = variantModel;
-			} else if (state.hasProperty(DoublePlantBlock.HALF) &&
+			} else if (SnowClientConfig.snowVariants && state.hasProperty(DoublePlantBlock.HALF) &&
 					CoreModule.SNOWY_DOUBLE_PLANT_LOWER.is(blockView.getBlockState(pos.below()))) {
 				model = variantModel;
 			}

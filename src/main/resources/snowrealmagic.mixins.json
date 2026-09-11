@@ -26,6 +26,7 @@
 		"SpreadableSnowyDirtBlockMixin",
 		"TreeGrowerMixin",
 		"diagonalblocks.VoxelCollectionAccess",
+		"farmersdelight.RopeFenceBlockMixin",
 		"sereneseasons.RandomUpdateHandlerMixin"
 	],
 	"client": [
