@@ -1,12 +1,12 @@
 package snownee.snow.block;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,7 +50,7 @@ public class SnowSlabBlock extends Block implements WaterLoggableSnowVariant {
 
 		if (hitResult.getDirection() == Direction.UP &&
 				blockEntity.getContainedState().getBlock().asItem() == itemStack.getItem() &&
-				itemStack.is(ItemTags.SLABS) &&
+				blockEntity.getContainedState().is(BlockTags.SLABS) &&
 				itemStack.getItem() instanceof BlockItem blockItem) {
 			state = blockItem.getBlock().defaultBlockState().trySetValue(SlabBlock.TYPE, SlabType.DOUBLE);
 			if (!level.isClientSide()) {

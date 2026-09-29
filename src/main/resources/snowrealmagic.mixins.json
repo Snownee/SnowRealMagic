@@ -4,7 +4,6 @@
 	"plugin": "snownee.snow.mixin.MixinPlugin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"BlockAccess",
 		"BlockBehaviourAccess",
 		"BlockBehaviourMixin",
 		"BlockItemMixin",

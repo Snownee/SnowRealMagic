@@ -2,6 +2,7 @@ package snownee.snow.mixin;
 
 import java.util.List;
 import java.util.Set;
+import net.fabricmc.loader.api.FabricLoader;
 
 import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.tree.ClassNode;
@@ -21,6 +22,13 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+		if (mixinClassName.contains(".diagonalblocks.")) {
+			return FabricLoader.getInstance().isModLoaded("diagonalfences") ||
+					FabricLoader.getInstance().isModLoaded("diagonalwalls");
+		}
+		if (mixinClassName.contains(".sereneseasons.")) {
+			return FabricLoader.getInstance().isModLoaded("sereneseasons");
+		}
 		return true;
 	}
 

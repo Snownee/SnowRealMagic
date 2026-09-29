@@ -1,24 +1,19 @@
 package snownee.snow.mixin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.mojang.datafixers.util.Pair;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,93 +23,42 @@ import snownee.snow.block.SnowVariant;
 
 @Mixin(value = TreeGrower.class, priority = 200)
 public class TreeGrowerMixin {
-	@WrapOperation(
-			method = "isTwoByTwoSapling",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
-	private static BlockState srm_isTwoByTwoSapling(
-			final BlockGetter level,
-			final BlockPos blockPos,
-			final Operation<BlockState> original) {
+    @ModifyReturnValue(method = "getSurroundingBlockStates", at = @At("RETURN"))
+    private static List<Pair<BlockState, BlockPos>> srm_unwrapSaplings(
+            List<Pair<BlockState, BlockPos>> original, ServerLevel level) {
+        return original.stream().map(pair -> {
+            BlockState state = pair.getFirst();
+            if (state.getBlock() instanceof SnowVariant snow) {
+                return Pair.of(snow.srm$getRaw(state, level, pair.getSecond()), pair.getSecond());
+            }
+            return pair;
+        }).toList();
+    }
 
-		var blockState = original.call(level, blockPos);
+    @WrapMethod(method = "growTree")
+    private boolean srm_preserveSnowOnFailedGrowth(
+            ServerLevel level, ChunkGenerator generator, BlockPos pos, BlockState state,
+            RandomSource random, Operation<Boolean> original) {
+        // Any of the four 2x2 arrangements can be selected, so snapshot the surrounding 3x3.
+        List<SnowSnapshot> snapshots = new ArrayList<>();
+        for (BlockPos candidate : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 0, 1))) {
+            BlockState candidateState = level.getBlockState(candidate);
+            if (candidateState.getBlock() instanceof SnowVariant snow) {
+                snapshots.add(new SnowSnapshot(candidate.immutable(), snow.srm$getRaw(candidateState, level, candidate),
+                        snow.srm$layers(candidateState, level, candidate)));
+            }
+        }
+        boolean grown = original.call(level, generator, pos, state, random);
+        if (!grown) {
+            for (SnowSnapshot snapshot : snapshots) {
+                BlockState current = level.getBlockState(snapshot.pos());
+                if (current.is(snapshot.state().getBlock()) || current.getBlock() instanceof SnowVariant) {
+                    Hooks.convert(level, snapshot.pos(), snapshot.state(), snapshot.layers(), Block.UPDATE_INVISIBLE, true, false);
+                }
+            }
+        }
+        return grown;
+    }
 
-		if (blockState.getBlock() instanceof SnowVariant snow) {
-			return snow.srm$getRaw(blockState, level, blockPos);
-		}
-
-		return blockState;
-	}
-
-	@Inject(
-			method = "growTree",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
-	private void srm_initLayers(
-			final ServerLevel level,
-			final ChunkGenerator generator,
-			final BlockPos pos,
-			final BlockState state,
-			final RandomSource random,
-			final CallbackInfoReturnable<Boolean> cir,
-			@Share("layers") LocalRef<IntList> layers,
-			@Share("index") LocalIntRef index) {
-		layers.set(new IntArrayList(4));
-		index.set(0);
-	}
-
-	@ModifyExpressionValue(
-			method = "growTree",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/core/BlockPos;offset(III)Lnet/minecraft/core/BlockPos;"),
-			slice = @Slice(
-					to = @At(
-							value = "INVOKE",
-							ordinal = 3,
-							target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z")))
-	private BlockPos srm_recordLayers(
-			final BlockPos blockPos,
-			ServerLevel level,
-			@Share("layers") LocalRef<IntList> layers) {
-		var blockState = level.getBlockState(blockPos);
-		if (blockState.getBlock() instanceof SnowVariant snow) {
-			layers.get().add(snow.srm$layers(blockState, level, blockPos));
-		} else {
-			layers.get().add(0);
-		}
-		return blockPos;
-	}
-
-	@WrapOperation(
-			method = "growTree",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"),
-			slice = @Slice(
-					from = @At(
-							value = "INVOKE",
-							target = "Lnet/minecraft/world/level/levelgen/feature/ConfiguredFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"),
-					to = @At(
-							value = "INVOKE",
-							target = "Lnet/minecraft/world/level/block/grower/TreeGrower;getConfiguredFeature(Lnet/minecraft/util/RandomSource;Z)Lnet/minecraft/resources/ResourceKey;")))
-	private boolean srm_recoverLayers(
-			final ServerLevel serverLevel,
-			final BlockPos blockPos,
-			final BlockState blockState,
-			final int i,
-			final Operation<Boolean> original,
-			@Share("layers") LocalRef<IntList> layers,
-			@Share("index") LocalIntRef index) {
-		var result = original.call(serverLevel, blockPos, blockState, i);
-
-		var layer = layers.get().getInt(index.get());
-		if (layer > 0) {
-			Hooks.convert(serverLevel, blockPos, blockState, layer, Block.UPDATE_INVISIBLE, true, false);
-		}
-		index.set(index.get() + 1);
-		return result;
-	}
+    public record SnowSnapshot(BlockPos pos, BlockState state, int layers) {}
 }

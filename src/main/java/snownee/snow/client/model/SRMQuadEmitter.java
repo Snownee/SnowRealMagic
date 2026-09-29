@@ -72,13 +72,33 @@ public class SRMQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
+	public QuadEmitter itemGlintRenderType(@Nullable RenderType renderType) {
+		return wrapped.itemGlintRenderType(renderType);
+	}
+
+	@Override
+	public QuadEmitter itemGlintSpecialRenderType(@Nullable RenderType renderType) {
+		return wrapped.itemGlintSpecialRenderType(renderType);
+	}
+
+	@Override
+	public @Nullable RenderType itemGlintRenderType() {
+		return wrapped.itemGlintRenderType();
+	}
+
+	@Override
+	public @Nullable RenderType itemGlintSpecialRenderType() {
+		return wrapped.itemGlintSpecialRenderType();
+	}
+
+	@Override
 	public QuadEmitter emissive(boolean emissive) {
 		return wrapped.emissive(emissive);
 	}
 
 	@Override
-	public QuadEmitter diffuseShade(boolean shade) {
-		return wrapped.diffuseShade(shade);
+	public QuadEmitter shadeDirectionOverride(@Nullable Direction direction) {
+		return wrapped.shadeDirectionOverride(direction);
 	}
 
 	@Override
@@ -257,8 +277,8 @@ public class SRMQuadEmitter implements QuadEmitter {
 	}
 
 	@Override
-	public boolean diffuseShade() {
-		return wrapped.diffuseShade();
+	public @Nullable Direction shadeDirectionOverride() {
+		return wrapped.shadeDirectionOverride();
 	}
 
 	@Override
