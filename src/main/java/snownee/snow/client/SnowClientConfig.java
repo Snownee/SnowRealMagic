@@ -13,8 +13,10 @@ public final class SnowClientConfig {
 
 	@KiwiConfig.Listen("snowVariants")
 	public static void toggleSnowVariants(String key) {
-		if (Minecraft.getInstance().level != null) {
-			Minecraft.getInstance().levelRenderer.allChanged();
+		Minecraft minecraft = Minecraft.getInstance();
+		if (minecraft.level != null) {
+			minecraft.levelRenderer.invalidateCompiledGeometry(
+					minecraft.level, minecraft.options, minecraft.gameRenderer.mainCamera(), minecraft.getBlockColors());
 		}
 	}
 

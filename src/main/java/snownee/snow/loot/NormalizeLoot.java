@@ -1,6 +1,7 @@
 package snownee.snow.loot;
 
-import java.util.List;
+import java.util.Optional;
+import net.minecraft.core.Holder;
 import java.util.function.Consumer;
 
 import com.mojang.serialization.MapCodec;
@@ -12,34 +13,34 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.SingleEntryContainerBase;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import snownee.snow.block.entity.SnowBlockEntity;
 
-public class NormalizeLoot extends LootPoolSingletonContainer {
+public class NormalizeLoot extends SingleEntryContainerBase {
 	public static final MapCodec<NormalizeLoot> CODEC = RecordCodecBuilder.mapCodec(
-			instance -> singletonFields(instance)
+			instance -> uniformFields(instance)
 					.apply(instance, NormalizeLoot::new)
 	);
 
-	private NormalizeLoot(int weight, int quality, List<LootItemCondition> conditions, List<LootItemFunction> functions) {
+	private NormalizeLoot(int weight, int quality, Optional<Holder<LootItemCondition>> conditions, Optional<Holder<LootItemFunction>> functions) {
 		super(weight, quality, conditions, functions);
 	}
 
 	@Override
-	public MapCodec<? extends LootPoolSingletonContainer> codec() {
+	public MapCodec<? extends SingleEntryContainerBase> codec() {
 		return CODEC;
 	}
 
-	public static LootPoolSingletonContainer.Builder<?> builder() {
+	public static SingleEntryContainerBase.Builder<?> builder() {
 		return simpleBuilder(NormalizeLoot::new);
 	}
 
 	@Override
 	protected void createItemStack(Consumer<ItemStack> output, LootContext context) {
-		BlockEntity tile = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+		BlockEntity tile = context.getOptional(LootContextParams.BLOCK_ENTITY);
 		if (!(tile instanceof SnowBlockEntity)) {
 			return;
 		}

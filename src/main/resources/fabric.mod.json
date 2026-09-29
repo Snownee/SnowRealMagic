@@ -38,8 +38,11 @@
 	],
 	"accessWidener": "snowrealmagic.classtweaker",
 	"depends": {
-		"kiwi": ">=26",
-		"fabric-api": ">=0.145.2"
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabricloader": ">=0.19.5",
+		"kiwi": ">=26.0.20-port.1+26.3",
+		"fabric-api": ">=0.161.0"
 	},
 	"custom": {
 		"modmenu": {

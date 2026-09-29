@@ -19,7 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +78,7 @@ public class SnowLayerBlockMixin extends Block implements SnowVariant {
 		}
 		if (context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
 			Entity entity = entityContext.getEntity();
-			if (entity.getType() == EntityType.FALLING_BLOCK) {
+			if (entity.getType() == EntityTypes.FALLING_BLOCK) {
 				return SHAPES[layers - 1];
 			}
 		}

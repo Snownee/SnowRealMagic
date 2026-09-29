@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -46,35 +47,35 @@ public class SRMBlockTagsProvider extends KiwiBlockTagsProvider {
 				SNOWY_DOUBLE_PLANT_UPPER,
 				SNOW_BLOCK,
 				SNOWY_PLANT).map(KiwiGO::get).toList()) {
-			valueLookupBuilder(CoreModule.SNOW_TAG).add(block);
+			builder(CoreModule.SNOW_TAG).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
 			if (!(block instanceof ExtraCollisionSnowLayerBlock)) {
-				valueLookupBuilder(BlockTags.GOATS_SPAWNABLE_ON).add(block);
-				valueLookupBuilder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(block);
-				valueLookupBuilder(BlockTags.RABBITS_SPAWNABLE_ON).add(block);
-				valueLookupBuilder(BlockTags.FOXES_SPAWNABLE_ON).add(block);
-				valueLookupBuilder(BlockTags.WOLVES_SPAWNABLE_ON).add(block);
+				builder(BlockTags.GOATS_SPAWNABLE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
+				builder(BlockTags.MOOSHROOMS_SPAWNABLE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
+				builder(BlockTags.RABBITS_SPAWNABLE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
+				builder(BlockTags.FOXES_SPAWNABLE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
+				builder(BlockTags.WOLVES_SPAWNABLE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow());
 			}
 		}
 
-		valueLookupBuilder(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
-		valueLookupBuilder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
-		valueLookupBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
+		builder(BlockTags.SNOW).addTag(CoreModule.SNOW_TAG);
+		builder(BlockTags.MINEABLE_WITH_SHOVEL).addTag(CoreModule.SNOW_TAG);
+		builder(BlockTags.INSIDE_STEP_SOUND_BLOCKS).addTag(CoreModule.SNOW_TAG);
 
-		valueLookupBuilder(BlockTags.STAIRS).add(STAIRS.get());
-		valueLookupBuilder(BlockTags.SLABS).add(SLAB.get());
-		valueLookupBuilder(BlockTags.FENCE_GATES).add(FENCE_GATE.get());
-		valueLookupBuilder(BlockTags.FENCES).add(FENCE2.get());
-		valueLookupBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(FENCE2.get());
-		valueLookupBuilder(BlockTags.WOODEN_FENCES).add(FENCE.get());
-		valueLookupBuilder(BlockTags.WALLS).add(WALL.get());
+		builder(BlockTags.STAIRS).add(BuiltInRegistries.BLOCK.getResourceKey(STAIRS.get()).orElseThrow());
+		builder(BlockTags.SLABS).add(BuiltInRegistries.BLOCK.getResourceKey(SLAB.get()).orElseThrow());
+		builder(BlockTags.FENCE_GATES).add(BuiltInRegistries.BLOCK.getResourceKey(FENCE_GATE.get()).orElseThrow());
+		builder(BlockTags.FENCES).add(BuiltInRegistries.BLOCK.getResourceKey(FENCE2.get()).orElseThrow());
+		builder(BlockTags.MINEABLE_WITH_PICKAXE).add(BuiltInRegistries.BLOCK.getResourceKey(FENCE2.get()).orElseThrow());
+		builder(BlockTags.WOODEN_FENCES).add(BuiltInRegistries.BLOCK.getResourceKey(FENCE.get()).orElseThrow());
+		builder(BlockTags.WALLS).add(BuiltInRegistries.BLOCK.getResourceKey(WALL.get()).orElseThrow());
 
-		valueLookupBuilder(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER).forceAddTag(BlockTags.LEAVES);
-		valueLookupBuilder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
-		valueLookupBuilder(SNOWY_SETTING).add(FENCE.get(), FENCE2.get(), FENCE_GATE.get(), WALL.get());
+		builder(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER).forceAddTag(BlockTags.LEAVES);
+		builder(SNOWY_SETTING).forceAddTag(BlockTags.SNOW);
+		builder(SNOWY_SETTING).add(BuiltInRegistries.BLOCK.getResourceKey(FENCE.get()).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(FENCE2.get()).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(FENCE_GATE.get()).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(WALL.get()).orElseThrow());
 
-		valueLookupBuilder(CoreModule.CANNOT_ACCUMULATE_ON).add(Blocks.HAY_BLOCK).forceAddTag(BlockTags.SLABS);
+		builder(CoreModule.CANNOT_ACCUMULATE_ON).add(BuiltInRegistries.BLOCK.getResourceKey(Blocks.HAY_BLOCK).orElseThrow()).forceAddTag(BlockTags.SLABS);
 
-		valueLookupBuilder(GRASS).add(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TALL_GRASS, Blocks.LARGE_FERN);
-		valueLookupBuilder(MUSHROOMS).add(Blocks.RED_MUSHROOM, Blocks.BROWN_MUSHROOM);
+		builder(GRASS).add(BuiltInRegistries.BLOCK.getResourceKey(Blocks.SHORT_GRASS).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(Blocks.FERN).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(Blocks.TALL_GRASS).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(Blocks.LARGE_FERN).orElseThrow());
+		builder(MUSHROOMS).add(BuiltInRegistries.BLOCK.getResourceKey(Blocks.RED_MUSHROOM).orElseThrow(), BuiltInRegistries.BLOCK.getResourceKey(Blocks.BROWN_MUSHROOM).orElseThrow());
 	}
 }

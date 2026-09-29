@@ -63,28 +63,32 @@ dependencies {
     //modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
-    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    // A locally built Kiwi port can be supplied until a 26.3 release is published.
+    def kiwiDependency = providers.gradleProperty('kiwiJar').map { files(it) }
+            .getOrElse("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    implementation kiwiDependency
+    annotationProcessor kiwiDependency
 
     implementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
 //    modRuntimeOnly "curse.maven:minihud-244260:5096818"
 //    modRuntimeOnly "curse.maven:malilib-303119:5096807"
 
-    implementation "maven.modrinth:serene-seasons:lIBnRbQL"
-    implementation "maven.modrinth:glitchcore:NGrOgEp8"
+    implementation "maven.modrinth:serene-seasons:V9PxJPuw"
+    implementation "maven.modrinth:glitchcore:aaUghyGp"
 //    implementation("net.jodah:typetools:0.6.3")
 
 //    modImplementation "maven.modrinth:regions-unexplored:A-0.5.6.1+1.21.1"
 //    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.2"
 //    modImplementation "maven.modrinth:terrablender:yHeHBZPt"
 
-    implementation "maven.modrinth:diagonal-fences:UUuyVvvj"
-    implementation "maven.modrinth:diagonal-walls:lLuopUKw"
+    implementation "maven.modrinth:diagonal-fences:CHD6edDK"
+    implementation "maven.modrinth:diagonal-walls:o4zUnUre"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/26.1.0
-    implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.1.0"
+    implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.3.0"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/puzzleslib/puzzleslib-fabric
-    implementation "fuzs.puzzleslib:puzzleslib-common:26.1.10"
-    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.1.10"
+    implementation "fuzs.puzzleslib:puzzleslib-common:26.3.8"
+    implementation "fuzs.puzzleslib:puzzleslib-fabric:26.3.8"
 
 //    compileOnly "maven.modrinth:suggestion-tweaker:1.20.6-1.5.2+fabric"
 
@@ -143,8 +147,6 @@ publishMods {
         server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1")
-        minecraftVersions.add("26.1.1")
         requires("kiwi-fabric")
         optional("cloth-config")
     }
@@ -152,8 +154,6 @@ publishMods {
         projectId = "iJNje1E8"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1")
-        minecraftVersions.add("26.1.1")
         requires("kiwi")
         optional("cloth-config")
     }

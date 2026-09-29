@@ -25,6 +25,7 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -244,25 +245,25 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, BonemealSource source) {
 		BlockState raw = srm$getRaw(state, level, pos);
 		Block block = raw.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(level, pos, raw);
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isValidBonemealTarget(level, pos, raw, source);
 	}
 
 	@Override
-	public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+	public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state, BonemealSource source) {
 		BlockState raw = srm$getRaw(state, level, pos);
 		Block block = raw.getBlock();
-		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isBonemealSuccess(level, random, pos, raw);
+		return block instanceof BonemealableBlock && ((BonemealableBlock) block).isBonemealSuccess(level, random, pos, raw, source);
 	}
 
 	@Override
-	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state, BonemealSource source) {
 		BlockState raw = srm$getRaw(state, level, pos);
 		Block block = raw.getBlock();
 		if (block instanceof BonemealableBlock) {
-			((BonemealableBlock) block).performBonemeal(level, random, pos, raw);
+			((BonemealableBlock) block).performBonemeal(level, random, pos, raw, source);
 			BlockState stateNow = level.getBlockState(pos);
 			Hooks.convert(level, pos, stateNow, state.getValue(LAYERS), Block.UPDATE_ALL, true);
 		}
