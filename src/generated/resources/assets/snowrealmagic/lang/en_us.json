@@ -24,6 +24,8 @@
   "snowrealmagic.config.accumulation.smoothAccumulation.desc": "Snow layer will accumulate and melt more smoothly.",
   "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes": "Snow And Ice Melt In Warm Biomes",
   "snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes.",
+  "snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere": "World Gen Snow And Freeze Everywhere",
+  "snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere.desc": "The snow and freeze world generation feature will generate snow and ice in all biomes, regardless of the climate.",
   "snowrealmagic.config.debug": "Debug",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic": "Force Vanilla Ice Snow Logic",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",

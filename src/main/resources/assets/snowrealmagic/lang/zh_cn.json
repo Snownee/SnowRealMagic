@@ -24,6 +24,8 @@
 	"snowrealmagic.config.accumulation.smoothAccumulation.desc": "雪层将更平滑地堆积和融化。",
 	"snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes": "暖生物群系中冰雪融化",
 	"snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "冰雪会在温暖的生物群系中融化。",
+	"snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere": "世界生成中冰雪无处不在",
+	"snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere.desc": "雪与冰冻世界生成特性会在所有生物群系中生成雪和冰，无论气候如何。",
 	"snowrealmagic.config.debug": "调试",
 	"snowrealmagic.config.debug.forceVanillaIceSnowLogic": "强制使用原版冰雪逻辑",
 	"snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",

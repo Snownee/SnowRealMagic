@@ -77,6 +77,9 @@ public final class SnowCommonConfig {
 	@Path("accumulation.smoothAccumulation")
 	@PerformanceImpact(PerformanceType.LOW)
 	public static boolean smoothAccumulation = true;
+	@Path("accumulation.worldGenSnowAndFreezeEverywhere")
+	@PerformanceImpact(PerformanceType.HIGH)
+	public static boolean worldGenSnowAndFreezeEverywhere = false;
 
 	@Path("integration.accumulationWinterOnly")
 	@PerformanceImpact(PerformanceType.NONE)
