@@ -49,6 +49,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import snownee.snow.block.SRMSnowLayerBlock;
 import snownee.snow.block.SnowVariant;
 import snownee.snow.block.entity.SnowBlockEntity;
@@ -69,20 +70,23 @@ public final class Hooks {
 			return;
 		}
 		if ((!SnowCommonConfig.worldGenSnowAndFreezeEverywhere && biome.warmEnoughToRain(pos)) ||
-				level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+				level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowSpawnMaxLightLevel) {
 			return;
 		}
-		BlockState posState = level.getBlockState(pos);
-		if (posState.isAir()) {
+		BlockState blockstate = level.getBlockState(pos);
+		if (blockstate.isAir()) {
 			BlockState belowState = level.getBlockState(belowPos);
-			if (convert(level, belowPos, belowState, 1, Block.UPDATE_CLIENTS, true)) {
+			boolean converted = convert(level, belowPos, belowState, 1, Block.UPDATE_CLIENTS, true);
+			if (!blocksRain(level, belowPos, belowState)) {
+				convertBelow(level, belowPos, Block.UPDATE_CLIENTS, true);
+			}
+			if (converted) {
 				return;
 			}
 		}
 		if (!canSnowSurvive(level, pos)) {
 			return;
 		}
-		BlockState blockstate = level.getBlockState(pos);
 		if (convert(level, pos, blockstate, 1, Block.UPDATE_CLIENTS, true)) {
 //			SnowRealMagic.LOGGER.info("Place {} @ {}", level.getBlockState(pos).getBlock(), pos);
 			blockstate = level.getBlockState(belowPos);
@@ -105,12 +109,32 @@ public final class Hooks {
 		return Blocks.SNOW.defaultBlockState().canSurvive(level, pos);
 	}
 
+	private static boolean blocksRain(LevelReader level, BlockPos pos, BlockState state) {
+		return state.isFaceSturdy(level, pos, Direction.UP) ||
+				Block.isFaceFull(state.getCollisionShape(level, pos, CollisionContext.empty()), Direction.DOWN);
+	}
+
+	public static void convertBelow(LevelAccessor level, BlockPos pos, int flags, boolean canConvert) {
+		BlockPos.MutableBlockPos mutablePos = pos.mutable();
+		for (int i = 0; i < 5; i++) {
+			mutablePos.move(Direction.DOWN);
+			if (level.getBrightness(LightLayer.BLOCK, mutablePos) > SnowCommonConfig.snowSpawnMaxLightLevel) {
+				break;
+			}
+			BlockState state = level.getBlockState(mutablePos);
+			convert(level, mutablePos, state, 1, flags, canConvert);
+			if (blocksRain(level, mutablePos, state)) {
+				break;
+			}
+		}
+	}
+
 	// Biome#shouldSnow without the temperature check
 	public static boolean shouldSnowIgnoringTemperature(LevelReader level, BlockPos pos) {
 		if (pos.getY() < level.getMinBuildHeight() || pos.getY() >= level.getMaxBuildHeight()) {
 			return false;
 		}
-		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+		if (level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowSpawnMaxLightLevel) {
 			return false;
 		}
 		BlockState blockState = level.getBlockState(pos);
@@ -122,7 +146,7 @@ public final class Hooks {
 		if (pos.getY() < level.getMinBuildHeight() || pos.getY() >= level.getMaxBuildHeight()) {
 			return false;
 		}
-		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+		if (level.getBrightness(LightLayer.BLOCK, pos) > SnowCommonConfig.snowSpawnMaxLightLevel) {
 			return false;
 		}
 		BlockState blockState = level.getBlockState(pos);
