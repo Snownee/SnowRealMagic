@@ -7,3 +7,6 @@ accessible field net/minecraft/world/level/storage/loot/LootContext params Lnet/
 accessible field net/minecraft/world/level/storage/loot/LootParams params Ljava/util/Map;
 
 accessible field net/minecraft/world/entity/Entity dimensions Lnet/minecraft/world/entity/EntityDimensions;
+
+accessible field net/minecraft/world/level/block/FenceBlock occlusionByIndex [Lnet/minecraft/world/phys/shapes/VoxelShape;
+mutable field net/minecraft/world/level/block/FenceBlock occlusionByIndex [Lnet/minecraft/world/phys/shapes/VoxelShape;

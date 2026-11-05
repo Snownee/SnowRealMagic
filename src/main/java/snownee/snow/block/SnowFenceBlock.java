@@ -23,6 +23,7 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	public SnowFenceBlock(Properties properties) {
 		super(properties);
+		occlusionByIndex = makeShapes(2.0F, 1.0F, 16.0F, 6.0F, 15.49F);
 	}
 
 	@Override

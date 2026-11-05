@@ -32,7 +32,7 @@ public class BlockMixin {
 	@Inject(method = "registerDefaultState", at = @At("RETURN"))
 	private void srm_registerDefaultState(BlockState state, CallbackInfo ci) {
 		if (state.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {
-			defaultBlockState = state.setValue(SnowVariant.OPTIONAL_LAYERS, 1);
+			defaultBlockState = state.setValue(SnowVariant.OPTIONAL_LAYERS, 0);
 		}
 	}
 
