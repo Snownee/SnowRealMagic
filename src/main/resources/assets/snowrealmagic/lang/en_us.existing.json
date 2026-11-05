@@ -34,6 +34,7 @@
 	"snowrealmagic.config.accumulation.snowAndIceMeltInWarmBiomes.desc": "Snow and ice will melt in warm biomes.",
 	"snowrealmagic.config.accumulation.naturalMelting.desc": "Snow melts with time if its layer is more than 1.",
 	"snowrealmagic.config.accumulation.smoothAccumulation.desc": "Snow layer will accumulate and melt more smoothly.",
+	"snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere.desc": "The snow and freeze world generation feature will generate snow and ice in all biomes, regardless of the climate.",
 	"snowrealmagic.config.integration.accumulationWinterOnly.desc": "If you have mod that adds seasons, snow accumulation only happens in winter.",
 	"snowrealmagic.config.particleThroughLeaves.desc": "Generates snowflake particles under snow that is above leaves.",
 	"snowrealmagic.config.snowVariants.desc": "Some snow-covered foliage will be rendered differently."
