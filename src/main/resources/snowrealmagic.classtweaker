@@ -13,3 +13,6 @@ accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEnt
 accessible field net/minecraft/client/resources/model/ModelManager MODEL_LISTER Lnet/minecraft/resources/FileToIdConverter;
 
 accessible field net/minecraft/world/level/block/state/BlockBehaviour$Properties replaceable Z
+
+accessible class net/minecraft/world/level/biome/Biome$ClimateSettings
+accessible field net/minecraft/world/level/biome/Biome climateSettings Lnet/minecraft/world/level/biome/Biome$ClimateSettings;

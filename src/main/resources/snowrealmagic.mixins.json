@@ -21,6 +21,7 @@
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
+		"SnowballMixin",
 		"SnowyBlockMixin",
 		"SpreadingSnowyBlockMixin",
 		"TreeGrowerMixin",
@@ -31,6 +32,7 @@
 	"client": [
 		"client.CameraMixin",
 		"client.SnowLayerBlockClientMixin",
+		"client.TerrainParticleMixin",
 		"client.VariantMixin"
 	],
 	"injectors": {

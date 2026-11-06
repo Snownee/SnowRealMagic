@@ -12,13 +12,16 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatusTasks;
 import snownee.snow.Hooks;
+import snownee.snow.SnowAccumulation;
 
 @Mixin(ChunkStatusTasks.class)
 abstract class ChunkGeneratingMixin {
 	@ModifyReturnValue(method = "lambda$full$0", at = @At("TAIL"))
 	private static ChunkAccess onChunkLoad(final ChunkAccess original, @Local(name = "protoChunk") ProtoChunk protoChunk) {
 		if (!(protoChunk instanceof ImposterProtoChunk)) {
-			Hooks.restoreOriginalBlocks((LevelChunk) original);
+			LevelChunk levelChunk = (LevelChunk) original;
+			Hooks.restoreOriginalBlocks(levelChunk);
+			SnowAccumulation.initializeChunk(levelChunk);
 		}
 		return original;
 	}

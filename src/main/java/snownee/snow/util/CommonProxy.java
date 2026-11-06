@@ -29,6 +29,7 @@ import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
+import snownee.snow.SnowAccumulation;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
@@ -78,9 +79,7 @@ public class CommonProxy implements ModInitializer {
 		if (sereneSeasons) {
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		}
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome)
-				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
-				&& skyLightEnoughToMelt(level, pos, layers)) {
+		if (shouldMeltInWarmBiome(level, pos, biome, layers)) {
 			return true;
 		}
 		if (layers <= 1) {
@@ -102,6 +101,22 @@ public class CommonProxy implements ModInitializer {
 			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
 		}
 		return fabricSeasons;
+	}
+
+	public static boolean shouldMeltInWarmBiome(Level level, BlockPos pos, int layers) {
+		if (sereneSeasons) {
+			return SereneSeasonsCompat.shouldMelt(level, pos, level.getBiome(pos));
+		}
+		if (!SnowCommonConfig.snowAndIceMeltInWarmBiomes && !fabricSeasons) {
+			return false;
+		}
+		return shouldMeltInWarmBiome(level, pos, level.getBiome(pos), layers);
+	}
+
+	public static boolean shouldMeltInWarmBiome(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
+		return snowAndIceMeltInWarmBiomes(level.dimension(), biome)
+				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
+				&& skyLightEnoughToMelt(level, pos, layers);
 	}
 
 	public static boolean skyLightEnoughToMelt(Level level, BlockPos pos, int layers) {
@@ -136,6 +151,7 @@ public class CommonProxy implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		SnowAccumulation.init();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			if (SnowCommonConfig.debugSpawningCommand) {
 				DebugMobSpawningCommand.register(dispatcher);

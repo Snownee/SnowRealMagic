@@ -1,5 +1,8 @@
 package snownee.snow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -77,6 +80,41 @@ public final class SnowCommonConfig {
 	@Path("accumulation.smoothAccumulation")
 	@PerformanceImpact(PerformanceType.LOW)
 	public static boolean smoothAccumulation = true;
+	@Path("accumulation.initialSnowOnLeaves")
+	@PerformanceImpact(PerformanceType.LOW)
+	public static boolean initialSnowOnLeaves = true;
+	@Path("accumulation.supportedBlocksWhitelist")
+	@ConfigUI.Typed(String.class)
+	public static List<String> supportedBlockWhitelist = new ArrayList<>(List.of(
+			".*:.*_leaves",
+			".*:vine",
+			".*:.*_vine",
+			"biomesoplenty:dead_branch"));
+	@Path("accumulation.supportedBlocksBlacklist")
+	@ConfigUI.Typed(String.class)
+	public static List<String> supportedBlockBlacklist = new ArrayList<>();
+	@Path("accumulation.initialSnowDownfallThresholds")
+	public static List<Number> initialSnowDownfallThresholds = new ArrayList<>(List.of(
+			// Convex curve: layers rise quickly at low downfall and flatten out at high downfall.
+			0.02D,
+			0.06D,
+			0.12D,
+			0.21D,
+			0.33D,
+			0.48D,
+			0.66D,
+			0.88D));
+	@Path("accumulation.blockSnowAccumulation")
+	@PerformanceImpact(PerformanceType.LOW)
+	public static boolean blockSnowAccumulation = true;
+	@Path("accumulation.blockSnowSpread")
+	@PerformanceImpact(PerformanceType.LOW)
+	public static boolean blockSnowSpread = true;
+	@Path("accumulation.blockSnowSpreadChance")
+	@Range(min = 0, max = 100)
+	@ConfigUI.Slider
+	@PerformanceImpact(PerformanceType.LOW)
+	public static int blockSnowSpreadChance = 80;
 
 	@Path("integration.accumulationWinterOnly")
 	@PerformanceImpact(PerformanceType.NONE)
@@ -94,6 +132,12 @@ public final class SnowCommonConfig {
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean canPlaceSnowInBlock() {
 		return placeSnowOnBlock && !restoreOriginalBlocks;
+	}
+
+	@Listen("accumulation.supportedBlocksWhitelist")
+	@Listen("accumulation.supportedBlocksBlacklist")
+	public static void onSupportedBlocksChange(String path) {
+		SnowAccumulation.invalidateSupportedBlocks();
 	}
 
 	@Listen("thinnerBoundingBox")
