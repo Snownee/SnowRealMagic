@@ -36,6 +36,14 @@ public final class SnowCommonConfig {
 	public static int snowPersistMaxLightLevel = 11;
 	@PerformanceImpact(PerformanceType.NONE)
 	public static boolean snowReduceFallDamage = true;
+	@Path("snowStepUpMultiplier")
+	@Range(min = 0, max = 10)
+	@PerformanceImpact(PerformanceType.NONE)
+	public static float snowStepUpMultiplier = 1.0F;
+	@Path("snowStepUpMaxIncrease")
+	@Range(min = 0, max = 10)
+	@PerformanceImpact(PerformanceType.NONE)
+	public static float snowStepUpMaxIncrease = 1.0F;
 	@PerformanceImpact(PerformanceType.NONE)
 	public static boolean sustainGrassIfLayerMoreThanOne = true;
 	@PerformanceImpact(PerformanceType.NONE)
