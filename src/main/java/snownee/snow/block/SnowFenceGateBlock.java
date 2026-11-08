@@ -39,10 +39,10 @@ public class SnowFenceGateBlock extends FenceGateBlock implements OptionalLayerS
 				it -> super.getCollisionShape(it, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()));
 	}
 
-//	@Override
-//	public VoxelShape getOcclusionShape(BlockState blockState) {
-//		return ShapeCaches.get(ShapeCaches.VISUAL, blockState, super::getOcclusionShape);
-//	}
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state) {
+		return ShapeCaches.get(ShapeCaches.VISUAL, state, super::getOcclusionShape);
+	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

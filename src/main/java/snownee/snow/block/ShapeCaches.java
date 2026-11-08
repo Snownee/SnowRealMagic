@@ -50,8 +50,8 @@ public class ShapeCaches {
 			SnowVariant snowVariant = (SnowVariant) blockState.getBlock();
 			int layers = snowVariant.srm$layers(blockState, EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
 			BlockState key = blockState;
-			if (layers != 1 && blockState.getBlock() instanceof SnowWallBlock) {
-				blockState = blockState.setValue(SnowVariant.OPTIONAL_LAYERS, 1);
+			if (layers != 0 && blockState.getBlock() instanceof SnowWallBlock) {
+				blockState = blockState.setValue(SnowVariant.OPTIONAL_LAYERS, 0);
 			}
 			shape = shapeFunc.apply(blockState);
 			if (layers != 0 && blockState.hasProperty(SnowVariant.OPTIONAL_LAYERS)) {

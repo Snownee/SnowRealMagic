@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.Hooks;
 
@@ -22,6 +21,7 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	public SnowFenceBlock(Properties properties) {
 		super(properties);
+		occlusionShapes = makeShapes(4.0F, 16.0F, 2.0F, 6.0F, 15.49F);
 	}
 
 	@Override
@@ -34,11 +34,7 @@ public class SnowFenceBlock extends FenceBlock implements WaterLoggableSnowVaria
 
 	@Override
 	public VoxelShape getOcclusionShape(BlockState state) {
-		return ShapeCaches.get(
-				ShapeCaches.VISUAL, state, it -> {
-					VoxelShape shape = super.getOcclusionShape(it);
-					return Shapes.or(shape, shape.move(0, 0.001, 0));
-				});
+		return ShapeCaches.get(ShapeCaches.VISUAL, state, it -> super.getOcclusionShape(it));
 	}
 
 	@Override
