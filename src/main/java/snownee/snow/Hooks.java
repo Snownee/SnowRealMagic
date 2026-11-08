@@ -34,6 +34,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -43,6 +44,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.loader.Platform;
 import snownee.snow.block.SRMSnowLayerBlock;
@@ -64,9 +67,18 @@ public final class Hooks {
 				!SnowCommonConfig.canPlaceSnowInBlock()) {
 			return;
 		}
-		if (biome.warmEnoughToRain(pos, level.getSeaLevel()) || level.getBrightness(LightLayer.BLOCK, pos) >= 10 || !Hooks.canSnowSurvive(
-				level,
-				pos)) {
+		if ((!SnowCommonConfig.worldGenSnowAndFreezeEverywhere && biome.warmEnoughToRain(pos, level.getSeaLevel())) ||
+				level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+			return;
+		}
+		BlockState posState = level.getBlockState(pos);
+		if (posState.isAir()) {
+			BlockState belowState = level.getBlockState(belowPos);
+			if (convert(level, belowPos, belowState, 1, Block.UPDATE_CLIENTS, true)) {
+				return;
+			}
+		}
+		if (!canSnowSurvive(level, pos)) {
 			return;
 		}
 		BlockState blockstate = level.getBlockState(pos);
@@ -81,6 +93,31 @@ public final class Hooks {
 
 	public static boolean canSnowSurvive(LevelReader level, BlockPos pos) {
 		return Blocks.SNOW.defaultBlockState().canSurvive(level, pos);
+	}
+
+	// Biome#shouldSnow without the temperature check
+	public static boolean shouldSnowIgnoringTemperature(LevelReader level, BlockPos pos) {
+		if (!level.isInsideBuildHeight(pos)) {
+			return false;
+		}
+		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+			return false;
+		}
+		BlockState blockState = level.getBlockState(pos);
+		return (blockState.isAir() || blockState.is(Blocks.SNOW)) && Blocks.SNOW.defaultBlockState().canSurvive(level, pos);
+	}
+
+	// Biome#shouldFreeze without the temperature check. The vanilla feature passes checkNeighbors = false
+	public static boolean shouldFreezeIgnoringTemperature(LevelReader level, BlockPos pos) {
+		if (!level.isInsideBuildHeight(pos)) {
+			return false;
+		}
+		if (level.getBrightness(LightLayer.BLOCK, pos) >= 10) {
+			return false;
+		}
+		BlockState blockState = level.getBlockState(pos);
+		FluidState fluidState = level.getFluidState(pos);
+		return fluidState.is(Fluids.WATER) && blockState.getBlock() instanceof LiquidBlock;
 	}
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")

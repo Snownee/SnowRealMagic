@@ -14,9 +14,28 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.SnowAndFreezeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import snownee.snow.Hooks;
+import snownee.snow.SnowCommonConfig;
 
 @Mixin(SnowAndFreezeFeature.class)
 public class SnowAndFreezeFeatureMixin {
+
+	@WrapOperation(
+			method = "place",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/biome/Biome;shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"))
+	private boolean srm_placeIce(
+			Biome biome,
+			LevelReader level,
+			BlockPos pos,
+			boolean checkNeighbors,
+			Operation<Boolean> original) {
+		boolean result = original.call(biome, level, pos, checkNeighbors);
+		if (!result && SnowCommonConfig.worldGenSnowAndFreezeEverywhere) {
+			result = Hooks.shouldFreezeIgnoringTemperature(level, pos);
+		}
+		return result;
+	}
 
 	@WrapOperation(
 			method = "place",
@@ -31,6 +50,9 @@ public class SnowAndFreezeFeatureMixin {
 			@Local(argsOnly = true) FeaturePlaceContext<NoneFeatureConfiguration> context,
 			@Local(name = "belowPos") BlockPos.MutableBlockPos belowPos) {
 		boolean result = original.call(biome, level, pos);
+		if (!result && SnowCommonConfig.worldGenSnowAndFreezeEverywhere) {
+			result = Hooks.shouldSnowIgnoringTemperature(level, pos);
+		}
 		if (!result) {
 			Hooks.placeFeatureExtra(biome, context.level(), pos, belowPos);
 		}

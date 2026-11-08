@@ -295,7 +295,7 @@ public final class SnowAccumulation {
 			return 0;
 		}
 		BlockPos surfacePos = new BlockPos(x, y, z);
-		if (!CommonProxy.coldEnoughToSnow(level, surfacePos, holder)) {
+		if (!SnowCommonConfig.worldGenSnowAndFreezeEverywhere && !CommonProxy.coldEnoughToSnow(level, surfacePos, holder)) {
 			return 0;
 		}
 		return layerForDownfall(Mth.clamp(biome.climateSettings.downfall(), 0F, 1F));

@@ -39,6 +39,8 @@
   "snowrealmagic.config.accumulation.supportedBlocksBlacklist.desc": "Regexes matched against the whole block ID. Matching blocks are excluded even if they match the whitelist.",
   "snowrealmagic.config.accumulation.supportedBlocksWhitelist": "Supported Blocks Whitelist",
   "snowrealmagic.config.accumulation.supportedBlocksWhitelist.desc": "Regexes matched against the whole block ID. A block must match this list to support snow accumulation.",
+  "snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere": "World Gen Snow And Freeze Everywhere",
+  "snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere.desc": "The snow and freeze world generation feature will generate snow and ice in all biomes, regardless of the climate.",
   "snowrealmagic.config.debug": "Debug",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic": "Force Vanilla Ice Snow Logic",
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",
