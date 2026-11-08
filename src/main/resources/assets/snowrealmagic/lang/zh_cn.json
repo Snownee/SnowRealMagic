@@ -22,6 +22,8 @@
 	"snowrealmagic.config.accumulation.naturalMelting.desc": "如果雪层超过1，则会随着时间自然融化。",
 	"snowrealmagic.config.accumulation.smoothAccumulation": "平滑堆积",
 	"snowrealmagic.config.accumulation.smoothAccumulation.desc": "雪层将更平滑地堆积和融化。",
+	"snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere": "世界生成中冰雪无处不在",
+	"snowrealmagic.config.accumulation.worldGenSnowAndFreezeEverywhere.desc": "雪与冰冻世界生成特性会在所有生物群系中生成雪和冰，无论气候如何。",
 	"snowrealmagic.config.accumulation.initialSnowOnLeaves": "树叶初始积雪",
 	"snowrealmagic.config.accumulation.initialSnowOnLeaves.desc": "生成区块时，根据生物群系降水量为雪地生物群系的地表树叶设置初始积雪层数。",
 	"snowrealmagic.config.accumulation.initialSnowDownfallThresholds": "初始积雪降水量阈值",
