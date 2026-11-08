@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import snownee.snow.SnowAccumulation;
 import snownee.snow.SnowCommonConfig;
 
 @Mixin(LevelChunk.class)
@@ -35,6 +36,20 @@ public class LevelChunkMixin {
 			@Local(name = "state") BlockState state) {
 		if (SnowCommonConfig.preventWorldgenLogSpam && state.is(Blocks.SNOW)) {
 			cir.setReturnValue(null);
+		}
+	}
+
+	@Inject(
+			method = "setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Lnet/minecraft/world/level/block/state/BlockState;",
+			at = @At("HEAD"))
+	private void srm_clearSnowAccumulation(BlockPos pos, BlockState newState, int flags, CallbackInfoReturnable<BlockState> cir) {
+		LevelChunk chunk = (LevelChunk) (Object) this;
+		if (chunk.getLevel().isClientSide()) {
+			return;
+		}
+		BlockState oldState = chunk.getBlockState(pos);
+		if (oldState.getBlock() != newState.getBlock() && SnowAccumulation.isSupported(oldState)) {
+			SnowAccumulation.clear(chunk, pos);
 		}
 	}
 }

@@ -35,6 +35,7 @@ import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.GameEvents;
 import snownee.snow.Hooks;
+import snownee.snow.SnowAccumulation;
 import snownee.snow.SnowCommonConfig;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.block.ShapeCaches;
@@ -84,9 +85,7 @@ public class CommonProxy {
 		if (sereneSeasons) {
 			return SereneSeasonsCompat.shouldMelt(level, pos, biome);
 		}
-		if (snowAndIceMeltInWarmBiomes(level.dimension(), biome)
-				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
-				&& skyLightEnoughToMelt(level, pos, layers)) {
+		if (shouldMeltInWarmBiome(level, pos, biome, layers)) {
 			return true;
 		}
 		if (layers <= 1) {
@@ -108,6 +107,22 @@ public class CommonProxy {
 			return SereneSeasonsCompat.snowAndIceMeltInWarmBiomes(dimension, biome);
 		}
 		return fabricSeasons;
+	}
+
+	public static boolean shouldMeltInWarmBiome(Level level, BlockPos pos, int layers) {
+		if (sereneSeasons) {
+			return SereneSeasonsCompat.shouldMelt(level, pos, level.getBiome(pos));
+		}
+		if (!SnowCommonConfig.snowAndIceMeltInWarmBiomes && !fabricSeasons) {
+			return false;
+		}
+		return shouldMeltInWarmBiome(level, pos, level.getBiome(pos), layers);
+	}
+
+	public static boolean shouldMeltInWarmBiome(Level level, BlockPos pos, Holder<Biome> biome, int layers) {
+		return snowAndIceMeltInWarmBiomes(level.dimension(), biome)
+				&& biome.value().warmEnoughToRain(pos, level.getSeaLevel())
+				&& skyLightEnoughToMelt(level, pos, layers);
 	}
 
 	public static boolean skyLightEnoughToMelt(Level level, BlockPos pos, int layers) {
@@ -141,6 +156,8 @@ public class CommonProxy {
 	}
 
 	public CommonProxy(IEventBus eventBus) {
+		SnowAccumulation.register(eventBus);
+		SnowAccumulation.init();
 		if (FMLEnvironment.getDist().isClient()) {
 			ClientProxy.onInitializeClient(eventBus);
 		}
@@ -186,6 +203,7 @@ public class CommonProxy {
 				ChunkEvent.Load.class, event -> {
 					if (event.getLevel() instanceof ServerLevel && event.isNewChunk()) {
 						Hooks.restoreOriginalBlocks(event.getChunk());
+						SnowAccumulation.initializeChunk(event.getChunk());
 					}
 				});
 		if (sereneSeasons) {

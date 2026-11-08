@@ -3,6 +3,19 @@
 		"#snowrealmagic:offset_y",
 		"#snowrealmagic:expand_model",
 		"#snowrealmagic:plants",
-		"#c:chains"
+		"#c:chains",
+		"leaf_litter",
+		{
+			"id": "biomesoplenty:red_maple_leaf_litter",
+			"required": false
+		},
+		{
+			"id": "biomesoplenty:orange_maple_leaf_litter",
+			"required": false
+		},
+		{
+			"id": "biomesoplenty:yellow_maple_leaf_litter",
+			"required": false
+		}
 	]
 }
