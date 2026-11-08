@@ -16,3 +16,6 @@ accessible field net/minecraft/world/level/block/state/BlockBehaviour$Properties
 
 accessible class net/minecraft/world/level/biome/Biome$ClimateSettings
 accessible field net/minecraft/world/level/biome/Biome climateSettings Lnet/minecraft/world/level/biome/Biome$ClimateSettings;
+
+accessible field net/minecraft/world/level/block/FenceBlock occlusionShapes Ljava/util/function/Function;
+mutable field net/minecraft/world/level/block/FenceBlock occlusionShapes Ljava/util/function/Function;

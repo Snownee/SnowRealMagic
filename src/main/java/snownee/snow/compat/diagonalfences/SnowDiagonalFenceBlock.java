@@ -23,6 +23,7 @@ import snownee.snow.compat.diagonalblocks.SnowStarCollisionBlock;
 public class SnowDiagonalFenceBlock extends DiagonalFenceBlock implements SnowStarCollisionBlock, WaterLoggableSnowVariant, OptionalLayerSnowVariant {
 	public SnowDiagonalFenceBlock(BlockBehaviour.Properties properties) {
 		super(properties);
+		occlusionShapes = makeShapes(4.0F, 16.0F, 2.0F, 6.0F, 15.49F);
 	}
 
 	@Override
