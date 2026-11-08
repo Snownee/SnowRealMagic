@@ -84,6 +84,8 @@ public final class SnowCommonConfig {
 
 	@Path("debug.forceVanillaIceSnowLogic")
 	public static boolean forceVanillaIceSnowLogic = false;
+	@Path("debug.preventWorldgenLogSpam")
+	public static boolean preventWorldgenLogSpam = true;
 	@Path("debug.mobSpawningCommand")
 	public static boolean debugSpawningCommand = false;
 	@Path("debug.logBlockError")
