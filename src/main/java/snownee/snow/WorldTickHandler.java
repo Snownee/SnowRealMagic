@@ -10,7 +10,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -193,31 +192,13 @@ public class WorldTickHandler {
 			return false;
 		}
 
-		BlockState blockState = level.getBlockState(pos);
-		if (!snowHereIfPossible(level, pos, blockState)) {
-			if (!snowHereIfPossible(level, pos, blockState = level.getBlockState(pos.move(Direction.DOWN)))) {
+		if (!snowHereIfPossible(level, pos, level.getBlockState(pos))) {
+			if (!snowHereIfPossible(level, pos, level.getBlockState(pos.move(Direction.DOWN)))) {
 				return false;
 			}
 		}
 
-		for (int i = 0; i < 5; i++) {
-			if (blockState.is(BlockTags.SLABS) || blockState.is(BlockTags.STAIRS)) {
-				break;
-			}
-			blockState = level.getBlockState(pos.move(Direction.DOWN));
-			if (!blockState.isAir() && !Hooks.canContainState(blockState)) {
-				break;
-			}
-			if (Hooks.canSnowSurvive(level, pos)) {
-				pos.move(Direction.UP);
-				if (level.getBlockState(pos).getBlock() instanceof SnowLayerBlock || level.getBrightness(LightLayer.BLOCK, pos) >
-						SnowCommonConfig.snowSpawnMaxLightLevel) {
-					break;
-				}
-				Hooks.convert(level, pos.move(Direction.DOWN), blockState, 1, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
-				//FIXME I should make snow melts somehow
-			}
-		}
+		Hooks.convertBelow(level, pos, Block.UPDATE_ALL, SnowCommonConfig.placeSnowOnBlockNaturally);
 		return true;
 	}
 
