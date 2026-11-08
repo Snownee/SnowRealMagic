@@ -18,6 +18,7 @@
 		"IceBlockAccess",
 		"IceBlockMixin",
 		"LevelChunkMixin",
+		"LivingEntityMixin",
 		"ServerLevelMixin",
 		"ServerPlayerGameModeMixin",
 		"SnowAndFreezeFeatureMixin",
