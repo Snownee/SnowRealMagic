@@ -1,5 +1,6 @@
 {
 	"values": [
+		"#minecraft:fence_gates",
 		{
 			"id": "#enchanted-vertical-slabs:slabs",
 			"required": false
