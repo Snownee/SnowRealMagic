@@ -32,6 +32,7 @@
 	],
 	"client": [
 		"client.CameraMixin",
+		"client.LevelRendererMixin",
 		"client.SnowLayerBlockClientMixin",
 		"client.TerrainParticleMixin",
 		"client.VariantMixin"
