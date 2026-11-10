@@ -29,6 +29,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
@@ -222,6 +223,47 @@ public final class SnowAccumulation {
 
 	public static void clear(LevelChunk chunk, BlockPos pos) {
 		set(chunk, pos, 0);
+	}
+
+	/**
+	 * Blows away all accumulated snow in a sphere around {@code center}, e.g. when a wind charge bursts.
+	 */
+	public static void clearAround(ServerLevel level, Vec3 center, double radius) {
+		int minChunkX = SectionPos.blockToSectionCoord(Mth.floor(center.x - radius));
+		int maxChunkX = SectionPos.blockToSectionCoord(Mth.floor(center.x + radius));
+		int minChunkZ = SectionPos.blockToSectionCoord(Mth.floor(center.z - radius));
+		int maxChunkZ = SectionPos.blockToSectionCoord(Mth.floor(center.z + radius));
+		int minY = Mth.floor(center.y - radius);
+		int maxY = Mth.floor(center.y + radius);
+		double radiusSq = radius * radius;
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				LevelChunk chunk = level.getChunkSource().getChunkNow(chunkX, chunkZ);
+				if (chunk == null || isEmpty(chunk)) {
+					continue;
+				}
+				ChunkPos chunkPos = chunk.getPos();
+				int minX = Math.max(Mth.floor(center.x - radius), chunkPos.getMinBlockX());
+				int maxX = Math.min(Mth.floor(center.x + radius), chunkPos.getMaxBlockX());
+				int minZ = Math.max(Mth.floor(center.z - radius), chunkPos.getMinBlockZ());
+				int maxZ = Math.min(Mth.floor(center.z + radius), chunkPos.getMaxBlockZ());
+				for (int x = minX; x <= maxX; x++) {
+					for (int y = minY; y <= maxY; y++) {
+						for (int z = minZ; z <= maxZ; z++) {
+							pos.set(x, y, z);
+							if (center.distanceToSqr(x + 0.5D, y + 0.5D, z + 0.5D) > radiusSq) {
+								continue;
+							}
+							if (!isSupported(level.getBlockState(pos))) {
+								continue;
+							}
+							clear(chunk, pos);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
