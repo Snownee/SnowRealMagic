@@ -166,7 +166,7 @@ public final class SnowyLeaves {
 
 	private static void markDirty(long pos) {
 		BlockPos blockPos = BlockPos.of(pos);
-		Minecraft.getInstance().levelRenderer.setSectionDirty(
+		Minecraft.getInstance().levelExtractor.setSectionDirty(
 				SectionPos.blockToSectionCoord(blockPos.getX()),
 				SectionPos.blockToSectionCoord(blockPos.getY()),
 				SectionPos.blockToSectionCoord(blockPos.getZ()));

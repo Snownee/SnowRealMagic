@@ -33,7 +33,7 @@ public class LevelChunkMixin {
 			BlockPos pos,
 			CompoundTag tag,
 			CallbackInfoReturnable<@Nullable BlockEntity> cir,
-			@Local(name = "state") BlockState state) {
+			@Local(type = BlockState.class) BlockState state) {
 		if (SnowCommonConfig.preventWorldgenLogSpam && state.is(Blocks.SNOW)) {
 			cir.setReturnValue(null);
 		}

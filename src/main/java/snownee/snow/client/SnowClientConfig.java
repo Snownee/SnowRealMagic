@@ -53,7 +53,7 @@ public final class SnowClientConfig {
 	@KiwiConfig.Listen("snowVariants")
 	public static void toggleSnowVariants(String key) {
 		if (Minecraft.getInstance().level != null) {
-			Minecraft.getInstance().levelRenderer.allChanged();
+			Minecraft.getInstance().levelExtractor.allChanged();
 		}
 	}
 
