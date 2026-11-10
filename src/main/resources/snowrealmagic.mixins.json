@@ -19,6 +19,7 @@
 		"IceBlockMixin",
 		"LevelChunkMixin",
 		"LivingEntityMixin",
+		"ServerExplosionMixin",
 		"ServerLevelMixin",
 		"SnowAndFreezeFeatureMixin",
 		"SnowLayerBlockMixin",
