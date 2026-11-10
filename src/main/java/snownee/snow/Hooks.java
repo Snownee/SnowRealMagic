@@ -339,10 +339,12 @@ public final class Hooks {
 		}
 
 		boolean accumulate = false;
-		if (layers < SnowCommonConfig.snowAccumulationMaxLayers && !meltByBrightness && level.isRaining() && CommonProxy.coldEnoughToSnow(
-				level,
-				pos,
-				biome) && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos).getY() <= pos.getY()) {
+		int hNoLeaves = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos).getY();
+		int hWithLeaves = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY();
+		boolean onSurface = hNoLeaves <= pos.getY() || hWithLeaves <= pos.getY();
+		if (layers < SnowCommonConfig.snowAccumulationMaxLayers && !meltByBrightness && level.isRaining()
+				&& CommonProxy.coldEnoughToSnow(level, pos, biome)
+				&& onSurface) {
 			accumulate = CommonProxy.snowAccumulationNow(level);
 		}
 
