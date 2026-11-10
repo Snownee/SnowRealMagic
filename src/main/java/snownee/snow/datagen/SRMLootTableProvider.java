@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import snownee.kiwi.util.GameObjectLookup;
 import snownee.snow.SnowRealMagic;
 import snownee.snow.loot.NormalizeLoot;
@@ -22,7 +22,7 @@ public class SRMLootTableProvider extends FabricBlockLootSubProvider {
 
 	@Override
 	public void generate() {
-		var normalizePool = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(NormalizeLoot.builder());
+		var normalizePool = LootPool.lootPool().setRolls(ContextIntProviders.exactly(1)).add(NormalizeLoot.builder());
 		LootTable.Builder table = LootTable.lootTable().withPool(normalizePool);
 		GameObjectLookup.all(BuiltInRegistries.BLOCK, SnowRealMagic.ID).forEach(block -> add(block, table));
 	}

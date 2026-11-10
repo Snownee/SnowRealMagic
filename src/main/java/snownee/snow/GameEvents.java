@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -47,7 +48,7 @@ public final class GameEvents {
 				ItemStack snowball = new ItemStack(Items.SNOWBALL);
 				if (!player.isCreative() || !player.getInventory().contains(snowball)) {
 					if (!player.addItem(snowball)) {
-						player.drop(snowball, false);
+						player.drop(snowball, false, Prediction.SERVER_ONLY);
 					}
 				}
 			}

@@ -66,13 +66,12 @@ public abstract class BlockItemMixin extends Item {
 
 	@Inject(
 			at = @At("HEAD"),
-			method = "updateCustomBlockEntityTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z")
-	private void srm_updateCustomBlockEntityTag(
-			BlockPos pos,
+			method = "updateCustomBlockEntityTag(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)Z")
+	private static void srm_updateCustomBlockEntityTag(
 			Level level,
 			Player player,
+			BlockPos pos,
 			ItemStack itemStack,
-			BlockState placedState,
 			CallbackInfoReturnable<Boolean> ci) {
 		if (level.isClientSide() && level.getServer() == null && level.getBlockEntity(pos) instanceof SnowBlockEntity be) {
 			var blockEntityData = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);

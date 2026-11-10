@@ -10,9 +10,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.SnowAndFreezeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import snownee.snow.Hooks;
 import snownee.snow.SnowCommonConfig;
 
@@ -47,14 +46,14 @@ public class SnowAndFreezeFeatureMixin {
 			LevelReader level,
 			BlockPos pos,
 			Operation<Boolean> original,
-			@Local(argsOnly = true) FeaturePlaceContext<NoneFeatureConfiguration> context,
+			@Local(argsOnly = true) WorldGenLevel worldGenLevel,
 			@Local(name = "belowPos") BlockPos.MutableBlockPos belowPos) {
 		boolean result = original.call(biome, level, pos);
 		if (!result && SnowCommonConfig.worldGenSnowAndFreezeEverywhere) {
 			result = Hooks.shouldSnowIgnoringTemperature(level, pos);
 		}
 		if (!result) {
-			Hooks.placeFeatureExtra(biome, context.level(), pos, belowPos);
+			Hooks.placeFeatureExtra(biome, worldGenLevel, pos, belowPos);
 		}
 		return result;
 	}

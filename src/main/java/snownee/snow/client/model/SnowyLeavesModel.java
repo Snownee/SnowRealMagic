@@ -131,8 +131,10 @@ public class SnowyLeavesModel extends WrapperBlockStateModel {
 				to,
 				old.layer(),
 				old.itemRenderType(),
+				old.itemGlintRenderType(),
+				old.itemGlintSpecialRenderType(),
 				-1,
-				old.shade(),
+				old.shadeDirectionOverride(),
 				old.lightEmission());
 		return new BakedQuad(
 				quad.position0(),
