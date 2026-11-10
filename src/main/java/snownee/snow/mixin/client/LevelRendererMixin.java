@@ -1,0 +1,170 @@
+package snownee.snow.mixin.client;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import snownee.snow.CoreModule;
+import snownee.snow.block.SnowVariant;
+import snownee.snow.block.entity.SnowBlockEntity;
+import snownee.snow.util.ClientProxy;
+
+@Mixin(LevelRenderer.class)
+public class LevelRendererMixin {
+	
+	/**
+	 * The destroy overlay is rendered from the model of the vanilla block state, which for snow-covered blocks is only
+	 * the snow layer or even an empty model. Render it from the model that is actually visible instead.
+	 */
+	@WrapOperation(
+			method = "submitBlockDestroyAnimation",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/renderer/block/BlockStateModelSet;get(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;"))
+	private BlockStateModel srm_getDestroyModel(
+			BlockStateModelSet modelSet,
+			BlockState state,
+			Operation<BlockStateModel> original,
+			@Local(name = "pos") BlockPos pos) {
+		BlockStateModel model = original.call(modelSet, state);
+		if (!(state.getBlock() instanceof SnowVariant snow)) {
+			return model;
+		}
+		var level = Minecraft.getInstance().level;
+		if (level == null) {
+			return model;
+		}
+		BlockState camo = getCamo(level, pos);
+		boolean full = isFull(state, camo);
+		if (!full && isCamoVisible(camo)) {
+			return ClientProxy.getBlockModel(camo);
+		}
+		BlockState snowState = snow.srm$getSnowState(state, level, pos);
+		if (!snowState.isAir()) {
+			return ClientProxy.getBlockModel(snowState);
+		}
+		if (isCamoVisible(camo)) {
+			return ClientProxy.getBlockModel(camo);
+		}
+		return model;
+	}
+
+	/**
+	 * When the camo is rendered, the snow layer/decoration on top of it is visible as well. Submit a second destroy
+	 * overlay for those quads so the snow part gets cracks too.
+	 */
+	@WrapOperation(
+			method = "submitBlockDestroyAnimation",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitBreakingBlockModel(Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/List;IZ)V"))
+	private void srm_submitSnowLayerCracks(
+			SubmitNodeCollector collector,
+			PoseStack poseStack,
+			List<BlockStateModelPart> parts,
+			int progress,
+			boolean improvedTransparency,
+			Operation<Void> original,
+			@Local(name = "state") BlockBreakingRenderState breakingState,
+			@Local(name = "pos") BlockPos pos,
+			@Local(name = "random") RandomSource random) {
+		original.call(collector, poseStack, parts, progress, improvedTransparency);
+		BlockState state = breakingState.blockState();
+		ClientLevel level = Minecraft.getInstance().level;
+		if (level == null || !(state.getBlock() instanceof SnowVariant snow)) {
+			return;
+		}
+		BlockState camo = getCamo(level, pos);
+		if (isFull(state, camo) || !isCamoVisible(camo)) {
+			return;
+		}
+		if (snow.srm$canRenderDecoration(state)) {
+			srm$submitExtra(
+					collector,
+					poseStack,
+					progress,
+					ClientProxy.getBlockModel(state),
+					snow.srm$renderDecorationOffset(state) + 0.001,
+					state,
+					pos,
+					random,
+					original);
+		}
+		BlockState snowState = snow.srm$getSnowState(state, level, pos);
+		// The layer offset is a render-time quad transform for blocks like slabs; applying it to the destroy pose
+		// shifts the overlay too far, so keep the snow layer overlay at the block origin.
+		if (!snowState.isAir()) {
+			srm$submitExtra(
+					collector,
+					poseStack,
+					progress,
+					ClientProxy.getBlockModel(snowState),
+					snow.srm$renderLayerOffset(state) * 0.25 + 0.001,
+					state,
+					pos,
+					random,
+					original);
+		}
+	}
+
+	private static void srm$submitExtra(
+			SubmitNodeCollector collector,
+			PoseStack poseStack,
+			int progress,
+			BlockStateModel model,
+			double yOffset,
+			BlockState state,
+			BlockPos pos,
+			RandomSource random,
+			Operation<Void> original) {
+		List<BlockStateModelPart> extraParts = new ArrayList<>();
+		random.setSeed(state.getSeed(pos));
+		model.collectParts(random, extraParts);
+		if (extraParts.isEmpty()) {
+			return;
+		}
+		if (yOffset != 0) {
+			poseStack.pushPose();
+			poseStack.translate(0, yOffset, 0);
+			original.call(collector, poseStack, extraParts, progress, model.hasMaterialFlag(1));
+			poseStack.popPose();
+		} else {
+			original.call(collector, poseStack, extraParts, progress, model.hasMaterialFlag(1));
+		}
+	}
+
+	private static BlockState getCamo(ClientLevel level, BlockPos pos) {
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		return blockEntity instanceof SnowBlockEntity snowBlockEntity ? snowBlockEntity.getContainedState() : null;
+	}
+
+	private static boolean isFull(BlockState state, BlockState camo) {
+		return state.hasProperty(SnowLayerBlock.LAYERS) && state.getValue(SnowLayerBlock.LAYERS) == 8 &&
+				(camo == null || !camo.is(CoreModule.EXPAND_MODEL));
+	}
+
+	private static boolean isCamoVisible(BlockState camo) {
+		return camo != null && !camo.isAir() && camo.getRenderShape() == RenderShape.MODEL;
+	}
+}
