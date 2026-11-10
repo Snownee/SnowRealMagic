@@ -1,8 +1,5 @@
 package snownee.snow.mixin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -17,10 +14,8 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockStateModelSet;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.state.level.BlockBreakingRenderState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -78,17 +73,17 @@ public class LevelRendererMixin {
 			method = "submitBlockDestroyAnimation",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitBreakingBlockModel(Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/List;I)V"))
+					target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitBreakingBlockModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;JI)V"))
 	private void srm_submitSnowLayerCracks(
 			SubmitNodeCollector collector,
 			PoseStack poseStack,
-			List<BlockStateModelPart> parts,
+			BlockStateModel model,
+			long seed,
 			int progress,
 			Operation<Void> original,
 			@Local(name = "state") BlockBreakingRenderState breakingState,
-			@Local(name = "pos") BlockPos pos,
-			@Local(name = "random") RandomSource random) {
-		original.call(collector, poseStack, parts, progress);
+			@Local(name = "pos") BlockPos pos) {
+		original.call(collector, poseStack, model, seed, progress);
 		BlockState state = breakingState.blockState();
 		ClientLevel level = Minecraft.getInstance().level;
 		if (level == null || !(state.getBlock() instanceof SnowVariant snow)) {
@@ -102,12 +97,10 @@ public class LevelRendererMixin {
 			srm$submitExtra(
 					collector,
 					poseStack,
-					progress,
 					ClientProxy.getBlockModel(state),
+					seed,
+					progress,
 					snow.srm$renderDecorationOffset(state) + 0.001,
-					state,
-					pos,
-					random,
 					original);
 		}
 		BlockState snowState = snow.srm$getSnowState(state, level, pos);
@@ -117,12 +110,10 @@ public class LevelRendererMixin {
 			srm$submitExtra(
 					collector,
 					poseStack,
-					progress,
 					ClientProxy.getBlockModel(snowState),
+					seed,
+					progress,
 					snow.srm$renderLayerOffset(state) * 0.25 + 0.001,
-					state,
-					pos,
-					random,
 					original);
 		}
 	}
@@ -130,26 +121,18 @@ public class LevelRendererMixin {
 	private static void srm$submitExtra(
 			SubmitNodeCollector collector,
 			PoseStack poseStack,
-			int progress,
 			BlockStateModel model,
+			long seed,
+			int progress,
 			double yOffset,
-			BlockState state,
-			BlockPos pos,
-			RandomSource random,
 			Operation<Void> original) {
-		List<BlockStateModelPart> extraParts = new ArrayList<>();
-		random.setSeed(state.getSeed(pos));
-		model.collectParts(random, extraParts);
-		if (extraParts.isEmpty()) {
-			return;
-		}
 		if (yOffset != 0) {
 			poseStack.pushPose();
 			poseStack.translate(0, yOffset, 0);
-			original.call(collector, poseStack, extraParts, progress);
+			original.call(collector, poseStack, model, seed, progress);
 			poseStack.popPose();
 		} else {
-			original.call(collector, poseStack, extraParts, progress);
+			original.call(collector, poseStack, model, seed, progress);
 		}
 	}
 
