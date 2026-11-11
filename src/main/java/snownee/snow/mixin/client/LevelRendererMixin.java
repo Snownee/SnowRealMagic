@@ -58,14 +58,14 @@ public class LevelRendererMixin {
 		BlockState camo = getCamo(level, pos);
 		boolean full = isFull(state, camo);
 		if (!full && isCamoVisible(camo)) {
-			return ClientProxy.getBlockModel(camo);
+			return ClientProxy.getUnwrappedBlockModel(camo);
 		}
 		BlockState snowState = snow.srm$getSnowState(state, level, pos);
 		if (!snowState.isAir()) {
-			return ClientProxy.getBlockModel(snowState);
+			return ClientProxy.getUnwrappedBlockModel(snowState);
 		}
 		if (isCamoVisible(camo)) {
-			return ClientProxy.getBlockModel(camo);
+			return ClientProxy.getUnwrappedBlockModel(camo);
 		}
 		return model;
 	}
@@ -103,7 +103,7 @@ public class LevelRendererMixin {
 					collector,
 					poseStack,
 					progress,
-					ClientProxy.getBlockModel(state),
+					ClientProxy.getUnwrappedBlockModel(state),
 					snow.srm$renderDecorationOffset(state) + 0.001,
 					state,
 					pos,
@@ -111,15 +111,15 @@ public class LevelRendererMixin {
 					original);
 		}
 		BlockState snowState = snow.srm$getSnowState(state, level, pos);
-		// The layer offset is a render-time quad transform for blocks like slabs; applying it to the destroy pose
-		// shifts the overlay too far, so keep the snow layer overlay at the block origin.
+		// Blocks like slabs draw the snow layer with a render-time quad transform, so the destroy overlay has to be
+		// submitted with the very same offset, otherwise the cracks end up inside the block instead of on the snow.
 		if (!snowState.isAir()) {
 			srm$submitExtra(
 					collector,
 					poseStack,
 					progress,
-					ClientProxy.getBlockModel(snowState),
-					snow.srm$renderLayerOffset(state) * 0.25 + 0.001,
+					ClientProxy.getUnwrappedBlockModel(snowState),
+					snow.srm$renderLayerOffset(state) + 0.001,
 					state,
 					pos,
 					random,

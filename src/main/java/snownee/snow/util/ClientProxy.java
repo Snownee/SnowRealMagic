@@ -53,6 +53,15 @@ public class ClientProxy implements ClientModInitializer {
 		return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
 	}
 
+	/**
+	 * Returns the raw geometry of the block's model. {@link SnowCoveredModel} only works during a real block render
+	 * (it needs the block entity render data), so the destroy overlay must use the wrapped model instead.
+	 */
+	public static BlockStateModel getUnwrappedBlockModel(BlockState state) {
+		BlockStateModel model = getBlockModel(state);
+		return model instanceof SnowCoveredModel snowCoveredModel ? snowCoveredModel.srm$getWrapped() : model;
+	}
+
 	public static BlockStateModel getExtraBlockModel(@Nullable Object key) {
 		ModelManager modelManager = Minecraft.getInstance().getModelManager();
 		if (key == null) {
