@@ -24,6 +24,14 @@ public class SnowCoveredModel extends WrapperBlockStateModel {
 		wrapped = model;
 	}
 
+	/**
+	 * The wrapper itself cannot be used outside of a real block render (its {@code emitQuads} needs the block entity
+	 * render data), so callers that only need the raw geometry (e.g. the destroy overlay) have to unwrap it.
+	 */
+	public BlockStateModel srm$getWrapped() {
+		return wrapped;
+	}
+
 	@Override
 	public void emitQuads(
 			QuadEmitter emitter,
