@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
 import snownee.snow.CoreModule;
+import snownee.snow.block.SnowVariant;
 
 public class FabricRendererRenderAPI implements RenderAPI {
 
@@ -35,6 +36,9 @@ public class FabricRendererRenderAPI implements RenderAPI {
 	private final BlockPos pos;
 	private final Predicate<@Nullable Direction> cullTest;
 	private final BlockStateModel unwrapped;
+	private final BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
+	private int cullCacheValid;
+	private int cullCacheCulled;
 
 	public FabricRendererRenderAPI(
 			QuadEmitter emitter,
@@ -57,6 +61,8 @@ public class FabricRendererRenderAPI implements RenderAPI {
 	public boolean render(BlockState blockState, BlockStateModel model, double yOffset, ModelPart part) {
 		Vec3 offset = yOffset == 0 ? blockState.getOffset(pos) : blockState.getOffset(pos).add(0, yOffset, 0);
 		boolean expandModel = part == ModelPart.CAMO && blockState.is(CoreModule.EXPAND_MODEL);
+		cullCacheValid = 0;
+		cullCacheCulled = 0;
 		emitter.pushTransform(quad -> {
 			if (part == ModelPart.SNOW_LAYER && yOffset != 0) { // is slab
 				if (quad.nominalFace() == Direction.DOWN) {
@@ -69,6 +75,26 @@ public class FabricRendererRenderAPI implements RenderAPI {
 				Block block = blockState.getBlock();
 				if (block instanceof StairBlock || block instanceof SlabBlock || block instanceof WallBlock) {
 					return false;
+				}
+			}
+			if (part == ModelPart.CAMO) {
+				Direction cullFace = quad.cullFace();
+				if (cullFace != null) {
+					// The renderer would cull this quad with the state of the snow layer block, which is not the
+					// geometry rendered here. Clear it and cull with the states rendered at the neighbor instead.
+					Direction nominalFace = quad.nominalFace();
+					quad.cullFace(null);
+					quad.nominalFace(nominalFace);
+					int mask = 1 << cullFace.ordinal();
+					if ((cullCacheValid & mask) == 0) {
+						cullCacheValid |= mask;
+						if (shouldCullCamoFace(blockState, cullFace)) {
+							cullCacheCulled |= mask;
+						}
+					}
+					if ((cullCacheCulled & mask) != 0) {
+						return false;
+					}
 				}
 			}
 			int color = -1;
@@ -105,9 +131,32 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		return true;
 	}
 
+	/**
+	 * Culls a camo face with the geometry the neighbor actually renders, i.e. its camo and its snow layer instead
+	 * of the snow layer block itself. Using the snow layer block would cull the face of a snow-covered vertical
+	 * slab that is next to a snow layer of the same height, while leaving the face between two snow-covered
+	 * vertical slabs unculled.
+	 */
+	private boolean shouldCullCamoFace(BlockState camo, Direction direction) {
+		BlockPos neighborPos = scratchPos.setWithOffset(pos, direction);
+		BlockState neighborState = level.getBlockState(neighborPos);
+		if (neighborState.getBlock() instanceof SnowVariant snowVariant) {
+			BlockState rawState = snowVariant.srm$getRaw(neighborState, level, neighborPos);
+			if (!rawState.isAir() && !Block.shouldRenderFace(camo, rawState, direction)) {
+				return true;
+			}
+			BlockState snowState = snowVariant.srm$getSnowState(neighborState, level, neighborPos);
+			return !snowState.isAir() && !Block.shouldRenderFace(camo, snowState, direction);
+		}
+		return !Block.shouldRenderFace(camo, neighborState, direction);
+	}
+
 	private Predicate<@Nullable Direction> newCullTest(BlockState blockState, ModelPart part, Vec3 offset) {
 		var cullTest = this.cullTest;
-		BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
+		if (part == ModelPart.CAMO) {
+			// Camo faces are culled in the transform, where the geometry rendered by the neighbor is known.
+			return $ -> false;
+		}
 		boolean generalOverlay = part == ModelPart.SNOW_OVERLAY && offset.y <= -1.0;
 		if (part == ModelPart.DECORATION || part == ModelPart.SNOW_OVERLAY || part == ModelPart.SNOW_LAYER) {
 			cullTest = $ -> {
@@ -117,7 +166,7 @@ public class FabricRendererRenderAPI implements RenderAPI {
 				if ($ == null) {
 					return false;
 				}
-				BlockPos.MutableBlockPos pos1 = scratchPos.setWithOffset(pos, $);
+				BlockPos.MutableBlockPos pos1 = this.scratchPos.setWithOffset(pos, $);
 				BlockState selfState = blockState;
 				if (generalOverlay) {
 					pos1.move(Direction.DOWN);
