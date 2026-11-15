@@ -80,6 +80,8 @@ dependencies {
 
     implementation "maven.modrinth:diagonal-fences:UUuyVvvj"
     implementation "maven.modrinth:diagonal-walls:lLuopUKw"
+//    implementation "maven.modrinth:enchanted-vertical-slabs:DRNGaBqJ"
+    implementation "maven.modrinth:spark:1.10.187-fabric"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/26.1.0
     implementation "fuzs.diagonalblocks:diagonalblocks-fabric:26.1.0"
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/puzzleslib/puzzleslib-fabric
