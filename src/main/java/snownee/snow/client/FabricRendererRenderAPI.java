@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -23,7 +24,11 @@ import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import snownee.snow.CoreModule;
+import snownee.snow.block.SnowVariant;
 import snownee.snow.mixin.client.AbstractBlockRenderContextAccess;
 import snownee.snow.mixin.client.BlockRenderInfoAccess;
 
@@ -37,6 +42,9 @@ public class FabricRendererRenderAPI implements RenderAPI {
 	private final BlockState selfState;
 	private final BlockPos pos;
 	private final BakedModel unwrapped;
+	private final BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
+	private int cullCacheValid;
+	private int cullCacheCulled;
 
 	public FabricRendererRenderAPI(
 			BlockAndTintGetter level,
@@ -65,6 +73,8 @@ public class FabricRendererRenderAPI implements RenderAPI {
 
 		Vec3 offset = yOffset == 0 ? blockState.getOffset(level, pos) : blockState.getOffset(level, pos).add(0, yOffset, 0);
 		boolean expandModel = part == ModelPart.CAMO && blockState.is(CoreModule.EXPAND_MODEL);
+		cullCacheValid = 0;
+		cullCacheCulled = 0;
 		context.pushTransform(quad -> {
 			if (part == ModelPart.SNOW_LAYER && yOffset != 0) { // is slab
 				if (quad.nominalFace() == Direction.DOWN) {
@@ -77,6 +87,26 @@ public class FabricRendererRenderAPI implements RenderAPI {
 				Block block = blockState.getBlock();
 				if (block instanceof StairBlock || block instanceof SlabBlock || block instanceof WallBlock) {
 					return false;
+				}
+			}
+			if (part == ModelPart.CAMO) {
+				Direction cullFace = quad.cullFace();
+				if (cullFace != null) {
+					// The renderer would cull this quad with the state of the snow layer block, which is not the
+					// geometry rendered here. Clear it and cull with the states rendered at the neighbor instead.
+					Direction nominalFace = quad.nominalFace();
+					quad.cullFace(null);
+					quad.nominalFace(nominalFace);
+					int mask = 1 << cullFace.ordinal();
+					if ((cullCacheValid & mask) == 0) {
+						cullCacheValid |= mask;
+						if (shouldCullCamoFace(blockState, cullFace)) {
+							cullCacheCulled |= mask;
+						}
+					}
+					if ((cullCacheCulled & mask) != 0) {
+						return false;
+					}
 				}
 			}
 			int color = -1;
@@ -124,6 +154,45 @@ public class FabricRendererRenderAPI implements RenderAPI {
 		((FabricBakedModel) model).emitBlockQuads(level, blockState, pos, randomSupplier, context);
 		context.popTransform();
 		return true;
+	}
+
+	/**
+	 * Culls a camo face with the geometry the neighbor actually renders, i.e. its camo and its snow layer instead
+	 * of the snow layer block itself. Using the snow layer block would cull the face of a snow-covered vertical
+	 * slab that is next to a snow layer of the same height, while leaving the face between two snow-covered
+	 * vertical slabs unculled.
+	 */
+	private boolean shouldCullCamoFace(BlockState camo, Direction direction) {
+		BlockPos neighborPos = scratchPos.setWithOffset(pos, direction);
+		BlockState neighborState = level.getBlockState(neighborPos);
+		if (neighborState.getBlock() instanceof SnowVariant snowVariant) {
+			BlockState rawState = snowVariant.srm$getRaw(neighborState, level, neighborPos);
+			if (!rawState.isAir() && !shouldRenderFace(camo, rawState, neighborPos, direction)) {
+				return true;
+			}
+			BlockState snowState = snowVariant.srm$getSnowState(neighborState, level, neighborPos);
+			return !snowState.isAir() && !shouldRenderFace(camo, snowState, neighborPos, direction);
+		}
+		return !Block.shouldRenderFace(camo, level, pos, direction, neighborPos);
+	}
+
+	/**
+	 * Mirrors {@link Block#shouldRenderFace(BlockState, BlockGetter, BlockPos, Direction, BlockPos)} but compares
+	 * against an explicitly given neighbor state instead of the state at the neighbor position.
+	 */
+	private boolean shouldRenderFace(BlockState state, BlockState neighborState, BlockPos neighborPos, Direction direction) {
+		if (state.skipRendering(neighborState, direction)) {
+			return false;
+		}
+		if (!neighborState.canOcclude()) {
+			return true;
+		}
+		VoxelShape shape = state.getFaceOcclusionShape(level, pos, direction);
+		if (shape.isEmpty()) {
+			return true;
+		}
+		VoxelShape neighborShape = neighborState.getFaceOcclusionShape(level, neighborPos, direction.getOpposite());
+		return Shapes.joinIsNotEmpty(shape, neighborShape, BooleanOp.ONLY_FIRST);
 	}
 
 	private static float expandModel(float f) {
