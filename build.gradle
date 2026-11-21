@@ -79,6 +79,7 @@ dependencies {
 
     modImplementation "maven.modrinth:diagonal-fences:v21.1.1-1.21.1-Fabric"
     modImplementation "maven.modrinth:diagonal-walls:v21.1.2-1.21.1-Fabric"
+    modImplementation "maven.modrinth:enchanted-vertical-slabs:dVIfiSnc" // 2.3.2 for 1.21.1
     // https://github.com/Fuzss/modresources/tree/main/maven/fuzs/diagonalblocks/diagonalblocks-neoforge/21.1.2
     modImplementation "fuzs.diagonalblocks:diagonalblocks-fabric:21.1.2"
     modImplementation "fuzs.puzzleslib:puzzleslib-common:21.1.33"
