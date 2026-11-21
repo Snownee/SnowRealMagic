@@ -31,6 +31,8 @@
   "snowrealmagic.config.debug.forceVanillaIceSnowLogic.desc": "",
   "snowrealmagic.config.debug.mobSpawningCommand": "Mob Spawning Command",
   "snowrealmagic.config.debug.mobSpawningCommand.desc": "",
+  "snowrealmagic.config.debug.preventWorldgenLogSpam": "Prevent Worldgen Log Spam",
+  "snowrealmagic.config.debug.preventWorldgenLogSpam.desc": "",
   "snowrealmagic.config.fancySnowOnUpperSlab": "Fancy Snow On Upper Slab",
   "snowrealmagic.config.fancySnowOnUpperSlab.desc": "Snow layer on upper slab will render snow overlay on the side of the slab.",
   "snowrealmagic.config.integration": "Integration",
