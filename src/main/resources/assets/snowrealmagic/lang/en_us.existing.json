@@ -19,6 +19,8 @@
 	"snowrealmagic.config.snowSpawnMaxLightLevel.desc": "Maximum light level for snow to spawn.",
 	"snowrealmagic.config.snowPersistMaxLightLevel.desc": "Maximum light level for snow to not melt.",
 	"snowrealmagic.config.snowReduceFallDamage.desc": "Reduce fall damage when landing on snow, depending on the snow layers.",
+	"snowrealmagic.config.snowStepUpMultiplier.desc": "When walking on snow layers or snow-covered blocks, the step height of players and their controlled creatures increases by this multiple of the base step height. 1 means doubled.",
+	"snowrealmagic.config.snowStepUpMaxIncrease.desc": "The maximum step height increase on snow layers or snow-covered blocks, in blocks.",
 	"snowrealmagic.config.sustainGrassIfLayerMoreThanOne.desc": "Prevents grass block from turning into dirt when snow layer is more than 1.",
 	"snowrealmagic.config.sneakSnowball.desc": "Sneak+use on snow layer to obtain snowball, consuming one layer of snow.",
 	"snowrealmagic.config.fancySnowOnUpperSlab.desc": "Snow layer on upper slab will render snow overlay on the side of the slab.",
