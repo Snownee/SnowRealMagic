@@ -64,15 +64,20 @@ public interface SnowVariant extends IKiwiBlock, FabricBlock {
 	@Override
 	default BlockState getAppearance(
 			BlockState state,
-			BlockAndTintGetter level,
+			BlockAndTintGetter renderView,
 			BlockPos pos,
 			Direction side,
-			@Nullable BlockState queryState,
+			@Nullable BlockState sourceState,
 			@Nullable BlockPos sourcePos) {
-		if (srm$layers(state, level, pos) > 0 && queryState != null && queryState.is(BlockTags.SNOW)) {
-			return srm$getSnowState(state, level, pos);
+		int layers = srm$layers(state, renderView, pos);
+		if (layers > 0 && sourcePos != null && pos.getX() == sourcePos.getX() && pos.getZ() == sourcePos.getZ() &&
+				pos.getY() - sourcePos.getY() == 1) {
+			return srm$getSnowState(state, renderView, pos);
 		}
-		return srm$getRaw(state, level, pos);
+		if (layers > 0 && sourceState != null && sourceState.is(BlockTags.SNOW)) {
+			return srm$getSnowState(state, renderView, pos);
+		}
+		return srm$getRaw(state, renderView, pos);
 	}
 
 	default int srm$layers(BlockState state, BlockGetter level, BlockPos pos) {
