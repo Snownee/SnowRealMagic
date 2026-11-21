@@ -1,0 +1,21 @@
+{
+	"values": [
+		"wither_rose",
+		{
+			"id": "open_eyeblossom",
+			"required": false
+		},
+		{
+			"id": "short_dry_grass",
+			"required": false
+		},
+		{
+			"id": "tall_dry_grass",
+			"required": false
+		},
+		{
+			"id": "firefly_bush",
+			"required": false
+		}
+	]
+}

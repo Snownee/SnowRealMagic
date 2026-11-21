@@ -146,6 +146,17 @@ public class SRMSnowLayerBlock extends SnowLayerBlock implements EntityBlock, Bo
 	}
 
 	@Override
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+		BlockState raw = srm$getRaw(state, level, pos);
+		if (raw.is(CoreModule.ANIMATE_TICK)) {
+			try {
+				raw.getBlock().animateTick(raw, level, pos, random);
+			} catch (Throwable ignored) {
+			}
+		}
+	}
+
+	@Override
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		BlockState stateIn = srm$getRaw(state, worldIn, pos);
 		try {
