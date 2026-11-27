@@ -2,7 +2,6 @@ package snownee.snow.convert;
 
 import org.jetbrains.annotations.Nullable;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -49,11 +48,14 @@ public class BlockConverters {
 
 	@Nullable
 	public BlockConverter of(BlockState blockState) {
-		BlockConverter converter = cache.computeIfAbsent(blockState, this::ofInternal);
-		if (cache.size() > 1024) {
-			cache.removeFirst();
+		// the cache is shared by all threads, including chunk generation workers (e.g. C2ME)
+		synchronized (cache) {
+			BlockConverter converter = cache.computeIfAbsent(blockState, this::ofInternal);
+			if (cache.size() > 1024) {
+				cache.removeFirst();
+			}
+			return converter;
 		}
-		return converter;
 	}
 
 	@Nullable
@@ -150,8 +152,6 @@ public class BlockConverters {
 				});
 		add(
 				SnowRealMagic.id("fallback"), new BlockConverter() {
-					private final Object2BooleanOpenHashMap<Block> cache = new Object2BooleanOpenHashMap<>();
-
 					@Override
 					public boolean takeIn(BlockState blockState) {
 						return isTakeInPlant(blockState) || blockState.is(CoreModule.CONTAINABLES);
@@ -167,12 +167,10 @@ public class BlockConverters {
 								CoreModule.SNOW_BLOCK.defaultBlockState();
 					}
 
-					private boolean isTakeInPlant(BlockState blockState) {
-						return cache.computeIfAbsent(
-								blockState.getBlock(),
-								block -> block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock ||
-										block instanceof MushroomBlock || block instanceof SweetBerryBushBlock ||
-										block instanceof PinkPetalsBlock);
+					private static boolean isTakeInPlant(BlockState blockState) {
+						Block block = blockState.getBlock();
+						return block instanceof TallGrassBlock || block instanceof FlowerBlock || block instanceof SaplingBlock ||
+								block instanceof MushroomBlock || block instanceof SweetBerryBushBlock || block instanceof PinkPetalsBlock;
 					}
 				});
 	}
